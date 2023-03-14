@@ -1,21 +1,18 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id "kotlin-kapt"
-    id 'dagger.hilt.android.plugin'
 }
 
 android {
-    namespace 'com.qure.onboarding'
+    namespace 'com.qure.core_design'
     compileSdk 33
 
     defaultConfig {
         minSdk 27
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -31,28 +28,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures {
-        dataBinding true
-    }
 }
 
 dependencies {
-    implementation project(path:':core-design')
-    implementation project(path:':core')
-    implementation project(path:':navigator')
-    implementation project(path:':domain')
-
     implementation(jetpackDeps)
-    implementation(coroutines)
-
-    implementation deps.hilt.core
-    kapt deps.hilt.compiler
-
-    implementation(splashDeps)
-    implementation(lottieDeps)
-
-    implementation deps.timber
-
     testImplementation(testDeps)
     androidTestImplementation(androidTestDeps)
 }

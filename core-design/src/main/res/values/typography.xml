@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Typography">
+        <item name="android:textColor">@color/gray_700</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Typography.Heading">
+        <item name="android:textSize" tools:ignore="SpUsage">14sp</item>
+        <item name="lineHeight">22sp</item>
+        <item name="fontFamily">@font/sc_black_dream</item>
+    </style>
+</resources>
