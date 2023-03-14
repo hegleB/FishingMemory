@@ -1,4 +1,4 @@
-package com.qure.fishingmemory
+package com.qure.fishingmemory.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
