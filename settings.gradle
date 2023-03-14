@@ -17,3 +17,8 @@ rootProject.name = "fishingmemory"
 include ':app'
 include ':data'
 include ':domain'
+include ':navigator'
+include ':presentation'
+include ':presentation:splash'
+include ':core'
+include ':presentation:onboarding'
