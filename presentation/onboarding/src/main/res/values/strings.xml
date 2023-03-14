@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">onboarding</string>
+    <string name="onboarding_first_title">내가 잡은 물고기를 기록해봐요.</string>
+    <string name="onboarding_second_title">통계를 통해 내가 남긴 기록을 \n한눈에 확인해보세요.</string>
+    <string name="onboarding_third_title">지도를 통해 나의 기록을 \n확인할 수 있어요.</string>
+
+    <string name="onboarding_next">다음</string>
+    <string name="onboarding_start">시작하기</string>
 </resources>
