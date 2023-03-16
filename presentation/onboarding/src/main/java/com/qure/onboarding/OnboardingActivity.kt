@@ -7,12 +7,16 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.qure.core.BaseActivity
+import com.qure.navigator.LoginNavigator
 import com.qure.onboarding.databinding.ActivityOnboardingBinding
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.activity_onboarding) {
 
+    @Inject
+    lateinit var loginNavigator: LoginNavigator
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,7 +47,12 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
         binding.apply {
             buttonActivityOnboardingNext.setOnClickListener {
                 viewpagerActivityOnboardingOnboarding.run {
-                    currentItem += PAGE_INCREMENT_VALUE
+                    if (currentItem == END_PAGE) {
+                        startActivity(loginNavigator.intent(this@OnboardingActivity))
+                        finish()
+                    } else {
+                        currentItem += PAGE_INCREMENT_VALUE
+                    }
                 }
             }
 
@@ -59,8 +68,10 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                     when (position) {
                         0 -> buttonActivityOnboardingNext.text = getString(R.string.onboarding_next)
                         1 -> buttonActivityOnboardingNext.text = getString(R.string.onboarding_next)
-                        else -> buttonActivityOnboardingNext.text =
-                            getString(R.string.onboarding_start)
+                        else -> {
+                            buttonActivityOnboardingNext.text =
+                                getString(R.string.onboarding_start)
+                        }
                     }
                 }
             })
@@ -99,6 +110,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
     companion object {
         private const val PAGES_NUMBER = 3
         private const val PAGE_INCREMENT_VALUE = 1
+        private const val END_PAGE = 2
     }
 }
 
