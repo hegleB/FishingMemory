@@ -7,6 +7,17 @@
         <item name="android:includeFontPadding">false</item>
     </style>
 
+    <style name="Typography.Title1">
+        <item name="android:textSize" tools:ignore="SpUsage">17dp</item>
+        <item name="fontFamily">@font/sc_bold_dream</item>
+    </style>
+
+    <!-- Title2 -->
+    <style name="Typography.Title2">
+        <item name="android:textSize" tools:ignore="SpUsage">15dp</item>
+        <item name="fontFamily">@font/sc_bold_dream</item>
+    </style>
+
     <style name="Typography.Heading">
         <item name="android:textSize" tools:ignore="SpUsage">14sp</item>
         <item name="lineHeight">22sp</item>

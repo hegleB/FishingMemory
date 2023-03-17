@@ -3,9 +3,22 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id "kotlin-kapt"
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
+
+    signingConfigs {
+        debug {
+            storeFile file(properties['store_file'])
+            keyAlias properties['key_alias']
+            keyPassword properties['key_password']
+            storePassword properties['store_password']
+        }
+    }
     namespace 'com.qure.fishingmemory'
     compileSdk 33
 
@@ -16,6 +29,7 @@ android {
         versionCode 1
         versionName "1.0"
 
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -23,6 +37,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ".app"
+
+            manifestPlaceholders = [
+                    KAKAO_API_KEY: properties.getProperty('kakao_api_key')
+            ]
+
+            buildConfigField 'String', 'KAKAO_API_KEY', "\"${properties.getProperty('kakao_api_key')}\""
+            buildConfigField 'String', 'FIREBASE_API_KEY', "\"${properties.getProperty('firebase_api_key')}\""
+            buildConfigField 'String', 'FIREBASE_AUTH_URL', "\"${properties.getProperty('firebase_auth_url')}\""
         }
     }
     compileOptions {
@@ -38,11 +63,14 @@ android {
 }
 
 dependencies {
-    implementation project(path:':domain')
-    implementation project(path:':data')
-    implementation project(path:':navigator')
-    implementation project(path:':presentation:splash')
-    implementation project(path:':presentation:onboarding')
+    implementation project(path: ':build-property')
+    implementation project(path: ':domain')
+    implementation project(path: ':data')
+    implementation project(path: ':navigator')
+    implementation project(path: ':presentation:splash')
+    implementation project(path: ':presentation:onboarding')
+    implementation project(path: ':presentation:login')
+    implementation project(path: ':presentation:home')
 
     implementation(jetpackDeps)
     implementation(coroutines)
@@ -57,6 +85,13 @@ dependencies {
     implementation(lottieDeps)
 
     implementation deps.timber
+
+    implementation(loginDeps)
+
+    implementation platform(deps.firebase.bom)
+
+    implementation deps.firebase.analytics
+    implementation deps.firebase.auth
 
     testImplementation(testDeps)
     androidTestImplementation(androidTestDeps)
