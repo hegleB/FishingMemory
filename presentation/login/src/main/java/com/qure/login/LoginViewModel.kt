@@ -2,6 +2,7 @@ package com.qure.login
 
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
+import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.domain.entity.auth.SignUpUser
 import com.qure.domain.usecase.auth.CreateUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,13 +10,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val createUserUseCase: CreateUserUseCase
+    private val createUserUseCase: CreateUserUseCase,
 ) : BaseViewModel() {
 
     private val _action = MutableSharedFlow<Action>()
@@ -36,7 +36,9 @@ class LoginViewModel @Inject constructor(
             }
         }.onFailure {
             it as Exception
-            Timber.d("${it.message}")
+            if (isExistsEmail(it.message)) {
+                _action.emit(Action.AlreadySignUp)
+            }
         }
     }
 

@@ -11,9 +11,6 @@ import okhttp3.Response
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val client: OkHttpClient,
-    private val gson: Gson,
     private val buildPropertyRepository: BuildPropertyRepository
 ): Interceptor {
 

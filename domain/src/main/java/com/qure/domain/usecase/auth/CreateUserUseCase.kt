@@ -10,5 +10,10 @@ class CreateUserUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(email: String, userId: String): Result<SignUpUser> {
         return authRepository.createUser(email, userId)
+            .onSuccess {
+                authRepository.saveTokenToLocal(it.localId)
+            }.onFailure {
+                throw it as Exception
+            }
     }
 }

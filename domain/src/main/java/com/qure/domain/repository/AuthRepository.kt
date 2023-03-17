@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     suspend fun createUser(email: String, userId: String): Result<SignUpUser>
+    fun saveTokenToLocal(token: String)
+    fun getAccessTokenFromLocal() :String
 }

@@ -82,9 +82,6 @@ class ServiceModule {
         val clientWithAuthInterceptor = client
             .addInterceptor(
                 interceptor = AuthInterceptor(
-                    context = context,
-                    client = client.build(),
-                    gson = gson,
                     buildPropertyRepository = buildPropertyRepository,
                 ),
             )

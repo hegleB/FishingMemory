@@ -3,7 +3,9 @@ package com.qure.splash
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.viewModels
 import com.qure.core.BaseActivity
+import com.qure.navigator.HomeNavigator
 import com.qure.navigator.OnboardingNavigator
 import com.qure.splash.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,6 +17,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     @Inject
     lateinit var onboardingNavigator: OnboardingNavigator
 
+    @Inject
+    lateinit var homeNavigator: HomeNavigator
+
+    private val viewModel by viewModels<SplashViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         playAnimation()
@@ -23,7 +30,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private fun goToHomeOrSignupActivityWithDelay() {
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = onboardingNavigator.intent(this)
+            val intent = if (viewModel.isSignedUp()) {
+                homeNavigator.intent(this)
+            } else {
+                onboardingNavigator.intent(this)
+            }
             startActivity(intent)
             finish()
         }, DELAYED_MILLIS)
