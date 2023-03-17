@@ -28,7 +28,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         startKakaoLogin()
-//        observe()
+        observe()
     }
 
     private fun startKakaoLogin() {
@@ -65,7 +65,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                 LoginViewModel.Action.AlreadySignUp -> {
                     homeNavigator.intent(this)
                 }
-                else -> {
+                LoginViewModel.Action.FirstSignUp -> {
                     homeNavigator.intent(this)
                 }
             }

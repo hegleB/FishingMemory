@@ -28,20 +28,28 @@ class LoginViewModel @Inject constructor(
                 email = email,
                 userId = userId
             ).onSuccess { value: SignUpUser ->
-                Timber.d("가입여부 ${value.isSignUp}")
-                _action.emit(
-                    if (value.isSignUp) Action.AlreadySignUp else Action.FirstSignUp
-                )
+                _action.emit(Action.FirstSignUp)
             }.onFailure {throwable ->
-                Timber.d("가입여부2 ${throwable}")
+                if (isExistsEmail(throwable.message)) {
+                    _action.emit(Action.AlreadySignUp)
+                }
             }
         }.onFailure {
-            Timber.d("가입여부3 ${it.message}")
+            it as Exception
+            Timber.d("${it.message}")
         }
+    }
+
+    private fun isExistsEmail(message: String?): Boolean {
+        return message == EMAIL_EXISTS
     }
 
     sealed class Action {
         object FirstSignUp : Action()
         object AlreadySignUp : Action()
+    }
+
+    companion object {
+        private const val EMAIL_EXISTS = "EMAIL_EXISTS"
     }
 }
