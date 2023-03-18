@@ -47,7 +47,9 @@ android {
 
             buildConfigField 'String', 'KAKAO_API_KEY', "\"${properties.getProperty('kakao_api_key')}\""
             buildConfigField 'String', 'FIREBASE_API_KEY', "\"${properties.getProperty('firebase_api_key')}\""
-            buildConfigField 'String', 'FIREBASE_AUTH_URL', "\"${properties.getProperty('firebase_auth_url')}\""
+            buildConfigField 'String', 'FIREBASE_DATABASE_URL', "\"${properties.getProperty('firebase_database_url')}\""
+            buildConfigField 'String', 'FIREBASE_DATABASE_PROJECT_ID', "\"${properties.getProperty('firebase_database_project_id')}\""
+
         }
     }
     compileOptions {

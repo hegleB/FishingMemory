@@ -4,7 +4,8 @@ enum class BuildProperty(
     private val description: String
 ) {
     KAKAO_API_KEY("kakao native app key"),
-    FIREBASE_AUTH_URL("firebase 인증 주소"),
+    FIREBASE_DATABASE_PROJECT_ID("firebase 프로젝트 ID"),
+    FIREBASE_DATABASE_URL("firebase 데이터베이스 주소"),
     FIREBASE_API_KEY("firebase api key");
 
     val key: String = this.name

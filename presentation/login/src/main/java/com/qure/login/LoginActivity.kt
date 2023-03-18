@@ -43,7 +43,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                             user.kakaoAccount?.email?.let { email ->
                                 viewModel.createUser(
                                     email = email,
-                                    userId = user.id.toString()
+                                    accessToken = oAuthToken.accessToken
                                 )
                             }
                         }

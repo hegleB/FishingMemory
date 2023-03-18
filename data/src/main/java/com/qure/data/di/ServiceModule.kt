@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
+import com.qure.data.Auth
 import com.qure.data.api.AuthService
 import com.qure.data.api.deserializer.LocalDateDeserializer
 import com.qure.data.api.deserializer.LocalDateTimeDeserializer
@@ -37,12 +38,13 @@ class ServiceModule {
     @Provides
     @Singleton
     fun providesAuthService(
-        retrofit: Retrofit,
+        @Auth retrofit: Retrofit,
     ): AuthService = retrofit.create()
 
     @Singleton
     @Provides
-    fun providesRetrofit(
+    @Auth
+    fun providesAuthRetrofit(
         okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
         resultCallAdapterFactory: ResultCallAdapterFactory
@@ -57,7 +59,7 @@ class ServiceModule {
             .create()
 
         return Retrofit.Builder()
-            .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_AUTH_URL))
+            .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_URL))
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
             .addCallAdapterFactory(resultCallAdapterFactory)

@@ -8,10 +8,10 @@ import javax.inject.Inject
 class CreateUserUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(email: String, userId: String): Result<SignUpUser> {
-        return authRepository.createUser(email, userId)
+    suspend operator fun invoke(email: String, socialToken: String): Result<SignUpUser> {
+        return authRepository.createUser(email, socialToken)
             .onSuccess {
-                authRepository.saveTokenToLocal(it.localId)
+                authRepository.saveTokenToLocal(it.fields.token.stringValue)
             }.onFailure {
                 throw it as Exception
             }

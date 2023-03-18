@@ -1,14 +1,18 @@
 package com.qure.data.api
 
-import com.qure.data.entity.auth.PostSignupRequest
+import com.qure.data.entity.auth.FieldsEntity
 import com.qure.data.entity.auth.SignUpUserEntity
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface AuthService {
 
-    @POST("/v1/accounts:signUp")
+    @POST("/v1beta1/projects/{projectId}/databases/(default)/documents/auth")
     suspend fun postSignUp(
-        @Body request: PostSignupRequest
+        @Path("projectId") projectId: String,
+        @Query("documentId") email: String,
+        @Body fields: FieldsEntity,
     ): Result<SignUpUserEntity>
 }
