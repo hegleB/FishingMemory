@@ -23,6 +23,10 @@ class AuthRepositoryImpl @Inject constructor(
         fishingMemorySharedPreference.putString(ACCESS_TOKEN_KEY, token)
     }
 
+    override fun removeTokenFromLocal() {
+        fishingMemorySharedPreference.remove(ACCESS_TOKEN_KEY)
+    }
+
     override fun getAccessTokenFromLocal(): String {
         return fishingMemorySharedPreference.getString(ACCESS_TOKEN_KEY)
     }

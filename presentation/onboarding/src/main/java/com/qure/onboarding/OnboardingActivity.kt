@@ -1,6 +1,7 @@
 package com.qure.onboarding
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -17,6 +18,8 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
 
     @Inject
     lateinit var loginNavigator: LoginNavigator
+
+    private val viewModel by viewModels<OnboardingViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,6 +51,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
             buttonActivityOnboardingNext.setOnClickListener {
                 viewpagerActivityOnboardingOnboarding.run {
                     if (currentItem == END_PAGE) {
+                        viewModel.writeFirstVisitor()
                         startActivity(loginNavigator.intent(this@OnboardingActivity))
                         finish()
                     } else {
