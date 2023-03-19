@@ -6,6 +6,8 @@ import com.qure.data.mapper.toSignUpUser
 import com.qure.domain.ACCESS_TOKEN_KEY
 import com.qure.domain.entity.auth.SignUpUser
 import com.qure.domain.repository.AuthRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -24,4 +26,16 @@ class AuthRepositoryImpl @Inject constructor(
     override fun getAccessTokenFromLocal(): String {
         return fishingMemorySharedPreference.getString(ACCESS_TOKEN_KEY)
     }
+
+    override fun getSignedUpUser(email: String): Flow<Result<SignUpUser>> =
+        flow {
+            authRemoteDataSource.getSignedUpUser(email)
+                .onSuccess { response ->
+                    emit(Result.success(value = response.toSignUpUser()))
+                }
+                .onFailure { throwable ->
+                    throwable as Exception
+                    emit(Result.failure(throwable))
+                }
+        }
 }

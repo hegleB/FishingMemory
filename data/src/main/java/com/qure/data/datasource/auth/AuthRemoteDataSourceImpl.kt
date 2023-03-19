@@ -14,4 +14,8 @@ class AuthRemoteDataSourceImpl @Inject constructor(
     override suspend fun postSignUp(email: String, socialToken: String): Result<SignUpUserEntity> {
         return authService.postSignUp(buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID), email, FieldsEntity(FieldEntity(EmailEntity(email), TokenEntity(socialToken))))
     }
+
+    override suspend fun getSignedUpUser(email: String): Result<SignUpUserEntity> {
+        return authService.getUserInfo(buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID), email)
+    }
 }
