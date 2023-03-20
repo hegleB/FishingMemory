@@ -88,6 +88,7 @@ ext {
                     "analytics"            : "com.google.firebase:firebase-analytics-ktx",
                     "auth"                 : "com.google.firebase:firebase-auth-ktx",
             ],
+            "chart"                        : "com.github.PhilJay:MPAndroidChart:v3.1.0"
     ]
 
     coroutines = [
@@ -138,5 +139,9 @@ ext {
 
     firebaseDeps = [
             deps.firebase,
+    ]
+
+    chartDeps = [
+            deps.chart
     ]
 }

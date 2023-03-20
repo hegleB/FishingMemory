@@ -1,4 +1,4 @@
-package com.qure.home
+package com.qure.home.home
 
 import com.qure.navigator.HomeNavigator
 import dagger.Binds

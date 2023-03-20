@@ -59,10 +59,7 @@ dependencies {
 
     implementation(loginDeps)
 
-//    implementation platform(deps.firebase.bom)
-//
-//    implementation deps.firebase.analytics
-//    implementation deps.firebase.auth
+    implementation(chartDeps)
 
     implementation deps.timber
 

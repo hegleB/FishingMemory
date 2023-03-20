@@ -21,7 +21,7 @@
             android:name="com.qure.login.LoginActivity"
             android:exported="false" />
         <activity
-            android:name="com.qure.home.HomeActivity"
+            android:name="com.qure.home.MainActivity"
             android:exported="false" />
         <activity
             android:name="com.qure.splash.SplashActivity"
