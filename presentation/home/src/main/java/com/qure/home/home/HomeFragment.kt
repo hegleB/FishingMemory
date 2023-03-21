@@ -23,6 +23,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             requireContext(),
             resources,
             values
-        ).initBarChart(binding.barChartActivityHomeChart)
+        ).initBarChart(binding.barChartFragmentHomeChart)
     }
 }
