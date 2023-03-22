@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.MaterialComponents.Chip.Choice.ChartType">
+        <item name="android:textAppearance">@style/Typography.SubTitle1</item>
+        <item name="android:textColor">@color/text_chip_color</item>
+        <item name="chipBackgroundColor">@color/bg_chip_color</item>
+        <item name="chipStrokeColor">@color/gray_200</item>
+        <item name="chipStrokeWidth">1dp</item>
+    </style>
+</resources>

@@ -13,17 +13,46 @@
         tools:context=".HomeActivity">
 
 
-        <TextView
+        <com.qure.core_design.custom.subtitle.CustomSubTitleTextView
             android:id="@+id/textView_fragmentHome_chartTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="잡은 물고기"
-            android:textAppearance="@style/Typography.Title2"
-            android:textColor="@color/gray_400"
             app:layout_constraintBottom_toTopOf="@+id/cardView_activityHome_chart"
             app:layout_constraintStart_toStartOf="@id/guideLine_left"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:subTitleText="잡은 물고기" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup_fragmentHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:checkedChip="@+id/chip_fragmentHome_fishType"
+            app:layout_constraintEnd_toEndOf="@id/guideLine_right"
+            app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_chartTitle"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_fragmentHome_fishType"
+                style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="어종" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_fragmentHome_fishSize"
+                style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="크기" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_fragmentHome_place"
+                style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="장소" />
+
+        </com.google.android.material.chip.ChipGroup>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView_activityHome_chart"
@@ -34,26 +63,24 @@
             app:cardElevation="10dp"
             app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
             app:layout_constraintStart_toStartOf="@+id/guideLine_left"
-            app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_chartTitle">
+            app:layout_constraintTop_toBottomOf="@id/chipGroup_fragmentHome">
 
-            <com.qure.home.home.barchart.CustomBarChartView
+            <com.qure.core_design.custom.barchart.CustomBarChartView
                 android:id="@+id/barChart_fragmentHome_chart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:radius="15dp"/>
+                app:radius="15dp" />
 
         </androidx.cardview.widget.CardView>
 
-        <TextView
+        <com.qure.core_design.custom.subtitle.CustomSubTitleTextView
             android:id="@id/textView_fragmentHome_weather"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="날씨"
-            android:textAppearance="@style/Typography.Title2"
-            android:textColor="@color/gray_400"
             app:layout_constraintStart_toStartOf="@id/guideLine_left"
-            app:layout_constraintTop_toBottomOf="@+id/cardView_activityHome_chart" />
+            app:layout_constraintTop_toBottomOf="@+id/cardView_activityHome_chart"
+            app:subTitleText="날씨" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView_activityHome_weather"
@@ -69,16 +96,14 @@
 
         </androidx.cardview.widget.CardView>
 
-        <TextView
+        <com.qure.core_design.custom.subtitle.CustomSubTitleTextView
             android:id="@+id/textView_activityHome_post"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="기록한 글"
-            android:textAppearance="@style/Typography.Title2"
-            android:textColor="@color/gray_400"
             app:layout_constraintStart_toStartOf="@id/guideLine_left"
-            app:layout_constraintTop_toBottomOf="@id/cardView_activityHome_weather" />
+            app:layout_constraintTop_toBottomOf="@id/cardView_activityHome_weather"
+            app:subTitleText="기록한 글" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -86,14 +111,14 @@
             android:layout_width="0dp"
             android:layout_height="200dp"
             android:layout_marginTop="10dp"
+            android:orientation="horizontal"
             app:cardCornerRadius="15dp"
             app:cardElevation="10dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="@id/guideLine_right"
             app:layout_constraintStart_toStartOf="@id/guideLine_left"
             app:layout_constraintTop_toBottomOf="@id/textView_activityHome_post"
-            tools:listitem="@layout/item_post"/>
+            tools:listitem="@layout/item_post" />
 
 
         <androidx.constraintlayout.widget.Guideline

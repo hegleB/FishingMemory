@@ -1,4 +1,4 @@
-package com.qure.home.home.barchart
+package com.qure.core_design.custom.barchart
 
 import android.content.Context
 import android.content.res.Resources
@@ -12,12 +12,13 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.qure.home.R
+import com.qure.core_design.R
 
 class BarChartView(
     private val context: Context,
     private val resources: Resources,
-    private val values: List<Float>
+    private val values: List<Float>,
+    private val labels: List<String>,
 ) {
 
     fun initBarChart(barChart: BarChart) {
@@ -38,7 +39,6 @@ class BarChartView(
         barChart.setDrawGridBackground(false)
 
         // barChart.setDrawYLabels(false);
-        val labels = arrayListOf("붕어", "잉어", "밀어", "송어", "살치")
 
         val xAxisFormatter: ValueFormatter = IndexAxisValueFormatter(labels)
         val xAxis = barChart.xAxis
@@ -92,8 +92,10 @@ class BarChartView(
 
         val valueList = ArrayList<BarEntry>()
 
-        for (i in 0 until  values.size) {
-            valueList.add(BarEntry(i.toFloat(), values[i]))
+        if (values.isNotEmpty()) {
+            for (i in 0 until values.size) {
+                valueList.add(BarEntry(i.toFloat(), values[i]))
+            }
         }
 
         val barDataSet = BarDataSet(valueList, null)
@@ -113,7 +115,7 @@ class BarChartView(
             animateXY(1000, 1000)
             this.data = data
             isDragXEnabled = true
-            marker = CustomMarkerView(context, R.layout.marker_view)
+            marker = CustomMarkerView(context, R.layout.custom_marker_view)
             setVisibleXRange(5f, 5f)
             moveViewToX(1f)
             setFitBars(true)

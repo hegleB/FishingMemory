@@ -8,7 +8,7 @@
         android:id="@+id/imageView_itemPost_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/bg_rect_blue600_r15"
+        android:background="@drawable/bg_rect_gray100_r10"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

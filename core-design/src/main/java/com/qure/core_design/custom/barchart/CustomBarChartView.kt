@@ -1,4 +1,4 @@
-package com.qure.home.home.barchart
+package com.qure.core_design.custom.barchart
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -16,21 +16,16 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.github.mikephil.charting.renderer.BarChartRenderer
 import com.github.mikephil.charting.utils.Utils
 import com.github.mikephil.charting.utils.ViewPortHandler
-import com.qure.home.R
+import com.qure.core_design.R
 
+class CustomBarChartView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet,
+    defStyle: Int = 0,
+    defStyleRes: Int = 0,
+) : BarChart(context, attrs, defStyle) {
 
-class CustomBarChartView : BarChart {
-
-    constructor(context: Context?) : super(context)
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        readRadiusAttr(context, attrs)
-    }
-
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
-        context,
-        attrs,
-        defStyle
-    ) {
+    init {
         readRadiusAttr(context, attrs)
     }
 

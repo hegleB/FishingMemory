@@ -1,21 +1,23 @@
-package com.qure.home.home.barchart
+package com.qure.core_design.custom.barchart
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.AttributeSet
 import android.widget.TextView
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
-import com.qure.home.R
+import com.qure.core_design.R
 
-class CustomMarkerView : MarkerView {
+class CustomMarkerView @JvmOverloads constructor(
+    context: Context,
+    defStyleRes: Int,
+) : MarkerView(context, defStyleRes) {
 
     private var tvContent: TextView
 
-    // marker
-    constructor(context: Context?, layoutResource: Int) : super(context, layoutResource) {
-
-        tvContent = findViewById(R.id.test_marker_view)
+    init {
+        tvContent = findViewById(R.id.textView_markerView)
     }
 
     // draw override를 사용해 marker의 위치 조정 (bar의 상단 중앙)
