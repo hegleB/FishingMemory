@@ -82,6 +82,15 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView_activityHome_chart"
             app:subTitleText="날씨" />
 
+        <ImageView
+            android:id="@+id/imageView_fragmentHome_refresh"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_refresh"
+            app:layout_constraintBottom_toBottomOf="@id/textView_fragmentHome_weather"
+            app:layout_constraintEnd_toEndOf="@id/guideLine_right"
+            app:layout_constraintTop_toTopOf="@+id/textView_fragmentHome_weather" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView_activityHome_weather"
             android:layout_width="0dp"
@@ -93,6 +102,77 @@
             app:layout_constraintStart_toStartOf="@+id/guideLine_left"
             app:layout_constraintTop_toBottomOf="@+id/textView_fragmentHome_weather">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_rect_gradient_purple700_blue300">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_weather_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="30sp"/>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_weather_top"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_begin="20sp"/>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_weather_right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="30dp"/>
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottieAnimationView_fragmentHome_weather"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center_vertical"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline_weather_right"
+                    app:layout_constraintTop_toTopOf="@+id/guideline_weather_top"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true" />
+
+
+                <TextView
+                    android:id="@+id/textView_fragmentHome_temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15°"
+                    android:textColor="@color/white"
+                    android:textAppearance="@style/Typography.Title1"
+                    android:textSize="32sp"
+                    app:layout_constraintStart_toStartOf="@+id/guideline_weather_left"
+                    app:layout_constraintTop_toTopOf="@+id/guideline_weather_top" />
+
+                <TextView
+                    android:id="@+id/textView_fragmentHome_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="서울특별시"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="5dp"
+                    android:textAppearance="@style/Typography.Title1"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="@+id/guideline_weather_left"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_fragmentHome_temperature" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="맑음"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="5dp"
+                    android:textAppearance="@style/Typography.SubTitle1"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="@+id/guideline_weather_left"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_fragmentHome_location" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
 
