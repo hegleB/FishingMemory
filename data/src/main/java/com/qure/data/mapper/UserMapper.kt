@@ -11,27 +11,8 @@ fun SignUpUserEntity.toSignUpUser(): SignUpUser {
 
     return SignUpUser(
         name = data.name,
-        fields = data.fields.toFields(),
+        fields = data.fields,
         createTime = data.createTime,
         updateTime = data.updateTime,
-    )
-}
-
-fun FieldEntity.toFields(): Fields {
-    return Fields(
-        email = this.email.toEmail(),
-        token = this.token.toToken(),
-    )
-}
-
-fun EmailEntity.toEmail(): Email {
-    return Email(
-        stringValue = this.stringValue
-    )
-}
-
-fun TokenEntity.toToken(): Token {
-    return Token(
-        stringValue = this.stringValue
     )
 }
