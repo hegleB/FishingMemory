@@ -51,20 +51,23 @@ class BarChartView(
             setDrawGridLines(false)
             granularity = 1f // only intervals of 1 day
             yOffset = 15f
-            textColor = ContextCompat.getColor(context, com.qure.core_design.R.color.gray_300)
-            axisLineColor =
-                ContextCompat.getColor(context, com.qure.core_design.R.color.blue_600)
+            textSize = 12f
+            textColor = ContextCompat.getColor(context, R.color.white)
+            axisLineColor = ContextCompat.getColor(context, R.color.white)
         }
 
         val leftAxis = barChart.axisLeft
         leftAxis.apply {
-            setLabelCount(4)
+            setLabelCount(3)
             setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
+            setDrawGridLines(false)
             spaceTop = 0f
             axisMinimum = 0f // this replaces setStartAtZero(true)
-            textColor = ContextCompat.getColor(context, com.qure.core_design.R.color.gray_300)
-            axisLineColor = ContextCompat.getColor(context, com.qure.core_design.R.color.gray_300)
-            zeroLineColor = ContextCompat.getColor(context, com.qure.core_design.R.color.gray_300)
+            textColor = ContextCompat.getColor(context, R.color.white)
+            axisLineColor = ContextCompat.getColor(context, R.color.white)
+            zeroLineColor = ContextCompat.getColor(context, R.color.white)
+            textSize = 12f
+            xOffset = 15f
         }
 
         barChart.axisRight.isEnabled = false
@@ -105,7 +108,7 @@ class BarChartView(
         barDataSet.setDrawValues(false)
         barDataSet.isHighlightEnabled = true
         barDataSet.setDrawIcons(true)
-        barDataSet.highLightColor = resources.getColor(com.qure.core_design.R.color.blue_100)
+        barDataSet.highLightColor = resources.getColor(R.color.blue_100)
 
         val data = BarData(barDataSet)
         data.barWidth = 0.3f

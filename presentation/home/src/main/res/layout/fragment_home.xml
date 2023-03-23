@@ -17,7 +17,7 @@
             android:id="@+id/textView_fragmentHome_chartTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/cardView_activityHome_chart"
+            android:layout_marginTop="30dp"
             app:layout_constraintStart_toStartOf="@id/guideLine_left"
             app:layout_constraintTop_toTopOf="parent"
             app:subTitleText="잡은 물고기" />
@@ -27,8 +27,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:checkedChip="@+id/chip_fragmentHome_fishType"
+            app:layout_constraintBottom_toTopOf="@+id/cardView_activityHome_chart"
             app:layout_constraintEnd_toEndOf="@id/guideLine_right"
-            app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_chartTitle"
+            app:layout_constraintTop_toTopOf="@+id/textView_fragmentHome_chartTitle"
             app:singleSelection="true">
 
             <com.google.android.material.chip.Chip
@@ -58,17 +59,18 @@
             android:id="@+id/cardView_activityHome_chart"
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_marginTop="10dp"
             app:cardCornerRadius="15dp"
             app:cardElevation="10dp"
             app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
             app:layout_constraintStart_toStartOf="@+id/guideLine_left"
-            app:layout_constraintTop_toBottomOf="@id/chipGroup_fragmentHome">
+            app:layout_constraintTop_toBottomOf="@+id/chipGroup_fragmentHome"
+           >
 
             <com.qure.core_design.custom.barchart.CustomBarChartView
                 android:id="@+id/barChart_fragmentHome_chart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/bg_rect_gradient_purple700_blue300"
                 app:radius="15dp" />
 
         </androidx.cardview.widget.CardView>

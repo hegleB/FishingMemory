@@ -22,7 +22,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun initView() {
-        val values = listOf(1, 2, 3, 4, 5).map { it.toFloat() }
+        val values = listOf(1, 2, 3, 4, 15).map { it.toFloat() }
         val lables = listOf("붕어", "잉어", "밀어", "송어", "살치")
 
         BarChartView(
