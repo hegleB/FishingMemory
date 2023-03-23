@@ -1,4 +1,4 @@
-package com.qure.data.datasource.datasotre
+package com.qure.data.datasource.datastore
 
 interface DataStoreDataSource {
     suspend fun readDataSource(key: String): String?

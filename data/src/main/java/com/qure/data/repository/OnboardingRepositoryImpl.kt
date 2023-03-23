@@ -1,6 +1,6 @@
 package com.qure.data.repository
 
-import com.qure.data.datasource.datasotre.DataStoreDataSource
+import com.qure.data.datasource.datastore.DataStoreDataSource
 import com.qure.domain.repository.OnboardingRepository
 import javax.inject.Inject
 

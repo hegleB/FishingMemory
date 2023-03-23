@@ -2,8 +2,8 @@ package com.qure.data.di
 
 import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.data.datasource.FishMemorySharedPreferenceImpl
-import com.qure.data.datasource.datasotre.DataStoreDataSource
-import com.qure.data.datasource.datasotre.DataStoreDataSourceImpl
+import com.qure.data.datasource.datastore.DataStoreDataSource
+import com.qure.data.datasource.datastore.DataStoreDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
