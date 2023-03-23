@@ -13,7 +13,7 @@ class BuildPropertyRepositoryImpl @Inject constructor() : BuildPropertyRepositor
             readBuildConfig(buildProperty = buildProperty)
         } catch (e: Exception) {
             throw IllegalStateException(
-                "Failed to read property from local.properties. key: $buildProperty",
+                "Failed to read property from local.properties. key: ${buildProperty}",
                 e
             )
         }

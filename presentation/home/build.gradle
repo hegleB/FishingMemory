@@ -61,6 +61,8 @@ dependencies {
 
     implementation(chartDeps)
 
+    implementation(locationDeps)
+
     implementation deps.timber
 
     testImplementation(testDeps)

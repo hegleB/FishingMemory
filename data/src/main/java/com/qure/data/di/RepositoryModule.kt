@@ -2,8 +2,10 @@ package com.qure.data.di
 
 import com.qure.data.repository.AuthRepositoryImpl
 import com.qure.data.repository.OnboardingRepositoryImpl
+import com.qure.data.repository.WeatherRepositoryImpl
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.repository.OnboardingRepository
+import com.qure.domain.repository.WeatherRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun bindOnboardingRepository(
         repository: OnboardingRepositoryImpl,
     ): OnboardingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWeatherRepository(
+        repository: WeatherRepositoryImpl,
+    ): WeatherRepository
 }

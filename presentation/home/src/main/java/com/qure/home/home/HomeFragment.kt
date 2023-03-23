@@ -1,24 +1,137 @@
 package com.qure.home.home
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.qure.core.BaseFragment
+import com.qure.core_design.custom.barchart.BarChartView
+import com.qure.domain.entity.weather.SkyState
 import com.qure.home.R
 import com.qure.home.databinding.FragmentHomeBinding
-import com.qure.core_design.custom.barchart.BarChartView
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.SimpleDateFormat
-import java.util.Date
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.util.*
 
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+    private val viewModel by viewModels<HomeViewModel>()
 
-    private val valueSize = 5
+    private lateinit var fusedLocationProvierClient: FusedLocationProviderClient
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        observe()
+    }
+
+    private fun getCurrentLocation() {
+        if (checkPermission()) {
+            if (isLocationEnabled()) {
+
+                if (ActivityCompat.checkSelfPermission(
+                        requireContext(),
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermission()
+                    return
+                }
+
+                fusedLocationProvierClient.lastLocation.addOnCompleteListener { task ->
+                    val location = task.result
+
+                    if (location == null) {
+                        Timber.d("Null Recieved")
+                    } else {
+                        val latXlngY =
+                            GpsTransfer().convertGRID_GPS(0, location.latitude, location.longitude)
+                        viewModel.fetchWeater(latXlngY)
+                        binding.textViewFragmentHomeLocation.text = getCurrentAddress(latXlngY)
+                    }
+                }
+
+            } else {
+                val intent = Intent(Settings.ACTION_SOUND_SETTINGS)
+                startActivity(intent)
+            }
+        } else {
+            requestPermission()
+        }
+    }
+
+    private fun getCurrentAddress(latXLngY: LatXLngY): String {
+        val geoCoder = Geocoder(requireContext(), Locale.getDefault())
+        val address =
+            geoCoder.getFromLocation(latXLngY.lat, latXLngY.lng, 7)?.get(0)?.getAddressLine(0)
+        val city = address?.split(" ")?.get(1).toString()
+        return city
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ),
+            PERMISSION_REQUEST_ACCESS_LOCATION
+        )
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == PERMISSION_REQUEST_ACCESS_LOCATION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation()
+            } else {
+                Timber.d("")
+            }
+        }
+    }
+
+    private fun checkPermission(): Boolean {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            return true
+        }
+        return false
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     private fun initView() {
@@ -31,40 +144,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             values,
             lables,
         ).initBarChart(binding.barChartFragmentHomeChart)
-        binding.imageViewFragmentHomeRefresh.setOnClickListener {
-            binding.lottieAnimationViewFragmentHomeWeather.setAnimation(getWeahterState(6, 0))
-        }
-        binding.lottieAnimationViewFragmentHomeWeather.setAnimation(getWeahterState(6, 0))
+        fusedLocationProvierClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        getCurrentLocation()
     }
 
-    private fun getSkyState(sky: Int): Int {
-        return when (sky) {
-            in 0..5 -> if (getHour() in 6..17) R.raw.weather_sunny_day else R.raw.weather_sunny_night
-            in 6..8 -> if (getHour() in 6..17) R.raw.weather_partly_cloudy_day else R.raw.weather_partly_cloudy_night
-            else -> R.raw.weather_cloudey
-        }
-    }
-
-    private fun getWeahterState(sky: Int, pty: Int): Int {
-        return when (pty) {
-            in listOf(
-                1,
-                2,
-                5
-            ) -> if (getHour() in 6..17) R.raw.weather_rainy_day else R.raw.weather_rainy_night
-            in listOf(
-                3,
-                6,
-                7
-            ) -> if (getHour() in 6..17) R.raw.weather_snow_day else R.raw.weather_snow_night
-            else -> getSkyState(sky)
+    private fun observe() {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.UiState.collect {
+                        setWeatherAnimation(it)
+                    }
+                }
+            }
         }
     }
 
-    private fun getHour(): Int {
-        val now = System.currentTimeMillis()
-        val currentTime = Date(now)
-        val formatTime = SimpleDateFormat("HH")
-        return formatTime.format(currentTime).toInt()
+    private fun setWeatherAnimation(uiState: UiState) {
+        if (uiState.isWeatherInitialized) {
+            binding.lottieAnimationViewFragmentHomeWeather.setAnimation(
+                uiState.getWeahterState()
+            )
+            binding.textViewFragmentHomeTemperature.text = uiState.toTemperatureString()
+            binding.textViewFragmentHomeWeatherState.text = getSkyStateToString(uiState.toWeatherString()).value
+        }
+    }
+    private fun getSkyStateToString(skyState: String): SkyState {
+        return when (skyState.toInt()) {
+            in (0..5) -> SkyState.SUNNY
+            in (6..8) -> SkyState.PARTLY_CLOUDY
+            else -> SkyState.CLOUDY
+        }
+    }
+
+    companion object {
+        private const val PERMISSION_REQUEST_ACCESS_LOCATION = 100
     }
 }
