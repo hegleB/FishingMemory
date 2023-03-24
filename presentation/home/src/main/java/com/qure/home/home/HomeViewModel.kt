@@ -59,12 +59,14 @@ class HomeViewModel @Inject constructor(
 
     private fun getBaseTime(): String {
         val baseTime = "${LocalTime.now().hour - 1}30"
+        Timber.d("baseTime : ${baseTime}")
         return baseTime
     }
 
     private fun getBaseDate(): Int {
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
         val baseDate = LocalDate.now().format(formatter).toInt()
+        Timber.d("baseDate : ${baseDate}")
         return baseDate
     }
 }

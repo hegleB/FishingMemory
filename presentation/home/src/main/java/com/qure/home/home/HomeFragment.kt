@@ -13,8 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.qure.core.BaseFragment
 import com.qure.core_design.custom.barchart.BarChartView
 import com.qure.domain.entity.weather.SkyState
@@ -53,9 +52,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
                 fusedLocationProvierClient.lastLocation.addOnCompleteListener { task ->
                     val location = task.result
-
                     if (location == null) {
-                        Timber.d("Null Recieved")
+                        val request = LocationRequest.create()
+                            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                            .setInterval(300)
+                            .setFastestInterval(200)
+                        val locationCallback = object : LocationCallback() {
+                            override fun onLocationResult(locationResult: LocationResult) {
+                                for (location in locationResult.locations) {
+                                    val latXlngY = GpsTransfer().convertGRID_GPS(0, location.latitude, location.longitude)
+                                    viewModel.fetchWeater(latXlngY)
+                                    binding.textViewFragmentHomeLocation.text = getCurrentAddress(latXlngY)
+                                    fusedLocationProvierClient.removeLocationUpdates(this)
+                                }
+                            }
+                        }
+                        fusedLocationProvierClient.requestLocationUpdates(request, locationCallback, null)
                     } else {
                         val latXlngY =
                             GpsTransfer().convertGRID_GPS(0, location.latitude, location.longitude)
@@ -167,9 +179,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 uiState.getWeahterState()
             )
             binding.textViewFragmentHomeTemperature.text = uiState.toTemperatureString()
-            binding.textViewFragmentHomeWeatherState.text = getSkyStateToString(uiState.toWeatherString()).value
+            binding.textViewFragmentHomeWeatherState.text =
+                getSkyStateToString(uiState.toWeatherString()).value
         }
     }
+
     private fun getSkyStateToString(skyState: String): SkyState {
         return when (skyState.toInt()) {
             in (0..5) -> SkyState.SUNNY
