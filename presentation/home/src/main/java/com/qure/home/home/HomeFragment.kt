@@ -172,19 +172,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun setWeatherAnimation(uiState: UiState) {
         if (uiState.isWeatherInitialized) {
             binding.lottieAnimationViewFragmentHomeWeather.setAnimation(
-                uiState.getWeahterState()
+                uiState.toWeatherAnimation()
             )
             binding.textViewFragmentHomeTemperature.text = uiState.toTemperatureString()
             binding.textViewFragmentHomeWeatherState.text =
-                getSkyStateToString(uiState.toWeatherString()).value
-        }
-    }
-
-    private fun getSkyStateToString(skyState: String): SkyState {
-        return when (skyState.toInt()) {
-            1 -> SkyState.SUNNY
-            3 -> SkyState.PARTLY_CLOUDY
-            else -> SkyState.CLOUDY
+                SkyState.from(uiState.getSkyState().fcstValue.toInt())
         }
     }
 

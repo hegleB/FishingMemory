@@ -11,4 +11,5 @@ enum class WeatherCategory {
     LGT,
     VEC,
     WSD,
+    UNKNOWN
 }

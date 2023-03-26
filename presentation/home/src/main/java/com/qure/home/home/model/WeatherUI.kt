@@ -1,19 +1,22 @@
 package com.qure.home.home.model
 
+import com.qure.core.extensions.Empty
 import com.qure.domain.entity.weather.Item
 import com.qure.domain.entity.weather.WeatherCategory
 import com.qure.home.R
+import java.text.SimpleDateFormat
+import java.util.*
 
 data class WeatherUI(
-    val baseData: Int,
-    val baseTime: Int,
-    val category: WeatherCategory,
-    val fcstDate: Int,
-    val fcstTime: Int,
-    val fcstValue: String,
-    val nx: Int,
-    val ny: Int,
-    val checkedWeather: Int,
+    val baseData: Int = 0,
+    val baseTime: Int = 0,
+    val category: WeatherCategory = WeatherCategory.UNKNOWN,
+    val fcstDate: Int = 0,
+    val fcstTime: Int = 0,
+    val fcstValue: String = String.Empty,
+    val nx: Int = 0,
+    val ny: Int = 0,
+    val checkedWeather: Int = if (isDayTime()) R.raw.weather_sunny_day else R.raw.weather_sunny_night
 )
 
 fun Item.toWeatherUI(): WeatherUI {
@@ -27,11 +30,37 @@ fun Item.toWeatherUI(): WeatherUI {
         nx = this.nx,
         ny = this.ny,
         checkedWeather = when (this.category) {
-            WeatherCategory.T1H -> R.raw.weather_cloudey
+            WeatherCategory.T1H -> this.fcstValue.toInt()
             WeatherCategory.LGT -> R.raw.weather_thunder
-            WeatherCategory.SKY -> R.raw.weather_cloudey
-            WeatherCategory.PTY -> R.raw.weather_rainy_night
+            WeatherCategory.SKY -> getSky(this.fcstValue.toInt())
+            WeatherCategory.PTY -> getPrecipitationState(this.fcstValue.toInt())
             else -> 0
-        }
+        },
+
     )
+}
+
+// 1, 2, 5: 비 / 3, 6, 7: 눈
+fun getPrecipitationState(pty: Int): Int {
+    return when (pty) {
+        in listOf(1, 2, 5)-> if (isDayTime()) R.raw.weather_rainy_day else R.raw.weather_rainy_night
+        in listOf(3, 6, 7) -> if (isDayTime()) R.raw.weather_snow_day else R.raw.weather_snow_night
+        else -> 0
+    }
+}
+
+// 1: 맑음 3: 약간 구름 4: 흐림
+private fun getSky(sky: Int): Int {
+    return when (sky) {
+        1 -> if (isDayTime()) R.raw.weather_sunny_day else R.raw.weather_sunny_night
+        3 -> if (isDayTime()) R.raw.weather_partly_cloudy_day else R.raw.weather_partly_cloudy_night
+        else -> R.raw.weather_cloudey
+    }
+}
+
+private fun isDayTime(): Boolean {
+    val now = System.currentTimeMillis()
+    val currentTime = Date(now)
+    val formatTime = SimpleDateFormat("HH")
+    return formatTime.format(currentTime).toInt() in 6..17
 }

@@ -39,7 +39,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             getWeatherUseCase(
                 base_date = getBaseDate(),
-                base_time =  getBaseTime(),
+                base_time = getBaseTime(),
                 nx = latXLngY.nx.toInt().toString(),
                 ny = latXLngY.ny.toInt().toString(),
             ).collect { response ->
@@ -73,61 +73,32 @@ data class UiState(
     val weatherUI: List<WeatherUI>? = null,
     val isWeatherInitialized: Boolean = false,
 ) {
-    fun getWeahterState(): Int {
-        val sky = getSkyState() ?: String.Empty
-        val pty = getPrecipitationState() ?: String.Empty
-        return when (pty.toInt()) {
-            in listOf(
-                1,
-                2,
-                5
-            ) -> if (getHour() in 6..17) R.raw.weather_rainy_day else R.raw.weather_rainy_night
-            in listOf(
-                3,
-                6,
-                7
-            ) -> if (getHour() in 6..17) R.raw.weather_snow_day else R.raw.weather_snow_night
-            else -> getSky(sky.toInt())
-        }
-    }
-
-    private fun getSky(sky: Int): Int {
-        return when (sky) {
-            1 -> if (getHour() in 6..17) R.raw.weather_sunny_day else R.raw.weather_sunny_night
-            3 -> if (getHour() in 6..17) R.raw.weather_partly_cloudy_day else R.raw.weather_partly_cloudy_night
-            else -> R.raw.weather_cloudey
-        }
-    }
-
-    private fun getTemperatureState(): String? {
-        return weatherUI?.filter { it.category == WeatherCategory.T1H }?.get(0)?.fcstValue
-    }
-
-    private fun getSkyState(): String? {
-        return weatherUI?.filter { it.category == WeatherCategory.SKY }?.get(0)?.fcstValue
-    }
-
-    private fun getPrecipitationState(): String? {
-        return weatherUI?.filter { it.category == WeatherCategory.PTY }?.get(0)?.fcstValue
-    }
-
-    private fun getThunder(): String? {
-        return weatherUI?.filter { it.category == WeatherCategory.LGT }?.get(0)?.fcstValue
-    }
 
     fun toTemperatureString(): String {
-        return getTemperatureState() + "°"
+        return "${getTemperatureState().checkedWeather}°"
     }
 
-    fun toWeatherString(): String {
-        return getSkyState() ?: String.Empty
+    fun toWeatherAnimation(): Int {
+        when {
+            getThunder().fcstValue.toInt() > 1 -> return getThunder().checkedWeather
+            getPrecipitationState().fcstValue.toInt() > 0 -> return getPrecipitationState().checkedWeather
+            else -> return getSkyState().checkedWeather
+        }
     }
 
+    fun getTemperatureState(): WeatherUI {
+        return weatherUI?.filter { it.category == WeatherCategory.T1H }?.get(0) ?: WeatherUI()
+    }
 
-    private fun getHour(): Int {
-        val now = System.currentTimeMillis()
-        val currentTime = Date(now)
-        val formatTime = SimpleDateFormat("HH")
-        return formatTime.format(currentTime).toInt()
+    fun getSkyState(): WeatherUI {
+        return weatherUI?.filter { it.category == WeatherCategory.SKY }?.get(0) ?: WeatherUI()
+    }
+
+    fun getPrecipitationState(): WeatherUI {
+        return weatherUI?.filter { it.category == WeatherCategory.PTY }?.get(0) ?: WeatherUI()
+    }
+
+    fun getThunder(): WeatherUI {
+        return weatherUI?.filter { it.category == WeatherCategory.LGT }?.get(0) ?: WeatherUI()
     }
 }
