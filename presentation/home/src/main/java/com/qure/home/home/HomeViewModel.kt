@@ -59,14 +59,12 @@ class HomeViewModel @Inject constructor(
 
     private fun getBaseTime(): String {
         val baseTime = "${LocalTime.now().hour - 1}30"
-        Timber.d("baseTime : ${baseTime}")
         return baseTime
     }
 
     private fun getBaseDate(): Int {
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
         val baseDate = LocalDate.now().format(formatter).toInt()
-        Timber.d("baseDate : ${baseDate}")
         return baseDate
     }
 }
@@ -95,8 +93,8 @@ data class UiState(
 
     private fun getSky(sky: Int): Int {
         return when (sky) {
-            in 0..5 -> if (getHour() in 6..17) R.raw.weather_sunny_day else R.raw.weather_sunny_night
-            in 6..8 -> if (getHour() in 6..17) R.raw.weather_partly_cloudy_day else R.raw.weather_partly_cloudy_night
+            1 -> if (getHour() in 6..17) R.raw.weather_sunny_day else R.raw.weather_sunny_night
+            3 -> if (getHour() in 6..17) R.raw.weather_partly_cloudy_day else R.raw.weather_partly_cloudy_night
             else -> R.raw.weather_cloudey
         }
     }

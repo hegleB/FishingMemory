@@ -142,10 +142,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         return false
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     private fun initView() {
         val values = listOf(1, 2, 3, 4, 15).map { it.toFloat() }
         val lables = listOf("붕어", "잉어", "밀어", "송어", "살치")
@@ -186,8 +182,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun getSkyStateToString(skyState: String): SkyState {
         return when (skyState.toInt()) {
-            in (0..5) -> SkyState.SUNNY
-            in (6..8) -> SkyState.PARTLY_CLOUDY
+            1 -> SkyState.SUNNY
+            3 -> SkyState.PARTLY_CLOUDY
             else -> SkyState.CLOUDY
         }
     }
