@@ -3,11 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id "kotlin-kapt"
     id 'dagger.hilt.android.plugin'
-//    id 'com.google.gms.google-services'
 }
 
 android {
-    namespace 'com.qure.home'
+    namespace 'com.qure.history'
     compileSdk 33
 
     defaultConfig {
@@ -42,7 +41,6 @@ dependencies {
     implementation project(path:':core')
     implementation project(path:':navigator')
     implementation project(path:':domain')
-    implementation project(path:':presentation:history')
 
     implementation(jetpackDeps)
     implementation(coroutines)
@@ -55,9 +53,9 @@ dependencies {
 
     implementation(loginDeps)
 
-    implementation(chartDeps)
-
     implementation(locationDeps)
+
+    implementation deps.calendar
 
     implementation deps.timber
 
