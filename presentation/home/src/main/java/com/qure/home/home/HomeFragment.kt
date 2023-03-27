@@ -35,6 +35,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         initView()
         observe()
+        refreshWeather()
+    }
+
+    private fun refreshWeather() {
+        binding.imageViewFragmentHomeRefresh.setOnClickListener {
+            getCurrentLocation()
+        }
     }
 
     private fun getCurrentLocation() {
