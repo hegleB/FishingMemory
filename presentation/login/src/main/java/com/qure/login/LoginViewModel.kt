@@ -25,6 +25,7 @@ class LoginViewModel @Inject constructor(
     private val _action = MutableSharedFlow<Action>()
     val action: SharedFlow<Action>
         get() = _action.asSharedFlow()
+
     fun createUser(email: String, accessToken: String) = viewModelScope.launch {
         kotlin.runCatching {
             createUserUseCase(
@@ -36,6 +37,8 @@ class LoginViewModel @Inject constructor(
                 if (isExistsEmail(throwable.message)) {
                     saveToLocalSignedUpUser(email)
                     _action.emit(Action.AlreadySignUp)
+                } else {
+                    sendErrorMessage(throwable.message)
                 }
             }
         }.onFailure {
@@ -43,6 +46,8 @@ class LoginViewModel @Inject constructor(
             if (isExistsEmail(it.message)) {
                 saveToLocalSignedUpUser(email)
                 _action.emit(Action.AlreadySignUp)
+            } else {
+                sendErrorMessage(it.message)
             }
         }
     }
@@ -53,6 +58,7 @@ class LoginViewModel @Inject constructor(
                 fishingSharedPreference.putString(ACCESS_TOKEN_KEY, user.fields.token.stringValue)
             }.onFailure { throwable ->
                 throwable as Exception
+                sendErrorMessage(throwable.message)
             }
         }
     }

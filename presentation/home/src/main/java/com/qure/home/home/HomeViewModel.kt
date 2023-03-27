@@ -52,6 +52,7 @@ class HomeViewModel @Inject constructor(
                     }
                 }.onFailure {
                     Timber.d("weather failed ${it.message}")
+                    sendErrorMessage(it.message)
                 }
             }
         }
