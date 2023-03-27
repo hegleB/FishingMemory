@@ -3,8 +3,8 @@ package com.qure.home
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.qure.core.BaseActivity
-import com.qure.home.home.HomeFragment
 import com.qure.home.databinding.ActivityMainBinding
+import com.qure.home.home.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

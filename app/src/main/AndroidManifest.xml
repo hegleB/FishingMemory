@@ -38,8 +38,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.MainActivity"
-            android:exported="false" />
+            android:name="com.qure.home.MainActivity"
+            android:exported="false"
+            tools:ignore="DuplicateActivity" />
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
