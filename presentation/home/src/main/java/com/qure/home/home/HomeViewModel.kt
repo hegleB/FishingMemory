@@ -58,7 +58,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getBaseTime(): String {
-        val baseTime = "${LocalTime.now().hour - 1}30"
+        val baseTime = "${String.format("%02d", LocalTime.now().hour - 1)}30"
         return baseTime
     }
 
