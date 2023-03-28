@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.*
 import com.qure.core.BaseFragment
+import com.qure.core.util.setOnSingleClickListener
 import com.qure.core_design.custom.barchart.BarChartView
 import com.qure.domain.entity.weather.SkyState
 import com.qure.home.R
@@ -39,7 +40,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun refreshWeather() {
-        binding.imageViewFragmentHomeRefresh.setOnClickListener {
+        binding.imageViewFragmentHomeRefresh.setOnSingleClickListener {
             getCurrentLocation()
         }
     }

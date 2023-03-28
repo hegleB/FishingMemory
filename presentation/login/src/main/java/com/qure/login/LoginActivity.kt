@@ -7,6 +7,7 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.qure.core.BaseActivity
+import com.qure.core.util.setOnSingleClickListener
 import com.qure.login.databinding.ActivityLoginBinding
 import com.qure.login.extension.loginWithKakaoOrThrow
 import com.qure.navigator.HomeNavigator
@@ -33,7 +34,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
 
     private fun startKakaoLogin() {
         val context = this
-        binding.linearLayoutActivityLoginKakao.setOnClickListener {
+        binding.linearLayoutActivityLoginKakao.setOnSingleClickListener {
             lifecycleScope.launch {
                 kotlin.runCatching {
                     UserApiClient.loginWithKakaoOrThrow(context)
