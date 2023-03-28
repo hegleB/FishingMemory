@@ -1,46 +1,74 @@
 package com.qure.history.view
 
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
+import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import com.qure.core.extensions.getColorCompat
 import com.qure.core.extensions.getDrawableCompat
+import com.qure.core.util.setOnSingleClickListener
 import com.qure.history.R
 import com.qure.history.databinding.CalendarDayBinding
-import timber.log.Timber
 import java.time.LocalDate
 
-class DayBind: MonthDayBinder<DayContainer> {
+class DayBind(
+    private val calendarView: CalendarView,
+) : MonthDayBinder<DayBind.DayContainer> {
 
     private val today = LocalDate.now()
+    private var calendar: LocalDate? = null
+
+    var input: Input? = null
+
+    fun updateCalendar(calendar: LocalDate) {
+        if (this.calendar == calendar) return
+        this.calendar = calendar
+        this.calendarView.notifyCalendarChanged()
+    }
 
     override fun bind(container: DayContainer, data: CalendarDay) {
-        val context = container.view.context
-        val textView = container.textView
-        val roundBackgroundView = container.round
+        val context = container.binding.root.context
+        val textView = container.binding.textViewDay
+        val roundBackgroundView = container.binding.viewRound
+        val dot = container.binding.imageViewDot
         val todayBackground = context.getDrawableCompat(R.drawable.bg_today)
+        val selectedBackgroud = context.getDrawableCompat(R.drawable.bg_selected)
 
-        container.textView.text = data.date.dayOfMonth.toString()
+        val selectedDay = this.calendar
+
+        container.binding.root.setOnSingleClickListener { _ ->
+            input?.onDayClick(data.date)
+        }
+
+        textView.text = data.date.dayOfMonth.toString()
 
         if (data.position == DayPosition.MonthDate) {
             textView.setTextColor(context.getColor(android.R.color.black))
-            if (data.date == today) {
-                roundBackgroundView.applyBackground(todayBackground)
-                textView.setTextColor(context.getColorCompat(R.color.white))
+            when (data.date) {
+                today -> {
+                    roundBackgroundView.applyBackground(todayBackground)
+                    textView.setTextColor(context.getColorCompat(R.color.white))
+                }
+                selectedDay -> {
+                    roundBackgroundView.applyBackground(selectedBackgroud)
+                }
+                else -> {
+                    roundBackgroundView.background = null
+                    textView.setTextColor(context.getColorCompat(R.color.black))
+                }
             }
+
         } else {
             textView.setTextColor(context.getColorCompat(com.qure.core_design.R.color.gray_300))
         }
     }
 
     override fun create(view: View): DayContainer {
-        return DayContainer(view)
+        val binding = CalendarDayBinding.bind(view)
+        return DayContainer(binding)
     }
 
     private fun View.applyBackground(drawable: Drawable) {
@@ -48,15 +76,9 @@ class DayBind: MonthDayBinder<DayContainer> {
         background = drawable
     }
 
-    companion object {
-        fun newInstance(): DayBind =
-            DayBind()
+    class DayContainer(val binding: CalendarDayBinding) : ViewContainer(binding.root)
+
+    abstract class Input {
+        abstract fun onDayClick(date: LocalDate)
     }
-}
-
-
-class DayContainer(view: View) : ViewContainer(view) {
-    private val binding = CalendarDayBinding.bind(view)
-    val textView = binding.textViewDay
-    val round = binding.viewRound
 }

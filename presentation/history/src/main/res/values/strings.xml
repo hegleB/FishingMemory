@@ -2,4 +2,8 @@
     <string name="app_name">history</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="numberpicker_title">년도 선택</string>
+    <string name="numberpicker_cancel">취소</string>
+    <string name="numberpicker_selection">선택</string>
 </resources>
