@@ -1,18 +1,22 @@
 package com.qure.history
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.google.android.material.tabs.TabLayout
 import com.qure.core.BaseFragment
+import com.qure.create.MemoCreateActivity
 import com.qure.history.databinding.FragmentHistoryBinding
 import com.qure.history.view.DayBind
+import com.qure.navigator.MemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.WeekFields
 import java.util.*
+
 
 @AndroidEntryPoint
 class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_history),
@@ -33,6 +37,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         initCalendar()
         changeCalendarMonth()
         setCalendarYear()
+        moveMemoCreate()
     }
 
     private fun initCalendar() {
@@ -86,6 +91,13 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
     private fun setupCalendarView(year: Int, month: Int) {
         firstMonth = YearMonth.of(year, month)
         binding.calendarViewFragmentHistory.setup(firstMonth, firstMonth, firstDayOfWeek)
+    }
+
+    private fun moveMemoCreate() {
+        binding.floatingActionButtonFragmentHistoryPostWriting.setOnClickListener {
+            val intent = Intent(requireActivity(), MemoCreateActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun selectYearClick(year: Int) {

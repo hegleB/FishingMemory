@@ -18,6 +18,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name="com.qure.create.MemoCreateActivity"
+            android:exported="false" />
+        <activity
             android:name="com.qure.onboarding.OnboardingActivity"
             android:exported="false" />
         <activity
