@@ -20,7 +20,7 @@
             android:layout_marginTop="30dp"
             app:layout_constraintStart_toStartOf="@id/guideLine_left"
             app:layout_constraintTop_toTopOf="parent"
-            app:subTitleText="잡은 물고기" />
+            app:subTitleText="@string/caught_fish" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroup_fragmentHome"
@@ -37,21 +37,21 @@
                 style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="어종" />
+                android:text="@string/fish_type" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_fragmentHome_fishSize"
                 style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="크기" />
+                android:text="@string/fish_size" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_fragmentHome_place"
                 style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="장소" />
+                android:text="@string/place" />
 
         </com.google.android.material.chip.ChipGroup>
 
@@ -82,7 +82,7 @@
             android:layout_marginTop="30dp"
             app:layout_constraintStart_toStartOf="@id/guideLine_left"
             app:layout_constraintTop_toBottomOf="@+id/cardView_activityHome_chart"
-            app:subTitleText="날씨" />
+            app:subTitleText="@string/weather" />
 
         <ImageView
             android:id="@+id/imageView_fragmentHome_refresh"
@@ -183,7 +183,7 @@
             android:layout_marginTop="30dp"
             app:layout_constraintStart_toStartOf="@id/guideLine_left"
             app:layout_constraintTop_toBottomOf="@id/cardView_activityHome_weather"
-            app:subTitleText="기록한 글" />
+            app:subTitleText="@string/writhing" />
 
 
         <androidx.recyclerview.widget.RecyclerView

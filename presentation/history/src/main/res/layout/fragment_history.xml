@@ -31,9 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="2023"
             android:textAppearance="@style/Typography.Heading"
-            android:textSize="30dp"
+            android:textSize="30sp"
             app:layout_constraintStart_toStartOf="@+id/guidLine_left"
             app:layout_constraintTop_toTopOf="parent" />
 

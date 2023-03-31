@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">create</string>
+
+    <string name="title">제목</string>
+    <string name="image">사진</string>
+    <string name="fresh_water">민물</string>
+    <string name="sea_water">바닷물</string>
+    <string name="size">CM</string>
+    <string name="location">위치</string>
+    <string name="date">날짜</string>
+    <string name="content">내용</string>
+    <string name="save">저장</string>
+
+    <string name="input_title">제목을 입력해주세요</string>
+    <string name="input_content">내용을 입력해주세요</string>
 </resources>

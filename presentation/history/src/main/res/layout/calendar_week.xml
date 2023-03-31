@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="S"
+            android:text="@string/sunday"
             android:textAppearance="@style/Typography.Title2"
             android:textColor="@android:color/holo_red_dark" />
 
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="M"
+            android:text="@string/monday"
             android:textAppearance="@style/Typography.Title2"
             android:textColor="@color/gray_700" />
 
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="T"
+            android:text="@string/tuesday"
             android:textAppearance="@style/Typography.Title2"
             android:textColor="@color/gray_700" />
 
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="W"
+            android:text="@string/wednesday"
             android:textAppearance="@style/Typography.Title2"
             android:textColor="@color/gray_700" />
 
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="T"
+            android:text="@string/thursday"
             android:textAppearance="@style/Typography.Title2"
             android:textColor="@color/gray_700" />
 
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="F"
+            android:text="@string/friday"
             android:textAppearance="@style/Typography.Title2"
             android:textColor="@color/gray_700" />
 
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="S"
+            android:text="@string/saturday"
             android:textAppearance="@style/Typography.Title2"
             android:textColor="@color/gray_700" />
     </LinearLayout>

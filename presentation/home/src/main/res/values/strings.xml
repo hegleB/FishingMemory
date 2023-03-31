@@ -2,4 +2,12 @@
     <string name="app_name">home</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    
+    <string name="caught_fish">잡은 물고기</string>
+    <string name="fish_type">어종</string>
+    <string name="fish_size">크기</string>
+    <string name="place">장소</string>
+    <string name="weather">날씨</string>
+    <string name="writhing">기록한 글</string>
+    
 </resources>
