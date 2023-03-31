@@ -12,6 +12,249 @@
         android:layout_height="match_parent"
         tools:context=".MemoCreateActivity">
 
-        
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLine_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="30dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="30dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="30dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLine_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="160dp" />
+
+        <ImageView
+            android:id="@+id/imageView_activityMemoCreate_back"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toTopOf="@id/guideLine_top" />
+
+        <TextView
+            android:id="@+id/textView_activityMemoCreate_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="제목"
+            android:textAppearance="@style/Typography.Title2"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/imageView_activityMemoCreate_back"
+
+            />
+
+        <EditText
+            android:id="@+id/editText_activityMemoCreate_title"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_rect_gray100_outline_r10"
+            android:hint="제목을 입력해주세요"
+            android:inputType="textNoSuggestions"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:textAppearance="@style/Typography.SubTitle1"
+            android:textColorHint="@color/gray_100"
+            android:textCursorDrawable="@drawable/bg_cursor_black"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/textView_activityMemoCreate_title" />
+
+        <TextView
+            android:id="@+id/textView_activityMemoCreate_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="사진"
+            android:textAppearance="@style/Typography.Title2"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/editText_activityMemoCreate_title" />
+
+        <ImageView
+            android:id="@+id/imageView_activityMemoCreate_fishImage"
+            android:layout_width="0dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/bg_rect_gray100_outline_r10"
+            android:src="@drawable/ic_image"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/textView_activityMemoCreate_gallery" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup_activityMemoCreate_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/imageView_activityMemoCreate_fishImage"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Choice.WaterType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="민물"
+                app:chipEndPadding="20dp"
+                app:chipStartPadding="20dp" />
+
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Choice.WaterType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="바닷물"
+                app:chipEndPadding="20dp"
+                app:chipStartPadding="20dp" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <EditText
+            android:id="@+id/editText_activityMemoCreate_fishSize"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/gray_100"
+            android:gravity="center"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:textAppearance="@style/Typography.SubTitle1"
+            android:textColorHint="@color/gray_100"
+            android:textCursorDrawable="@drawable/bg_cursor_black"
+            app:layout_constraintBottom_toBottomOf="@+id/chipGroup_activityMemoCreate_type"
+            app:layout_constraintEnd_toStartOf="@+id/textView_activityMemoCreate_fishSize"
+            app:layout_constraintTop_toTopOf="@+id/chipGroup_activityMemoCreate_type" />
+
+        <TextView
+            android:id="@+id/textView_activityMemoCreate_fishSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="CM"
+            android:textAppearance="@style/Typography.SubTitle1"
+            app:layout_constraintBottom_toBottomOf="@+id/editText_activityMemoCreate_fishSize"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintTop_toTopOf="@+id/editText_activityMemoCreate_fishSize" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="날짜"
+            android:textAppearance="@style/Typography.Title2"
+            android:textSize="16sp"
+            app:drawableStartCompat="@drawable/ic_date"
+            app:layout_constraintStart_toStartOf="@id/guideLine_date"
+            app:layout_constraintTop_toTopOf="@id/textView_activityMemoCreate_location" />
+
+        <TextView
+            android:id="@+id/textView_activityMemoCreate_date"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_rect_gray100_outline_r10"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textAppearance="@style/Typography.SubTitle1"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/textView_activityMemoCreate_locationInfo"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideLine_date"
+            app:layout_constraintTop_toTopOf="@id/textView_activityMemoCreate_locationInfo" />
+
+        <TextView
+            android:id="@+id/textView_activityMemoCreate_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawableStart="@drawable/ic_location"
+            android:gravity="center"
+            android:text="위치"
+            android:textAppearance="@style/Typography.Title2"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/chipGroup_activityMemoCreate_type" />
+
+        <TextView
+            android:id="@+id/textView_activityMemoCreate_locationInfo"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_rect_gray100_outline_r10"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textAppearance="@style/Typography.SubTitle1"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@id/guideLine_date"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@+id/textView_activityMemoCreate_location" />
+
+        <TextView
+            android:id="@+id/textView_activityMemoCreate_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="내용"
+            android:textAppearance="@style/Typography.Title2"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/textView_activityMemoCreate_locationInfo" />
+
+        <EditText
+            android:id="@+id/editText_activityMemoCreate_content"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_rect_gray100_outline_r10"
+            android:gravity="top"
+            android:hint="내용을 입력해주세요"
+            android:inputType="textMultiLine"
+            android:padding="20dp"
+            android:textAppearance="@style/Typography.SubTitle1"
+            android:textColorHint="@color/gray_100"
+            android:textCursorDrawable="@drawable/bg_cursor_black"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/textView_activityMemoCreate_content" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_activityMemoCreate_post"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_rect_blue500_r15"
+            android:text="저장"
+            android:textAppearance="@style/Typography.Title2"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

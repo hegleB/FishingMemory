@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MemoCreateActivity">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLine_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="30dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="30dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="30dp" />
+
+        <ImageView
+            android:id="@+id/imageView_activityMemoCreate_back"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toTopOf="@id/guideLine_top" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editText_activityMemoCreate_title"
+            style="@style/TextInputLayoutAppearance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="제목"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/imageView_activityMemoCreate_back">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/gray_300"
+                android:inputType="textNoSuggestions"
+                android:maxLines="1"
+                android:textAppearance="@style/Typography.SubTitle1"
+                android:textCursorDrawable="@drawable/bg_cursor_black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/imageView_activityMemoCreate_fishImage"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/bg_rect_gray100_outline_r10"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/editText_activityMemoCreate_title" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup_activityMemoCreate_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:singleSelection="true"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/imageView_activityMemoCreate_fishImage">
+
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Choice.WaterType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="민물"
+                app:chipEndPadding="20dp"
+                app:chipStartPadding="20dp" />
+
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Choice.WaterType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="바닷물"
+                app:chipEndPadding="20dp"
+                app:chipStartPadding="20dp" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editText_activityMemoCreate_content"
+            style="@style/TextInputLayoutAppearance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="내용"
+            app:counterEnabled="true"
+            app:counterMaxLength="200"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintTop_toBottomOf="@id/chipGroup_activityMemoCreate_type">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:textAppearance="@style/Typography.SubTitle1"
+                android:textCursorDrawable="@drawable/bg_cursor_black" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_activityMemoCreate_post"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_rect_blue500_r15"
+            android:text="저장"
+            android:textAppearance="@style/Typography.Title2"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"
+            app:layout_constraintStart_toStartOf="@id/guideline_left" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Widget.MaterialComponents.Chip.Choice.ChartType">
         <item name="android:textAppearance">@style/Typography.SubTitle1</item>
         <item name="android:textColor">@color/text_chip_color</item>
         <item name="chipBackgroundColor">@color/bg_chip_color</item>
         <item name="chipStrokeColor">@color/gray_200</item>
         <item name="chipStrokeWidth">1dp</item>
+    </style>
+
+    <style name="Widget.MaterialComponents.Chip.Choice.WaterType">
+        <item name="android:textColor">@color/text_waterchip_color</item>
+        <item name="chipBackgroundColor">@color/bg_chip_color</item>
+        <item name="chipStrokeColor">@color/stroke_waterchip_color</item>
+        <item name="chipStrokeWidth">2dp</item>
+    </style>
+
+
+    <style name="TextInputLayoutAppearance" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <!-- reference our hint & error styles -->
+        <item name="android:colorControlActivated">@color/gray_500</item>
+        <item name="android:colorControlNormal">@color/gray_500</item>
+        <item name="colorControlNormal">@color/gray_500</item>
+        <item name="hintEnabled">true</item>
+        <item name="boxStrokeColor">@color/gray_500</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxStrokeErrorColor">@android:color/holo_red_light</item>
+        <item name="hintTextColor">@color/gray_500</item>
+        <item name="errorTextColor">@android:color/holo_red_light</item>
     </style>
 </resources>
