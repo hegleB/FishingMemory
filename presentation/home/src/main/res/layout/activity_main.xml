@@ -24,8 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:elevation="0dp"
-            app:itemIconTint="@drawable/selected_menu_color"
-            app:itemTextColor="@drawable/selected_menu_color"
+            app:itemIconTint="@drawable/selector_menu_color"
+            app:itemTextColor="@drawable/selector_menu_color"
             app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:menu="@menu/buttom_nav_menu" />
