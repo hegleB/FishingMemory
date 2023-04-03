@@ -18,7 +18,7 @@ class LocationSettingActivity :
     RegionPositionCallback {
     
     lateinit var listener: RegionPositionCallback
-
+    private var currentItemPosition = 0
     private lateinit var adapter: LocationSettingPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,11 +77,13 @@ class LocationSettingActivity :
             buttonActivityLocationSettingNext.setOnSingleClickListener {
                 viewPagerActivityLocationSetting.run {
                     currentItem += PAGE_INCREMENT_VALUE
+                    currentItemPosition = currentItem
                 }
             }
             buttonActivityLocationSettingPrevious.setOnSingleClickListener {
                 viewPagerActivityLocationSetting.run {
                     currentItem -= PAGE_INCREMENT_VALUE
+                    currentItemPosition = currentItem
                 }
             }
         }
@@ -139,14 +141,16 @@ class LocationSettingActivity :
     }
 
     override fun setRegionPosition(postion: Int) {
-        adapter.refreshFragment(
-            1,
-            LocationSettingFragment.newInstance(
-                title = getString(R.string.selection_city),
-                subTitle = getString(R.string.city_name),
-                regionArray = Region.getArray(this, postion),
-                listener = listener
+        if (currentItemPosition == 0) {
+            adapter.refreshFragment(
+                1,
+                LocationSettingFragment.newInstance(
+                    title = getString(R.string.selection_city),
+                    subTitle = getString(R.string.city_name),
+                    regionArray = Region.getArray(this@LocationSettingActivity, postion),
+                    listener = listener
+                )
             )
-        )
+        }
     }
 }

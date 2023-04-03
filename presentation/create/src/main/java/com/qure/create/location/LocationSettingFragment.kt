@@ -38,7 +38,6 @@ class LocationSettingFragment(listener: RegionPositionCallback) :
             regionArray = it.getStringArray(ARG_PARAM3) as Array<String>
         }
         adapter = LocationRegionAdapter(regionArray)
-        adapter.setHasStableIds(true)
         initView()
         initAdapter()
 
