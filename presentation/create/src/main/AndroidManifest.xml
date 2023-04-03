@@ -4,6 +4,9 @@
 
     <application>
         <activity
+            android:name=".LocationSettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".GalleryActivity"
             android:exported="false" />
     </application>

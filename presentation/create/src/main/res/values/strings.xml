@@ -13,4 +13,17 @@
 
     <string name="input_title">제목을 입력해주세요</string>
     <string name="input_content">내용을 입력해주세요</string>
+
+    <string name="selection_do">시/도/별을 \n선택해주세요</string>
+    <string name="do_name">시/도/별</string>
+    
+    <string name="selection_city">시/군/구를 \n선택해주세요</string>
+    <string name="city_name">시/군/구</string>
+
+    <string name="selection_map">지도에서 \n위치를 \n선택해주세요</string>
+    <string name="map">지도</string>
+
+    <string name="location_setting_previous">이전</string>
+    <string name="location_setting_next">다음</string>
+    <string name="location_setting_setting">설정</string>
 </resources>

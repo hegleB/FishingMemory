@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.snackbar.Snackbar
 import com.qure.core.BaseActivity
 import com.qure.create.databinding.ActivityMemoCreateBinding
+import com.qure.create.location.LocationSettingActivity
 import com.qure.history.MemoCalendarDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,6 +42,9 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             checkExternalStoragePermission {
                 startGallery()
             }
+        }
+        binding.textViewActivityMemoCreateLocationInfo.setOnClickListener {
+            startActivity(Intent(this, LocationSettingActivity::class.java))
         }
     }
 
@@ -136,6 +140,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     companion object {
         const val PERMISSION_REQUEST_CODE = 1000
+        const val GALLERY_REQUEST_CODE = 1001
         const val DEFAULT_GALLERY_REQUEST_CODE = 1002
     }
 }
