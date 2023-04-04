@@ -3,10 +3,10 @@ package com.qure.create.location
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.qure.core.BaseActivity
+import com.qure.core.extensions.Empty
+import com.qure.core.extensions.Spacing
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.create.R
 import com.qure.create.databinding.ActivityLocationSettingBinding
@@ -16,10 +16,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class LocationSettingActivity :
     BaseActivity<ActivityLocationSettingBinding>(R.layout.activity_location_setting),
     RegionPositionCallback {
-    
+
     lateinit var listener: RegionPositionCallback
     private var currentItemPosition = 0
     private lateinit var adapter: LocationSettingPagerAdapter
+    private var selectedRegionName = MutableList(2, { String.Empty })
+    private var selectedRegionId = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,18 +45,21 @@ class LocationSettingActivity :
                 title = getString(R.string.selection_do),
                 subTitle = getString(R.string.do_name),
                 regionArray = Region.getArray(this),
+                regionName = String.Empty,
                 listener = listener
             ),
             LocationSettingFragment.newInstance(
                 title = getString(R.string.selection_city),
                 subTitle = getString(R.string.city_name),
                 regionArray = Region.getArray(this),
+                regionName = String.Empty,
                 listener = listener
             ),
             LocationSettingFragment.newInstance(
                 title = getString(R.string.selection_map),
                 subTitle = getString(R.string.map),
                 regionArray = emptyArray(),
+                regionName = String.Empty,
                 listener = listener
             )
         )
@@ -62,7 +67,7 @@ class LocationSettingActivity :
 
     private fun initEvent() {
         setViewPagePosition()
-        setButtonTextToPageTransition()
+        setButtonoPageTransition()
         closeLocationSetting()
     }
 
@@ -89,68 +94,88 @@ class LocationSettingActivity :
         }
     }
 
-    private fun setButtonTextToPageTransition() {
+    private fun setButtonoPageTransition() {
         binding.apply {
             viewPagerActivityLocationSetting.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     when (position) {
-                        0 -> {
-                            buttonActivityLocationSettingPrevious.visibility = View.INVISIBLE
-                            buttonActivityLocationSettingNext.text =
-                                getString(R.string.location_setting_next)
-                        }
-                        1 -> {
-                            buttonActivityLocationSettingPrevious.visibility = View.VISIBLE
-                            buttonActivityLocationSettingNext.text =
-                                getString(R.string.location_setting_next)
-                        }
-                        else -> {
-                            buttonActivityLocationSettingPrevious.visibility = View.VISIBLE
-                            buttonActivityLocationSettingNext.text =
-                                getString(R.string.location_setting_setting)
-                        }
+                        0 -> setPreViousAndNextButton(position)
+                        1 -> setPreViousAndNextButton(position)
+                        else -> setPreViousAndNextButton(position)
                     }
                 }
             })
         }
     }
 
-    private inner class LocationSettingPagerAdapter(
-        fragmentActivity: FragmentActivity,
-        var fragments: MutableList<Fragment>,
-    ) :
-        FragmentStateAdapter(fragmentActivity) {
-        override fun getItemCount(): Int = PAGES_NUMBER
-
-        fun refreshFragment(index: Int, fragment: Fragment) {
-            fragments[index] = fragment
-            notifyItemChanged(index)
+    private fun setPreViousAndNextButton(position: Int) {
+        with(binding) {
+            buttonActivityLocationSettingPrevious.visibility =
+                if (position == 0) View.INVISIBLE else View.VISIBLE
+            buttonActivityLocationSettingNext.text =
+                if (position == 2) getString(R.string.location_setting_setting) else
+                    getString(R.string.location_setting_next)
+            setEnabledNetxtButton(position)
         }
+    }
 
-        override fun createFragment(position: Int): Fragment {
-            return fragments[position]
+    private fun setEnabledNetxtButton(position: Int) {
+        when {
+            selectedRegionName[0] != String.Empty && position == 0 -> {
+                binding.buttonActivityLocationSettingNext.isEnabled = true
+            }
+            selectedRegionName[1] == String.Empty && position == 1 -> {
+                binding.buttonActivityLocationSettingNext.isEnabled = false
+            }
         }
+    }
+
+
+    override fun setRegionPosition(postion: Int) {
+        binding.buttonActivityLocationSettingNext.isEnabled = true
+        setSelectedRegionName(postion)
+    }
+
+    private fun setSelectedRegionName(postion: Int) {
+        val regionArray = Region.getArray(this@LocationSettingActivity, postion)
+        when (currentItemPosition) {
+            0 -> {
+                selectedRegionId = postion
+                selectedRegionName[0] = resources.getStringArray(R.array.array_region)[postion]
+                selectedRegionName[1] = String.Empty
+                refreshAdapter(regionArray)
+            }
+            1 -> {
+                selectedRegionName[1] =
+                    Region.getArray(this@LocationSettingActivity, selectedRegionId)[postion]
+                refreshAdapter(regionArray)
+            }
+        }
+    }
+
+    private fun refreshAdapter(regionArray: Array<String>) {
+        when (currentItemPosition) {
+            0 -> setRefreshAdapter(regionArray, R.string.selection_city, R.string.city_name)
+            else -> setRefreshAdapter(emptyArray(), R.string.selection_map, R.string.map)
+        }
+    }
+
+    private fun setRefreshAdapter(regionArray: Array<String>, title: Int, subTitle: Int) {
+        adapter.refreshFragment(
+            currentItemPosition + 1,
+            LocationSettingFragment.newInstance(
+                title = getString(title),
+                subTitle = getString(subTitle),
+                regionArray = regionArray,
+                regionName = selectedRegionName.joinToString(String.Spacing),
+                listener = listener
+            )
+        )
     }
 
     companion object {
-        private const val PAGES_NUMBER = 3
         private const val PAGE_INCREMENT_VALUE = 1
-        private const val END_PAGE = 2
-    }
-
-    override fun setRegionPosition(postion: Int) {
-        if (currentItemPosition == 0) {
-            adapter.refreshFragment(
-                1,
-                LocationSettingFragment.newInstance(
-                    title = getString(R.string.selection_city),
-                    subTitle = getString(R.string.city_name),
-                    regionArray = Region.getArray(this@LocationSettingActivity, postion),
-                    listener = listener
-                )
-            )
-        }
     }
 }
