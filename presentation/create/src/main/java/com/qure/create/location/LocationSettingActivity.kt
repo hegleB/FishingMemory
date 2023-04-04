@@ -7,6 +7,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.qure.core.BaseActivity
 import com.qure.core.extensions.Empty
 import com.qure.core.extensions.Spacing
+import com.qure.core.extensions.getStringArrayCompat
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.create.R
 import com.qure.create.databinding.ActivityLocationSettingBinding
@@ -143,7 +144,7 @@ class LocationSettingActivity :
         when (currentItemPosition) {
             0 -> {
                 selectedRegionId = postion
-                selectedRegionName[0] = resources.getStringArray(R.array.array_region)[postion]
+                selectedRegionName[0] = getStringArrayCompat(R.array.array_region)[postion]
                 selectedRegionName[1] = String.Empty
                 refreshAdapter(regionArray)
             }
