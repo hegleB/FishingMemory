@@ -66,6 +66,8 @@ dependencies {
     implementation deps.glide.okhttp
     kapt deps.glide.compiler
 
+    implementation deps.navermap
+
     testImplementation(testDeps)
     androidTestImplementation(androidTestDeps)
 }

@@ -1,10 +1,11 @@
 package com.qure.fishingmemory
 
-import dagger.hilt.android.HiltAndroidApp
 import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
+import com.naver.maps.map.NaverMapSdk
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,6 +19,13 @@ class Application : Application() {
 
         initTimber()
         initKakaoSdk()
+        initNaverMapSdk()
+    }
+
+    private fun initNaverMapSdk() {
+        NaverMapSdk.getInstance(this).setClient(
+            NaverMapSdk.NaverCloudPlatformClient(buildPropertyRepository.get(BuildProperty.NAVER_MAP_API_CLIENT_ID))
+        )
     }
 
     private fun initKakaoSdk() {

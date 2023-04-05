@@ -6,12 +6,14 @@ import com.google.gson.GsonBuilder
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.data.api.AuthService
+import com.qure.data.api.GeocodingService
 import com.qure.data.api.WeatherService
 import com.qure.data.api.deserializer.LocalDateDeserializer
 import com.qure.data.api.deserializer.LocalDateTimeDeserializer
 import com.qure.data.api.deserializer.LocalTimeDeserializer
 import com.qure.data.api.exception.ResultCallAdapterFactory
 import com.qure.data.api.interceptor.AuthInterceptor
+import com.qure.data.api.interceptor.GeocodingInterceptor
 import com.qure.data.api.interceptor.WeatherInterceptor
 import com.qure.data.api.serializer.LocalDateSerializer
 import com.qure.data.api.serializer.LocalDateTimeSerializer
@@ -45,6 +47,10 @@ class ServiceModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class Weather
 
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class Geocoding
+
     @Provides
     @Singleton
     fun providesAuthService(
@@ -56,6 +62,12 @@ class ServiceModule {
     fun providesWeatherService(
         @Weather retrofit: Retrofit,
     ): WeatherService = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun providesGeocodingService(
+        @Geocoding retrofit: Retrofit,
+    ): GeocodingService = retrofit.create()
 
     @Singleton
     @Provides
@@ -107,6 +119,31 @@ class ServiceModule {
             .build()
     }
 
+    @Singleton
+    @Provides
+    @Geocoding
+    fun providesGeocodingRetrofit(
+        @Geocoding okHttpClient: OkHttpClient,
+        buildPropertyRepository: BuildPropertyRepository,
+        resultCallAdapterFactory: ResultCallAdapterFactory
+    ): Retrofit {
+        val gsonWithAdapter: Gson = GsonBuilder()
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
+            .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+            .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
+            .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+            .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
+            .create()
+
+        return Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl(buildPropertyRepository.get(BuildProperty.NAVER_MAP_URL))
+            .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
+            .addCallAdapterFactory(resultCallAdapterFactory)
+            .build()
+    }
+
     @Provides
     @Singleton
     fun providesResultCallAdapterFactory(): ResultCallAdapterFactory = ResultCallAdapterFactory()
@@ -152,6 +189,29 @@ class ServiceModule {
                 interceptor = WeatherInterceptor(
                     buildPropertyRepository = buildPropertyRepository,
                     gson = gson,
+                ),
+            )
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BASIC
+            })
+        return clientWithAuthInterceptor.build()
+    }
+
+    @Provides
+    @Singleton
+    @Geocoding
+    fun providesGeocodingHttpClient(
+        @ApplicationContext context: Context,
+        buildPropertyRepository: BuildPropertyRepository
+    ): OkHttpClient {
+        val client = OkHttpClient.Builder()
+            .readTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+            .connectTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+            .writeTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+        val clientWithAuthInterceptor = client
+            .addInterceptor(
+                interceptor = GeocodingInterceptor(
+                    buildPropertyRepository = buildPropertyRepository,
                 ),
             )
             .addInterceptor(HttpLoggingInterceptor().apply {

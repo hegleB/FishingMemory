@@ -8,7 +8,10 @@ enum class BuildProperty(
     FIREBASE_DATABASE_URL("firebase 데이터베이스 주소"),
     FIREBASE_API_KEY("firebase api key"),
     WEATHER_DATABASE_URL("weather 데이터베이스 주소"),
-    WEATHER_API_KEY("weather api key");
+    WEATHER_API_KEY("weather api key"),
+    NAVER_MAP_URL("naver map 주소"),
+    NAVER_MAP_API_CLIENT_ID("naver map client id"),
+    NAVER_MAP_API_CLIENT_SECRET("naver_map_api_client_secret");
 
     val key: String = this.name
 

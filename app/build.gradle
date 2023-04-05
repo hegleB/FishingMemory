@@ -42,7 +42,8 @@ android {
             applicationIdSuffix ".app"
 
             manifestPlaceholders = [
-                    KAKAO_API_KEY: properties.getProperty('kakao_api_key')
+                    KAKAO_API_KEY: properties.getProperty('kakao_api_key'),
+                    NAVER_MAP_API_CLIENT_ID: properties.getProperty('naver_map_api_client_id')
             ]
 
             buildConfigField 'String', 'KAKAO_API_KEY', "\"${properties.getProperty('kakao_api_key')}\""
@@ -51,6 +52,9 @@ android {
             buildConfigField 'String', 'FIREBASE_DATABASE_PROJECT_ID', "\"${properties.getProperty('firebase_database_project_id')}\""
             buildConfigField 'String', 'WEATHER_API_KEY', "\"${properties.getProperty('weather_api_key')}\""
             buildConfigField 'String', 'WEATHER_DATABASE_URL', "\"${properties.getProperty('weather_database_url')}\""
+            buildConfigField 'String', 'NAVER_MAP_URL', "\"${properties.getProperty('naver_map_url')}\""
+            buildConfigField 'String', 'NAVER_MAP_API_CLIENT_ID', "\"${properties.getProperty('naver_map_api_client_id')}\""
+            buildConfigField 'String', 'NAVER_MAP_API_CLIENT_SECRET', "\"${properties.getProperty('naver_map_api_client_secret')}\""
 
         }
     }
@@ -100,6 +104,8 @@ dependencies {
     implementation deps.firebase.auth
 
     implementation(locationDeps)
+
+    implementation deps.navermap
 
     testImplementation(testDeps)
     androidTestImplementation(androidTestDeps)

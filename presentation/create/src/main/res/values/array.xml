@@ -70,7 +70,7 @@
     <string-array name="array_region_incheon">
         <item>강화군</item>
         <item>계양구</item>
-        <item>남구</item>
+        <item>미추홀구</item>
         <item>남동구</item>
         <item>동구</item>
         <item>부평구</item>
@@ -117,6 +117,10 @@
 
     <string-array name="array_region_sejong">
         <item>없음</item>
+    </string-array>
+
+    <string-array name="array_region_sejong_cheong">
+        <item>한누리대로 2130 세종특별자치시청</item>
     </string-array>
 
     <string-array name="array_region_gyeonggi">
