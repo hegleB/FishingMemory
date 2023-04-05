@@ -1,8 +1,8 @@
 package com.qure.create.model
 
 import com.qure.core.extensions.Empty
-import com.qure.domain.entity.geocoding.Addresses
-import com.qure.domain.entity.geocoding.Region
+import com.qure.domain.entity.map.Addresses
+import com.qure.domain.entity.map.Region
 
 data class GeocodingUI(
     val roadAddress: String = String.Empty,

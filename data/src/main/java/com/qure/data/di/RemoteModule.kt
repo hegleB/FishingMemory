@@ -2,8 +2,8 @@ package com.qure.data.di
 
 import com.qure.data.datasource.auth.AuthRemoteDataSource
 import com.qure.data.datasource.auth.AuthRemoteDataSourceImpl
-import com.qure.data.datasource.geocoding.GeocodingRemoteDataSource
-import com.qure.data.datasource.geocoding.GeocodingRemoteRemoteDataSourceImpl
+import com.qure.data.datasource.map.MapRemoteDataSource
+import com.qure.data.datasource.map.MapRemoteRemoteDataSourceImpl
 import com.qure.data.datasource.weather.WeatherRemoteDataSource
 import com.qure.data.datasource.weather.WeatherRemoteDataSourceImpl
 import dagger.Binds
@@ -30,7 +30,7 @@ abstract class RemoteModule {
 
     @Binds
     @Singleton
-    abstract fun bindGeocodingRemoteDataResource(
-        dataSource: GeocodingRemoteRemoteDataSourceImpl,
-    ): GeocodingRemoteDataSource
+    abstract fun bindMapRemoteDataResource(
+        dataSource: MapRemoteRemoteDataSourceImpl,
+    ): MapRemoteDataSource
 }

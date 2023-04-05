@@ -1,4 +1,4 @@
-package com.qure.domain.entity.geocoding
+package com.qure.domain.entity.map
 
 data class Geocoding(
     val status: String,

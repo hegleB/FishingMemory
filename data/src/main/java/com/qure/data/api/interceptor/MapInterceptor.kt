@@ -6,7 +6,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
-class GeocodingInterceptor @Inject constructor(
+class MapInterceptor @Inject constructor(
     private val buildPropertyRepository: BuildPropertyRepository
 ): Interceptor {
 

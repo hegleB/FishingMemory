@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
 import com.qure.create.model.GeocodingUI
 import com.qure.create.model.toGeocodingUI
-import com.qure.domain.usecase.geocoding.GetGeocodingUseCase
+import com.qure.domain.usecase.map.GetGeocodingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

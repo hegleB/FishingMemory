@@ -1,8 +1,8 @@
 package com.qure.data.mapper
 
 
-import com.qure.data.entity.geocoding.GeocodingEntity
-import com.qure.domain.entity.geocoding.Geocoding
+import com.qure.data.entity.map.GeocodingEntity
+import com.qure.domain.entity.map.Geocoding
 
 
 fun GeocodingEntity.toGeocoding(): Geocoding {

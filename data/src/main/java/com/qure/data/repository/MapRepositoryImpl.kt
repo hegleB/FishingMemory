@@ -1,20 +1,20 @@
 package com.qure.data.repository
 
-import com.qure.data.datasource.geocoding.GeocodingRemoteDataSource
+import com.qure.data.datasource.map.MapRemoteDataSource
 import com.qure.data.mapper.toGeocoding
-import com.qure.domain.entity.geocoding.Geocoding
-import com.qure.domain.repository.GeocodingRepository
+import com.qure.domain.entity.map.Geocoding
+import com.qure.domain.repository.MapRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GeocodingRepositoryImpl @Inject constructor(
-    private val geocodingRemoteDataSource: GeocodingRemoteDataSource,
-) : GeocodingRepository {
+class MapRepositoryImpl @Inject constructor(
+    private val mapRemoteDataSource: MapRemoteDataSource,
+) : MapRepository {
 
     override fun getGeocoding(query: String): Flow<Result<Geocoding>> {
         return flow {
-            geocodingRemoteDataSource.getGeocoding(query)
+            mapRemoteDataSource.getGeocoding(query)
                 .onSuccess { geocoding ->
                     emit(Result.success(geocoding.toGeocoding()))
                 }

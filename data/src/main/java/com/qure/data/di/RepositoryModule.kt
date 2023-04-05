@@ -1,11 +1,8 @@
 package com.qure.data.di
 
-import com.qure.data.repository.AuthRepositoryImpl
-import com.qure.data.repository.GeocodingRepositoryImpl
-import com.qure.data.repository.OnboardingRepositoryImpl
-import com.qure.data.repository.WeatherRepositoryImpl
+import com.qure.data.repository.*
 import com.qure.domain.repository.AuthRepository
-import com.qure.domain.repository.GeocodingRepository
+import com.qure.domain.repository.MapRepository
 import com.qure.domain.repository.OnboardingRepository
 import com.qure.domain.repository.WeatherRepository
 import dagger.Binds
@@ -38,7 +35,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindGeocodingRepository(
-        repository: GeocodingRepositoryImpl,
-    ): GeocodingRepository
+    abstract fun bindMapRepository(
+        repository: MapRepositoryImpl,
+    ): MapRepository
 }

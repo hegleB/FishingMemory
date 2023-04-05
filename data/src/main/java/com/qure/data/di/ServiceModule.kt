@@ -6,14 +6,14 @@ import com.google.gson.GsonBuilder
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.data.api.AuthService
-import com.qure.data.api.GeocodingService
+import com.qure.data.api.NaverMapService
 import com.qure.data.api.WeatherService
 import com.qure.data.api.deserializer.LocalDateDeserializer
 import com.qure.data.api.deserializer.LocalDateTimeDeserializer
 import com.qure.data.api.deserializer.LocalTimeDeserializer
 import com.qure.data.api.exception.ResultCallAdapterFactory
 import com.qure.data.api.interceptor.AuthInterceptor
-import com.qure.data.api.interceptor.GeocodingInterceptor
+import com.qure.data.api.interceptor.MapInterceptor
 import com.qure.data.api.interceptor.WeatherInterceptor
 import com.qure.data.api.serializer.LocalDateSerializer
 import com.qure.data.api.serializer.LocalDateTimeSerializer
@@ -49,7 +49,7 @@ class ServiceModule {
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
-    annotation class Geocoding
+    annotation class Map
 
     @Provides
     @Singleton
@@ -65,9 +65,9 @@ class ServiceModule {
 
     @Provides
     @Singleton
-    fun providesGeocodingService(
-        @Geocoding retrofit: Retrofit,
-    ): GeocodingService = retrofit.create()
+    fun providesMapService(
+        @Map retrofit: Retrofit,
+    ): NaverMapService = retrofit.create()
 
     @Singleton
     @Provides
@@ -121,9 +121,9 @@ class ServiceModule {
 
     @Singleton
     @Provides
-    @Geocoding
-    fun providesGeocodingRetrofit(
-        @Geocoding okHttpClient: OkHttpClient,
+    @Map
+    fun providesMapRetrofit(
+        @Map okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
         resultCallAdapterFactory: ResultCallAdapterFactory
     ): Retrofit {
@@ -138,7 +138,7 @@ class ServiceModule {
 
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(buildPropertyRepository.get(BuildProperty.NAVER_MAP_URL))
+            .baseUrl(buildPropertyRepository.get(BuildProperty.NAVER_MAP_BASE_URL))
             .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
             .addCallAdapterFactory(resultCallAdapterFactory)
             .build()
@@ -199,8 +199,8 @@ class ServiceModule {
 
     @Provides
     @Singleton
-    @Geocoding
-    fun providesGeocodingHttpClient(
+    @Map
+    fun providesMapHttpClient(
         @ApplicationContext context: Context,
         buildPropertyRepository: BuildPropertyRepository
     ): OkHttpClient {
@@ -210,7 +210,7 @@ class ServiceModule {
             .writeTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
         val clientWithAuthInterceptor = client
             .addInterceptor(
-                interceptor = GeocodingInterceptor(
+                interceptor = MapInterceptor(
                     buildPropertyRepository = buildPropertyRepository,
                 ),
             )

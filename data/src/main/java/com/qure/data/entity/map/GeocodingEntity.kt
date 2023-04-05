@@ -1,7 +1,7 @@
-package com.qure.data.entity.geocoding
+package com.qure.data.entity.map
 
-import com.qure.domain.entity.geocoding.Addresses
-import com.qure.domain.entity.geocoding.Meta
+import com.qure.domain.entity.map.Addresses
+import com.qure.domain.entity.map.Meta
 
 data class GeocodingEntity(
     val status: String,
