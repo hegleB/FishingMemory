@@ -26,4 +26,12 @@
     <string name="location_setting_previous">이전</string>
     <string name="location_setting_next">다음</string>
     <string name="location_setting_setting">설정</string>
+    
+    <string name="location_marker_failure_message">"주소가 존재하지 않습니다"</string>
+
+    <string name="can_not_get_image">사진을 가져오지 못했습니다.</string>
+
+    <string name="permission_required">권한이 필요합니다.</string>
+    <string name="required_to_import_image">사진을 가져오기 위해 필요합니다.</string>
+    <string name="agreement">동의</string>
 </resources>

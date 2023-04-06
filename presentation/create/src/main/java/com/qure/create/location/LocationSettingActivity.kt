@@ -1,7 +1,10 @@
 package com.qure.create.location
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.qure.core.BaseActivity
@@ -9,6 +12,9 @@ import com.qure.core.extensions.Empty
 import com.qure.core.extensions.Spacing
 import com.qure.core.extensions.getStringArrayCompat
 import com.qure.core.util.setOnSingleClickListener
+import com.qure.create.MemoCreateActivity
+import com.qure.create.MemoCreateActivity.Companion.ARG_AREA
+import com.qure.create.MemoCreateActivity.Companion.ARG_AREA_COORDS
 import com.qure.create.R
 import com.qure.create.databinding.ActivityLocationSettingBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,9 +22,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LocationSettingActivity :
     BaseActivity<ActivityLocationSettingBinding>(R.layout.activity_location_setting),
-    RegionPositionCallback {
+    RegionPositionCallback, AreaNameCallback{
 
     lateinit var listener: RegionPositionCallback
+    lateinit var arealistener: AreaNameCallback
+
+    private var areaName = String.Empty
+    private var coords = String.Empty
     private var currentItemPosition = 0
     private lateinit var adapter: LocationSettingPagerAdapter
     private var selectedRegionName = MutableList(2, { String.Empty })
@@ -27,6 +37,7 @@ class LocationSettingActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listener = this
+        arealistener = this
         adapter = LocationSettingPagerAdapter(this@LocationSettingActivity, getFragments())
         initViewPager()
         initEvent()
@@ -47,21 +58,24 @@ class LocationSettingActivity :
                 subTitle = getString(R.string.do_name),
                 regionArray = Region.getArray(this),
                 regionName = String.Empty,
-                listener = listener
+                listener = listener,
+                arealistener = arealistener,
             ),
             LocationSettingFragment.newInstance(
                 title = getString(R.string.selection_city),
                 subTitle = getString(R.string.city_name),
                 regionArray = Region.getArray(this),
                 regionName = String.Empty,
-                listener = listener
+                listener = listener,
+                arealistener = arealistener,
             ),
             LocationSettingFragment.newInstance(
                 title = getString(R.string.selection_map),
                 subTitle = getString(R.string.map),
                 regionArray = emptyArray(),
                 regionName = String.Empty,
-                listener = listener
+                listener = listener,
+                arealistener = arealistener,
             )
         )
     }
@@ -81,6 +95,13 @@ class LocationSettingActivity :
     private fun setViewPagePosition() {
         binding.apply {
             buttonActivityLocationSettingNext.setOnSingleClickListener {
+                if (currentItemPosition == 2) {
+                    val intent = Intent(this@LocationSettingActivity, MemoCreateActivity::class.java)
+                    intent.putExtra(ARG_AREA, areaName)
+                    intent.putExtra(ARG_AREA_COORDS, coords)
+                    setResult(Activity.RESULT_OK, intent)
+                    finish()
+                }
                 viewPagerActivityLocationSetting.run {
                     currentItem += PAGE_INCREMENT_VALUE
                     currentItemPosition = currentItem
@@ -171,12 +192,19 @@ class LocationSettingActivity :
                 subTitle = getString(subTitle),
                 regionArray = regionArray,
                 regionName = selectedRegionName.joinToString(String.Spacing),
-                listener = listener
+                listener = listener,
+                arealistener = arealistener,
             )
         )
+    }
+    override fun setAreaName(name: String, coords: String) {
+        this.areaName = name
+        this.coords = coords
     }
 
     companion object {
         private const val PAGE_INCREMENT_VALUE = 1
+        const val REQUEST_CODE_AREA = 0
     }
+
 }
