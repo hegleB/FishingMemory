@@ -18,6 +18,7 @@
         android:theme="@style/Theme.Fishingmemory"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name="com.qure.create.MemoCreateActivity"
             android:exported="false" />
@@ -44,10 +45,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.qure.home.MainActivity"
-            android:exported="false"
-            tools:ignore="DuplicateActivity" />
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"

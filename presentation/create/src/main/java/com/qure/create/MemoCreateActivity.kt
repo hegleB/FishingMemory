@@ -4,14 +4,25 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.qure.core.BaseActivity
 import com.qure.create.databinding.ActivityMemoCreateBinding
@@ -19,6 +30,8 @@ import com.qure.create.location.LocationSettingActivity
 import com.qure.create.location.LocationSettingActivity.Companion.REQUEST_CODE_AREA
 import com.qure.history.MemoCalendarDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+
 
 @AndroidEntryPoint
 class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.activity_memo_create),
@@ -26,6 +39,9 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     lateinit var listener: MemoCalendarDialogFragment.DatePickerListener
 
+    private var selectedImageUri: Uri? = null
+
+    private var isSave = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listener = this
@@ -49,6 +65,8 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                 REQUEST_CODE_AREA
             )
         }
+
+        validateMemo()
     }
 
     private fun setDate() {
@@ -124,6 +142,60 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         }
     }
 
+    private fun validateMemo() {
+        with(binding) {
+            editTextActivityMemoCreateTitle.addTextChangedListener(textWatcher)
+            editTextActivityMemoCreateFishSize.addTextChangedListener(textWatcher)
+            textViewActivityMemoCreateLocationInfo.addTextChangedListener(textWatcher)
+            textViewActivityMemoCreateDate.addTextChangedListener(textWatcher)
+            imageViewActivityMemoCreateFishImage.addOnAttachStateChangeListener()
+            chipGroupActivityMemoCreateType.setOnCheckedChangeListener()
+        }
+    }
+
+    private fun checkInputs() {
+        with(binding) {
+            val title = editTextActivityMemoCreateTitle.text.toString()
+            val fishSize = editTextActivityMemoCreateFishSize.text.toString()
+            val locationInfo = textViewActivityMemoCreateLocationInfo.text.toString()
+            val date = textViewActivityMemoCreateDate.text.toString()
+            val isChecked = chipGroupActivityMemoCreateType.checkedChipId != View.NO_ID
+            val hasImage = imageViewActivityMemoCreateFishImage.drawable != null
+            Timber.d("hasIamge ${hasImage}")
+            buttonActivityMemoCreatePost.isEnabled =
+                title.isNotBlank() &&
+                        fishSize.isNotBlank() &&
+                        locationInfo.isNotBlank() &&
+                        date.isNotBlank() &&
+                        isChecked &&
+                        hasImage
+        }
+    }
+
+    private fun ChipGroup.setOnCheckedChangeListener() {
+        this.setOnCheckedStateChangeListener { group, checkedIds ->
+            checkInputs()
+        }
+    }
+
+    private fun ImageView.addOnAttachStateChangeListener() {
+        this.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+                checkInputs()
+            }
+
+            override fun onViewDetachedFromWindow(v: View) = Unit
+        })
+    }
+
+    private val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+        override fun afterTextChanged(s: Editable?) {
+            checkInputs()
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -132,12 +204,16 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                 binding.textViewActivityMemoCreateLocationInfo.text =
                     data.getStringExtra(ARG_AREA)
 
-            requestCode != Activity.RESULT_OK && data != null ->
+            requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null -> {
                 Glide.with(this)
                     .load(data.data as Uri)
                     .transform(CenterCrop(), RoundedCorners(15))
+                    .override(360, 360)
                     .into(binding.imageViewActivityMemoCreateFishImage)
-
+                Handler().postDelayed({
+                    checkInputs()
+                }, 100)
+            }
             else ->
                 Snackbar.make(
                     binding.constraintLayoutActivityMemoCreate,
