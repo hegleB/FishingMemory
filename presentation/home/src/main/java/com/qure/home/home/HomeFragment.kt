@@ -8,6 +8,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -21,6 +22,8 @@ import com.qure.domain.entity.weather.SkyState
 import com.qure.home.R
 import com.qure.home.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
@@ -31,6 +34,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val viewModel by viewModels<HomeViewModel>()
 
     private lateinit var fusedLocationProvierClient: FusedLocationProviderClient
+    private var latX = 0.0
+    private var longY = 0.0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -60,6 +65,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
                 fusedLocationProvierClient.lastLocation.addOnCompleteListener { task ->
                     val location = task.result
+                    latX = location.latitude
+                    longY = location.longitude
                     if (location == null) {
                         val request = LocationRequest.create()
                             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -68,19 +75,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                         val locationCallback = object : LocationCallback() {
                             override fun onLocationResult(locationResult: LocationResult) {
                                 for (location in locationResult.locations) {
-                                    val latXlngY = GpsTransfer().convertGRID_GPS(0, location.latitude, location.longitude)
+                                    val latXlngY = GpsTransfer().convertGRID_GPS(
+                                        0,
+                                        location.latitude,
+                                        location.longitude
+                                    )
                                     viewModel.fetchWeater(latXlngY)
-                                    binding.textViewFragmentHomeLocation.text = getCurrentAddress(latXlngY)
                                     fusedLocationProvierClient.removeLocationUpdates(this)
                                 }
                             }
                         }
-                        fusedLocationProvierClient.requestLocationUpdates(request, locationCallback, null)
+                        fusedLocationProvierClient.requestLocationUpdates(
+                            request,
+                            locationCallback,
+                            null
+                        )
                     } else {
                         val latXlngY =
                             GpsTransfer().convertGRID_GPS(0, location.latitude, location.longitude)
                         viewModel.fetchWeater(latXlngY)
-                        binding.textViewFragmentHomeLocation.text = getCurrentAddress(latXlngY)
                     }
                 }
 
@@ -122,7 +135,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -166,11 +179,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun observe() {
+        viewModel.error
+            .onEach { errorMessage ->
+                Toast.makeText(
+                    requireContext(),
+                    errorMessage,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.UiState.collect {
                         setWeatherAnimation(it)
+                        val weatherData = it.weatherUI ?: emptyList()
+                        if (weatherData.isNotEmpty()) {
+                            val latXLngY = LatXLngY(
+                                lat = latX, lng = longY
+                            )
+                            binding.textViewFragmentHomeLocation.text = getCurrentAddress(latXLngY)
+                        }
                     }
                 }
             }
