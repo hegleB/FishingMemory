@@ -21,9 +21,12 @@ import com.qure.core.BaseFragment
 import com.qure.core.extensions.Empty
 import com.qure.core.extensions.Spacing
 import com.qure.core.extensions.getColorCompat
+import com.qure.core.util.FishingMemoryToast
 import com.qure.create.R
 import com.qure.create.databinding.FragmentLocationSettingBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 private const val ARG_PARAM1 = "param1"
@@ -149,6 +152,15 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
     }
 
     private fun observe() {
+        viewModel.error
+            .onEach { errorMessage ->
+                FishingMemoryToast().show(
+                    requireContext(),
+                    errorMessage,
+                )
+            }.launchIn(lifecycleScope)
+
+
         viewModel.getGeocoding(regionName ?: String.Empty)
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

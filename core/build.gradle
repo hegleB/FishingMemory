@@ -38,6 +38,9 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':core-design')
+    implementation project(path: ':build-property')
+
     implementation(jetpackDeps)
     implementation(coroutines)
 

@@ -12,9 +12,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -22,6 +25,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.qure.core.BaseActivity
+import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.create.databinding.ActivityMemoCreateBinding
 import com.qure.create.location.LocationSettingActivity
@@ -30,6 +34,8 @@ import com.qure.domain.entity.auth.*
 import com.qure.domain.entity.memo.*
 import com.qure.history.MemoCalendarDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
 
@@ -46,6 +52,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         listener = this
         initView()
         setDate()
+        observe()
     }
 
     private fun initView() {
@@ -95,6 +102,16 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             setContent(binding.editTextActivityMemoCreateContent.text.toString())
             createMemo()
         }
+    }
+
+    private fun observe() {
+        viewModel.error
+            .onEach { errorMessage ->
+                FishingMemoryToast().show(
+                    this,
+                    errorMessage,
+                )
+            }.launchIn(lifecycleScope)
     }
 
 

@@ -10,12 +10,14 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.*
 import com.qure.core.BaseFragment
+import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.core_design.custom.barchart.BarChartView
 import com.qure.domain.entity.weather.SkyState
@@ -181,13 +183,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun observe() {
         viewModel.error
             .onEach { errorMessage ->
-                Toast.makeText(
+                FishingMemoryToast().show(
                     requireContext(),
                     errorMessage,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
+                )
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

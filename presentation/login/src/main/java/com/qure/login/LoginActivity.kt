@@ -7,6 +7,7 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.qure.core.BaseActivity
+import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.login.databinding.ActivityLoginBinding
 import com.qure.login.extension.loginWithKakaoOrThrow
@@ -61,6 +62,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     }
 
     private fun observe() {
+        viewModel.error
+            .onEach { errorMessage ->
+                FishingMemoryToast().show(
+                    this,
+                    errorMessage,
+                )
+            }.launchIn(lifecycleScope)
+
         viewModel.action.onEach { action ->
             val intent = when(action) {
                 LoginViewModel.Action.AlreadySignUp -> {
