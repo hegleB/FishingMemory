@@ -4,7 +4,7 @@ import com.qure.domain.entity.auth.SignUpFields
 
 data class SignUpUserEntity(
     val name: String,
-    val signUpFields: SignUpFields,
+    val fields: SignUpFields,
     val createTime: String,
     val updateTime: String,
 )

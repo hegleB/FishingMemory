@@ -8,7 +8,7 @@ fun SignUpUserEntity.toSignUpUser(): SignUpUser {
 
     return SignUpUser(
         name = data.name,
-        fields = data.signUpFields,
+        fields = data.fields,
         createTime = data.createTime,
         updateTime = data.updateTime,
     )

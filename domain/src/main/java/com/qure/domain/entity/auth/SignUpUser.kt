@@ -7,6 +7,10 @@ data class SignUpUser(
     val updateTime: String,
 )
 
+data class SignUpFieldsEntity(
+    val fields: SignUpFields
+)
+
 data class SignUpFields(
     val email: Email,
     val token: Token,
