@@ -4,14 +4,12 @@ import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
 import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.domain.ACCESS_TOKEN_KEY
-import com.qure.domain.SHARED_PREFERNCE_KEY
 import com.qure.domain.entity.auth.SignUpUser
 import com.qure.domain.usecase.auth.CreateUserUseCase
 import com.qure.domain.usecase.auth.GetUserTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 

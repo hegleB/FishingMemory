@@ -1,10 +1,10 @@
 package com.qure.data.entity.auth
 
-import com.qure.domain.entity.auth.Fields
+import com.qure.domain.entity.auth.SignUpFields
 
 data class SignUpUserEntity(
     val name: String,
-    val fields: Fields,
+    val signUpFields: SignUpFields,
     val createTime: String,
     val updateTime: String,
 )

@@ -2,12 +2,12 @@ package com.qure.domain.entity.auth
 
 data class SignUpUser(
     val name: String,
-    val fields: Fields,
+    val fields: SignUpFields,
     val createTime: String,
     val updateTime: String,
 )
 
-data class Fields(
+data class SignUpFields(
     val email: Email,
     val token: Token,
 )
