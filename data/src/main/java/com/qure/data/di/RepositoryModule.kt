@@ -1,10 +1,7 @@
 package com.qure.data.di
 
 import com.qure.data.repository.*
-import com.qure.domain.repository.AuthRepository
-import com.qure.domain.repository.MapRepository
-import com.qure.domain.repository.OnboardingRepository
-import com.qure.domain.repository.WeatherRepository
+import com.qure.domain.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -38,4 +35,10 @@ abstract class RepositoryModule {
     abstract fun bindMapRepository(
         repository: MapRepositoryImpl,
     ): MapRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMemoRepository(
+        repository: MemoRepositoryImpl,
+    ): MemoRepository
 }

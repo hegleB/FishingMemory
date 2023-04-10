@@ -4,6 +4,7 @@ import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.data.datasource.auth.AuthRemoteDataSource
 import com.qure.data.mapper.toSignUpUser
 import com.qure.domain.ACCESS_TOKEN_KEY
+import com.qure.domain.SIGNED_UP_EMAIL
 import com.qure.domain.entity.auth.SignUpUser
 import com.qure.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
@@ -23,12 +24,24 @@ class AuthRepositoryImpl @Inject constructor(
         fishingMemorySharedPreference.putString(ACCESS_TOKEN_KEY, token)
     }
 
+    override fun saveEmailToLocal(email: String) {
+        fishingMemorySharedPreference.putString(SIGNED_UP_EMAIL, email)
+    }
+
     override fun removeTokenFromLocal() {
         fishingMemorySharedPreference.remove(ACCESS_TOKEN_KEY)
     }
 
+    override fun removeEmailFromLocal() {
+        fishingMemorySharedPreference.remove(SIGNED_UP_EMAIL)
+    }
+
     override fun getAccessTokenFromLocal(): String {
         return fishingMemorySharedPreference.getString(ACCESS_TOKEN_KEY)
+    }
+
+    override fun getEmailFromLocal(): String {
+        return fishingMemorySharedPreference.getString(SIGNED_UP_EMAIL)
     }
 
     override fun getSignedUpUser(email: String): Flow<Result<SignUpUser>> =

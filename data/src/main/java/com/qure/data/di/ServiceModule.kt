@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.data.api.AuthService
+import com.qure.data.api.MemoService
 import com.qure.data.api.NaverMapService
 import com.qure.data.api.WeatherService
 import com.qure.data.api.deserializer.LocalDateDeserializer
@@ -68,6 +69,12 @@ class ServiceModule {
     fun providesMapService(
         @Map retrofit: Retrofit,
     ): NaverMapService = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun providesMemoService(
+        @Auth retrofit: Retrofit,
+    ): MemoService = retrofit.create()
 
     @Singleton
     @Provides
