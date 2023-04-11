@@ -2,22 +2,26 @@ package com.qure.create
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ContentResolver
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -25,6 +29,8 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.qure.core.BaseActivity
+import com.qure.core.extensions.gone
+import com.qure.core.extensions.visiable
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.create.databinding.ActivityMemoCreateBinding
@@ -35,8 +41,13 @@ import com.qure.domain.entity.memo.*
 import com.qure.history.MemoCalendarDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.observeOn
 import kotlinx.coroutines.flow.onEach
-import timber.log.Timber
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.time.LocalDate
 
 
 @AndroidEntryPoint
@@ -44,6 +55,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     MemoCalendarDialogFragment.DatePickerListener {
 
     private val viewModel by viewModels<MemoViewModel>()
+    private var selectedImageUri: Uri? = null
 
     lateinit var listener: MemoCalendarDialogFragment.DatePickerListener
 
@@ -74,7 +86,8 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
         binding.buttonActivityMemoCreatePost.setOnSingleClickListener {
             saveMemo()
-            finish()
+            uploadImage()
+            viewModel.uploadMemoImage()
         }
 
         validateMemo()
@@ -89,6 +102,26 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         }
     }
 
+    private fun uploadImage() {
+        if (selectedImageUri == null) {
+            FishingMemoryToast().show(
+                this,
+                "이미지를 선택하지 않았습니다."
+            )
+            return
+        }
+
+        val parcelFileDescriptor = contentResolver.openFileDescriptor(
+            selectedImageUri!!, "r", null
+        ) ?: return
+
+        val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+        val file = File(cacheDir, contentResolver.getFileName(selectedImageUri!!))
+        val outputStream = FileOutputStream(file)
+        inputStream.copyTo(outputStream)
+        viewModel.setImage(file)
+    }
+
     private fun saveMemo() {
         val chipGroup = binding.chipGroupActivityMemoCreateType
         val selectedChipId = binding.chipGroupActivityMemoCreateType.checkedChipId
@@ -100,7 +133,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             setLocation(binding.textViewActivityMemoCreateLocationInfo.text.toString())
             setDate(binding.textViewActivityMemoCreateDate.text.toString())
             setContent(binding.editTextActivityMemoCreateContent.text.toString())
-            createMemo()
         }
     }
 
@@ -112,6 +144,22 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                     errorMessage,
                 )
             }.launchIn(lifecycleScope)
+
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.uiState.collect {
+                        when  {
+                            it.isUploadImage && !it.isSave -> binding.progressBarActivityMemo.visiable()
+                            it.isUploadImage && it.isSave -> finish()
+                            else -> binding.progressBarActivityMemo.gone()
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 
@@ -197,7 +245,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             val date = textViewActivityMemoCreateDate.text.toString()
             val isChecked = chipGroupActivityMemoCreateType.checkedChipId != View.NO_ID
             val hasImage = imageViewActivityMemoCreateFishImage.drawable != null
-            Timber.d("hasIamge ${hasImage}")
+
             buttonActivityMemoCreatePost.isEnabled =
                 title.isNotBlank() &&
                         fishSize.isNotBlank() &&
@@ -241,8 +289,11 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                     data.getStringExtra(ARG_AREA)
 
             requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null -> {
+                val data = data.data as Uri
+                selectedImageUri = data
+
                 Glide.with(this)
-                    .load(data.data as Uri)
+                    .load(data)
                     .transform(CenterCrop(), RoundedCorners(15))
                     .override(360, 360)
                     .into(binding.imageViewActivityMemoCreateFishImage)
@@ -259,6 +310,18 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         }
     }
 
+    private fun ContentResolver.getFileName(selectedImageUri: Uri): String {
+        var name = ""
+        val returnCursor = this.query(selectedImageUri, null, null, null, null, null)
+        if (returnCursor != null) {
+            val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            returnCursor.moveToFirst()
+            name = System.currentTimeMillis().toString() + returnCursor.getString(nameIndex)
+            returnCursor.close()
+        }
+        return name
+    }
+
     companion object {
         const val PERMISSION_REQUEST_CODE = 1000
         const val DEFAULT_GALLERY_REQUEST_CODE = 1002
@@ -266,3 +329,5 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         const val ARG_AREA_COORDS = "ARG_AREA_COORDS"
     }
 }
+
+

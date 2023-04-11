@@ -6,6 +6,7 @@ enum class BuildProperty(
     KAKAO_API_KEY("kakao native app key"),
     FIREBASE_DATABASE_PROJECT_ID("firebase 프로젝트 ID"),
     FIREBASE_DATABASE_URL("firebase 데이터베이스 주소"),
+    FIREBASE_STORAGE_URL("firebase storage 주소"),
     FIREBASE_API_KEY("firebase api key"),
     WEATHER_DATABASE_URL("weather 데이터베이스 주소"),
     WEATHER_API_KEY("weather api key"),

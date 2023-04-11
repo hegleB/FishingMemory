@@ -1,31 +1,41 @@
 package com.qure.create
 
 import androidx.lifecycle.viewModelScope
+import com.qure.build_property.BuildProperty
+import com.qure.build_property.BuildPropertyRepository
 import com.qure.core.BaseViewModel
 import com.qure.core.extensions.Empty
 import com.qure.domain.entity.auth.Email
 import com.qure.domain.entity.memo.*
 import com.qure.domain.repository.AuthRepository
-import com.qure.domain.usecase.auth.GetUserTokenUseCase
 import com.qure.domain.usecase.memo.CreateMemoUseCase
+import com.qure.domain.usecase.memo.UploadMemoImageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class MemoViewModel @Inject constructor(
     private val createMemoUseCase: CreateMemoUseCase,
+    private val uploadMemoImageUseCase: UploadMemoImageUseCase,
     private val authRepository: AuthRepository,
+    private val buildPropertyRepository: BuildPropertyRepository,
 ) : BaseViewModel() {
+
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState>
+        get() = _uiState
 
     private val _title = MutableStateFlow(String.Empty)
     val title: StateFlow<String>
         get() = _title
 
-    private val _image = MutableStateFlow(String.Empty)
-    val image: StateFlow<String>
+    private val _image = MutableStateFlow(File("/path/to/file"))
+    val image: StateFlow<File>
         get() = _image
 
     private val _fishType = MutableStateFlow(String.Empty)
@@ -48,11 +58,11 @@ class MemoViewModel @Inject constructor(
     val content: StateFlow<String>
         get() = _content
 
-    fun createMemo() {
+    fun createMemo(imageUrl: String) {
         val memo = MemoFields(
             email = Email(authRepository.getEmailFromLocal()),
             title = MemoTitle(title.value),
-            image = MemoImage(image.value),
+            image = MemoImage(imageUrl),
             fishType = FishType(fishType.value),
             location = MemoLocation(location.value),
             date = MemoDate(date.value),
@@ -61,12 +71,49 @@ class MemoViewModel @Inject constructor(
         )
         viewModelScope.launch {
             createMemoUseCase(memo).onSuccess {
-
+                _uiState.update {
+                    it.copy(
+                        isSave = true
+                    )
+                }
             }.onFailure { throwable ->
                 throwable as Exception
                 sendErrorMessage(throwable)
             }
         }
+    }
+
+    fun uploadMemoImage() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isUploadImage = true
+                )
+            }
+            uploadMemoImageUseCase(image.value)
+                .onSuccess { storage ->
+                    createMemo(getImageUrl(storage))
+                }.onFailure { throwable ->
+                    throwable is Exception
+                    sendErrorMessage(throwable)
+                    _uiState.update {
+                        it.copy(
+                            isUploadImage = false
+                        )
+                    }
+
+                }
+        }
+    }
+
+    private fun getImageUrl(storage: MemoStorage): String {
+        val fileName = storage.name.split("/").joinToString("%2F")
+        return buildPropertyRepository.get(BuildProperty.FIREBASE_STORAGE_URL) +
+                "o/${fileName}?alt=media&token=${storage.downloadTokens}"
+    }
+
+    fun setImage(image: File) {
+        _image.value = image
     }
 
     fun setTitle(title: String) {
@@ -93,3 +140,8 @@ class MemoViewModel @Inject constructor(
         _content.value = content
     }
 }
+
+data class UiState(
+    val isSave: Boolean = false,
+    val isUploadImage: Boolean = false,
+)

@@ -5,10 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
-import com.qure.data.api.AuthService
-import com.qure.data.api.MemoService
-import com.qure.data.api.NaverMapService
-import com.qure.data.api.WeatherService
+import com.qure.data.api.*
 import com.qure.data.api.deserializer.LocalDateDeserializer
 import com.qure.data.api.deserializer.LocalDateTimeDeserializer
 import com.qure.data.api.deserializer.LocalTimeDeserializer
@@ -52,6 +49,10 @@ class ServiceModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class Map
 
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class Storage
+
     @Provides
     @Singleton
     fun providesAuthService(
@@ -76,6 +77,12 @@ class ServiceModule {
         @Auth retrofit: Retrofit,
     ): MemoService = retrofit.create()
 
+    @Provides
+    @Singleton
+    fun providesStorageService(
+        @Storage retrofit: Retrofit,
+    ): StorageService = retrofit.create()
+
     @Singleton
     @Provides
     @Auth
@@ -96,6 +103,29 @@ class ServiceModule {
         return Retrofit.Builder()
             .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_URL))
             .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
+            .addCallAdapterFactory(resultCallAdapterFactory)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    @Storage
+    fun providesStorageRetrofit(
+        buildPropertyRepository: BuildPropertyRepository,
+        resultCallAdapterFactory: ResultCallAdapterFactory
+    ): Retrofit {
+        val gsonWithAdapter: Gson = GsonBuilder()
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
+            .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+            .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
+            .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+            .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
+            .create()
+
+        return Retrofit.Builder()
+            .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_STORAGE_URL))
             .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
             .addCallAdapterFactory(resultCallAdapterFactory)
             .build()

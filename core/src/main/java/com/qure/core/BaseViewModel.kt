@@ -10,11 +10,11 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel : ViewModel() {
 
-    private val _isLoading = MutableStateFlow(false)
+    protected val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean>
         get() = _isLoading
 
-    private val _error = MutableSharedFlow<String>()
+    protected val _error = MutableSharedFlow<String>()
     val error: SharedFlow<String>
         get() = _error
 
