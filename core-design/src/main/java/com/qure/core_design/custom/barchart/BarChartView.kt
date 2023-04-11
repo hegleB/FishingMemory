@@ -58,11 +58,12 @@ class BarChartView(
 
         val leftAxis = barChart.axisLeft
         leftAxis.apply {
-            setLabelCount(3)
+            setLabelCount(3, true)
             setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
             setDrawGridLines(false)
             spaceTop = 0f
             axisMinimum = 0f // this replaces setStartAtZero(true)
+            axisMaximum = values.max()
             textColor = ContextCompat.getColor(context, R.color.white)
             axisLineColor = ContextCompat.getColor(context, R.color.white)
             zeroLineColor = ContextCompat.getColor(context, R.color.white)
