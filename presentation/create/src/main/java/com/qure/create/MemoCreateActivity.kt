@@ -153,7 +153,13 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                     viewModel.uiState.collect {
                         when  {
                             it.isUploadImage && !it.isSave -> binding.progressBarActivityMemo.visiable()
-                            it.isUploadImage && it.isSave -> finish()
+                            it.isUploadImage && it.isSave -> {
+                                FishingMemoryToast().show(
+                                    this@MemoCreateActivity,
+                                    getString(R.string.toast_save_memo)
+                                )
+                                finish()
+                            }
                             else -> binding.progressBarActivityMemo.gone()
                         }
                     }
