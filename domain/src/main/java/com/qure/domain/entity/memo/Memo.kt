@@ -19,9 +19,11 @@ data class MemoFields(
     val image: MemoImage,
     val location: MemoLocation,
     val date: MemoDate,
+    val waterType: WaterType,
     val fishType: FishType,
     val fishSize: FishSize,
     val content: MemoContent,
+    val createTime: CreateTime = CreateTime(),
 )
 
 data class MemoTitle(
@@ -40,6 +42,10 @@ data class MemoDate(
     val stringValue: String,
 )
 
+data class WaterType(
+    val stringValue: String,
+)
+
 data class FishType(
     val stringValue: String,
 )
@@ -50,4 +56,8 @@ data class MemoContent(
 
 data class FishSize(
     val stringValue: String,
+)
+
+data class CreateTime(
+    val stringValue: String = System.currentTimeMillis().toString(),
 )

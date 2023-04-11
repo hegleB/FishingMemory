@@ -38,6 +38,10 @@ class MemoViewModel @Inject constructor(
     val image: StateFlow<File>
         get() = _image
 
+    private val _waterType = MutableStateFlow(String.Empty)
+    val waterType: StateFlow<String>
+        get() = _waterType
+
     private val _fishType = MutableStateFlow(String.Empty)
     val fishType: StateFlow<String>
         get() = _fishType
@@ -63,6 +67,7 @@ class MemoViewModel @Inject constructor(
             email = Email(authRepository.getEmailFromLocal()),
             title = MemoTitle(title.value),
             image = MemoImage(imageUrl),
+            waterType = WaterType(waterType.value),
             fishType = FishType(fishType.value),
             location = MemoLocation(location.value),
             date = MemoDate(date.value),
@@ -118,6 +123,10 @@ class MemoViewModel @Inject constructor(
 
     fun setTitle(title: String) {
         _title.value = title
+    }
+
+    fun setWaterType(watherType: String) {
+        _waterType.value = watherType
     }
 
     fun setFishType(fishType: String) {

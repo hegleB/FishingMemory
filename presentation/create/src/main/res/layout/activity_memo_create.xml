@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="30dp" />
+            app:layout_constraintGuide_begin="20dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_left"
@@ -53,7 +53,7 @@
             android:id="@+id/textView_activityMemoCreate_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="@string/title"
             android:textAppearance="@style/Typography.Title2"
             android:textSize="16sp"
@@ -83,7 +83,7 @@
             android:id="@+id/textView_activityMemoCreate_gallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="@string/image"
             android:textAppearance="@style/Typography.Title2"
             android:textSize="16sp"
@@ -215,16 +215,46 @@
             app:layout_constraintTop_toBottomOf="@+id/textView_activityMemoCreate_location" />
 
         <TextView
+            android:id="@+id/textView_activityMemoCreate_fishType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fish_type"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:textAppearance="@style/Typography.Title2"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/textView_activityMemoCreate_locationInfo"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"/>
+
+        <EditText
+            android:id="@+id/editText_activityMemoCreate_fishType"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:background="@drawable/bg_rect_gray100_outline_r10"
+            android:inputType="textNoSuggestions"
+            android:maxLines="1"
+            android:hint="@string/input_fishtype"
+            android:textAppearance="@style/Typography.SubTitle1"
+            android:textColorHint="@color/gray_100"
+            android:textCursorDrawable="@drawable/bg_cursor_black"
+            app:layout_constraintTop_toBottomOf="@id/textView_activityMemoCreate_fishType"
+            app:layout_constraintStart_toStartOf="@id/guideline_left"
+            app:layout_constraintEnd_toEndOf="@id/guideline_right"/>
+
+        <TextView
             android:id="@+id/textView_activityMemoCreate_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/content"
             android:textAppearance="@style/Typography.Title2"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@id/guideline_left"
-            app:layout_constraintTop_toBottomOf="@id/textView_activityMemoCreate_locationInfo" />
+            app:layout_constraintTop_toBottomOf="@id/editText_activityMemoCreate_fishType" />
 
         <EditText
             android:id="@+id/editText_activityMemoCreate_content"

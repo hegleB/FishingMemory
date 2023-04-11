@@ -8,11 +8,13 @@
     <string name="size">CM</string>
     <string name="location">위치</string>
     <string name="date">날짜</string>
+    <string name="fish_type">어종</string>
     <string name="content">내용</string>
     <string name="save">저장</string>
 
     <string name="input_title">제목을 입력해주세요</string>
     <string name="input_content">내용을 입력해주세요</string>
+    <string name="input_fishtype">어종을 입력해주세요</string>
 
     <string name="selection_do">시/도/별을 \n선택해주세요</string>
     <string name="do_name">시/도/별</string>

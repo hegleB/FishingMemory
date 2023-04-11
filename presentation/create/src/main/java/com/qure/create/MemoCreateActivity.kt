@@ -128,7 +128,8 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         val selectedChip: Chip = chipGroup.findViewById(selectedChipId)
         with(viewModel) {
             setTitle(binding.editTextActivityMemoCreateTitle.text.toString())
-            setFishType(selectedChip.text.toString())
+            setWaterType(selectedChip.text.toString())
+            setFishType(binding.editTextActivityMemoCreateFishType.text.toString())
             setFishSize(binding.editTextActivityMemoCreateFishSize.text.toString())
             setLocation(binding.textViewActivityMemoCreateLocationInfo.text.toString())
             setDate(binding.textViewActivityMemoCreateDate.text.toString())
@@ -230,6 +231,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         with(binding) {
             editTextActivityMemoCreateTitle.addTextChangedListener(textWatcher)
             editTextActivityMemoCreateFishSize.addTextChangedListener(textWatcher)
+            editTextActivityMemoCreateFishType.addTextChangedListener(textWatcher)
             textViewActivityMemoCreateLocationInfo.addTextChangedListener(textWatcher)
             textViewActivityMemoCreateDate.addTextChangedListener(textWatcher)
             imageViewActivityMemoCreateFishImage.addOnAttachStateChangeListener()
@@ -240,6 +242,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     private fun checkInputs() {
         with(binding) {
             val title = editTextActivityMemoCreateTitle.text.toString()
+            val fishType = editTextActivityMemoCreateFishType.text.toString()
             val fishSize = editTextActivityMemoCreateFishSize.text.toString()
             val locationInfo = textViewActivityMemoCreateLocationInfo.text.toString()
             val date = textViewActivityMemoCreateDate.text.toString()
@@ -248,6 +251,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
             buttonActivityMemoCreatePost.isEnabled =
                 title.isNotBlank() &&
+                        fishType.isNotBlank() &&
                         fishSize.isNotBlank() &&
                         locationInfo.isNotBlank() &&
                         date.isNotBlank() &&
