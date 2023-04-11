@@ -170,7 +170,10 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
                             moveMapCamera(it)
                         } else if (it.isReverseGeocodingInittialized) {
                             if (it.reverseGeocodingUI?.code == 0 && it.geocodingUI?.coords != String.Empty) {
-                                arealistener.setAreaName(it.reverseGeocodingUI.areaName, it.geocodingUI!!.coords)
+                                arealistener.setAreaName(
+                                    it.reverseGeocodingUI.areaName,
+                                    it.geocodingUI!!.coords
+                                )
                             }
                         }
                     }
@@ -179,7 +182,7 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
                 launch {
                     viewModel.uiEffect.collect {
                         if (it is UiEffect.ShowToastMessage) {
-                            Toast.makeText(requireContext(), it.resId, Toast.LENGTH_LONG).show()
+                            FishingMemoryToast().error(requireContext(), getString(it.resId))
                         }
                     }
                 }
