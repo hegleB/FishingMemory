@@ -1,5 +1,6 @@
 package com.qure.data.entity.memo
 
+import com.qure.domain.entity.memo.Document
 import com.qure.domain.entity.memo.MemoFieldsEntity
 
 data class MemoEntity(
@@ -7,4 +8,9 @@ data class MemoEntity(
     val MemoFields: MemoFieldsEntity,
     val createTime: String,
     val updateTime: String,
+)
+
+data class MemoQueryEntity(
+    val document: Document,
+    val readTime: String
 )

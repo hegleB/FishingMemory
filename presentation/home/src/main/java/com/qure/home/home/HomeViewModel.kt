@@ -1,17 +1,12 @@
 package com.qure.home.home
 
-import android.icu.util.LocaleData
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
-import com.qure.core.extensions.Empty
-import com.qure.domain.entity.weather.Item
-import com.qure.domain.entity.weather.Items
-import com.qure.domain.entity.weather.Weather
+import com.qure.domain.entity.memo.*
 import com.qure.domain.entity.weather.WeatherCategory
+import com.qure.domain.repository.AuthRepository
+import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
 import com.qure.domain.usecase.weather.GetWeatherUseCase
-import com.qure.home.R
 import com.qure.home.home.model.WeatherUI
 import com.qure.home.home.model.toWeatherUI
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,17 +14,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getWeatherUseCase: GetWeatherUseCase,
+    private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
+    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
     private val _UiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val UiState: StateFlow<UiState>
@@ -57,6 +51,43 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getFilteredMemo() {
+        viewModelScope.launch {
+            getFilteredMemoUseCase(
+                getStructuredQuery()
+            ).collect { response ->
+                response.onSuccess { result ->
+                    _UiState.update {
+                        it.copy(
+                            isFilterInitialized = true,
+                            filteredMemo = result
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getStructuredQuery(): MemoQuery {
+        val emailFilter = FieldFilter(
+            field = FieldPath(EMAIL),
+            op = EQUAL,
+            value = Value(authRepository.getEmailFromLocal())
+        )
+
+        val compositeFilter = CompositeFilter(
+            op = AND,
+            filters = listOf(Filter(emailFilter))
+        )
+
+        return MemoQuery(
+            StructuredQuery(
+                from = listOf(CollectionId(COLLECTION_ID)),
+                where = Where(compositeFilter)
+            )
+        )
+    }
+
     private fun getBaseTime(): String {
         val baseTime = "${String.format("%02d", LocalTime.now().hour - 1)}30"
         return baseTime
@@ -67,11 +98,20 @@ class HomeViewModel @Inject constructor(
         val baseDate = LocalDate.now().format(formatter).toInt()
         return baseDate
     }
+
+    companion object {
+        private const val EMAIL = "email"
+        private const val EQUAL = "EQUAL"
+        private const val AND = "AND"
+        private const val COLLECTION_ID = "memo"
+    }
 }
 
 data class UiState(
     val weatherUI: List<WeatherUI>? = null,
     val isWeatherInitialized: Boolean = false,
+    val isFilterInitialized: Boolean = false,
+    val filteredMemo: List<Memo> = emptyList(),
 ) {
 
     fun toTemperatureString(): String {

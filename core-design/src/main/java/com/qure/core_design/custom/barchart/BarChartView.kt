@@ -83,7 +83,7 @@ class BarChartView(
             form = Legend.LegendForm.NONE
             formSize = 9f
             textSize = 11f
-            xEntrySpace = 1f
+            xEntrySpace = 0f
         }
 
         setData(barChart)
@@ -104,7 +104,7 @@ class BarChartView(
 
         val barDataSet = BarDataSet(valueList, null)
         barDataSet.setColors(
-            resources.getColor(com.qure.core_design.R.color.blue_500),
+            resources.getColor(R.color.blue_500),
         )
         barDataSet.setDrawValues(false)
         barDataSet.isHighlightEnabled = true
@@ -121,7 +121,7 @@ class BarChartView(
             isDragXEnabled = true
             marker = CustomMarkerView(context, R.layout.custom_marker_view)
             setVisibleXRange(5f, 5f)
-            moveViewToX(1f)
+            moveViewToX(-1f)
             setFitBars(true)
             invalidate()
         }
