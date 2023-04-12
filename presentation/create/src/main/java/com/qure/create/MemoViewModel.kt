@@ -5,8 +5,9 @@ import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.core.BaseViewModel
 import com.qure.core.extensions.Empty
-import com.qure.domain.entity.auth.Email
-import com.qure.domain.entity.memo.*
+import com.qure.domain.entity.memo.FieldValue
+import com.qure.domain.entity.memo.MemoFields
+import com.qure.domain.entity.memo.MemoStorage
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.CreateMemoUseCase
 import com.qure.domain.usecase.memo.UploadMemoImageUseCase
@@ -64,15 +65,15 @@ class MemoViewModel @Inject constructor(
 
     fun createMemo(imageUrl: String) {
         val memo = MemoFields(
-            email = Email(authRepository.getEmailFromLocal()),
-            title = MemoTitle(title.value),
-            image = MemoImage(imageUrl),
-            waterType = WaterType(waterType.value),
-            fishType = FishType(fishType.value),
-            location = MemoLocation(location.value),
-            date = MemoDate(date.value),
-            fishSize = FishSize(fishSize.value),
-            content = MemoContent(content.value)
+            email = FieldValue(authRepository.getEmailFromLocal()),
+            title = FieldValue(title.value),
+            image = FieldValue(imageUrl),
+            waterType = FieldValue(waterType.value),
+            fishType = FieldValue(fishType.value),
+            location = FieldValue(location.value),
+            date = FieldValue(date.value),
+            fishSize = FieldValue(fishSize.value),
+            content = FieldValue(content.value)
         )
         viewModelScope.launch {
             createMemoUseCase(memo).onSuccess {
