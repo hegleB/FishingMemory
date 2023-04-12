@@ -44,14 +44,13 @@ class LocationRegionAdapter(val regionNames: Array<String>) :
     }
 
     override fun onBindViewHolder(holder: RegionViewHolder, position: Int) {
-        holder.binding.textViewItemRegionName.text = regionNames[position]
+        val regionName = regionNames[position]
+        val isSelected = selectedPostion == position
 
-        if (selectedPostion == position) {
-            holder.binding.imageViewItemRegionCheck.isSelected = true
-            holder.binding.textViewItemRegionName.isSelected = true
-        } else {
-            holder.binding.imageViewItemRegionCheck.isSelected = false
-            holder.binding.textViewItemRegionName.isSelected = false
+        with(holder.binding) {
+            textViewItemRegionName.text = regionName
+            imageViewItemRegionCheck.isSelected = isSelected
+            textViewItemRegionName.isSelected = isSelected
         }
     }
 
