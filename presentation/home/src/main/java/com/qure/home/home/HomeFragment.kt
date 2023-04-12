@@ -23,6 +23,7 @@ import com.qure.domain.entity.memo.MemoFields
 import com.qure.domain.entity.weather.SkyState
 import com.qure.home.R
 import com.qure.home.databinding.FragmentHomeBinding
+import com.qure.home.home.memo.MemoAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -34,6 +35,7 @@ import java.util.*
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val viewModel by viewModels<HomeViewModel>()
 
+    private val adapter: MemoAdapter by lazy { MemoAdapter() }
     private var memoFields: List<MemoFields> = listOf()
     private lateinit var fusedLocationProvierClient: FusedLocationProviderClient
     private var latX = 0.0
@@ -43,7 +45,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         observe()
         initView()
+        initRecyclerView()
         refreshWeather()
+    }
+
+    private fun initRecyclerView() {
+        binding.recyclerViewFragmentHomePost.adapter = adapter
     }
 
     private fun refreshWeather() {
@@ -215,6 +222,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 }
             }
             uiState.isFilterInitialized -> {
+                adapter.submitList(uiState.filteredMemo)
                 memoFields = uiState.filteredMemo.map { it.fields!!.fields }
                 initBarChart(R.id.chip_fragmentHome_fishType)
             }

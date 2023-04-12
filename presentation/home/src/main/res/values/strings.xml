@@ -9,5 +9,6 @@
     <string name="place">장소</string>
     <string name="weather">날씨</string>
     <string name="writhing">기록한 글</string>
+    <string name="memo_more">더보기</string>
     
 </resources>

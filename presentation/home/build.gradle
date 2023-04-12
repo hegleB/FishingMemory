@@ -61,6 +61,10 @@ dependencies {
 
     implementation deps.timber
 
+    implementation deps.glide.core
+    implementation deps.glide.okhttp
+    kapt deps.glide.compiler
+
     testImplementation(testDeps)
     androidTestImplementation(androidTestDeps)
 }

@@ -52,8 +52,8 @@ class BarChartView(
             granularity = 1f // only intervals of 1 day
             yOffset = 15f
             textSize = 12f
-            textColor = ContextCompat.getColor(context, R.color.white)
-            axisLineColor = ContextCompat.getColor(context, R.color.white)
+            textColor = ContextCompat.getColor(context, R.color.gray_700)
+            axisLineColor = ContextCompat.getColor(context, R.color.gray_700)
         }
 
         val leftAxis = barChart.axisLeft
@@ -64,9 +64,9 @@ class BarChartView(
             spaceTop = 0f
             axisMinimum = 0f // this replaces setStartAtZero(true)
             axisMaximum = values.max()
-            textColor = ContextCompat.getColor(context, R.color.white)
-            axisLineColor = ContextCompat.getColor(context, R.color.white)
-            zeroLineColor = ContextCompat.getColor(context, R.color.white)
+            textColor = ContextCompat.getColor(context, R.color.gray_700)
+            axisLineColor = ContextCompat.getColor(context, R.color.gray_700)
+            zeroLineColor = ContextCompat.getColor(context, R.color.gray_700)
             textSize = 12f
             xOffset = 15f
         }
