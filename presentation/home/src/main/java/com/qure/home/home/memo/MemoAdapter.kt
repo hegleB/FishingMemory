@@ -27,6 +27,10 @@ class MemoAdapter(
         holder.bind(getItem(position))
     }
 
+    override fun getItemCount(): Int {
+        return minOf(super.getItemCount(), 5)
+    }
+
     inner class MemoViewHoler(val binding: ItemMemoBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Memo) {
             val field = item.fields!!.fields
