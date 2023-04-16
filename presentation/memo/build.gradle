@@ -3,11 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id "kotlin-kapt"
     id 'dagger.hilt.android.plugin'
-//    id 'com.google.gms.google-services'
 }
 
 android {
-    namespace 'com.qure.home'
+    namespace 'com.qure.memo'
     compileSdk 33
 
     defaultConfig {
@@ -42,13 +41,14 @@ dependencies {
     implementation project(path:':core')
     implementation project(path:':navigator')
     implementation project(path:':domain')
-    implementation project(path:':presentation:history')
-    implementation project(path:':presentation:memo')
 
     implementation(jetpackDeps)
     implementation(coroutines)
 
     implementation deps.hilt.core
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     kapt deps.hilt.compiler
 
     implementation(splashDeps)

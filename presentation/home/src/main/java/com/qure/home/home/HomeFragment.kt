@@ -24,15 +24,21 @@ import com.qure.domain.entity.weather.SkyState
 import com.qure.home.R
 import com.qure.home.databinding.FragmentHomeBinding
 import com.qure.home.home.memo.MemoAdapter
+import com.qure.navigator.MemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+
+    @Inject
+    lateinit var memoNavigator: MemoNavigator
+
     private val viewModel by viewModels<HomeViewModel>()
 
     private val adapter: MemoAdapter by lazy { MemoAdapter() }
@@ -173,6 +179,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding.imageViewFragmentHomeRefresh.setOnSingleClickListener {
             refreshWeather()
+        }
+
+        binding.textViewFragmentHomeMemoMore.setOnSingleClickListener {
+            startActivity(memoNavigator.intent(requireContext()))
         }
     }
 
