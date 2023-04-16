@@ -25,7 +25,7 @@ class MemoListAdapter() : ListAdapter<Memo, MemoListAdapter.MemoViewHoler>(DIFF_
     }
 
     override fun getItemCount(): Int {
-        return minOf(super.getItemCount(), ITEM_COUNT)
+        return super.getItemCount()
     }
 
     inner class MemoViewHoler(val binding: ItemMemoListBinding): RecyclerView.ViewHolder(binding.root) {
