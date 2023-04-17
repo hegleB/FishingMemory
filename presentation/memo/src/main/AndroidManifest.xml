@@ -2,13 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.qure.presentation.memo">
 
-    <application>
-        <activity
-            android:name=".DetailMemoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MemoListActivity"
-            android:exported="false" />
-    </application>
+    <queries>
+        <package android:name="com.kakao.talk" />
+    </queries>
 
 </manifest>

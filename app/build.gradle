@@ -43,10 +43,12 @@ android {
 
             manifestPlaceholders = [
                     KAKAO_API_KEY: properties.getProperty('kakao_api_key'),
-                    NAVER_MAP_API_CLIENT_ID: properties.getProperty('naver_map_api_client_id')
+                    NAVER_MAP_API_CLIENT_ID: properties.getProperty('naver_map_api_client_id'),
+                    KAKAO_NATIVE_APP_KEY: properties.getProperty('kakao_native_app_key')
             ]
 
             buildConfigField 'String', 'KAKAO_API_KEY', "\"${properties.getProperty('kakao_api_key')}\""
+            buildConfigField 'String', 'KAKAO_NATIVE_APP_KEY', "\"${properties.getProperty('kakao_native_app_key')}\""
             buildConfigField 'String', 'FIREBASE_API_KEY', "\"${properties.getProperty('firebase_api_key')}\""
             buildConfigField 'String', 'FIREBASE_DATABASE_URL', "\"${properties.getProperty('firebase_database_url')}\""
             buildConfigField 'String', 'FIREBASE_STORAGE_URL', "\"${properties.getProperty('firebase_storage_url')}\""
@@ -98,7 +100,7 @@ dependencies {
 
     implementation deps.timber
 
-    implementation(loginDeps)
+    implementation(kakaoDeps)
 
     implementation platform(deps.firebase.bom)
 

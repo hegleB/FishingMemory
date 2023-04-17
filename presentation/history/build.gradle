@@ -52,7 +52,7 @@ dependencies {
     implementation(splashDeps)
     implementation(lottieDeps)
 
-    implementation(loginDeps)
+    implementation(kakaoDeps)
 
     implementation(locationDeps)
 
