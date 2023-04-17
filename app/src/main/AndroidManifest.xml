@@ -26,6 +26,9 @@
             android:name="com.qure.memo.MemoListActivity"
             android:exported="false" />
         <activity
+            android:name="com.qure.memo.detail.DetailMemoActivity"
+            android:exported="false" />
+        <activity
             android:name="com.qure.create.location.LocationSettingActivity"
             android:exported="false" />
         <activity

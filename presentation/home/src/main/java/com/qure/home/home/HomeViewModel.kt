@@ -9,6 +9,8 @@ import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
 import com.qure.domain.usecase.weather.GetWeatherUseCase
 import com.qure.home.home.model.WeatherUI
 import com.qure.home.home.model.toWeatherUI
+import com.qure.memo.model.MemoUI
+import com.qure.memo.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,7 +62,7 @@ class HomeViewModel @Inject constructor(
                     _UiState.update {
                         it.copy(
                             isFilterInitialized = true,
-                            filteredMemo = result
+                            filteredMemo = result.map { it.toMemoUI() }
                         )
                     }
                 }
@@ -111,7 +113,7 @@ data class UiState(
     val weatherUI: List<WeatherUI>? = null,
     val isWeatherInitialized: Boolean = false,
     val isFilterInitialized: Boolean = false,
-    val filteredMemo: List<Memo> = emptyList(),
+    val filteredMemo: List<MemoUI> = emptyList(),
 ) {
 
     fun toTemperatureString(): String {

@@ -19,11 +19,13 @@ import com.qure.core.extensions.Spacing
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.core_design.custom.barchart.BarChartView
-import com.qure.domain.entity.memo.MemoFields
 import com.qure.domain.entity.weather.SkyState
 import com.qure.home.R
 import com.qure.home.databinding.FragmentHomeBinding
 import com.qure.home.home.memo.MemoAdapter
+import com.qure.memo.detail.DetailMemoActivity
+import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
+import com.qure.memo.model.MemoUI
 import com.qure.navigator.MemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -40,13 +42,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     lateinit var memoNavigator: MemoNavigator
 
     private val viewModel by viewModels<HomeViewModel>()
+    private var memos: List<MemoUI> = emptyList()
 
-    private val adapter: MemoAdapter by lazy { MemoAdapter() }
-    private var memoFields: List<MemoFields> = listOf()
+    private val adapter: MemoAdapter by lazy {
+        MemoAdapter(
+            onMemoClick = { memo ->
+                val intent = Intent(requireActivity(), DetailMemoActivity::class.java)
+                intent.putExtra(MEMO_DATA, memo)
+                startActivity(intent)
+
+            }
+        )
+    }
+    private var memoFields: List<MemoUI> = emptyList()
     private lateinit var fusedLocationProvierClient: FusedLocationProviderClient
     private var latX = 0.0
     private var longY = 0.0
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observe()
@@ -188,9 +199,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun initBarChart(checkedId: Int) {
         val chartData = when (checkedId) {
-            R.id.chip_fragmentHome_fishType -> memoFields.map { it.fishType.stringValue }
-            R.id.chip_fragmentHome_fishSize -> memoFields.map { it.fishSize.stringValue }
-            else -> memoFields.map { it.location.stringValue.split(String.Spacing)[1] }
+            R.id.chip_fragmentHome_fishType -> memoFields.map { it.fishType }
+            R.id.chip_fragmentHome_fishSize -> memoFields.map { it.fishSize }
+            else -> memoFields.map { it.location.split(String.Spacing)[1] }
         }
         BarChartView(
             requireContext(),
@@ -233,12 +244,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
             uiState.isFilterInitialized -> {
                 adapter.submitList(uiState.filteredMemo)
-                memoFields = uiState.filteredMemo.map { it.fields!!.fields }
+                memos = uiState.filteredMemo
+                memoFields = uiState.filteredMemo
                 initBarChart(R.id.chip_fragmentHome_fishType)
             }
         }
     }
-
     private fun <T> countElements(list: List<T>): Map<T, Float> {
         val map = mutableMapOf<T, Float>()
         for (element in list) {

@@ -3,17 +3,15 @@ package com.qure.memo
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
 import com.qure.domain.entity.memo.*
-import com.qure.domain.entity.weather.WeatherCategory
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
+import com.qure.memo.model.MemoUI
+import com.qure.memo.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,7 +33,7 @@ class MemoListViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isFilterInitialized = true,
-                            filteredMemo = result
+                            filteredMemo = result.map { it.toMemoUI() }
                         )
                     }
                 }.onFailure { throwable ->
@@ -75,5 +73,5 @@ class MemoListViewModel @Inject constructor(
 
 data class UiState(
     val isFilterInitialized: Boolean = false,
-    val filteredMemo: List<Memo> = emptyList(),
+    val filteredMemo: List<MemoUI> = emptyList(),
 )

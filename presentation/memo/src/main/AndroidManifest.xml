@@ -4,6 +4,9 @@
 
     <application>
         <activity
+            android:name=".DetailMemoActivity"
+            android:exported="false" />
+        <activity
             android:name=".MemoListActivity"
             android:exported="false" />
     </application>
