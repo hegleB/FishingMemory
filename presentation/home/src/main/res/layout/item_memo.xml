@@ -10,9 +10,14 @@
         android:layout_width="300dp"
         android:layout_height="100dp"
         android:layout_marginVertical="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/bg_rect_gray100_outline_r10">
+        android:layout_marginRight="10dp">
 
+<!--        <View-->
+<!--            android:layout_width="1dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:background="@color/gray_700"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"/>-->
 
         <ImageView
             android:id="@+id/imageView_itemMemo_fish"
@@ -41,9 +46,10 @@
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right|top"
-            android:background="@drawable/bg_rect_gray600_rt_r10_lb_r10"
+            android:background="@drawable/bg_rect_gray700_r15"
             android:ellipsize="end"
             android:gravity="center"
+            android:layout_marginEnd="10dp"
             android:maxLines="1"
             android:text="미꾸라지"
             android:textAppearance="@style/Typography.Paragraph3"
