@@ -5,10 +5,13 @@ import com.qure.core.BaseViewModel
 import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.domain.ACCESS_TOKEN_KEY
 import com.qure.domain.entity.auth.SignUpUser
+import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.auth.CreateUserUseCase
 import com.qure.domain.usecase.auth.GetUserTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,6 +21,7 @@ class LoginViewModel @Inject constructor(
     private val createUserUseCase: CreateUserUseCase,
     private val getUserTokenUseCase: GetUserTokenUseCase,
     private val fishingSharedPreference: FishMemorySharedPreference,
+    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
 
     private val _action = MutableSharedFlow<Action>()
@@ -51,6 +55,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun saveToLocalSignedUpUser(email: String) = viewModelScope.launch {
+        authRepository.saveEmailToLocal(email)
         getUserTokenUseCase(email = email).collect { response ->
             response.onSuccess { user ->
                 fishingSharedPreference.putString(ACCESS_TOKEN_KEY, user.fields.token.stringValue)
