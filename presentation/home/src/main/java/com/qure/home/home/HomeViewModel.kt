@@ -65,6 +65,8 @@ class HomeViewModel @Inject constructor(
                             filteredMemo = result.map { it.toMemoUI() }
                         )
                     }
+                }.onFailure { throwable ->
+                    sendErrorMessage(throwable)
                 }
             }
         }

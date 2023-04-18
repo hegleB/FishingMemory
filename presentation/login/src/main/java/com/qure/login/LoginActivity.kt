@@ -64,7 +64,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
     private fun observe() {
         viewModel.error
             .onEach { errorMessage ->
-                FishingMemoryToast().show(
+                FishingMemoryToast().error(
                     this,
                     errorMessage,
                 )
