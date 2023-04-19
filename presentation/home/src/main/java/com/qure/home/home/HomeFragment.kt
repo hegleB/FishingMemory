@@ -26,6 +26,7 @@ import com.qure.home.home.memo.MemoAdapter
 import com.qure.memo.detail.DetailMemoActivity
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.memo.model.MemoUI
+import com.qure.navigator.DetailMemoNavigator
 import com.qure.navigator.MemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -41,13 +42,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     @Inject
     lateinit var memoNavigator: MemoNavigator
 
+    @Inject
+    lateinit var detailMemoNavigator: DetailMemoNavigator
+
     private val viewModel by viewModels<HomeViewModel>()
     private var memos: List<MemoUI> = emptyList()
 
     private val adapter: MemoAdapter by lazy {
         MemoAdapter(
             onMemoClick = { memo ->
-                val intent = Intent(requireActivity(), DetailMemoActivity::class.java)
+                val intent = detailMemoNavigator.intent(requireContext())
                 intent.putExtra(MEMO_DATA, memo)
                 startActivity(intent)
 

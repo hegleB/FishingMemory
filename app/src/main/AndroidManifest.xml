@@ -37,8 +37,21 @@
             android:exported="false" />
         <activity
             android:name="com.qure.memo.detail.DetailMemoActivity"
-            android:parentActivityName="com.qure.home.MainActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name="com.qure.create.location.LocationSettingActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.qure.onboarding.OnboardingActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.qure.login.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.qure.home.MainActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -67,18 +80,6 @@
                     android:scheme="http" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.qure.create.location.LocationSettingActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.qure.onboarding.OnboardingActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.qure.login.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name="com.qure.home.MainActivity"
-            android:exported="false"/>
         <activity
             android:name="com.qure.splash.SplashActivity"
             android:exported="true"

@@ -14,20 +14,25 @@ import com.qure.memo.databinding.ActivityMemoListBinding
 import com.qure.memo.detail.DetailMemoActivity
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.memo.model.MemoUI
+import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MemoListActivity : BaseActivity<ActivityMemoListBinding>(R.layout.activity_memo_list) {
+
+    @Inject
+    lateinit var detailMemoNavigator: DetailMemoNavigator
 
     private val viewModel by viewModels<MemoListViewModel>()
 
     private val adapter: MemoListAdapter by lazy {
         MemoListAdapter(
             onMemoClick = { memo ->
-                val intent = Intent(this@MemoListActivity, DetailMemoActivity::class.java)
+                val intent = detailMemoNavigator.intent(this)
                 intent.putExtra(MEMO_DATA, memo)
                 startActivity(intent)
             }

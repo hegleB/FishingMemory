@@ -54,7 +54,7 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
         }
     }
 
-    private fun createMemoUI(uri: Uri): MemoUI {
+    fun createMemoUI(uri: Uri): MemoUI {
         return MemoUI(
             title = uri.getQueryParameter(QUERY_TITLE) ?: String.Empty,
             waterType = uri.getQueryParameter(QUERY_WATER_TYPE) ?: String.Empty,
