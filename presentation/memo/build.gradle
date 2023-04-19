@@ -57,6 +57,9 @@ dependencies {
 
     implementation(kakaoDeps)
 
+    implementation(firebaseDeps)
+    implementation platform(deps.firebase.bom)
+
     implementation(chartDeps)
 
     implementation(locationDeps)
