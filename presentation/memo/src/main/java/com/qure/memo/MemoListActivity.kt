@@ -13,6 +13,7 @@ import com.qure.core.util.setOnSingleClickListener
 import com.qure.memo.databinding.ActivityMemoListBinding
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.navigator.DetailMemoNavigator
+import com.qure.navigator.MemoCreateNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -24,6 +25,9 @@ class MemoListActivity : BaseActivity<ActivityMemoListBinding>(R.layout.activity
 
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
+
+    @Inject
+    lateinit var memoCreateNavigator: MemoCreateNavigator
 
     private val viewModel by viewModels<MemoListViewModel>()
 
@@ -52,6 +56,10 @@ class MemoListActivity : BaseActivity<ActivityMemoListBinding>(R.layout.activity
 
         binding.lottieAnimationActivityMemoListFishing.apply {
             setAnimation(R.raw.fishing)
+        }
+
+        binding.imageViewActivityMemoListAdd.setOnSingleClickListener {
+            startActivity(memoCreateNavigator.intent(this))
         }
     }
     private fun observe() {

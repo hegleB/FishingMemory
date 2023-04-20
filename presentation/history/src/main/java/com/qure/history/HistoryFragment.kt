@@ -9,6 +9,7 @@ import com.qure.core.BaseFragment
 import com.qure.create.MemoCreateActivity
 import com.qure.history.databinding.FragmentHistoryBinding
 import com.qure.history.view.DayBind
+import com.qure.navigator.MemoCreateNavigator
 import com.qure.navigator.MemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
@@ -16,11 +17,15 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.WeekFields
 import java.util.*
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_history),
     YearPickerDialogFragment.YearDialogListner {
+
+    @Inject
+    lateinit var memoCreateNavigator: MemoCreateNavigator
 
     private lateinit var firstMonth: YearMonth
     private lateinit var firstDayOfWeek: DayOfWeek
@@ -95,8 +100,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
 
     private fun moveMemoCreate() {
         binding.floatingActionButtonFragmentHistoryPostWriting.setOnClickListener {
-            val intent = Intent(requireActivity(), MemoCreateActivity::class.java)
-            startActivity(intent)
+            startActivity(memoCreateNavigator.intent(requireContext()))
         }
     }
 
