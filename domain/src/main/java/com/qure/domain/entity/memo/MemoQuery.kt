@@ -6,7 +6,8 @@ data class MemoQuery(
 
 data class StructuredQuery(
     val from: List<CollectionId>,
-    val where: Where
+    val orderBy: List<OrderBy>,
+    val where: Where,
 )
 
 data class CollectionId(
@@ -15,6 +16,11 @@ data class CollectionId(
 
 data class Where(
     val compositeFilter: CompositeFilter
+)
+
+data class OrderBy(
+    val field: FieldPath,
+    val direction: String,
 )
 
 data class CompositeFilter(

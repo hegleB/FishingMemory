@@ -58,13 +58,16 @@ class MemoListViewModel @Inject constructor(
         return MemoQuery(
             StructuredQuery(
                 from = listOf(CollectionId(COLLECTION_ID)),
-                where = Where(compositeFilter)
+                where = Where(compositeFilter),
+                orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING))
             )
         )
     }
 
     companion object {
         private const val EMAIL = "email"
+        private const val DATE = "date"
+        private const val DESCENDING = "DESCENDING"
         private const val EQUAL = "EQUAL"
         private const val AND = "AND"
         private const val COLLECTION_ID = "memo"
