@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_share"
-        android:title="@string/menu_share"/>
+        android:title="@string/share"/>
 
     <item  android:id="@+id/menu_edit"
-        android:title="@string/menu_edit"/>
+        android:title="@string/edit"/>
 
     <item android:id="@+id/menu_delete"
-        android:title="@string/menu_delete"/>
+        android:title="@string/delete"/>
 </menu>

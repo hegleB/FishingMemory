@@ -1,9 +1,13 @@
 <resources>
-    <string name="menu_share">공유</string>
-    <string name="menu_edit">수정</string>
-    <string name="menu_delete">삭제</string>
+    <string name="share">공유</string>
+    <string name="edit">수정</string>
+    <string name="delete">삭제</string>
+    <string name="cancel">취소</string>
 
     <string name="empty_memo_title">작성된 메모가 없어요</string>
     <string name="empty_memo_description">잡은 물고기를 기록해보세요</string>
+
+    <string name="delete_memo_title">메모를 삭제하시겠어요?</string>
+    <string name="delete_memo_description">이 작업은 연관된 \n모든 데이터를 삭제합니다.</string>
 
 </resources>

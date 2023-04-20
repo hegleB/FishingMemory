@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="30dp"
+        tools:context=".delete.DeleteDialogFragment">
+
+        <ImageView
+            android:id="@+id/imageView_fragmentDialogDelete"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/bg_oval_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView_fragmentDialogDelete_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/delete_memo_title"
+            android:textAppearance="@style/Typography.Title1"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@id/imageView_fragmentDialogDelete"
+            app:layout_constraintStart_toStartOf="@id/imageView_fragmentDialogDelete"
+            app:layout_constraintTop_toBottomOf="@id/imageView_fragmentDialogDelete" />
+
+        <TextView
+            android:id="@+id/textView_fragmentDialogDelete_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="@string/delete_memo_description"
+            android:textAppearance="@style/Typography.Paragraph1"
+            app:layout_constraintTop_toBottomOf="@id/textView_fragmentDialogDelete_title"
+            app:layout_constraintStart_toStartOf="@id/textView_fragmentDialogDelete_title"
+            app:layout_constraintEnd_toEndOf="@id/textView_fragmentDialogDelete_title"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_fragmentDialogDelete_description">
+
+            <TextView
+                android:id="@+id/button_fragmentDialogDelete_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:elevation="0dp"
+                android:gravity="center"
+                android:text="@string/cancel"
+                android:layout_marginEnd="5dp"
+                android:textAppearance="@style/Typography.Title2" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_fragmentDialogDelete_delete"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_rect_blue600_r5"
+                android:gravity="center"
+                android:text="@string/delete"
+                android:layout_marginStart="5dp"
+                android:elevation="0dp"
+                android:textAppearance="@style/Typography.Title2"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

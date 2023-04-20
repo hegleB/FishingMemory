@@ -8,6 +8,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -26,15 +31,21 @@ import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.memo.R
 import com.qure.memo.databinding.ActivityDetailMemoBinding
+import com.qure.memo.delete.DeleteDialogFragment
 import com.qure.memo.model.MemoUI
 import com.qure.memo.share.KakaoLinkSender
 import com.qure.memo.share.ShareDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
 class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.activity_detail_memo) {
 
+    private val viewModel by viewModels<DetailMemoViewModel>()
     private var memo: MemoUI = MemoUI()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +53,13 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
 
         initData()
         initView()
+        observe()
+    }
 
+    private fun observe() {
+        viewModel.error
+            .onEach { errorMessage -> FishingMemoryToast().error(this, errorMessage) }
+            .launchIn(lifecycleScope)
     }
 
     private fun initData() {
@@ -102,7 +119,11 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
                     true
                 }
                 R.id.menu_delete -> {
-
+                    DeleteDialogFragment.newInstance(memo.uuid)
+                        .show(
+                            this.supportFragmentManager,
+                            DeleteDialogFragment.TAG
+                        )
                     true
                 }
                 R.id.menu_edit -> {

@@ -26,4 +26,11 @@ class MemoRemoteDataSourceImpl @Inject constructor(
             memoQuery
         )
     }
+
+    override suspend fun deleteMemo(uuid: String): Result<Unit> {
+        return memoService.deleteMemo(
+            buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
+            uuid
+        )
+    }
 }
