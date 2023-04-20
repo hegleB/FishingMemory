@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">memo</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_share">공유</string>
+    <string name="menu_edit">수정</string>
+    <string name="menu_delete">삭제</string>
 </resources>

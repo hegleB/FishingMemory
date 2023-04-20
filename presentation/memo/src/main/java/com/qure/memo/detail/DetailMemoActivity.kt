@@ -4,6 +4,10 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.PopupMenu
 import com.bumptech.glide.Glide
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
@@ -44,7 +48,7 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
     private fun initData() {
         if (Intent.ACTION_VIEW == intent.action) {
             val uri = intent.data
-            binding.imageViewActivityDetailMemoShare.gone()
+            binding.imageViewActivityDetailMemoMore.gone()
             if (uri != null) {
                 memo = createMemoUI(uri)
 
@@ -77,13 +81,40 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
                 finish()
             }
 
-            imageViewActivityDetailMemoShare.setOnSingleClickListener {
-                ShareDialogFragment.newInstance(memo)
-                    .show(this@DetailMemoActivity.supportFragmentManager, ShareDialogFragment.TAG)
+            imageViewActivityDetailMemoMore.setOnSingleClickListener {
+                showPopUp(it)
             }
         }
 
     }
+
+    private fun showPopUp(view: View) {
+        val popup = PopupMenu(this, view)
+        popup.inflate(R.menu.menu_detail_memo)
+        popup.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_share -> {
+                    ShareDialogFragment.newInstance(memo)
+                        .show(
+                            this.supportFragmentManager,
+                            ShareDialogFragment.TAG
+                        )
+                    true
+                }
+                R.id.menu_delete -> {
+
+                    true
+                }
+                R.id.menu_edit -> {
+
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
 
     private fun ActivityDetailMemoBinding.setMemoView() {
         textViewActivityDetailMemoFishNameHeadline.text = memo.fishType
