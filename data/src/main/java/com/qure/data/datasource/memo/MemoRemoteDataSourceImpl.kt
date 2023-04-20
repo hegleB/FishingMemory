@@ -15,6 +15,7 @@ class MemoRemoteDataSourceImpl @Inject constructor(
     override suspend fun postMemo(memoFields: MemoFields): Result<MemoEntity> {
         return memoService.postMemo(
             buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
+            memoFields.uuid.stringValue,
             MemoFieldsEntity(memoFields)
         )
     }

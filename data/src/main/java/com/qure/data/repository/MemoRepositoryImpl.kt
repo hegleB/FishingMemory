@@ -2,15 +2,14 @@ package com.qure.data.repository
 
 import com.qure.data.datasource.memo.MemoRemoteDataSource
 import com.qure.data.datasource.memo.MemoStorageRemoteDataSource
+import com.qure.data.entity.memo.MemoQueryEntity
 import com.qure.data.mapper.toMemo
 import com.qure.data.mapper.toMemoStorage
-import com.qure.domain.entity.memo.Memo
-import com.qure.domain.entity.memo.MemoFields
-import com.qure.domain.entity.memo.MemoQuery
-import com.qure.domain.entity.memo.MemoStorage
+import com.qure.domain.entity.memo.*
 import com.qure.domain.repository.MemoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -31,7 +30,12 @@ class MemoRepositoryImpl @Inject constructor(
         return flow {
             memoRemoteDataSource.postMemoQuery(memoQuery)
                 .onSuccess { memo ->
-                    emit(Result.success(memo.map { it.toMemo() }))
+                    val emptyMemoQueryEntity = memo.filter { it.document == null}
+                    if (emptyMemoQueryEntity.isNotEmpty()) {
+                        emit(Result.success(emptyList()))
+                    } else {
+                        emit(Result.success(memo.map { it.toMemo() }))
+                    }
                 }
                 .onFailure { throwable ->
                     emit(Result.failure(throwable))

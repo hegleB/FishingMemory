@@ -1,19 +1,17 @@
 package com.qure.memo
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.qure.core.BaseActivity
+import com.qure.core.extensions.gone
+import com.qure.core.extensions.visiable
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.memo.databinding.ActivityMemoListBinding
-import com.qure.memo.detail.DetailMemoActivity
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
-import com.qure.memo.model.MemoUI
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -51,8 +49,11 @@ class MemoListActivity : BaseActivity<ActivityMemoListBinding>(R.layout.activity
         binding.imageViewActivityMemoListBack.setOnSingleClickListener {
             finish()
         }
-    }
 
+        binding.lottieAnimationActivityMemoListFishing.apply {
+            setAnimation(R.raw.fishing)
+        }
+    }
     private fun observe() {
         viewModel.error
             .onEach { errorMessage -> FishingMemoryToast().error(this, errorMessage) }
@@ -62,10 +63,27 @@ class MemoListActivity : BaseActivity<ActivityMemoListBinding>(R.layout.activity
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.uiState.collect {
-                        adapter.submitList(it.filteredMemo)
+                        handleUiState(it)
                     }
                 }
             }
+        }
+    }
+
+    private fun handleUiState(uidState: UiState) {
+        if (uidState.isFilterInitialized) {
+            setViewVisiable(uidState)
+        }
+    }
+
+    private fun setViewVisiable(uidState: UiState){
+        if (uidState.filteredMemo.isEmpty()) {
+            binding.groupActivityMemoListEmpty.visiable()
+            binding.recyclerViewActiviryMemoList.gone()
+        } else {
+            binding.groupActivityMemoListEmpty.gone()
+            binding.recyclerViewActiviryMemoList.visiable()
+            adapter.submitList(uidState.filteredMemo)
         }
     }
 

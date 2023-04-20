@@ -10,5 +10,8 @@
     <string name="weather">날씨</string>
     <string name="writhing">기록한 글</string>
     <string name="memo_more">더보기</string>
+
+    <string name="no_fish_caught">잡은 물고기 없습니다</string>
+    <string name="empty_memo">작성된 메모가 없습니다</string>
     
 </resources>

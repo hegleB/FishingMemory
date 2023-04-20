@@ -46,6 +46,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="30dp"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,6 +54,49 @@
             app:layout_constraintTop_toBottomOf="@id/imageView_activityMemoList_back"
             tools:listitem="@layout/item_memo_list" />
 
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimation_activityMemoList_fishing"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/guideLine_top"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:id="@+id/textView_activityMemoList_empty_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_memo_title"
+            android:textAppearance="@style/Typography.Heading"
+            android:textSize="18sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/lottieAnimation_activityMemoList_fishing"
+            app:layout_constraintStart_toStartOf="@id/lottieAnimation_activityMemoList_fishing"
+            app:layout_constraintTop_toBottomOf="@id/lottieAnimation_activityMemoList_fishing" />
+
+        <TextView
+            android:id="@+id/textView_activityMemoList_empty_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/empty_memo_description"
+            android:textAppearance="@style/Typography.Title2"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/textView_activityMemoList_empty_title"
+            app:layout_constraintStart_toStartOf="@id/textView_activityMemoList_empty_title"
+            app:layout_constraintTop_toBottomOf="@id/textView_activityMemoList_empty_title" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_activityMemoList_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="lottieAnimation_activityMemoList_fishing, textView_activityMemoList_empty_description, textView_activityMemoList_empty_title" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

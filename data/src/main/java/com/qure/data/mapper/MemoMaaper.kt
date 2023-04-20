@@ -3,10 +3,7 @@ package com.qure.data.mapper
 import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoQueryEntity
 import com.qure.data.entity.memo.MemoStorageEntity
-import com.qure.domain.entity.memo.Memo
-import com.qure.domain.entity.memo.MemoFields
-import com.qure.domain.entity.memo.MemoFieldsEntity
-import com.qure.domain.entity.memo.MemoStorage
+import com.qure.domain.entity.memo.*
 
 fun MemoEntity.toMemo(): Memo {
     val data = this
@@ -20,7 +17,7 @@ fun MemoEntity.toMemo(): Memo {
 }
 
 fun MemoQueryEntity.toMemo(): Memo {
-    val data = this.document
+    val data = this.document ?: Document.EMPTY
     return Memo(
         name = data.name,
         fields = data.fields.toMemoFieldsEntity(),

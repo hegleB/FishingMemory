@@ -5,6 +5,7 @@ import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.core.BaseViewModel
 import com.qure.core.extensions.Empty
+import com.qure.core.extensions.UUID
 import com.qure.domain.entity.memo.FieldValue
 import com.qure.domain.entity.memo.MemoFields
 import com.qure.domain.entity.memo.MemoStorage
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -65,6 +67,7 @@ class MemoViewModel @Inject constructor(
 
     fun createMemo(imageUrl: String) {
         val memo = MemoFields(
+            uuid = FieldValue(String.UUID),
             email = FieldValue(authRepository.getEmailFromLocal()),
             title = FieldValue(title.value),
             image = FieldValue(imageUrl),

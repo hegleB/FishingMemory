@@ -2,11 +2,13 @@ package com.qure.memo.model
 
 import android.os.Parcelable
 import com.qure.core.extensions.Empty
+import com.qure.core.extensions.UUID
 import com.qure.domain.entity.memo.Memo
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class MemoUI(
+    val uuid: String = String.Empty,
     val name: String = String.Empty,
     val email: String = String.Empty,
     val title: String = String.Empty,
@@ -23,6 +25,7 @@ data class MemoUI(
 fun Memo.toMemoUI(): MemoUI {
     val data = this.fields!!.fields
     return MemoUI(
+        uuid = data.uuid.stringValue,
         name = this.name,
         email = data.email.stringValue,
         title = data.title.stringValue,

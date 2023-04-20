@@ -44,6 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right|top"
                     android:layout_marginEnd="10dp"
+                    android:visibility="gone"
                     app:checkedChip="@+id/chip_fragmentHome_fishType"
                     app:layout_constraintBottom_toBottomOf="@id/textView_fragmentHome_chartTitle"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -76,11 +77,25 @@
                     android:id="@+id/barChart_fragmentHome_chart"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/chipGroup_fragmentHome"
                     app:radius="15dp" />
+
+                <TextView
+                    android:id="@+id/textView_fragmentHome_empty_barchart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_fish_caught"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    android:textAppearance="@style/Typography.Paragraph1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chipGroup_fragmentHome"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
@@ -193,7 +208,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="180dp"
             app:cardCornerRadius="15dp"
             app:cardElevation="5dp"
             android:layout_marginTop="20dp"
@@ -243,6 +258,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_memo"
                     tools:listitem="@layout/item_memo" />
+
+                <TextView
+                    android:id="@+id/textView_fragmentHome_empty_recyclerview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empty_memo"
+                    android:textSize="13sp"
+                    android:visibility="gone"
+                    android:textAppearance="@style/Typography.Paragraph1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_memo"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 

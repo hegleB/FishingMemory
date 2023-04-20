@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import androidx.core.app.ActivityCompat
+import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.*
 import com.qure.core.BaseFragment
 import com.qure.core.extensions.Spacing
+import com.qure.core.extensions.gone
+import com.qure.core.extensions.visiable
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.core_design.custom.barchart.BarChartView
@@ -32,6 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -237,21 +241,49 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun handleUiState(uiState: UiState) {
         when {
-            uiState.isWeatherInitialized -> {
-                setWeatherAnimation(uiState)
-                val weatherData = uiState.weatherUI ?: emptyList()
-                if (weatherData.isNotEmpty()) {
-                    val latXLngY = LatXLngY(lat = latX, lng = longY)
-                    binding.textViewFragmentHomeLocation.text =
-                        getCurrentAddress(latXLngY)
-                }
-            }
-            uiState.isFilterInitialized -> {
-                adapter.submitList(uiState.filteredMemo)
-                memos = uiState.filteredMemo
-                memoFields = uiState.filteredMemo
-                initBarChart(R.id.chip_fragmentHome_fishType)
-            }
+            uiState.isWeatherInitialized -> handleWeatherInitialized(uiState)
+            uiState.isFilterInitialized -> handleFilterInitialized(uiState)
+        }
+    }
+
+    private fun handleWeatherInitialized(uiState: UiState) {
+        setWeatherAnimation(uiState)
+        val weatherData = uiState.weatherUI ?: emptyList()
+        if (weatherData.isNotEmpty()) {
+            val latXLngY = LatXLngY(lat = latX, lng = longY)
+            binding.textViewFragmentHomeLocation.text = getCurrentAddress(latXLngY)
+        }
+    }
+
+    private fun handleFilterInitialized(uiState: UiState) {
+        if (uiState.filteredMemo.isEmpty()) {
+            hideViews()
+        } else {
+            showViews()
+            adapter.submitList(uiState.filteredMemo)
+            memos = uiState.filteredMemo
+            memoFields = uiState.filteredMemo
+            initBarChart(R.id.chip_fragmentHome_fishType)
+        }
+    }
+
+    private fun hideViews() {
+        with(binding) {
+            barChartFragmentHomeChart.gone()
+            chipGroupFragmentHome.gone()
+            recyclerViewFragmentHomePost.gone()
+            textViewFragmentHomeEmptyBarchart.visiable()
+            textViewFragmentHomeEmptyRecyclerview.visiable()
+        }
+    }
+
+    private fun showViews() {
+        with(binding) {
+            barChartFragmentHomeChart.visiable()
+            chipGroupFragmentHome.visiable()
+            recyclerViewFragmentHomePost.visiable()
+            textViewFragmentHomeEmptyBarchart.gone()
+            textViewFragmentHomeEmptyRecyclerview.gone()
         }
     }
     private fun <T> countElements(list: List<T>): Map<T, Float> {

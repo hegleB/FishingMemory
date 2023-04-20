@@ -7,12 +7,14 @@ import com.qure.domain.entity.memo.MemoQuery
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface MemoService {
 
     @POST("/v1beta1/projects/{projectId}/databases/(default)/documents/memo")
     suspend fun postMemo(
         @Path("projectId") projectId: String,
+        @Query("documentId") documentId: String,
         @Body fields: MemoFieldsEntity,
     ): Result<MemoEntity>
 
