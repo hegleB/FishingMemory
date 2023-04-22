@@ -46,6 +46,7 @@ class DeleteDialogFragment(uuid: String) : DialogFragment() {
             container,
             false
         )
+        setCancelable(false)
         return binding.root
     }
 
@@ -60,7 +61,6 @@ class DeleteDialogFragment(uuid: String) : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initView()
         observe()
     }

@@ -5,11 +5,16 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.provider.Settings
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.children
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +23,7 @@ import com.google.android.gms.location.*
 import com.qure.core.BaseFragment
 import com.qure.core.extensions.Spacing
 import com.qure.core.extensions.gone
+import com.qure.core.extensions.initSwipeRefreshLayout
 import com.qure.core.extensions.visiable
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
@@ -32,6 +38,8 @@ import com.qure.memo.model.MemoUI
 import com.qure.navigator.DetailMemoNavigator
 import com.qure.navigator.MemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -62,16 +70,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
         )
     }
-    private var memoFields: List<MemoUI> = emptyList()
     private lateinit var fusedLocationProvierClient: FusedLocationProviderClient
     private var latX = 0.0
     private var longY = 0.0
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        fusedLocationProvierClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        getCurrentLocation()
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observe()
         initView()
         initRecyclerView()
-        refreshWeather()
+
     }
 
     private fun initRecyclerView() {
@@ -80,7 +100,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun refreshWeather() {
         if (checkPermission()) {
-            getCurrentLocation()
+            binding.progressBarFragmentHome.visiable()
+            lifecycleScope.launch {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    delay(500)
+                    launch {
+                        viewModel.UiState.collect {
+                            if (it.isWeatherInitialized) {
+                                handleWeatherInitialized(it)
+                                binding.progressBarFragmentHome.gone()
+                            }
+                        }
+                    }
+                }
+            }
         } else {
             requestPermission()
         }
@@ -91,13 +124,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             requestPermission()
             return
         }
-
         if (!isLocationEnabled()) {
             val intent = Intent(Settings.ACTION_SOUND_SETTINGS)
             startActivity(intent)
             return
         }
-
         fusedLocationProvierClient.lastLocation.addOnCompleteListener { task ->
             val location = task.result
             if (location == null) {
@@ -124,6 +155,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 longY = location.longitude
                 val latXlngY = GpsTransfer().convertGRID_GPS(0, latX, longY)
                 viewModel.fetchWeater(latXlngY)
+
             }
         }
     }
@@ -188,15 +220,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun initView() {
         viewModel.getFilteredMemo()
 
-        fusedLocationProvierClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-        getCurrentLocation()
+        binding.swipeRefreshLayoutFragmentHome.initSwipeRefreshLayout()
+        binding.swipeRefreshLayoutFragmentHome.setOnRefreshListener {
+            getCurrentLocation()
+            refreshView()
+        }
+        binding.swipeRefreshLayoutFragmentHome.setRefreshing(false)
 
         binding.chipGroupFragmentHome.setOnCheckedChangeListener { group, checkedId ->
             initBarChart(checkedId)
         }
 
         binding.imageViewFragmentHomeRefresh.setOnSingleClickListener {
+            getCurrentLocation()
             refreshWeather()
         }
 
@@ -205,11 +241,31 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
     }
 
+    private fun refreshView() = lifecycleScope.launch {
+        viewModel.getFilteredMemo()
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            launch {
+                delay(500)
+                viewModel.UiState.collect {
+                    binding.swipeRefreshLayoutFragmentHome.setRefreshing(false)
+                    if (it.isFilterInitialized) {
+                        handleFilterInitialized(it)
+                    }
+
+                    if (it.isWeatherInitialized) {
+                        handleWeatherInitialized(it)
+                    }
+                }
+            }
+        }
+    }
+
+
     private fun initBarChart(checkedId: Int) {
         val chartData = when (checkedId) {
-            R.id.chip_fragmentHome_fishType -> memoFields.map { it.fishType }
-            R.id.chip_fragmentHome_fishSize -> memoFields.map { it.fishSize }
-            else -> memoFields.map { it.location.split(String.Spacing)[1] }
+            R.id.chip_fragmentHome_fishType -> memos.map { it.fishType }
+            R.id.chip_fragmentHome_fishSize -> memos.map { it.fishSize }
+            else -> memos.map { it.location.split(String.Spacing)[1] }
         }
         BarChartView(
             requireContext(),
@@ -229,7 +285,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.UiState.collect {
                         handleUiState(it)
@@ -252,6 +308,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         if (weatherData.isNotEmpty()) {
             val latXLngY = LatXLngY(lat = latX, lng = longY)
             binding.textViewFragmentHomeLocation.text = getCurrentAddress(latXLngY)
+            binding.progressBarFragmentHome.gone()
         }
     }
 
@@ -260,9 +317,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             hideViews()
         } else {
             showViews()
-            adapter.submitList(uiState.filteredMemo)
+            adapter.submitList(uiState.filteredMemo) {
+                binding.recyclerViewFragmentHomePost.scrollToPosition(0)
+            }
             memos = uiState.filteredMemo
-            memoFields = uiState.filteredMemo
             initBarChart(R.id.chip_fragmentHome_fishType)
         }
     }
@@ -274,6 +332,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             recyclerViewFragmentHomePost.gone()
             textViewFragmentHomeEmptyBarchart.visiable()
             textViewFragmentHomeEmptyRecyclerview.visiable()
+
         }
     }
 
@@ -286,6 +345,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             textViewFragmentHomeEmptyRecyclerview.gone()
         }
     }
+
     private fun <T> countElements(list: List<T>): Map<T, Float> {
         val map = mutableMapOf<T, Float>()
         for (element in list) {
@@ -293,7 +353,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
         return map
     }
-
     private fun setWeatherAnimation(uiState: UiState) {
         binding.lottieAnimationViewFragmentHomeWeather.setAnimation(
             uiState.toWeatherAnimation()

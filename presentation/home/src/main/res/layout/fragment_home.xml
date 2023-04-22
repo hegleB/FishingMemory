@@ -7,286 +7,304 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.simform.refresh.SSPullToRefreshLayout
+        android:id="@+id/swipeRefreshLayout_fragmentHome"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/gray_background">
+        android:layout_height="match_parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/gray_background">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView_fragmentHome_chart"
-            android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="30dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="5dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
-            app:layout_constraintStart_toStartOf="@+id/guideLine_left"
-            app:layout_constraintTop_toTopOf="parent">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_fragmentHome_chart"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="30dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="5dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
+                app:layout_constraintStart_toStartOf="@+id/guideLine_left"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <com.qure.core_design.custom.subtitle.CustomSubTitleTextView
-                    android:id="@+id/textView_fragmentHome_chartTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:subTitleText="@string/caught_fish" />
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipGroup_fragmentHome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|top"
-                    android:layout_marginEnd="10dp"
-                    android:visibility="gone"
-                    app:checkedChip="@+id/chip_fragmentHome_fishType"
-                    app:layout_constraintBottom_toBottomOf="@id/textView_fragmentHome_chartTitle"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/textView_fragmentHome_chartTitle"
-                    app:singleSelection="true">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_fragmentHome_fishType"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
+                    <com.qure.core_design.custom.subtitle.CustomSubTitleTextView
+                        android:id="@+id/textView_fragmentHome_chartTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/fish_type" />
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:subTitleText="@string/caught_fish" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_fragmentHome_fishSize"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroup_fragmentHome"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/fish_size" />
+                        android:layout_gravity="right|top"
+                        android:layout_marginEnd="10dp"
+                        android:visibility="gone"
+                        app:checkedChip="@+id/chip_fragmentHome_fishType"
+                        app:layout_constraintBottom_toBottomOf="@id/textView_fragmentHome_chartTitle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/textView_fragmentHome_chartTitle"
+                        app:singleSelection="true">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_fragmentHome_place"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_fragmentHome_fishType"
+                            style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fish_type" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_fragmentHome_fishSize"
+                            style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fish_size" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_fragmentHome_place"
+                            style="@style/Widget.MaterialComponents.Chip.Choice.ChartType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/place" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <com.qure.core_design.custom.barchart.CustomBarChartView
+                        android:id="@+id/barChart_fragmentHome_chart"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/chipGroup_fragmentHome"
+                        app:radius="15dp" />
+
+                    <TextView
+                        android:id="@+id/textView_fragmentHome_empty_barchart"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/place" />
-                </com.google.android.material.chip.ChipGroup>
+                        android:text="@string/no_fish_caught"
+                        android:textAppearance="@style/Typography.Paragraph1"
+                        android:textSize="13sp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/chipGroup_fragmentHome" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <com.qure.core_design.custom.barchart.CustomBarChartView
-                    android:id="@+id/barChart_fragmentHome_chart"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/chipGroup_fragmentHome"
-                    app:radius="15dp" />
+            </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:id="@+id/textView_fragmentHome_empty_barchart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/no_fish_caught"
-                    android:textSize="13sp"
-                    android:visibility="gone"
-                    android:textAppearance="@style/Typography.Paragraph1"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/chipGroup_fragmentHome"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_fragmentHome_weather"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="5dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
+                app:layout_constraintStart_toStartOf="@+id/guideLine_left"
+                app:layout_constraintTop_toBottomOf="@+id/cardView_fragmentHome_chart">
 
-        </androidx.cardview.widget.CardView>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_rect_gradient_purple700_blue300"
+                    android:paddingBottom="20dp">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView_fragmentHome_weather"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="5dp"
-            app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
-            app:layout_constraintStart_toStartOf="@+id/guideLine_left"
-            app:layout_constraintTop_toBottomOf="@+id/cardView_fragmentHome_chart">
+                    <ProgressBar
+                        android:id="@+id/progressBar_fragmentHome"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:indeterminateTint="@color/gray_700"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_rect_gradient_purple700_blue300"
-                android:paddingBottom="20dp">
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_weather_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_begin="30sp" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_weather_left"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_begin="30sp" />
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_weather_top"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_begin="40dp" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_weather_top"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_begin="40dp" />
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline_weather_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_end="30dp" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline_weather_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_end="30dp" />
+                    <com.qure.core_design.custom.subtitle.CustomSubTitleTextView
+                        android:id="@id/textView_fragmentHome_weather"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:subTitleText="@string/weather" />
 
-                <com.qure.core_design.custom.subtitle.CustomSubTitleTextView
-                    android:id="@id/textView_fragmentHome_weather"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:subTitleText="@string/weather" />
-
-                <ImageView
-                    android:id="@+id/imageView_fragmentHome_refresh"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/ic_refresh"
-                    app:layout_constraintBottom_toBottomOf="@id/textView_fragmentHome_weather"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/textView_fragmentHome_weather" />
+                    <ImageView
+                        android:id="@+id/imageView_fragmentHome_refresh"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/ic_refresh"
+                        app:layout_constraintBottom_toBottomOf="@id/textView_fragmentHome_weather"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/textView_fragmentHome_weather" />
 
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lottieAnimationView_fragmentHome_weather"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_gravity="center_vertical"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline_weather_right"
-                    app:layout_constraintTop_toTopOf="@+id/guideline_weather_top"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true" />
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottieAnimationView_fragmentHome_weather"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center_vertical"
+                        app:layout_constraintEnd_toStartOf="@+id/guideline_weather_right"
+                        app:layout_constraintTop_toTopOf="@+id/guideline_weather_top"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true" />
 
 
-                <TextView
-                    android:id="@+id/textView_fragmentHome_temperature"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/Typography.Title1"
-                    android:textColor="@color/white"
-                    android:textSize="32sp"
-                    app:layout_constraintStart_toStartOf="@+id/guideline_weather_left"
-                    app:layout_constraintTop_toTopOf="@+id/guideline_weather_top" />
+                    <TextView
+                        android:id="@+id/textView_fragmentHome_temperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/Typography.Title1"
+                        android:textColor="@color/white"
+                        android:textSize="32sp"
+                        app:layout_constraintStart_toStartOf="@+id/guideline_weather_left"
+                        app:layout_constraintTop_toTopOf="@+id/guideline_weather_top" />
 
-                <TextView
-                    android:id="@+id/textView_fragmentHome_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textAppearance="@style/Typography.Title1"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="@+id/guideline_weather_left"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_fragmentHome_temperature" />
+                    <TextView
+                        android:id="@+id/textView_fragmentHome_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textAppearance="@style/Typography.Title1"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:layout_constraintStart_toStartOf="@+id/guideline_weather_left"
+                        app:layout_constraintTop_toBottomOf="@+id/textView_fragmentHome_temperature" />
 
-                <TextView
-                    android:id="@+id/textView_fragmentHome_weatherState"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textAppearance="@style/Typography.SubTitle1"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    app:layout_constraintStart_toStartOf="@+id/guideline_weather_left"
-                    app:layout_constraintTop_toBottomOf="@+id/textView_fragmentHome_location" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/textView_fragmentHome_weatherState"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textAppearance="@style/Typography.SubTitle1"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        app:layout_constraintStart_toStartOf="@+id/guideline_weather_left"
+                        app:layout_constraintTop_toBottomOf="@+id/textView_fragmentHome_location" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.cardview.widget.CardView>
-
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="180dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="5dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toEndOf="@id/guideLine_right"
-            app:layout_constraintStart_toStartOf="@id/guideLine_left"
-            app:layout_constraintTop_toBottomOf="@id/cardView_fragmentHome_weather">
+            </androidx.cardview.widget.CardView>
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="20dp">
-
-                <com.qure.core_design.custom.subtitle.CustomSubTitleTextView
-                    android:id="@+id/textView_fragmentHome_memo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:subTitleText="@string/writhing" />
-
-                <TextView
-                    android:id="@+id/textView_fragmentHome_memoMore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/memo_more"
-                    android:textAppearance="@style/Typography.Paragraph3"
-                    app:layout_constraintTop_toTopOf="@+id/textView_fragmentHome_memo"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView_fragmentHome_memo"/>
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="180dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="5dp"
+                app:layout_constraintEnd_toEndOf="@id/guideLine_right"
+                app:layout_constraintStart_toStartOf="@id/guideLine_left"
+                app:layout_constraintTop_toBottomOf="@id/cardView_fragmentHome_weather">
 
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView_fragmentHome_post"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="10dp"
-                    android:orientation="horizontal"
-                    app:cardCornerRadius="15dp"
-                    app:cardElevation="10dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_memo"
-                    tools:listitem="@layout/item_memo" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="20dp">
 
-                <TextView
-                    android:id="@+id/textView_fragmentHome_empty_recyclerview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/empty_memo"
-                    android:textSize="13sp"
-                    android:visibility="gone"
-                    android:textAppearance="@style/Typography.Paragraph1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_memo"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+                    <com.qure.core_design.custom.subtitle.CustomSubTitleTextView
+                        android:id="@+id/textView_fragmentHome_memo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:subTitleText="@string/writhing" />
+
+                    <TextView
+                        android:id="@+id/textView_fragmentHome_memoMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="@string/memo_more"
+                        android:textAppearance="@style/Typography.Paragraph3"
+                        app:layout_constraintBottom_toBottomOf="@+id/textView_fragmentHome_memo"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/textView_fragmentHome_memo" />
 
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideLine_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="30dp" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_fragmentHome_post"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        app:cardCornerRadius="15dp"
+                        app:cardElevation="10dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_memo"
+                        tools:listitem="@layout/item_memo" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideLine_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="30dp" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/textView_fragmentHome_empty_recyclerview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/empty_memo"
+                        android:textAppearance="@style/Typography.Paragraph1"
+                        android:textSize="13sp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_memo" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideLine_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="30dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideLine_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="30dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.simform.refresh.SSPullToRefreshLayout>
 </layout>

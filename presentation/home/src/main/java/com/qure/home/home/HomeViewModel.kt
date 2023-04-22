@@ -31,7 +31,6 @@ class HomeViewModel @Inject constructor(
     private val _UiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val UiState: StateFlow<UiState>
         get() = _UiState
-
     fun fetchWeater(latXLngY: LatXLngY) {
         viewModelScope.launch {
             getWeatherUseCase(
@@ -44,7 +43,7 @@ class HomeViewModel @Inject constructor(
                     _UiState.update {
                         it.copy(
                             weatherUI = weather.response.body.items.item.map { it.toWeatherUI() },
-                            isWeatherInitialized = true
+                            isWeatherInitialized = true,
                         )
                     }
                 }.onFailure {

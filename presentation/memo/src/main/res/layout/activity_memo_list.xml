@@ -46,23 +46,28 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:background="@drawable/ic_circle_add"
-            app:layout_constraintTop_toTopOf="@id/imageView_activityMemoList_back"
             app:layout_constraintBottom_toBottomOf="@id/imageView_activityMemoList_back"
-            app:layout_constraintEnd_toEndOf="@id/guideLine_right"/>
+            app:layout_constraintEnd_toEndOf="@id/guideLine_right"
+            app:layout_constraintTop_toTopOf="@id/imageView_activityMemoList_back" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_activiryMemoList"
+        <com.simform.refresh.SSPullToRefreshLayout
+            android:id="@+id/swipeRefreshLayout_activityMemoList"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="30dp"
-            android:visibility="gone"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imageView_activityMemoList_back"
-            tools:listitem="@layout/item_memo_list" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_activityMemoList"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="30dp"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_memo_list" />
+        </com.simform.refresh.SSPullToRefreshLayout>
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottieAnimation_activityMemoList_fishing"
@@ -107,5 +112,15 @@
             android:visibility="gone"
             app:constraint_referenced_ids="lottieAnimation_activityMemoList_fishing, textView_activityMemoList_empty_description, textView_activityMemoList_empty_title" />
 
+        <ProgressBar
+            android:id="@+id/progressBar_activityMemoList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/gray_700"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

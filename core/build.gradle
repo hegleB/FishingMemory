@@ -44,6 +44,8 @@ dependencies {
     implementation(jetpackDeps)
     implementation(coroutines)
 
+    implementation(swipRefreshDeps)
+
     implementation deps.hilt.core
     kapt deps.hilt.compiler
     implementation deps.glide.core

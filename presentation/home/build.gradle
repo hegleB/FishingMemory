@@ -61,6 +61,8 @@ dependencies {
 
     implementation(locationDeps)
 
+    implementation(swipRefreshDeps)
+
     implementation deps.timber
 
     implementation deps.glide.core
