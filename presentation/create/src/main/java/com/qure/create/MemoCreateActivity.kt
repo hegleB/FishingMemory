@@ -17,9 +17,7 @@ import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.net.toFile
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
@@ -39,32 +37,41 @@ import com.qure.create.location.LocationSettingActivity.Companion.REQUEST_CODE_A
 import com.qure.domain.entity.auth.*
 import com.qure.domain.entity.memo.*
 import com.qure.history.MemoCalendarDialogFragment
+import com.qure.memo.detail.DetailMemoActivity
+import com.qure.memo.model.MemoUI
+import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.observeOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.time.LocalDate
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.activity_memo_create),
     MemoCalendarDialogFragment.DatePickerListener {
 
+    @Inject
+    lateinit var detailMemoNavigator: DetailMemoNavigator
+
     private val viewModel by viewModels<MemoViewModel>()
     private var selectedImageUri: Uri? = null
 
     lateinit var listener: MemoCalendarDialogFragment.DatePickerListener
 
+    private var createdMemo: MemoUI? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listener = this
+        createdMemo = intent.getParcelableExtra(DetailMemoActivity.UPDATE_MEMO)
         initView()
         setDate()
         observe()
+        setCreatedMemo()
     }
 
     private fun initView() {
@@ -87,10 +94,44 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         binding.buttonActivityMemoCreatePost.setOnSingleClickListener {
             saveMemo()
             uploadImage()
-            viewModel.uploadMemoImage()
         }
 
         validateMemo()
+    }
+
+    private fun setCreatedMemo() {
+        createdMemo?.let { memo ->
+            with(binding) {
+                editTextActivityMemoCreateTitle.setText(memo.title)
+                editTextActivityMemoCreateFishSize.setText(memo.fishSize)
+                textViewActivityMemoCreateLocationInfo.setText(memo.location)
+                textViewActivityMemoCreateDate.setText(memo.date)
+                editTextActivityMemoCreateFishType.setText(memo.fishType)
+                editTextActivityMemoCreateContent.setText(memo.content)
+                setSelectedChipText(chipGroupActivityMemoCreateType, memo.waterType)
+                buttonActivityMemoCreatePost.setText(getString(R.string.edit))
+                Glide.with(this@MemoCreateActivity)
+                    .load(memo.image)
+                    .transform(CenterCrop(), RoundedCorners(15))
+                    .override(360, 360)
+                    .into(imageViewActivityMemoCreateFishImage)
+                Handler().postDelayed({
+                    checkInputs()
+                }, 100)
+            }
+        }
+    }
+
+    private fun setSelectedChipText(chipGroup: ChipGroup, selectedText: String?) {
+        selectedText?.let { text ->
+            for (i in 0 until chipGroup.childCount) {
+                val chip = chipGroup.getChildAt(i) as Chip
+                if (chip.text.toString() == text) {
+                    chipGroup.check(chip.id)
+                    break
+                }
+            }
+        }
     }
 
     private fun setDate() {
@@ -103,23 +144,25 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     }
 
     private fun uploadImage() {
-        if (selectedImageUri == null) {
-            FishingMemoryToast().show(
-                this,
-                "이미지를 선택하지 않았습니다."
-            )
-            return
+        if (selectedImageUri != null) {
+            val parcelFileDescriptor = contentResolver.openFileDescriptor(
+                selectedImageUri!!, "r", null
+            ) ?: return
+
+            val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+            val file = File(cacheDir, contentResolver.getFileName(selectedImageUri!!))
+            val outputStream = FileOutputStream(file)
+            inputStream.copyTo(outputStream)
+            viewModel.setImage(file)
+            if (createdMemo == null) {
+                viewModel.uploadMemoImage()
+            } else {
+                viewModel.uploadMemoImage(createdMemo!!.uuid)
+            }
+        } else {
+            viewModel.updateMemo(createdMemo!!.uuid, createdMemo!!.image)
+            finish()
         }
-
-        val parcelFileDescriptor = contentResolver.openFileDescriptor(
-            selectedImageUri!!, "r", null
-        ) ?: return
-
-        val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-        val file = File(cacheDir, contentResolver.getFileName(selectedImageUri!!))
-        val outputStream = FileOutputStream(file)
-        inputStream.copyTo(outputStream)
-        viewModel.setImage(file)
     }
 
     private fun saveMemo() {
@@ -151,22 +194,35 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.uiState.collect {
-                        when  {
-                            it.isUploadImage && !it.isSave -> binding.progressBarActivityMemo.visiable()
-                            it.isUploadImage && it.isSave -> {
-                                FishingMemoryToast().show(
-                                    this@MemoCreateActivity,
-                                    getString(R.string.toast_save_memo)
-                                )
-                                finish()
-                            }
-                            else -> binding.progressBarActivityMemo.gone()
-                        }
+                        handleSaveOrUpdateState(it)
                     }
                 }
             }
         }
 
+    }
+
+    private fun handleSaveOrUpdateState(it: UiState) {
+        when {
+            it.isUploadImage && !it.isSave && !it.isUpdated -> binding.progressBarActivityMemo.visiable()
+            it.isUploadImage && it.isUpdated -> {
+                sendSuccessMessage(R.string.toast_update_memo)
+                val intent = detailMemoNavigator.intent(this).apply {
+                    putExtra(DetailMemoActivity.UPDATE_MEMO, it.memo)
+                }
+                startActivity(intent)
+            }
+            it.isUploadImage && it.isSave -> sendSuccessMessage(R.string.toast_save_memo)
+            else -> binding.progressBarActivityMemo.gone()
+        }
+    }
+
+    private fun sendSuccessMessage(stringdId: Int) {
+        FishingMemoryToast().show(
+            this@MemoCreateActivity,
+            getString(stringdId)
+        )
+        finish()
     }
 
 

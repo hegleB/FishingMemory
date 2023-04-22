@@ -2,12 +2,10 @@ package com.qure.data.repository
 
 import com.qure.data.datasource.memo.MemoRemoteDataSource
 import com.qure.data.datasource.memo.MemoStorageRemoteDataSource
+import com.qure.data.mapper.toDocument
 import com.qure.data.mapper.toMemo
 import com.qure.data.mapper.toMemoStorage
-import com.qure.domain.entity.memo.Memo
-import com.qure.domain.entity.memo.MemoFields
-import com.qure.domain.entity.memo.MemoQuery
-import com.qure.domain.entity.memo.MemoStorage
+import com.qure.domain.entity.memo.*
 import com.qure.domain.repository.MemoRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -25,6 +23,18 @@ class MemoRepositoryImpl @Inject constructor(
 
     override suspend fun uploadMemoImage(image: File): Result<MemoStorage> {
         return memoStorageRemoteDataSource.postMemoStorage(image).map { it.toMemoStorage() }
+    }
+
+    override fun getUpdatedMemo(memoFields: MemoFields): Flow<Result<Document>> {
+        return flow {
+            memoRemoteDataSource.updateMemo(memoFields).map { it.toDocument() }
+                .onSuccess {
+                    emit(Result.success(it))
+                }
+                .onFailure { throwable ->
+                    emit(Result.failure(throwable))
+                }
+        }
     }
 
     override fun deleteMemo(uuid: String): Flow<Result<Unit>> {

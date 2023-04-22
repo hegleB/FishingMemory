@@ -42,6 +42,7 @@ dependencies {
     implementation project(path:':core')
     implementation project(path:':navigator')
     implementation project(path:':domain')
+    implementation project(path:':presentation:memo')
 
     implementation(jetpackDeps)
     implementation(coroutines)

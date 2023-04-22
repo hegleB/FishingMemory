@@ -2,13 +2,9 @@ package com.qure.data.api
 
 import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoQueryEntity
-import com.qure.domain.entity.memo.MemoFieldsEntity
-import com.qure.domain.entity.memo.MemoQuery
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import com.qure.data.entity.memo.UpdatedMemoEntity
+import com.qure.domain.entity.memo.*
+import retrofit2.http.*
 
 interface MemoService {
 
@@ -30,4 +26,11 @@ interface MemoService {
         @Path("projectId") projectId: String,
         @Path("documentId") documentId: String,
     ): Result<Unit>
+
+    @PATCH("/v1beta1/projects/{projectId}/databases/(default)/documents/memo/{documentId}")
+    suspend fun updateMemo(
+        @Path("projectId") projectId: String,
+        @Path("documentId") documentId: String,
+        @Body fields: MemoFieldsEntity,
+    ): Result<UpdatedMemoEntity>
 }

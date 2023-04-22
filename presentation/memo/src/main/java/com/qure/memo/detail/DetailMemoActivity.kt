@@ -1,29 +1,13 @@
 package com.qure.memo.detail
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import androidx.activity.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
-import com.google.firebase.dynamiclinks.DynamicLink
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.google.firebase.dynamiclinks.ktx.androidParameters
-import com.google.firebase.dynamiclinks.ktx.dynamicLink
-import com.google.firebase.dynamiclinks.ktx.dynamicLinks
-import com.google.firebase.ktx.Firebase
-import com.kakao.sdk.common.util.KakaoCustomTabsClient
-import com.kakao.sdk.share.ShareClient
-import com.kakao.sdk.share.WebSharerClient
-import com.kakao.sdk.template.model.*
 import com.qure.core.BaseActivity
 import com.qure.core.extensions.Empty
 import com.qure.core.extensions.gone
@@ -33,24 +17,23 @@ import com.qure.memo.R
 import com.qure.memo.databinding.ActivityDetailMemoBinding
 import com.qure.memo.delete.DeleteDialogFragment
 import com.qure.memo.model.MemoUI
-import com.qure.memo.share.KakaoLinkSender
 import com.qure.memo.share.ShareDialogFragment
+import com.qure.navigator.MemoCreateNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.activity_detail_memo) {
 
+    @Inject
+    lateinit var memoCreateNavigator: MemoCreateNavigator
+
     private val viewModel by viewModels<DetailMemoViewModel>()
     private var memo: MemoUI = MemoUI()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         initData()
         initView()
         observe()
@@ -63,15 +46,15 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
     }
 
     private fun initData() {
-        if (Intent.ACTION_VIEW == intent.action) {
-            val uri = intent.data
-            binding.imageViewActivityDetailMemoMore.gone()
-            if (uri != null) {
-                memo = createMemoUI(uri)
-
+        memo = when {
+            Intent.ACTION_VIEW == intent.action -> {
+                val uri = intent.data
+                binding.imageViewActivityDetailMemoMore.gone()
+                uri?.let { createMemoUI(it) } ?: MemoUI()
             }
-        } else {
-            memo = intent.getParcelableExtra(MEMO_DATA) ?: MemoUI()
+            intent.getParcelableExtra<MemoUI>(UPDATE_MEMO) != null ->
+                intent.getParcelableExtra(UPDATE_MEMO) ?: MemoUI()
+            else -> intent.getParcelableExtra(MEMO_DATA) ?: MemoUI()
         }
     }
 
@@ -91,9 +74,8 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
 
 
     private fun initView() {
+        setMemoView()
         binding.apply {
-            setMemoView()
-
             imageViewActivityDetailMemoBack.setOnSingleClickListener {
                 finish()
             }
@@ -127,7 +109,10 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
                     true
                 }
                 R.id.menu_edit -> {
-
+                    val intent = memoCreateNavigator.intent(this)
+                    intent.putExtra(UPDATE_MEMO, memo)
+                    startActivity(intent)
+                    finish()
                     true
                 }
                 else -> false
@@ -137,21 +122,22 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
     }
 
 
-    private fun ActivityDetailMemoBinding.setMemoView() {
-        textViewActivityDetailMemoFishNameHeadline.text = memo.fishType
-        textViewActivityDetailMemoFishName.text = memo.fishType
-        textViewActivityDetailMemoWaterType.text = memo.waterType
-        textViewActivityDetailMemoFishSize.text = memo.fishSize + SIZE_UNIT
-        textViewActivityDetailMemoContent.text = memo.content
-        textViewActivityDetailMemoLocation.text = memo.location
-        textViewActivityDetailMemoCreateTime.text = memo.date
-        textViewActivityDetailMemoTitle.text = memo.title
+    private fun setMemoView() {
+        binding.apply {
+            textViewActivityDetailMemoFishNameHeadline.text = memo.fishType
+            textViewActivityDetailMemoFishName.text = memo.fishType
+            textViewActivityDetailMemoWaterType.text = memo.waterType
+            textViewActivityDetailMemoFishSize.text = memo.fishSize + SIZE_UNIT
+            textViewActivityDetailMemoContent.text = memo.content
+            textViewActivityDetailMemoLocation.text = memo.location
+            textViewActivityDetailMemoCreateTime.text = memo.date
+            textViewActivityDetailMemoTitle.text = memo.title
 
-        Glide.with(this@DetailMemoActivity)
-            .load(memo.image)
-            .into(imageViewActivityDetailMemoFishImage)
+            Glide.with(this@DetailMemoActivity)
+                .load(memo.image)
+                .into(imageViewActivityDetailMemoFishImage)
+        }
     }
-
 
     companion object {
         const val MEMO_DATA = "memoData"
@@ -166,5 +152,6 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
         const val QUERY_BASE_URL = "baseUrl"
         const val QUERY_IMAGE_PATH = "imagePath"
         const val SLASH = "%2F"
+        const val UPDATE_MEMO = "updateMemo"
     }
 }

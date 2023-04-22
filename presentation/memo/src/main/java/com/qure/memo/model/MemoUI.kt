@@ -3,6 +3,7 @@ package com.qure.memo.model
 import android.os.Parcelable
 import com.qure.core.extensions.Empty
 import com.qure.core.extensions.UUID
+import com.qure.domain.entity.memo.Document
 import com.qure.domain.entity.memo.Memo
 import kotlinx.android.parcel.Parcelize
 
@@ -24,6 +25,24 @@ data class MemoUI(
 
 fun Memo.toMemoUI(): MemoUI {
     val data = this.fields!!.fields
+    return MemoUI(
+        uuid = data.uuid.stringValue,
+        name = this.name,
+        email = data.email.stringValue,
+        title = data.title.stringValue,
+        image = data.image.stringValue,
+        location = data.location.stringValue,
+        date = data.date.stringValue,
+        waterType = data.waterType.stringValue,
+        fishType = data.fishType.stringValue,
+        fishSize = data.fishSize.stringValue,
+        content = data.content.stringValue,
+        createTime = data.createTime.stringValue,
+    )
+}
+
+fun Document.toMemoUI(): MemoUI {
+    val data = this.fields
     return MemoUI(
         uuid = data.uuid.stringValue,
         name = this.name,

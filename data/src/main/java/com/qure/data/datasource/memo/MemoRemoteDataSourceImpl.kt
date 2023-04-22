@@ -5,7 +5,10 @@ import com.qure.build_property.BuildPropertyRepository
 import com.qure.data.api.MemoService
 import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoQueryEntity
-import com.qure.domain.entity.memo.*
+import com.qure.data.entity.memo.UpdatedMemoEntity
+import com.qure.domain.entity.memo.MemoFields
+import com.qure.domain.entity.memo.MemoFieldsEntity
+import com.qure.domain.entity.memo.MemoQuery
 import javax.inject.Inject
 
 class MemoRemoteDataSourceImpl @Inject constructor(
@@ -31,6 +34,14 @@ class MemoRemoteDataSourceImpl @Inject constructor(
         return memoService.deleteMemo(
             buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
             uuid
+        )
+    }
+
+    override suspend fun updateMemo(memoFields: MemoFields): Result<UpdatedMemoEntity> {
+        return memoService.updateMemo(
+            buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
+            memoFields.uuid.stringValue,
+            MemoFieldsEntity(memoFields),
         )
     }
 }

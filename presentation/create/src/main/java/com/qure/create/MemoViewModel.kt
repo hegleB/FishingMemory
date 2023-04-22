@@ -11,20 +11,23 @@ import com.qure.domain.entity.memo.MemoFields
 import com.qure.domain.entity.memo.MemoStorage
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.CreateMemoUseCase
+import com.qure.domain.usecase.memo.UpdateMemoUseCase
 import com.qure.domain.usecase.memo.UploadMemoImageUseCase
+import com.qure.memo.model.MemoUI
+import com.qure.memo.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class MemoViewModel @Inject constructor(
     private val createMemoUseCase: CreateMemoUseCase,
     private val uploadMemoImageUseCase: UploadMemoImageUseCase,
+    private val updateMemoUseCase: UpdateMemoUseCase,
     private val authRepository: AuthRepository,
     private val buildPropertyRepository: BuildPropertyRepository,
 ) : BaseViewModel() {
@@ -66,18 +69,7 @@ class MemoViewModel @Inject constructor(
         get() = _content
 
     fun createMemo(imageUrl: String) {
-        val memo = MemoFields(
-            uuid = FieldValue(String.UUID),
-            email = FieldValue(authRepository.getEmailFromLocal()),
-            title = FieldValue(title.value),
-            image = FieldValue(imageUrl),
-            waterType = FieldValue(waterType.value),
-            fishType = FieldValue(fishType.value),
-            location = FieldValue(location.value),
-            date = FieldValue(date.value),
-            fishSize = FieldValue(fishSize.value),
-            content = FieldValue(content.value)
-        )
+        val memo = createMemoFields(imageUrl)
         viewModelScope.launch {
             createMemoUseCase(memo).onSuccess {
                 _uiState.update {
@@ -92,7 +84,22 @@ class MemoViewModel @Inject constructor(
         }
     }
 
-    fun uploadMemoImage() {
+    private fun createMemoFields(imageUrl: String, uuid: String = String.UUID): MemoFields {
+        return MemoFields(
+            uuid = FieldValue(uuid),
+            email = FieldValue(authRepository.getEmailFromLocal()),
+            title = FieldValue(title.value),
+            image = FieldValue(imageUrl),
+            waterType = FieldValue(waterType.value),
+            fishType = FieldValue(fishType.value),
+            location = FieldValue(location.value),
+            date = FieldValue(date.value),
+            fishSize = FieldValue(fishSize.value),
+            content = FieldValue(content.value)
+        )
+    }
+
+    fun uploadMemoImage(uuid: String = String.Empty) {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
@@ -101,7 +108,11 @@ class MemoViewModel @Inject constructor(
             }
             uploadMemoImageUseCase(image.value)
                 .onSuccess { storage ->
-                    createMemo(getImageUrl(storage))
+                    if (uuid == String.Empty) {
+                        createMemo(getImageUrl(storage))
+                    } else {
+                        updateMemo(uuid, getImageUrl(storage))
+                    }
                 }.onFailure { throwable ->
                     throwable is Exception
                     sendErrorMessage(throwable)
@@ -112,6 +123,22 @@ class MemoViewModel @Inject constructor(
                     }
 
                 }
+        }
+    }
+
+    fun updateMemo(uuid: String, imageUrl: String) {
+        val editedMemo = createMemoFields(imageUrl, uuid)
+        viewModelScope.launch {
+            updateMemoUseCase(editedMemo).collect { response ->
+                response.onSuccess { memo ->
+                    _uiState.update {
+                        it.copy(
+                            isUpdated = true,
+                            memo = memo.toMemoUI()
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -157,4 +184,6 @@ class MemoViewModel @Inject constructor(
 data class UiState(
     val isSave: Boolean = false,
     val isUploadImage: Boolean = false,
+    val isUpdated: Boolean = false,
+    val memo: MemoUI? = null,
 )
