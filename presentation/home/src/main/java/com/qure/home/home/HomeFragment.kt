@@ -265,7 +265,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         val chartData = when (checkedId) {
             R.id.chip_fragmentHome_fishType -> memos.map { it.fishType }
             R.id.chip_fragmentHome_fishSize -> memos.map { it.fishSize }
-            else -> memos.map { it.location.split(String.Spacing)[1] }
+            else -> memos.map {
+                try {
+                    it.location.split(String.Spacing)[1]
+                } catch (e: IndexOutOfBoundsException) {
+                    it.location.split(String.Spacing)[0]
+                }
+            }
         }
         BarChartView(
             requireContext(),
@@ -353,6 +359,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
         return map
     }
+
     private fun setWeatherAnimation(uiState: UiState) {
         binding.lottieAnimationViewFragmentHomeWeather.setAnimation(
             uiState.toWeatherAnimation()
