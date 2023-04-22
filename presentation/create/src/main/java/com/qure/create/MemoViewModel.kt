@@ -5,6 +5,8 @@ import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.core.BaseViewModel
 import com.qure.core.extensions.Empty
+import com.qure.core.extensions.Slash
+import com.qure.core.extensions.URLSplash
 import com.qure.core.extensions.UUID
 import com.qure.domain.entity.memo.FieldValue
 import com.qure.domain.entity.memo.MemoFields
@@ -143,7 +145,7 @@ class MemoViewModel @Inject constructor(
     }
 
     private fun getImageUrl(storage: MemoStorage): String {
-        val fileName = storage.name.split("/").joinToString("%2F")
+        val fileName = storage.name.split(String.Slash).joinToString(String.URLSplash)
         return buildPropertyRepository.get(BuildProperty.FIREBASE_STORAGE_URL) +
                 "o/${fileName}?alt=media&token=${storage.downloadTokens}"
     }

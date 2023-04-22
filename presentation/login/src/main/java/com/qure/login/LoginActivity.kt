@@ -52,9 +52,15 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                     }
                 }.onFailure { throwable ->
                     if (throwable is ClientError && throwable.reason == ClientErrorCause.Cancelled) {
-                        Timber.d("사용자가 명시적으로 카카오 취소")
+                        FishingMemoryToast().error(
+                            this@LoginActivity,
+                            getString(R.string.message_kakao_cancellation_requested_User)
+                        )
                     } else {
-                        Timber.d("로그인 실패 : ${throwable.message}")
+                        FishingMemoryToast().error(
+                            this@LoginActivity,
+                            getString(R.string.message_kakao_login_failure)
+                        )
                     }
                 }
             }
@@ -71,7 +77,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             }.launchIn(lifecycleScope)
 
         viewModel.action.onEach { action ->
-            val intent = when(action) {
+            val intent = when (action) {
                 LoginViewModel.Action.AlreadySignUp -> {
                     homeNavigator.intent(this)
                 }

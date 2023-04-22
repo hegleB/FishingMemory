@@ -17,10 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.*
 import com.qure.core.BaseFragment
-import com.qure.core.extensions.Spacing
-import com.qure.core.extensions.gone
-import com.qure.core.extensions.initSwipeRefreshLayout
-import com.qure.core.extensions.visiable
+import com.qure.core.extensions.*
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.core_design.custom.barchart.BarChartView
@@ -190,7 +187,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurrentLocation()
             } else {
-                FishingMemoryToast().show(requireContext(), "위치 권한을 설정해주세요")
+                FishingMemoryToast().show(requireContext(), getString(R.string.message_location_permission_required))
             }
         }
     }
@@ -238,7 +235,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         viewModel.getFilteredMemo()
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
             launch {
-                delay(500)
+                delay(Long.SwipRefreshTime)
                 viewModel.UiState.collect {
                     binding.swipeRefreshLayoutFragmentHome.setRefreshing(false)
                     if (it.isFilterInitialized) {

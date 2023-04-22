@@ -66,7 +66,6 @@ class DayBind(
                     textView.setTextColor(context.getColorCompat(R.color.white))
                 }
                 selectedDay -> {
-                    Timber.d("날짜 선택")
                     roundBackgroundView.applyBackground(selectedBackgroud)
                 }
                 else -> {

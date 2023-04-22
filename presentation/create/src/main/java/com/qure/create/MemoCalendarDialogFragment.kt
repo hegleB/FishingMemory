@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.qure.core.extensions.twoDigitsFormat
 import com.qure.create.databinding.DialogMemoCalendarBinding
 import java.util.Date
 
@@ -52,8 +53,9 @@ class MemoCalendarDialogFragment(listener: DatePickerListener) : DialogFragment(
 
     private fun getSelectedDate(): String {
         val year = binding.dataPickerDialogMemoCalendar.year
-        val month = "%02d".format(binding.dataPickerDialogMemoCalendar.month + 1)
-        val day = "%02d".format(binding.dataPickerDialogMemoCalendar.dayOfMonth)
+
+        val month = (binding.dataPickerDialogMemoCalendar.month + 1).twoDigitsFormat()
+        val day = (binding.dataPickerDialogMemoCalendar.dayOfMonth).twoDigitsFormat()
         val selectedDate = "${year}/${month}/${day}"
         return selectedDate
     }

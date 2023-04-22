@@ -11,6 +11,7 @@ import com.kakao.sdk.template.model.Button
 import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
+import com.qure.core.extensions.HashTag
 import com.qure.core.util.FishingMemoryToast
 import com.qure.memo.detail.DetailMemoActivity
 import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_BASE_URL
@@ -45,7 +46,7 @@ class KakaoLinkSender(private val context: Context, private val memo: MemoUI) {
             memo.waterType,
             memo.fishType,
             memo.fishSize + SIZE_UNIT
-        ).joinToString(" #")
+        ).joinToString(String.HashTag)
         return FeedTemplate(
             content = Content(
                 title = memo.title,

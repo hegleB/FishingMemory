@@ -2,6 +2,7 @@ package com.qure.login
 
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
+import com.qure.core.extensions.Colon
 import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.domain.ACCESS_TOKEN_KEY
 import com.qure.domain.entity.auth.SignUpUser
@@ -67,7 +68,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun isExistsEmail(message: String?): Boolean {
-        val documentMessage = message?.split(":") ?: emptyList()
+        val documentMessage = message?.split(String.Colon) ?: emptyList()
         return documentMessage[0] == EMAIL_EXISTS
     }
 

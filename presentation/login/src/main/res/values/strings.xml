@@ -1,3 +1,7 @@
 <resources>
     <string name="kakao_login">카카오로 계속하기</string>
+
+    <string name="message_kakao_cancellation_requested_User">사용자가 명시적으로 카카오 취소</string>
+    <string name="message_kakao_login_failure">카카오 로그인 실패</string>
+    <string name="kakao_access_token_fetch_failure">kakao access token 받기 실패</string>
 </resources>

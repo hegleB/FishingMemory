@@ -17,6 +17,14 @@ val String.Companion.Slash
 val String.Companion.Dash
     get() = "-"
 
+val String.Companion.URLSplash
+    get() = "%2F"
+
+val String.Companion.Colon
+    get() = ":"
+
+val String.Companion.HashTag
+    get() = " #"
 fun generateUniqueId(): String {
-    return UUID.randomUUID().toString().replace("-","")
+    return UUID.randomUUID().toString().replace(String.Dash,String.Empty)
 }

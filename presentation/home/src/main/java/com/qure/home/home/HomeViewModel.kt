@@ -2,6 +2,7 @@ package com.qure.home.home
 
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
+import com.qure.core.extensions.twoDigitsFormat
 import com.qure.domain.entity.memo.*
 import com.qure.domain.entity.weather.WeatherCategory
 import com.qure.domain.repository.AuthRepository
@@ -94,7 +95,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getBaseTime(): String {
-        val baseTime = "${String.format("%02d", LocalTime.now().hour - 1)}30"
+        val baseTime = "${(LocalTime.now().hour - 1).twoDigitsFormat()}30"
         return baseTime
     }
 
