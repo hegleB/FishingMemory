@@ -7,87 +7,107 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.simform.refresh.SSPullToRefreshLayout
+        android:id="@+id/swipeRefreshLayout_fragmentHistory"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".HistoryFragment">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidLine_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="25dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".HistoryFragment">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideLine_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="25dp" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidLine_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="25dp" />
 
-        <TextView
-            android:id="@+id/textView_fragmentHistory_year"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textAppearance="@style/Typography.Heading"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="@+id/guidLine_left"
-            app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideLine_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="25dp" />
 
-
-        <include
-            android:id="@+id/tabLayout_fragmentHistory_month"
-            layout="@layout/calenary_month"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@id/guideLine_right"
-            app:layout_constraintStart_toStartOf="@+id/guidLine_left"
-            app:layout_constraintTop_toBottomOf="@id/textView_fragmentHistory_year" />
-
-        <include
-            android:id="@+id/linearLayout_fragmentHistory_week"
-            layout="@layout/calendar_week"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:layout_constraintEnd_toEndOf="@id/guideLine_right"
-            app:layout_constraintStart_toStartOf="@id/guidLine_left"
-            app:layout_constraintTop_toBottomOf="@+id/tabLayout_fragmentHistory_month" />
-
-        <com.kizitonwose.calendar.view.CalendarView
-            android:id="@+id/calendarView_fragmentHistory"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:cv_dayViewResource="@layout/calendar_day"
-            app:cv_orientation="vertical"
-            app:cv_outDateStyle="endOfGrid"
-            app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
-            app:layout_constraintStart_toStartOf="@+id/guidLine_left"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout_fragmentHistory_week" />
+            <TextView
+                android:id="@+id/textView_fragmentHistory_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textAppearance="@style/Typography.Heading"
+                android:textSize="30sp"
+                app:layout_constraintStart_toStartOf="@+id/guidLine_left"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton_fragmentHistory_postWriting"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="24dp"
-            android:backgroundTint="@color/blue_400"
-            android:src="@drawable/ic_add"
-            app:fabCustomSize="50dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
-            app:shapeAppearanceOverlay="@style/CustomFloatingActionButton"
-            app:tint="@null" />
+            <include
+                android:id="@+id/tabLayout_fragmentHistory_month"
+                layout="@layout/calenary_month"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@id/guideLine_right"
+                app:layout_constraintStart_toStartOf="@+id/guidLine_left"
+                app:layout_constraintTop_toBottomOf="@id/textView_fragmentHistory_year" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_fragmentHistory_post"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
-            app:layout_constraintStart_toEndOf="@+id/guidLine_left"
-            app:layout_constraintTop_toBottomOf="@+id/calendarView_fragmentHistory" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <include
+                android:id="@+id/linearLayout_fragmentHistory_week"
+                layout="@layout/calendar_week"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="@id/guideLine_right"
+                app:layout_constraintStart_toStartOf="@id/guidLine_left"
+                app:layout_constraintTop_toBottomOf="@+id/tabLayout_fragmentHistory_month" />
+
+            <com.kizitonwose.calendar.view.CalendarView
+                android:id="@+id/calendarView_fragmentHistory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:cv_dayViewResource="@layout/calendar_day"
+                app:cv_orientation="vertical"
+                app:cv_outDateStyle="endOfGrid"
+                app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
+                app:layout_constraintStart_toStartOf="@+id/guidLine_left"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout_fragmentHistory_week" />
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButton_fragmentHistory_postWriting"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="24dp"
+                android:backgroundTint="@color/blue_400"
+                android:src="@drawable/ic_add"
+                app:fabCustomSize="50dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
+                app:shapeAppearanceOverlay="@style/CustomFloatingActionButton"
+                app:tint="@null" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_fragmentHistory_post"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
+                app:layout_constraintStart_toEndOf="@+id/guidLine_left"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/calendarView_fragmentHistory"
+                tools:listitem="@layout/item_calendar_memo" />
+
+            <ProgressBar
+                android:id="@+id/progressBar_fragmentHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/gray_700"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/calendarView_fragmentHistory" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.simform.refresh.SSPullToRefreshLayout>
 </layout>

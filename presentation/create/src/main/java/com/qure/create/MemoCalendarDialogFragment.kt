@@ -54,7 +54,7 @@ class MemoCalendarDialogFragment(listener: DatePickerListener) : DialogFragment(
         val year = binding.dataPickerDialogMemoCalendar.year
         val month = "%02d".format(binding.dataPickerDialogMemoCalendar.month + 1)
         val day = "%02d".format(binding.dataPickerDialogMemoCalendar.dayOfMonth)
-        val selectedDate = "${year}/${month}/${day} "
+        val selectedDate = "${year}/${month}/${day}"
         return selectedDate
     }
 

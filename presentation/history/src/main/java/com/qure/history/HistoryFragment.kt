@@ -1,17 +1,30 @@
 package com.qure.history
 
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.tabs.TabLayout
 import com.qure.core.BaseFragment
-import com.qure.create.MemoCreateActivity
+import com.qure.core.extensions.gone
+import com.qure.core.extensions.initSwipeRefreshLayout
+import com.qure.core.extensions.visiable
+import com.qure.core.util.FishingMemoryToast
 import com.qure.history.databinding.FragmentHistoryBinding
 import com.qure.history.view.DayBind
+import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
+import com.qure.navigator.DetailMemoNavigator
 import com.qure.navigator.MemoCreateNavigator
-import com.qure.navigator.MemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -27,6 +40,20 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
     @Inject
     lateinit var memoCreateNavigator: MemoCreateNavigator
 
+    @Inject
+    lateinit var detailMemoNavigator: DetailMemoNavigator
+
+    private val viewModel by viewModels<HistoryViewModel>()
+
+    private val adapter: HistoryAdapter by lazy {
+        HistoryAdapter(
+            onMemoClick = {
+                val intent = detailMemoNavigator.intent(requireContext())
+                intent.putExtra(MEMO_DATA, it)
+                startActivity(intent)
+            })
+    }
+
     private lateinit var firstMonth: YearMonth
     private lateinit var firstDayOfWeek: DayOfWeek
     private lateinit var binder: DayBind
@@ -38,22 +65,74 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         super.onViewCreated(view, savedInstanceState)
 
         listener = this
-
+        viewModel.getFilteredDayMemo(LocalDate.now())
+        viewModel.getFilteredMemo()
+        initRecyclerView()
         initCalendar()
+        initView()
+        observe()
         changeCalendarMonth()
         setCalendarYear()
         moveMemoCreate()
+    }
+
+    private fun initView() {
+        with(binding) {
+            swipeRefreshLayoutFragmentHistory.initSwipeRefreshLayout()
+            swipeRefreshLayoutFragmentHistory.setOnRefreshListener {
+                lifecycleScope.launch {
+                    delay(500)
+                    viewModel.getFilteredDayMemo(LocalDate.now())
+                    viewModel.getFilteredMemo()
+                    swipeRefreshLayoutFragmentHistory.setRefreshing(false)
+                }
+            }
+        }
+    }
+
+    private fun observe() {
+        viewModel.error
+            .onEach { errorMessage -> FishingMemoryToast().error(requireContext(), errorMessage) }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.selectedDayMemos.collect {
+                        adapter.submitList(it)
+                        binding.progressBarFragmentHistory.gone()
+                    }
+                }
+
+                launch {
+                    viewModel.uiState.collect {
+                        if (it.isFiltered) {
+                            binder = DayBind(binding.calendarViewFragmentHistory, it.filteredMemos).apply {
+                                input = object : DayBind.Input() {
+                                    override fun onDayClick(date: LocalDate) = dayClick(date)
+                                }
+                            }
+                            binding.calendarViewFragmentHistory.dayBinder = binder
+                            binding.progressBarFragmentHistory.gone()
+                        } else {
+                            binding.progressBarFragmentHistory.visiable()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initRecyclerView() {
+        binding.recyclerViewFragmentHistoryPost.adapter = adapter
     }
 
     private fun initCalendar() {
         firstMonth = YearMonth.of(LocalDate.now().year, LocalDate.now().month)
         currentYear = LocalDate.now().year
         firstDayOfWeek = WeekFields.of(Locale.KOREAN).firstDayOfWeek
-        binder = DayBind(binding.calendarViewFragmentHistory).apply {
-            input = object : DayBind.Input() {
-                override fun onDayClick(date: LocalDate) = dayClick(date)
-            }
-        }
+        binder = DayBind(binding.calendarViewFragmentHistory)
         with(binding) {
             textViewFragmentHistoryYear.text = LocalDate.now().year.toString()
             calendarViewFragmentHistory.setup(firstMonth, firstMonth, firstDayOfWeek)
@@ -78,7 +157,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
             tabLayoutFragmentHistoryMonth.tabs.addOnTabSelectedListener(object :
                 TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
-                    val month =  tab?.position?.plus(1)!!
+                    val month = tab?.position?.plus(1)!!
                     setupCalendarView(currentYear, month)
                     currentMonth = month
                 }
@@ -90,6 +169,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
     }
 
     private fun dayClick(date: LocalDate) {
+        viewModel.getFilteredDayMemo(date)
         binder.updateCalendar(date)
     }
 
@@ -107,6 +187,13 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
     override fun selectYearClick(year: Int) {
         this.currentYear = year
         setupCalendarView(year, currentMonth)
+        viewModel.getFilteredDayMemo(
+            LocalDate.of(
+                year,
+                currentMonth,
+                LocalDate.now().dayOfMonth
+            )
+        )
         with(binding) {
             textViewFragmentHistoryYear.text = year.toString()
             tabLayoutFragmentHistoryMonth.tabs.post({

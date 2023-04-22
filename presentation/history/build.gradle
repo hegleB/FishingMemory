@@ -42,6 +42,7 @@ dependencies {
     implementation project(path:':navigator')
     implementation project(path:':domain')
     implementation project(path:':presentation:create')
+    implementation project(path:':presentation:memo')
 
     implementation(jetpackDeps)
     implementation(coroutines)
@@ -56,9 +57,15 @@ dependencies {
 
     implementation(locationDeps)
 
+    implementation(swipRefreshDeps)
+
     implementation deps.calendar
 
     implementation deps.timber
+
+    implementation deps.glide.core
+    implementation deps.glide.okhttp
+    kapt deps.glide.compiler
 
     testImplementation(testDeps)
     androidTestImplementation(androidTestDeps)

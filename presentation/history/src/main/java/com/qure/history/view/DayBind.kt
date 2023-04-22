@@ -7,15 +7,21 @@ import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import com.qure.core.extensions.Dash
+import com.qure.core.extensions.Slash
 import com.qure.core.extensions.getColorCompat
 import com.qure.core.extensions.getDrawableCompat
 import com.qure.core.util.setOnSingleClickListener
+import com.qure.history.HistoryViewModel
 import com.qure.history.R
 import com.qure.history.databinding.CalendarDayBinding
+import com.qure.memo.model.MemoUI
+import timber.log.Timber
 import java.time.LocalDate
 
 class DayBind(
     private val calendarView: CalendarView,
+    private val memos: List<MemoUI> = emptyList()
 ) : MonthDayBinder<DayBind.DayContainer> {
 
     private val today = LocalDate.now()
@@ -45,6 +51,13 @@ class DayBind(
 
         textView.text = data.date.dayOfMonth.toString()
 
+        if (memos.isNotEmpty()) {
+            val hasMemo = memos.any {
+                it.date == data.date.toString().split(String.Dash).joinToString(String.Slash)
+            }
+            dot.visibility = if (hasMemo) View.VISIBLE else View.INVISIBLE
+        }
+
         if (data.position == DayPosition.MonthDate) {
             textView.setTextColor(context.getColor(android.R.color.black))
             when (data.date) {
@@ -53,6 +66,7 @@ class DayBind(
                     textView.setTextColor(context.getColorCompat(R.color.white))
                 }
                 selectedDay -> {
+                    Timber.d("날짜 선택")
                     roundBackgroundView.applyBackground(selectedBackgroud)
                 }
                 else -> {

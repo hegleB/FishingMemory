@@ -66,12 +66,12 @@ class MemoListViewModel @Inject constructor(
     }
 
     companion object {
-        private const val EMAIL = "email"
-        private const val DATE = "date"
-        private const val DESCENDING = "DESCENDING"
-        private const val EQUAL = "EQUAL"
-        private const val AND = "AND"
-        private const val COLLECTION_ID = "memo"
+        const val EMAIL = "email"
+        const val DATE = "date"
+        const val DESCENDING = "DESCENDING"
+        const val EQUAL = "EQUAL"
+        const val AND = "AND"
+        const val COLLECTION_ID = "memo"
     }
 }
 
