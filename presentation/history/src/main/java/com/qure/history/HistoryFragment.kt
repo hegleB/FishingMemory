@@ -81,10 +81,14 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
             swipeRefreshLayoutFragmentHistory.initSwipeRefreshLayout()
             swipeRefreshLayoutFragmentHistory.setOnRefreshListener {
                 lifecycleScope.launch {
-                    delay(500)
-                    viewModel.getFilteredDayMemo(LocalDate.now())
-                    viewModel.getFilteredMemo()
-                    swipeRefreshLayoutFragmentHistory.setRefreshing(false)
+                    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        delay(500)
+                        viewModel.selectedDate.collect {
+                            viewModel.getFilteredDayMemo(it)
+                            viewModel.getFilteredMemo()
+                            swipeRefreshLayoutFragmentHistory.setRefreshing(false)
+                        }
+                    }
                 }
             }
         }
@@ -100,7 +104,9 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.selectedDayMemos.collect {
-                        adapter.submitList(it)
+                        adapter.submitList(it) {
+                            binding.recyclerViewFragmentHistoryPost.scrollToPosition(0)
+                        }
                         binding.progressBarFragmentHistory.gone()
                     }
                 }
@@ -170,6 +176,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
 
     private fun dayClick(date: LocalDate) {
         viewModel.getFilteredDayMemo(date)
+        viewModel.selectDate(date)
         binder.updateCalendar(date)
     }
 

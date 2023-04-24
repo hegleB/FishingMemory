@@ -3,6 +3,7 @@ package com.qure.history
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
 import com.qure.core.extensions.Dash
+import com.qure.core.extensions.Empty
 import com.qure.core.extensions.Slash
 import com.qure.domain.entity.memo.*
 import com.qure.domain.repository.AuthRepository
@@ -36,6 +37,10 @@ class HistoryViewModel @Inject constructor(
     private val _selectedDayMemos: MutableStateFlow<List<MemoUI>> = MutableStateFlow(emptyList())
     val selectedDayMemos: StateFlow<List<MemoUI>>
         get() = _selectedDayMemos
+
+    private val _selectedDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
+    val selectedDate: StateFlow<LocalDate>
+        get() = _selectedDate
 
     fun getFilteredDayMemo(date: LocalDate) {
         viewModelScope.launch {
@@ -122,6 +127,10 @@ class HistoryViewModel @Inject constructor(
                 orderBy = listOf(OrderBy(FieldPath(CREATE_TIME), DESCENDING))
             )
         )
+    }
+
+    fun selectDate(date: LocalDate) {
+        _selectedDate.value = date
     }
 
     companion object {
