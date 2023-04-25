@@ -39,6 +39,7 @@ data class MemoFields(
     val fishSize: FieldValue,
     val content: FieldValue,
     val createTime: FieldValue = FieldValue(System.currentTimeMillis().toString()),
+    val coords: FieldValue,
 ) {
     companion object {
         val EMPTY = MemoFields(
@@ -53,6 +54,7 @@ data class MemoFields(
             fishSize = FieldValue.EMPTY,
             content = FieldValue.EMPTY,
             createTime = FieldValue.EMPTY,
+            coords =  FieldValue.EMPTY,
         )
     }
 }

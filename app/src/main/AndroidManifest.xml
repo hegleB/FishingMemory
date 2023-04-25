@@ -31,6 +31,10 @@
         </provider>
 
         <activity
+            android:name="com.qure.map.MapActivity"
+            android:exported="false" />
+
+        <activity
             android:name="com.qure.create.MemoCreateActivity"
             android:exported="false" />
         <activity

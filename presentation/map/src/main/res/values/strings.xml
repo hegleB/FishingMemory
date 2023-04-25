@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">map</string>
+    <string name="message_location_permission_required">위치 권한을 설정해주세요</string>
+    <string name="basic_map">일반지도</string>
+    <string name="satellite_map">위성지도</string>
+    <string name="terrain_map">지형지도</string>
+</resources>

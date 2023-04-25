@@ -9,6 +9,7 @@
     <string name="place">장소</string>
     <string name="weather">날씨</string>
     <string name="writhing">기록한 글</string>
+    <string name="map">지도로 보기 ></string>
     <string name="memo_more">더보기</string>
 
     <string name="no_fish_caught">잡은 물고기 없습니다</string>

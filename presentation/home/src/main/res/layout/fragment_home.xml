@@ -23,7 +23,7 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="30dp"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="5dp"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
                 app:layout_constraintStart_toStartOf="@+id/guideLine_left"
                 app:layout_constraintTop_toTopOf="parent">
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="5dp"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideLine_right"
                 app:layout_constraintStart_toStartOf="@+id/guideLine_left"
                 app:layout_constraintTop_toBottomOf="@+id/cardView_fragmentHome_chart">
@@ -125,13 +125,12 @@
                         android:id="@+id/progressBar_fragmentHome"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="visible"
                         android:indeterminateTint="@color/gray_700"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/guideline_weather_left"
@@ -223,11 +222,12 @@
 
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_fragmentHome_writedmemos"
                 android:layout_width="0dp"
                 android:layout_height="180dp"
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="5dp"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="@id/guideLine_right"
                 app:layout_constraintStart_toStartOf="@id/guideLine_left"
                 app:layout_constraintTop_toBottomOf="@id/cardView_fragmentHome_weather">
@@ -268,7 +268,7 @@
                         android:layout_marginTop="10dp"
                         android:orientation="horizontal"
                         app:cardCornerRadius="15dp"
-                        app:cardElevation="10dp"
+                        app:cardElevation="0dp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -288,6 +288,52 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/textView_fragmentHome_memo" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView_fragmentHome_map"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/guideLine_right"
+                app:layout_constraintStart_toStartOf="@id/guideLine_left"
+                app:layout_constraintTop_toBottomOf="@id/cardView_fragmentHome_writedmemos">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottieAnimationView_fragmentHome_map"
+                        android:layout_width="100dp"
+                        android:layout_height="0dp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/map"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/map"
+                        android:gravity="center"
+                        android:textColor="@color/gray_700"
+                        android:layout_marginEnd="20dp"
+                        android:textAppearance="@style/Typography.Title1"
+                        app:layout_constraintTop_toTopOf="@id/lottieAnimationView_fragmentHome_map"
+                        app:layout_constraintEnd_toStartOf="@id/lottieAnimationView_fragmentHome_map"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@id/lottieAnimationView_fragmentHome_map"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             </androidx.cardview.widget.CardView>
 

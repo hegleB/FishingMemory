@@ -21,6 +21,7 @@ data class MemoUI(
     val fishSize: String = String.Empty,
     val content: String = String.Empty,
     val createTime: String? = System.currentTimeMillis().toString(),
+    val coords: String = String.Empty
 ): Parcelable
 
 fun Memo.toMemoUI(): MemoUI {
@@ -38,6 +39,7 @@ fun Memo.toMemoUI(): MemoUI {
         fishSize = data.fishSize.stringValue,
         content = data.content.stringValue,
         createTime = data.createTime.stringValue,
+        coords = data.coords.stringValue,
     )
 }
 

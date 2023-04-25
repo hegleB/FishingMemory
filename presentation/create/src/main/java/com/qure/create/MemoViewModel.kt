@@ -70,6 +70,10 @@ class MemoViewModel @Inject constructor(
     val content: StateFlow<String>
         get() = _content
 
+    private val _coords = MutableStateFlow(String.Empty)
+    val coords: StateFlow<String>
+        get() = _coords
+
     fun createMemo(imageUrl: String) {
         val memo = createMemoFields(imageUrl)
         viewModelScope.launch {
@@ -97,7 +101,8 @@ class MemoViewModel @Inject constructor(
             location = FieldValue(location.value),
             date = FieldValue(date.value),
             fishSize = FieldValue(fishSize.value),
-            content = FieldValue(content.value)
+            content = FieldValue(content.value),
+            coords = FieldValue(coords.value)
         )
     }
 
@@ -180,6 +185,10 @@ class MemoViewModel @Inject constructor(
 
     fun setContent(content: String) {
         _content.value = content
+    }
+
+    fun setCoords(coords: String) {
+        _coords.value = coords
     }
 }
 

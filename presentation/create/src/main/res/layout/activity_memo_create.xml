@@ -188,7 +188,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:drawableStart="@drawable/ic_location"
+            android:drawableStart="@drawable/ic_marker"
             android:gravity="center"
             android:text="@string/location"
             android:textAppearance="@style/Typography.Title2"

@@ -27,6 +27,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.qure.core.BaseActivity
+import com.qure.core.extensions.Empty
 import com.qure.core.extensions.gone
 import com.qure.core.extensions.visiable
 import com.qure.core.util.FishingMemoryToast
@@ -350,9 +351,11 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         super.onActivityResult(requestCode, resultCode, data)
 
         when {
-            requestCode == REQUEST_CODE_AREA && data != null ->
+            requestCode == REQUEST_CODE_AREA && data != null -> {
                 binding.textViewActivityMemoCreateLocationInfo.text =
                     data.getStringExtra(ARG_AREA)
+                viewModel.setCoords(data.getStringExtra(ARG_AREA_COORDS) ?: String.Empty)
+            }
 
             requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null -> {
                 val data = data.data as Uri

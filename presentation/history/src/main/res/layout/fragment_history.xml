@@ -41,6 +41,16 @@
                 app:layout_constraintStart_toStartOf="@+id/guidLine_left"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/imageView_fragmentHistory_map"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@drawable/ic_map"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintTop_toTopOf="@id/textView_fragmentHistory_year"
+                app:layout_constraintBottom_toBottomOf="@id/textView_fragmentHistory_year"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
 
             <include
                 android:id="@+id/tabLayout_fragmentHistory_month"

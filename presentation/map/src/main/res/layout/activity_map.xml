@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MapActivity">
+
+        <FrameLayout
+            android:id="@+id/fragment_activityMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/imageView_activityMap_back"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/bg_oval_arrow_back" />
+
+        <ImageView
+            android:id="@+id/imageView_activityMap_location"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="bottom|right"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="80dp"
+            android:background="@drawable/bg_oval_location" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup_activityMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="80dp"
+            app:checkedChip="@+id/chip_activityMap_basic_map"
+            app:chipSpacingHorizontal="3000dp"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_activityMap_basic_map"
+                style="@style/Widget.MaterialComponents.Chip.Choice.MapType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/basic_map" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_activityMap_satellite_map"
+                style="@style/Widget.MaterialComponents.Chip.Choice.MapType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/satellite_map" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_activityMap_terrain_map"
+                style="@style/Widget.MaterialComponents.Chip.Choice.MapType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/terrain_map" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <include
+            android:id="@+id/bottomSheet_activityMap"
+            layout="@layout/bottom_sheet_memo_list"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

@@ -13,10 +13,12 @@ import com.qure.core.extensions.gone
 import com.qure.core.extensions.initSwipeRefreshLayout
 import com.qure.core.extensions.visiable
 import com.qure.core.util.FishingMemoryToast
+import com.qure.core.util.setOnSingleClickListener
 import com.qure.history.databinding.FragmentHistoryBinding
 import com.qure.history.view.DayBind
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.navigator.DetailMemoNavigator
+import com.qure.navigator.MapNavigator
 import com.qure.navigator.MemoCreateNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -42,6 +44,9 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
 
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
+
+    @Inject
+    lateinit var mapNavigator: MapNavigator
 
     private val viewModel by viewModels<HistoryViewModel>()
 
@@ -90,6 +95,10 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                         }
                     }
                 }
+            }
+
+            imageViewFragmentHistoryMap.setOnSingleClickListener {
+                startActivity(mapNavigator.intent(requireContext()))
             }
         }
     }

@@ -25,6 +25,9 @@ val String.Companion.Colon
 
 val String.Companion.HashTag
     get() = " #"
+
+val String.Companion.Comma
+    get() = ","
 fun generateUniqueId(): String {
     return UUID.randomUUID().toString().replace(String.Dash,String.Empty)
 }

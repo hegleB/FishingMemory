@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.MaterialComponents.Chip.Choice.MapType">
+        <item name="android:textAppearance">@style/Typography.SubTitle1</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="chipBackgroundColor">@color/selector_map_type</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/selector_map_type</item>
+    </style>
+</resources>

@@ -33,6 +33,7 @@ android {
 dependencies {
     implementation(jetpackDeps)
     implementation(chartDeps)
+    implementation deps.navermap
     testImplementation(testDeps)
     androidTestImplementation(androidTestDeps)
 }

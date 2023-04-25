@@ -85,6 +85,7 @@ dependencies {
     implementation project(path: ':presentation:history')
     implementation project(path: ':presentation:create')
     implementation project(path: ':presentation:memo')
+    implementation project(path: ':presentation:map')
 
     implementation(jetpackDeps)
     implementation(coroutines)

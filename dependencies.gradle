@@ -95,7 +95,7 @@ ext {
                     "link"     : "com.google.firebase:firebase-dynamic-links-ktx",
             ],
             "chart"       : "com.github.PhilJay:MPAndroidChart:v3.1.0",
-            "location"    : "com.google.android.gms:play-services-location:21.0.1",
+            "location"    : "com.google.android.gms:play-services-location:16.0.0",
             "navermap"    : "com.naver.maps:map-sdk:3.16.0",
             "swiprefresh" : "com.github.SimformSolutionsPvtLtd:SSPullToRefresh:1.5.1"
     ]

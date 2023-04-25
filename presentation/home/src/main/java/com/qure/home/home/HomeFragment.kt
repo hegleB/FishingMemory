@@ -28,6 +28,7 @@ import com.qure.home.home.memo.MemoAdapter
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.memo.model.MemoUI
 import com.qure.navigator.DetailMemoNavigator
+import com.qure.navigator.MapNavigator
 import com.qure.navigator.MemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -46,6 +47,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
+
+    @Inject
+    lateinit var mapNavigator: MapNavigator
 
     private val viewModel by viewModels<HomeViewModel>()
     private var memos: List<MemoUI> = emptyList()
@@ -228,6 +232,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding.textViewFragmentHomeMemoMore.setOnSingleClickListener {
             startActivity(memoNavigator.intent(requireContext()))
+        }
+
+        binding.cardViewFragmentHomeMap.setOnSingleClickListener {
+            startActivity(mapNavigator.intent(requireContext()))
         }
     }
 
