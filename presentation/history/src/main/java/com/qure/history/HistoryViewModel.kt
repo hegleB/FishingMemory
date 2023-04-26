@@ -3,7 +3,6 @@ package com.qure.history
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
 import com.qure.core.extensions.Dash
-import com.qure.core.extensions.Empty
 import com.qure.core.extensions.Slash
 import com.qure.domain.entity.memo.*
 import com.qure.domain.repository.AuthRepository

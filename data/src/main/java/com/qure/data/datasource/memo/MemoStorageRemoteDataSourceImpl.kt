@@ -1,6 +1,5 @@
 package com.qure.data.datasource.memo
 
-import com.qure.data.api.MemoService
 import com.qure.data.api.StorageService
 import com.qure.data.entity.memo.MemoStorageEntity
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

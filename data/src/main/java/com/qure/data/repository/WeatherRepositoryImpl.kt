@@ -1,7 +1,6 @@
 package com.qure.data.repository
 
 import com.qure.data.datasource.weather.WeatherRemoteDataSource
-import com.qure.data.entity.weather.WeatherEntity
 import com.qure.data.mapper.toWeather
 import com.qure.domain.entity.weather.Weather
 import com.qure.domain.repository.WeatherRepository

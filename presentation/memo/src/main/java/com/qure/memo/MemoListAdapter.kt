@@ -10,8 +10,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.qure.core.util.setOnSingleClickListener
-import com.qure.memo.model.MemoUI
 import com.qure.memo.databinding.ItemMemoListBinding
+import com.qure.memo.model.MemoUI
 
 
 class MemoListAdapter(private val onMemoClick: (memo: MemoUI) -> Unit) :

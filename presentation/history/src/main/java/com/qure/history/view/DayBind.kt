@@ -12,11 +12,9 @@ import com.qure.core.extensions.Slash
 import com.qure.core.extensions.getColorCompat
 import com.qure.core.extensions.getDrawableCompat
 import com.qure.core.util.setOnSingleClickListener
-import com.qure.history.HistoryViewModel
 import com.qure.history.R
 import com.qure.history.databinding.CalendarDayBinding
 import com.qure.memo.model.MemoUI
-import timber.log.Timber
 import java.time.LocalDate
 
 class DayBind(

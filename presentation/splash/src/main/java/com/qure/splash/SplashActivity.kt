@@ -7,8 +7,8 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.qure.core.BaseActivity
 import com.qure.navigator.HomeNavigator
-import com.qure.navigator.OnboardingNavigator
 import com.qure.navigator.LoginNavigator
+import com.qure.navigator.OnboardingNavigator
 import com.qure.splash.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

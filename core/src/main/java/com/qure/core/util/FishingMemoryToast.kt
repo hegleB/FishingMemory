@@ -1,13 +1,11 @@
 package com.qure.core.util
 
 import android.content.Context
-import android.text.Layout
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.TextView
 import android.widget.Toast
 import com.qure.core.R
-import java.time.Duration
 
 class FishingMemoryToast {
     fun show(

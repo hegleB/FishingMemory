@@ -1,6 +1,6 @@
 package com.qure.data.mapper
 
-import com.qure.data.entity.auth.*
+import com.qure.data.entity.auth.SignUpUserEntity
 import com.qure.domain.entity.auth.SignUpUser
 
 fun SignUpUserEntity.toSignUpUser(): SignUpUser {

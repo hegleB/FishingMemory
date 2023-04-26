@@ -4,8 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
 import com.qure.core.extensions.Empty
 import com.qure.domain.usecase.memo.DeleteMemoUseCase
-import com.qure.memo.model.MemoUI
-
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

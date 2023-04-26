@@ -1,12 +1,10 @@
 package com.qure.memo
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.qure.core.BaseActivity
 import com.qure.core.extensions.gone
 import com.qure.core.extensions.initSwipeRefreshLayout

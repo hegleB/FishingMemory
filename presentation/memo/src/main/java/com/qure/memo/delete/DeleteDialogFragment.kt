@@ -3,7 +3,6 @@ package com.qure.memo.delete
 import android.app.ActionBar
 import android.os.Bundle
 import android.util.DisplayMetrics
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

@@ -3,7 +3,7 @@ package com.qure.data.datasource.auth
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.data.api.AuthService
-import com.qure.data.entity.auth.*
+import com.qure.data.entity.auth.SignUpUserEntity
 import com.qure.domain.entity.auth.Email
 import com.qure.domain.entity.auth.SignUpFields
 import com.qure.domain.entity.auth.SignUpFieldsEntity

@@ -5,16 +5,12 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.qure.core.BaseActivity
-import com.qure.core.extensions.Empty
 import com.qure.history.HistoryFragment
 import com.qure.home.databinding.ActivityMainBinding
 import com.qure.home.home.HomeFragment
 import com.qure.memo.detail.DetailMemoActivity
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_TITLE
-import com.qure.memo.model.MemoUI
 import com.qure.navigator.DetailMemoNavigator
-import com.qure.navigator.MemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

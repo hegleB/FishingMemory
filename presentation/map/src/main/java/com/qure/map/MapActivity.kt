@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
-import android.os.Handler
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -21,6 +20,7 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.qure.core.BaseActivity
 import com.qure.core.extensions.dpToPx
+import com.qure.core.extensions.toReverseCoordsString
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.map.databinding.ActivityMapBinding
 import com.qure.memo.MemoListAdapter
@@ -30,11 +30,9 @@ import com.qure.memo.model.MemoUI
 import com.qure.memo.model.toTedClusterItem
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.naver.TedNaverClustering
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -44,7 +42,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
     private val memoViewModel by viewModels<MemoListViewModel>()
-    private var preMarker: Marker? = null
+    
     private val adatper: MemoListAdapter by lazy {
         MemoListAdapter({
             val intent = detailMemoNavigator.intent(this)
@@ -133,8 +131,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             .clusterClickListener { clusterItems ->
                 val clusterMemos = mutableSetOf<MemoUI>()
                 clusterItems.items.forEach {
-                    val (lng, lat) = it.getTedLatLng()
-                    val latLng = "${lat},${lng}"
+                    val latLng = it.getTedLatLng().toReverseCoordsString()
                     val filteredMemos = memos.filter { it.coords == latLng }
                     clusterMemos.addAll(filteredMemos)
                 }

@@ -1,10 +1,8 @@
 package com.qure.memo.model
 
 import android.os.Parcelable
-import com.naver.maps.geometry.LatLng
 import com.qure.core.extensions.Comma
 import com.qure.core.extensions.Empty
-import com.qure.core.extensions.UUID
 import com.qure.domain.entity.memo.Document
 import com.qure.domain.entity.memo.Memo
 import kotlinx.android.parcel.Parcelize

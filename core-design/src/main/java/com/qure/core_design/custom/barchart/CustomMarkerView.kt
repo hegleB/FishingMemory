@@ -2,7 +2,6 @@ package com.qure.core_design.custom.barchart
 
 import android.content.Context
 import android.graphics.Canvas
-import android.util.AttributeSet
 import android.widget.TextView
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry

@@ -2,8 +2,6 @@ package com.qure.memo.share
 
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import com.kakao.sdk.common.util.KakaoCustomTabsClient
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.share.WebSharerClient
@@ -13,7 +11,6 @@ import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
 import com.qure.core.extensions.HashTag
 import com.qure.core.util.FishingMemoryToast
-import com.qure.memo.detail.DetailMemoActivity
 import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_BASE_URL
 import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_CONTENT
 import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_CREATE_TIME
