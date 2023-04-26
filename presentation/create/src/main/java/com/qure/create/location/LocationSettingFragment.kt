@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.UiThread
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -172,7 +171,7 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
                             if (it.reverseGeocodingUI?.code == 0 && it.geocodingUI?.coords != String.Empty) {
                                 arealistener.setAreaName(
                                     it.reverseGeocodingUI.areaName,
-                                    it.geocodingUI!!.coords
+                                    it.geocodingUI!!.coords,
                                 )
                             }
                         }
@@ -195,7 +194,7 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
         val longitude = uiState.geocodingUI?.x ?: DEFAULT_LONGITUDE
         val coords = "${latitude},${longitude}"
         viewModel.getReverseGeocoding(coords)
-        arealistener.setAreaName(regionName ?: String.Empty, coords)
+        arealistener.setAreaName(regionName ?: String.Empty, "${longitude},${latitude}")
         val cameraUpdate = CameraUpdate.scrollTo(
             LatLng(
                 latitude.toDouble(),

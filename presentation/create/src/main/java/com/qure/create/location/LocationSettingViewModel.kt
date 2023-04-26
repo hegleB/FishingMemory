@@ -2,6 +2,8 @@ package com.qure.create.location
 
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
+import com.qure.core.extensions.Comma
+import com.qure.core.extensions.Empty
 import com.qure.create.R
 import com.qure.create.model.GeocodingUI
 import com.qure.create.model.ReverseGeocodingUI
@@ -12,6 +14,7 @@ import com.qure.domain.usecase.map.GetReverseGeocodingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +29,6 @@ class LocationSettingViewModel @Inject constructor(
     private val _uiEffect: MutableSharedFlow<UiEffect> = MutableSharedFlow()
     val uiEffect: SharedFlow<UiEffect>
         get() = _uiEffect
-
     fun getGeocoding(query: String) {
         viewModelScope.launch {
             getGeocodingUseCase(query).collect { response ->
@@ -47,6 +49,7 @@ class LocationSettingViewModel @Inject constructor(
     }
 
     fun getReverseGeocoding(coords: String) {
+        val latLng = coords.split(String.Comma).reversed().joinToString(String.Comma)
         viewModelScope.launch {
             getReverseGeocodingUseCase(coords).collect { response ->
                 response.onSuccess { reverseGeocoding ->
@@ -54,7 +57,8 @@ class LocationSettingViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 reverseGeocodingUI = reverseGeocoding.toReverseGeocodingUI(),
-                                isReverseGeocodingInittialized = true
+                                isReverseGeocodingInittialized = true,
+                                geocodingUI = GeocodingUI(coords = latLng),
                             )
 
                         }
