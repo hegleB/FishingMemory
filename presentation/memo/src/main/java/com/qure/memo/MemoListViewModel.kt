@@ -24,17 +24,17 @@ class MemoListViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState>
         get() = _uiState
-
     fun getFilteredMemo() {
         viewModelScope.launch {
             getFilteredMemoUseCase(
                 getStructuredQuery()
             ).collect { response ->
                 response.onSuccess { result ->
+                    val memoUI = result.map { it.toMemoUI() }
                     _uiState.update {
                         it.copy(
                             isFilterInitialized = true,
-                            filteredMemo = result.map { it.toMemoUI() }
+                            filteredMemo = memoUI
                         )
                     }
                 }.onFailure { throwable ->

@@ -2,9 +2,11 @@ package com.qure.map
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.PointF
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Lifecycle
@@ -14,13 +16,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
-import com.naver.maps.map.NaverMap.OnMapClickListener
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
-import com.naver.maps.map.util.MarkerIcons
 import com.qure.core.BaseActivity
-import com.qure.core.extensions.Comma
 import com.qure.core.extensions.dpToPx
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.map.databinding.ActivityMapBinding
@@ -28,9 +27,14 @@ import com.qure.memo.MemoListAdapter
 import com.qure.memo.MemoListViewModel
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.memo.model.MemoUI
+import com.qure.memo.model.toTedClusterItem
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ted.gun0912.clustering.clustering.TedClusterItem
+import ted.gun0912.clustering.naver.TedNaverClustering
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -40,6 +44,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
     private val memoViewModel by viewModels<MemoListViewModel>()
+    private var preMarker: Marker? = null
     private val adatper: MemoListAdapter by lazy {
         MemoListAdapter({
             val intent = detailMemoNavigator.intent(this)
@@ -55,12 +60,11 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
+        memoViewModel.getFilteredMemo()
+        openMapFragment()
         initView()
         initRecyclerView()
-        openMapFragment()
-        observe()
     }
-
     private fun initView() {
         binding.imageViewActivityMapBack.setOnSingleClickListener {
             finish()
@@ -88,40 +92,57 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     }
 
     private fun observe() {
+        memoViewModel.getFilteredMemo()
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
                     memoViewModel.uiState.collect { uiState ->
-                        val memos = uiState.filteredMemo
-                        createMarkers(memos)
-                        setBottomSheetView(memos)
+                        if (uiState.isFilterInitialized) {
+                            createMarkers(uiState.filteredMemo)
+                        }
                     }
                 }
             }
         }
     }
-
     private fun createMarkers(memos: List<MemoUI>) {
-        for (memo in memos) {
-            val (lat, lng) = memo.coords.split(String.Comma).map { it.toDouble() }
-            val latLng = LatLng(lat, lng)
-            val marker = Marker()
-            marker.apply {
-                position = latLng
-                map = naverMap
-                icon = OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker)
-                width = 100
-                height = 120
-
-                setOnClickListener {
-                    val cameraUpdate = CameraUpdate.scrollTo(latLng)
-                    val selectedMemos = memos.filter { it.coords == "${lat},${lng}" }
-                    naverMap.moveCamera(cameraUpdate)
-                    setBottomSheetView(selectedMemos)
-                    true
+        val clusterItems = memos.map { it.toTedClusterItem() }
+        TedNaverClustering.with<TedClusterItem>(this, naverMap)
+            .customMarker { clusterItem ->
+                Marker().apply {
+                    icon =
+                        OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker)
+                    width = 100
+                    height = 120
                 }
             }
-        }
+            .customCluster {
+                TextView(this).apply {
+                    setBackgroundResource(com.qure.core_design.R.drawable.bg_oval_gray600)
+                    setTextColor(Color.WHITE)
+                    setPadding(40, 25, 40, 25)
+                    text = "${it.size}"
+                }
+            }
+            .minClusterSize(2)
+            .markerClickListener { memoUi ->
+                val (lng, lat) = memoUi.getTedLatLng()
+                val selectedMemos = memos.filter { it.coords == "${lat},${lng}" }
+                setBottomSheetView(selectedMemos)
+            }
+            .clusterClickListener { clusterItems ->
+                val clusterMemos = mutableSetOf<MemoUI>()
+                clusterItems.items.forEach {
+                    val (lng, lat) = it.getTedLatLng()
+                    val latLng = "${lat},${lng}"
+                    val filteredMemos = memos.filter { it.coords == latLng }
+                    clusterMemos.addAll(filteredMemos)
+                }
+                setBottomSheetView(clusterMemos.toList())
+            }
+            .clusterBuckets(intArrayOf(10, 100, 1000, 10000))
+            .items(clusterItems)
+            .make()
     }
 
     private fun setBottomSheetView(memos: List<MemoUI>) {
@@ -153,8 +174,6 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         ) {
             if (!locationSource.isActivated) { // 권한 거부됨
                 naverMap.locationTrackingMode = LocationTrackingMode.None
-            } else {
-                onMapReady(naverMap)
             }
             return
         }
@@ -163,10 +182,9 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
-
         setMapSettings()
         updateCurrentLocation()
-        memoViewModel.getFilteredMemo()
+        observe()
     }
 
     private fun setMapSettings() {

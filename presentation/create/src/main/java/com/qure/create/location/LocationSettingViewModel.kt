@@ -49,7 +49,6 @@ class LocationSettingViewModel @Inject constructor(
     }
 
     fun getReverseGeocoding(coords: String) {
-        val latLng = coords.split(String.Comma).reversed().joinToString(String.Comma)
         viewModelScope.launch {
             getReverseGeocodingUseCase(coords).collect { response ->
                 response.onSuccess { reverseGeocoding ->
@@ -58,7 +57,7 @@ class LocationSettingViewModel @Inject constructor(
                             it.copy(
                                 reverseGeocodingUI = reverseGeocoding.toReverseGeocodingUI(),
                                 isReverseGeocodingInittialized = true,
-                                geocodingUI = GeocodingUI(coords = latLng),
+                                geocodingUI = GeocodingUI(coords = coords),
                             )
 
                         }

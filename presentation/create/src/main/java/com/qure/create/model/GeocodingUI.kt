@@ -21,7 +21,7 @@ fun Geocoding.toGeocodingUI(): GeocodingUI {
         return GeocodingUI()
     }
     val address = addresses[0]
-    val coords = "${address.x},${address.y}"
+    val coords = "${address.y},${address.x}"
     return GeocodingUI(
         roadAddress = address.roadAddress,
         jibunAddress = address.jibunAddress,

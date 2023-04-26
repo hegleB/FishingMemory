@@ -1,11 +1,15 @@
 package com.qure.memo.model
 
 import android.os.Parcelable
+import com.naver.maps.geometry.LatLng
+import com.qure.core.extensions.Comma
 import com.qure.core.extensions.Empty
 import com.qure.core.extensions.UUID
 import com.qure.domain.entity.memo.Document
 import com.qure.domain.entity.memo.Memo
 import kotlinx.android.parcel.Parcelize
+import ted.gun0912.clustering.clustering.TedClusterItem
+import ted.gun0912.clustering.geometry.TedLatLng
 
 @Parcelize
 data class MemoUI(
@@ -23,6 +27,16 @@ data class MemoUI(
     val createTime: String? = System.currentTimeMillis().toString(),
     val coords: String = String.Empty
 ): Parcelable
+
+fun MemoUI.toTedClusterItem(): TedClusterItem {
+    val (lng, lat) = this.coords.split(String.Comma).map { it.toDouble() }
+    return object : TedClusterItem {
+        override fun getTedLatLng(): TedLatLng {
+            return TedLatLng(lat, lng)
+        }
+    }
+}
+
 
 fun Memo.toMemoUI(): MemoUI {
     val data = this.fields!!.fields

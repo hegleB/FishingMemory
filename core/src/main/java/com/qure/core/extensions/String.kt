@@ -28,6 +28,12 @@ val String.Companion.HashTag
 
 val String.Companion.Comma
     get() = ","
+
+val String.Companion.DefaultLatitude
+    get() = "37.5666102"
+
+val String.Companion.DefaultLongitude
+    get() = "126.9783881"
 fun generateUniqueId(): String {
     return UUID.randomUUID().toString().replace(String.Dash,String.Empty)
 }

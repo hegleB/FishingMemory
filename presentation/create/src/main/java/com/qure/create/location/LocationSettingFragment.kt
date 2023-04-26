@@ -17,9 +17,7 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.MarkerIcons
 import com.qure.core.BaseFragment
-import com.qure.core.extensions.Empty
-import com.qure.core.extensions.Spacing
-import com.qure.core.extensions.getColorCompat
+import com.qure.core.extensions.*
 import com.qure.core.util.FishingMemoryToast
 import com.qure.create.R
 import com.qure.create.databinding.FragmentLocationSettingBinding
@@ -145,7 +143,7 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
                 icon = MarkerIcons.BLACK
                 iconTintColor =
                     requireContext().getColorCompat(com.qure.core_design.R.color.blue_600)
-                viewModel.getReverseGeocoding("${coord.longitude},${coord.latitude}")
+                viewModel.getReverseGeocoding(coord.toReverseCoordsString())
             }
         }
     }
@@ -190,8 +188,8 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
     }
 
     private fun moveMapCamera(uiState: UiState) {
-        val latitude = uiState.geocodingUI?.y ?: DEFAULT_LATITUDE
-        val longitude = uiState.geocodingUI?.x ?: DEFAULT_LONGITUDE
+        val latitude = uiState.geocodingUI?.y ?: String.DefaultLatitude
+        val longitude = uiState.geocodingUI?.x ?: String.DefaultLongitude
         val coords = "${latitude},${longitude}"
         viewModel.getReverseGeocoding(coords)
         arealistener.setAreaName(regionName ?: String.Empty, "${longitude},${latitude}")
@@ -206,8 +204,6 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
 
     companion object {
         private const val NOT_EXIST_CITY_NAME = "없음"
-        private const val DEFAULT_LATITUDE = "37.5666102"
-        private const val DEFAULT_LONGITUDE = "126.9783881"
         fun newInstance(
             title: String,
             subTitle: String,

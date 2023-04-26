@@ -50,6 +50,8 @@ dependencies {
     kapt deps.hilt.compiler
     implementation deps.glide.core
 
+    implementation deps.navermap
+
     implementation deps.timber
 
     testImplementation(testDeps)

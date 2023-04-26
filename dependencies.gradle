@@ -81,10 +81,10 @@ ext {
             "jodaTime"    : "joda-time:joda-time:${versions.jodaTime}",
             "calendar"    : "com.kizitonwose.calendar:view:${versions.calendar}",
             "kakao"       : [
-                    "user"      : "com.kakao.sdk:v2-user:${versions.kakao}",
-                    "talk"      : "com.kakao.sdk:v2-talk:${versions.kakao}",
-                    "story"     : "com.kakao.sdk:v2-story:${versions.kakao}",
-                    "share"     : "com.kakao.sdk:v2-share:${versions.kakao}",
+                    "user" : "com.kakao.sdk:v2-user:${versions.kakao}",
+                    "talk" : "com.kakao.sdk:v2-talk:${versions.kakao}",
+                    "story": "com.kakao.sdk:v2-story:${versions.kakao}",
+                    "share": "com.kakao.sdk:v2-share:${versions.kakao}",
             ],
             "lottie"      : "com.airbnb.android:lottie:${versions.lottie}",
             "splash"      : "androidx.core:core-splashscreen:1.0.0",
@@ -96,7 +96,10 @@ ext {
             ],
             "chart"       : "com.github.PhilJay:MPAndroidChart:v3.1.0",
             "location"    : "com.google.android.gms:play-services-location:16.0.0",
-            "navermap"    : "com.naver.maps:map-sdk:3.16.0",
+            "navermap"    : [
+                    "com.naver.maps:map-sdk:3.16.0",
+                    "io.github.ParkSangGwon:tedclustering-naver:1.0.2"
+            ],
             "swiprefresh" : "com.github.SimformSolutionsPvtLtd:SSPullToRefresh:1.5.1"
     ]
 
