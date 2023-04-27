@@ -3,6 +3,7 @@ package com.qure.map
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.PointF
 import android.location.Location
 import android.os.Bundle
 import android.widget.TextView
@@ -13,13 +14,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
+import com.naver.maps.map.NaverMap.OnMapClickListener
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.qure.core.BaseActivity
 import com.qure.core.extensions.dpToPx
+import com.qure.core.extensions.toLatlng
 import com.qure.core.extensions.toReverseCoordsString
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.map.databinding.ActivityMapBinding
@@ -33,16 +37,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.naver.TedNaverClustering
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnMapReadyCallback {
+class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnMapReadyCallback,
+    OnMapClickListener {
 
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
     private val memoViewModel by viewModels<MemoListViewModel>()
-    
+    private var selectedMarker: Marker? = null
     private val adatper: MemoListAdapter by lazy {
         MemoListAdapter({
             val intent = detailMemoNavigator.intent(this)
@@ -63,6 +69,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         initView()
         initRecyclerView()
     }
+
     private fun initView() {
         binding.imageViewActivityMapBack.setOnSingleClickListener {
             finish()
@@ -103,6 +110,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             }
         }
     }
+
     private fun createMarkers(memos: List<MemoUI>) {
         val clusterItems = memos.map { it.toTedClusterItem() }
         TedNaverClustering.with<TedClusterItem>(this, naverMap)
@@ -122,10 +130,11 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
                     text = "${it.size}"
                 }
             }
-            .minClusterSize(2)
+            .minClusterSize(1)
             .markerClickListener { memoUi ->
                 val (lng, lat) = memoUi.getTedLatLng()
                 val selectedMemos = memos.filter { it.coords == "${lat},${lng}" }
+
                 setBottomSheetView(selectedMemos)
             }
             .clusterClickListener { clusterItems ->
@@ -143,8 +152,11 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     }
 
     private fun setBottomSheetView(memos: List<MemoUI>) {
-        binding.bottomSheetActivityMap.textViewBottomSheetMemoListCount.text = "${memos.size}개의 메모"
+        binding.bottomSheetActivityMap.textViewBottomSheetMemoListCount.text =
+            "${memos.size}개의 메모"
         adatper.submitList(memos)
+
+        changeBottomSheetPeekHeight(300)
     }
 
     private fun openMapFragment() {
@@ -179,6 +191,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
+        naverMap.setOnMapClickListener(this)
         setMapSettings()
         updateCurrentLocation()
         observe()
@@ -225,6 +238,16 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
                 )
                 naverMap.moveCamera(cameraUpdate)
             }
+    }
+
+    override fun onMapClick(p0: PointF, p1: LatLng) {
+        changeBottomSheetPeekHeight(50)
+    }
+
+    private fun changeBottomSheetPeekHeight(height: Int) {
+        val bottomSheet =
+            BottomSheetBehavior.from(binding.bottomSheetActivityMap.constraintLayoutBottomSheetMemoList)
+        bottomSheet.setPeekHeight(height.dpToPx(this), true)
     }
 
     companion object {
