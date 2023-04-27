@@ -23,7 +23,6 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.qure.core.BaseActivity
 import com.qure.core.extensions.dpToPx
-import com.qure.core.extensions.toLatlng
 import com.qure.core.extensions.toReverseCoordsString
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.map.databinding.ActivityMapBinding
@@ -37,7 +36,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.naver.TedNaverClustering
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -48,7 +46,6 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
     private val memoViewModel by viewModels<MemoListViewModel>()
-    private var selectedMarker: Marker? = null
     private val adatper: MemoListAdapter by lazy {
         MemoListAdapter({
             val intent = detailMemoNavigator.intent(this)
@@ -99,7 +96,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     private fun observe() {
         memoViewModel.getFilteredMemo()
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     memoViewModel.uiState.collect { uiState ->
                         if (uiState.isFilterInitialized) {
@@ -249,7 +246,6 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             BottomSheetBehavior.from(binding.bottomSheetActivityMap.constraintLayoutBottomSheetMemoList)
         bottomSheet.setPeekHeight(height.dpToPx(this), true)
     }
-
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
