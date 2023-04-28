@@ -6,6 +6,8 @@ import android.graphics.Color
 import android.graphics.PointF
 import android.location.Location
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -124,7 +126,11 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
                     setBackgroundResource(com.qure.core_design.R.drawable.bg_oval_gray600)
                     setTextColor(Color.WHITE)
                     setPadding(40, 25, 40, 25)
-                    text = "${it.size}"
+
+                    text = when {
+                        it.size > 99 -> "99+"
+                        else -> "${it.size}"
+                    }
                 }
             }
             .minClusterSize(1)
@@ -149,11 +155,10 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     }
 
     private fun setBottomSheetView(memos: List<MemoUI>) {
+        changeBottomSheetPeekHeight(300)
         binding.bottomSheetActivityMap.textViewBottomSheetMemoListCount.text =
             "${memos.size}개의 메모"
         adatper.submitList(memos)
-
-        changeBottomSheetPeekHeight(300)
     }
 
     private fun openMapFragment() {
@@ -245,7 +250,61 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         val bottomSheet =
             BottomSheetBehavior.from(binding.bottomSheetActivityMap.constraintLayoutBottomSheetMemoList)
         bottomSheet.setPeekHeight(height.dpToPx(this), true)
+
+        bottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheetView: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_SETTLING) {
+                    bottomSheetView.animate()
+                        .translationY(0f)
+                }
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    bottomSheetView.animate()
+                        .setDuration(200)
+                        .translationY(20f)
+                }
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    bottomSheetView.animate()
+                        .setDuration(200)
+                        .translationY(-20f)
+                }
+            }
+
+            override fun onSlide(bottomSheetView: View, slideOffset: Float) {
+                when {
+                    slideOffset < 0f -> {
+                        if (bottomSheet.peekHeight == 300.dpToPx(this@MapActivity)) {
+                            updateUiOnSlide(310, 250)
+                        } else {
+                            updateUiOnSlide(60, 0)
+                        }
+                    }
+
+                    slideOffset > 0f -> {
+                        if (bottomSheet.peekHeight == 300.dpToPx(this@MapActivity)) {
+                            updateUiOnSlide(310, 250)
+                        } else {
+                            updateUiOnSlide(60, 0)
+                        }
+                    }
+                }
+            }
+
+        })
     }
+
+    private fun updateUiOnSlide(mapUIheight: Int, layoutHeight: Int) {
+        val uiSettings = naverMap.uiSettings
+        uiSettings.apply {
+            isCompassEnabled = false
+            isZoomControlEnabled = false
+            setLogoMargin(0, 0, 0, mapUIheight.dpToPx(this@MapActivity))
+        }
+        val layoutParams =
+            binding.constraintLayoutActivityMap.layoutParams as ViewGroup.MarginLayoutParams
+        layoutParams.setMargins(0, 0, 0, layoutHeight.dpToPx(this@MapActivity))
+        binding.constraintLayoutActivityMap.layoutParams = layoutParams
+    }
+
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }

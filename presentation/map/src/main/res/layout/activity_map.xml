@@ -8,6 +8,7 @@
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout_activityMap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MapActivity">
@@ -15,58 +16,68 @@
         <FrameLayout
             android:id="@+id/fragment_activityMap"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
-        <ImageView
-            android:id="@+id/imageView_activityMap_back"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/bg_oval_arrow_back" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout_activityMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageView_activityMap_location"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="bottom|right"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="80dp"
-            android:background="@drawable/bg_oval_location" />
+            <ImageView
+                android:id="@+id/imageView_activityMap_back"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/bg_oval_arrow_back"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroup_activityMap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="80dp"
-            app:checkedChip="@+id/chip_activityMap_basic_map"
-            app:chipSpacingHorizontal="3000dp"
-            app:singleSelection="true">
+            <ImageView
+                android:id="@+id/imageView_activityMap_location"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="80dp"
+                android:background="@drawable/bg_oval_location"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_activityMap_basic_map"
-                style="@style/Widget.MaterialComponents.Chip.Choice.MapType"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroup_activityMap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/basic_map" />
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="80dp"
+                app:checkedChip="@+id/chip_activityMap_basic_map"
+                app:chipSpacingHorizontal="3000dp"
+                app:singleSelection="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_activityMap_satellite_map"
-                style="@style/Widget.MaterialComponents.Chip.Choice.MapType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/satellite_map" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_activityMap_basic_map"
+                    style="@style/Widget.MaterialComponents.Chip.Choice.MapType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/basic_map" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_activityMap_terrain_map"
-                style="@style/Widget.MaterialComponents.Chip.Choice.MapType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/terrain_map" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_activityMap_satellite_map"
+                    style="@style/Widget.MaterialComponents.Chip.Choice.MapType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satellite_map" />
 
-        </com.google.android.material.chip.ChipGroup>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_activityMap_terrain_map"
+                    style="@style/Widget.MaterialComponents.Chip.Choice.MapType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/terrain_map" />
+
+            </com.google.android.material.chip.ChipGroup>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include
             android:id="@+id/bottomSheet_activityMap"
