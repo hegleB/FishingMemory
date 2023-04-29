@@ -7,4 +7,12 @@
         <item name="chipStrokeWidth">1dp</item>
         <item name="chipStrokeColor">@color/selector_map_type</item>
     </style>
+
+    <style name="Widget.MaterialComponents.Chip.Choice.MarkerType">
+        <item name="android:textAppearance">@style/Typography.SubTitle1</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="chipBackgroundColor">@color/selector_map_marker_type</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/selector_map_marker_type</item>
+    </style>
 </resources>

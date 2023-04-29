@@ -28,41 +28,50 @@ data class Document(
 }
 
 data class MemoFields(
-    val uuid: FieldValue,
-    val email: FieldValue,
-    val title: FieldValue,
-    val image: FieldValue,
-    val location: FieldValue,
-    val date: FieldValue,
-    val waterType: FieldValue,
-    val fishType: FieldValue,
-    val fishSize: FieldValue,
-    val content: FieldValue,
-    val createTime: FieldValue = FieldValue(System.currentTimeMillis().toString()),
-    val coords: FieldValue,
+    val uuid: FieldStringValue,
+    val email: FieldStringValue,
+    val title: FieldStringValue,
+    val image: FieldStringValue,
+    val location: FieldStringValue,
+    val date: FieldStringValue,
+    val waterType: FieldStringValue,
+    val fishType: FieldStringValue,
+    val fishSize: FieldStringValue,
+    val content: FieldStringValue,
+    val createTime: FieldStringValue = FieldStringValue(System.currentTimeMillis().toString()),
+    val coords: FieldStringValue,
 ) {
     companion object {
         val EMPTY = MemoFields(
-            uuid = FieldValue.EMPTY,
-            email = FieldValue.EMPTY,
-            title = FieldValue.EMPTY,
-            image = FieldValue.EMPTY,
-            location = FieldValue.EMPTY,
-            date = FieldValue.EMPTY,
-            waterType = FieldValue.EMPTY,
-            fishType = FieldValue.EMPTY,
-            fishSize = FieldValue.EMPTY,
-            content = FieldValue.EMPTY,
-            createTime = FieldValue.EMPTY,
-            coords =  FieldValue.EMPTY,
+            uuid = FieldStringValue.EMPTY,
+            email = FieldStringValue.EMPTY,
+            title = FieldStringValue.EMPTY,
+            image = FieldStringValue.EMPTY,
+            location = FieldStringValue.EMPTY,
+            date = FieldStringValue.EMPTY,
+            waterType = FieldStringValue.EMPTY,
+            fishType = FieldStringValue.EMPTY,
+            fishSize = FieldStringValue.EMPTY,
+            content = FieldStringValue.EMPTY,
+            createTime = FieldStringValue.EMPTY,
+            coords =  FieldStringValue.EMPTY,
         )
     }
 }
 
-data class FieldValue(
+data class FieldStringValue(
     val stringValue: String,
 ) {
     companion object {
-        val EMPTY = FieldValue("")
+        val EMPTY = FieldStringValue("")
     }
 }
+
+data class FieldIntegerValue(
+    val integerValue: Int,
+)
+
+
+data class FieldDoubleValue(
+    val doubleValue: Double,
+)

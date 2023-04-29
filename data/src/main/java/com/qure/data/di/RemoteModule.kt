@@ -2,6 +2,8 @@ package com.qure.data.di
 
 import com.qure.data.datasource.auth.AuthRemoteDataSource
 import com.qure.data.datasource.auth.AuthRemoteDataSourceImpl
+import com.qure.data.datasource.fishingspot.FishingSpotRemoteDataSource
+import com.qure.data.datasource.fishingspot.FishingSpotRemoteDataSourceImpl
 import com.qure.data.datasource.map.MapRemoteDataSource
 import com.qure.data.datasource.map.MapRemoteRemoteDataSourceImpl
 import com.qure.data.datasource.memo.MemoRemoteDataSource
@@ -43,6 +45,12 @@ abstract class RemoteModule {
     abstract fun bindMemoRemoteDataResource(
         dataSource: MemoRemoteDataSourceImpl,
     ): MemoRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindFishingSpotRemoteDataResource(
+        dataSource: FishingSpotRemoteDataSourceImpl,
+    ): FishingSpotRemoteDataSource
 
     @Binds
     @Singleton

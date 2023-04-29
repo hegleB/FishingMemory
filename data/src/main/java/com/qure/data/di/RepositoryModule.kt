@@ -41,4 +41,10 @@ abstract class RepositoryModule {
     abstract fun bindMemoRepository(
         repository: MemoRepositoryImpl,
     ): MemoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFishingSpotRepository(
+        repository: FishingSpotRepositoryImpl,
+    ): FishingSpotRepository
 }

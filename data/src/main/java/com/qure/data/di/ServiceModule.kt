@@ -53,6 +53,10 @@ class ServiceModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class Storage
 
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class FishingSpot
+
     @Provides
     @Singleton
     fun providesAuthService(
@@ -82,6 +86,12 @@ class ServiceModule {
     fun providesStorageService(
         @Storage retrofit: Retrofit,
     ): StorageService = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun providesFishingSpotService(
+        @FishingSpot retrofit: Retrofit,
+    ): FishingSpotService = retrofit.create()
 
     @Singleton
     @Provides
@@ -176,6 +186,31 @@ class ServiceModule {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(buildPropertyRepository.get(BuildProperty.NAVER_MAP_BASE_URL))
+            .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
+            .addCallAdapterFactory(resultCallAdapterFactory)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    @FishingSpot
+    fun providesFishingSpotRetrofit(
+        @Map okHttpClient: OkHttpClient,
+        buildPropertyRepository: BuildPropertyRepository,
+        resultCallAdapterFactory: ResultCallAdapterFactory
+    ): Retrofit {
+        val gsonWithAdapter: Gson = GsonBuilder()
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
+            .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+            .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
+            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
+            .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+            .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
+            .create()
+
+        return Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_URL))
             .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
             .addCallAdapterFactory(resultCallAdapterFactory)
             .build()

@@ -8,7 +8,7 @@ import com.qure.core.extensions.Empty
 import com.qure.core.extensions.Slash
 import com.qure.core.extensions.URLSplash
 import com.qure.core.extensions.UUID
-import com.qure.domain.entity.memo.FieldValue
+import com.qure.domain.entity.memo.FieldStringValue
 import com.qure.domain.entity.memo.MemoFields
 import com.qure.domain.entity.memo.MemoStorage
 import com.qure.domain.repository.AuthRepository
@@ -92,17 +92,17 @@ class MemoViewModel @Inject constructor(
 
     private fun createMemoFields(imageUrl: String, uuid: String = String.UUID): MemoFields {
         return MemoFields(
-            uuid = FieldValue(uuid),
-            email = FieldValue(authRepository.getEmailFromLocal()),
-            title = FieldValue(title.value),
-            image = FieldValue(imageUrl),
-            waterType = FieldValue(waterType.value),
-            fishType = FieldValue(fishType.value),
-            location = FieldValue(location.value),
-            date = FieldValue(date.value),
-            fishSize = FieldValue(fishSize.value),
-            content = FieldValue(content.value),
-            coords = FieldValue(coords.value)
+            uuid = FieldStringValue(uuid),
+            email = FieldStringValue(authRepository.getEmailFromLocal()),
+            title = FieldStringValue(title.value),
+            image = FieldStringValue(imageUrl),
+            waterType = FieldStringValue(waterType.value),
+            fishType = FieldStringValue(fishType.value),
+            location = FieldStringValue(location.value),
+            date = FieldStringValue(date.value),
+            fishSize = FieldStringValue(fishSize.value),
+            content = FieldStringValue(content.value),
+            coords = FieldStringValue(coords.value)
         )
     }
 

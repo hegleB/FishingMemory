@@ -27,17 +27,21 @@ import com.qure.core.BaseActivity
 import com.qure.core.extensions.dpToPx
 import com.qure.core.extensions.toReverseCoordsString
 import com.qure.core.util.setOnSingleClickListener
+import com.qure.domain.entity.MarkerType
 import com.qure.map.databinding.ActivityMapBinding
-import com.qure.memo.MemoListAdapter
-import com.qure.memo.MemoListViewModel
+import com.qure.map.model.FishingSpotUI
+import com.qure.map.model.toTedClusterItem
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.memo.model.MemoUI
 import com.qure.memo.model.toTedClusterItem
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import ted.gun0912.clustering.BaseBuilder
+import ted.gun0912.clustering.clustering.Cluster
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.naver.TedNaverClustering
+import ted.gun0912.clustering.naver.TedNaverMarker
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,23 +51,42 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
-    private val memoViewModel by viewModels<MemoListViewModel>()
-    private val adatper: MemoListAdapter by lazy {
-        MemoListAdapter({
-            val intent = detailMemoNavigator.intent(this)
-            intent.putExtra(MEMO_DATA, it)
+    private val viewModel by viewModels<MapViewModel>()
+    private val adapter: MapAdapter by lazy {
+        MapAdapter { item ->
+            val intent = if (item is MemoUI) {
+                detailMemoNavigator.intent(this)
+            } else {
+                detailMemoNavigator.intent(this)
+            }
+
+            intent.apply {
+                if (item is MemoUI) {
+                    putExtra(MEMO_DATA, item)
+                }
+                if (item is FishingSpotUI) {
+                    putExtra("ITEM_ME", item)
+                }
+            }
             startActivity(intent)
-        })
+        }
     }
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var tedNaverClustering: BaseBuilder<TedNaverClustering<TedClusterItem>,
+            TedClusterItem,
+            Marker,
+            TedNaverMarker,
+            NaverMap,
+            OverlayImage>? = null
+    private var preTedNaverClustering: TedNaverClustering<TedClusterItem>?? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
-        memoViewModel.getFilteredMemo()
+        viewModel.getFilteredMemo()
         openMapFragment()
         initView()
         initRecyclerView()
@@ -81,10 +104,14 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         binding.chipGroupActivityMap.setOnCheckedChangeListener { group, checkedId ->
             selectMapType(checkedId)
         }
+
+        binding.chipGroupActivityMapMarkertype.setOnCheckedChangeListener { group, checkedId ->
+            selectMarkerType(checkedId)
+        }
     }
 
     private fun initRecyclerView() {
-        binding.bottomSheetActivityMap.recyclerViewBottomSheetMemoList.adapter = adatper
+        binding.bottomSheetActivityMap.recyclerViewBottomSheetMemoList.adapter = adapter
     }
 
     private fun selectMapType(checkedId: Int) {
@@ -95,70 +122,143 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         }
     }
 
+    private fun selectMarkerType(checkedId: Int) {
+
+        val markerType = when (checkedId) {
+            R.id.chip_activityMap_memo -> {
+                viewModel.getFilteredMemo()
+                MarkerType.MEMO
+            }
+            R.id.chip_activityMap_entire -> {
+                viewModel.getFishingSpot(MarkerType.SEA)
+                viewModel.getFishingSpot(MarkerType.RESERVOIR)
+                viewModel.getFishingSpot(MarkerType.FLATLAND)
+                viewModel.getFishingSpot(MarkerType.OTHER)
+                MarkerType.ENTIRE
+            }
+            R.id.chip_activityMap_sea -> MarkerType.SEA
+            R.id.chip_activityMap_reservoir -> MarkerType.RESERVOIR
+            R.id.chip_activityMap_flatland -> MarkerType.FLATLAND
+            R.id.chip_activityMap_other -> MarkerType.OTHER
+            else -> throw IllegalArgumentException("Invalid checkedId")
+        }
+        if (markerType != MarkerType.MEMO) {
+            viewModel.getFishingSpot(markerType)
+        }
+        clearMpaMarker()
+    }
+
+    private fun clearMpaMarker() {
+        preTedNaverClustering?.clearItems()
+        preTedNaverClustering = tedNaverClustering?.make()
+        tedNaverClustering = null
+    }
+
     private fun observe() {
-        memoViewModel.getFilteredMemo()
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
-                    memoViewModel.uiState.collect { uiState ->
-                        if (uiState.isFilterInitialized) {
-                            createMarkers(uiState.filteredMemo)
-                        }
+                    viewModel.markers.collect { markers ->
+                        tedNaverClustering = initNaverClustering(markers)
+                        preTedNaverClustering = tedNaverClustering?.make()
+                        tedNaverClustering = null
                     }
                 }
             }
         }
     }
 
-    private fun createMarkers(memos: List<MemoUI>) {
-        val clusterItems = memos.map { it.toTedClusterItem() }
-        TedNaverClustering.with<TedClusterItem>(this, naverMap)
-            .customMarker { clusterItem ->
-                Marker().apply {
-                    icon =
-                        OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker)
-                    width = 100
-                    height = 120
-                }
+    private fun initNaverClustering(markers: List<Any>): BaseBuilder<TedNaverClustering<TedClusterItem>, TedClusterItem, Marker, TedNaverMarker, NaverMap, OverlayImage> {
+        val clusterItems = markers.map {
+            when (it) {
+                is MemoUI -> it.toTedClusterItem()
+                is FishingSpotUI -> it.toTedClusterItem()
+                else -> throw IllegalStateException("create Marker error")
             }
-            .customCluster {
-                TextView(this).apply {
-                    setBackgroundResource(com.qure.core_design.R.drawable.bg_oval_gray600)
-                    setTextColor(Color.WHITE)
-                    setPadding(40, 25, 40, 25)
-
-                    text = when {
-                        it.size > 99 -> "99+"
-                        else -> "${it.size}"
-                    }
-                }
-            }
-            .minClusterSize(1)
-            .markerClickListener { memoUi ->
-                val (lng, lat) = memoUi.getTedLatLng()
-                val selectedMemos = memos.filter { it.coords == "${lat},${lng}" }
-
-                setBottomSheetView(selectedMemos)
+        }
+        return TedNaverClustering.with<TedClusterItem>(this, naverMap)
+            .customMarker { createMarker() }
+            .customCluster { setClusteringText(it) }
+            .markerClickListener { marker ->
+                setBottomSheetView(
+                    getSelectedMarker(
+                        marker,
+                        markers
+                    )
+                )
             }
             .clusterClickListener { clusterItems ->
-                val clusterMemos = mutableSetOf<MemoUI>()
-                clusterItems.items.forEach {
-                    val latLng = it.getTedLatLng().toReverseCoordsString()
-                    val filteredMemos = memos.filter { it.coords == latLng }
-                    clusterMemos.addAll(filteredMemos)
-                }
-                setBottomSheetView(clusterMemos.toList())
+                val clusterMarkers = getSelectedClustering(clusterItems, markers)
+                setBottomSheetView(clusterMarkers.toList())
             }
-            .clusterBuckets(intArrayOf(10, 100, 1000, 10000))
+            .minClusterSize(1)
+            .clusterBuckets(intArrayOf(1000))
             .items(clusterItems)
-            .make()
     }
 
-    private fun setBottomSheetView(memos: List<MemoUI>) {
+    private fun getSelectedClustering(
+        clusterItems: Cluster<TedClusterItem>,
+        markers: List<Any>
+    ): MutableSet<Any> {
+        val clusterMarkers = mutableSetOf<Any>()
+        clusterItems.items.forEach {
+            val latLng = it.getTedLatLng().toReverseCoordsString()
+            val filteredMarkers = markers.filter { item ->
+                when (item) {
+                    is MemoUI -> item.coords == latLng
+                    is FishingSpotUI -> "${item.longitude},${item.latitude}" == latLng
+                    else -> false
+                }
+            }
+            clusterMarkers.addAll(filteredMarkers)
+        }
+        return clusterMarkers
+    }
+
+    private fun getSelectedMarker(
+        marker: TedClusterItem,
+        markers: List<Any>
+    ): List<Any> {
+        val (lng, lat) = marker.getTedLatLng()
+        val markerItems = markers.filter {
+            when (it) {
+                is MemoUI -> it.coords == "${lat},${lng}"
+                is FishingSpotUI ->
+                    LatLng(it.longitude, it.latitude) ==
+                            LatLng(lat, lng)
+                else -> false
+            }
+        }
+        return markerItems
+    }
+
+    private fun setClusteringText(it: Cluster<TedClusterItem>): View {
+        return TextView(this).apply {
+            setBackgroundResource(com.qure.core_design.R.drawable.bg_oval_gray600)
+            setTextColor(Color.WHITE)
+            setPadding(50, 40, 50, 40)
+            text = "${it.size}"
+        }
+    }
+
+    private fun createMarker(): Marker {
+        val marker = Marker().apply {
+            icon =
+                OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker)
+            width = 100
+            height = 120
+            isHideCollidedCaptions = true
+            isHideCollidedSymbols = true
+        }
+        return marker
+    }
+
+    private fun setBottomSheetView(memos: List<Any>) {
         changeBottomSheetPeekHeight(300)
         binding.bottomSheetActivityMap.textViewBottomSheetMemoListCount.text =
             "${memos.size}개의 메모"
-        adatper.submitList(memos)
+        binding.bottomSheetActivityMap.recyclerViewBottomSheetMemoList.adapter = adapter
+        adapter.submitList(memos)
     }
 
     private fun openMapFragment() {
@@ -193,10 +293,12 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
+        tedNaverClustering = TedNaverClustering.with<TedClusterItem>(this, naverMap)
         naverMap.setOnMapClickListener(this)
         setMapSettings()
         updateCurrentLocation()
         observe()
+
     }
 
     private fun setMapSettings() {
