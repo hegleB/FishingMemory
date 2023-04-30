@@ -33,68 +33,54 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroup_activityMap_markertype"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:scrollbars="none"
-                android:layout_marginStart="130dp"
+                android:orientation="horizontal"
+                app:checkedChip="@+id/chip_activityMap_memo"
                 app:layout_constraintBottom_toBottomOf="@id/imageView_activityMap_back"
-                app:layout_constraintStart_toEndOf="@id/imageView_activityMap_back"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/imageView_activityMap_back">
+                app:layout_constraintTop_toTopOf="@id/imageView_activityMap_back"
+                app:singleSelection="true">
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipGroup_activityMap_markertype"
-                    android:layout_width="match_parent"
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_activityMap_memo"
+                    style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:checkedChip="@+id/chip_activityMap_memo"
-                    app:singleSelection="true">
+                    android:text="@string/map_memo" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_activityMap_memo"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/map_memo" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_activityMap_sea"
+                    style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/map_sea" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_activityMap_entire"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/map_entire" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_activityMap_reservoir"
+                    style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/map_reservoir" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_activityMap_sea"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/map_sea" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_activityMap_flatland"
+                    style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/map_flatland" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_activityMap_reservoir"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/map_reservoir" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_activityMap_other"
+                    style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/map_other" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_activityMap_flatland"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/map_flatland" />
+            </com.google.android.material.chip.ChipGroup>
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_activityMap_other"
-                        style="@style/Widget.MaterialComponents.Chip.Choice.MarkerType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/map_other" />
-
-                </com.google.android.material.chip.ChipGroup>
-            </HorizontalScrollView>
 
             <ImageView
                 android:id="@+id/imageView_activityMap_location"

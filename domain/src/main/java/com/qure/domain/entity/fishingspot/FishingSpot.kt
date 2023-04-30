@@ -24,7 +24,9 @@ data class Fields(
     val fishing_spot_name: StringValue,
     val main_point: StringValue,
     val road_address: StringValue,
-    val longitude: DoubleValue
+    val longitude: DoubleValue,
+    val phone_number: StringValue,
+    val fee: StringValue,
 )
 
 data class IntegerValue(

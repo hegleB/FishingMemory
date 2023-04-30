@@ -102,12 +102,13 @@ class MapAdapter(private val onItemClick: (item: Any) -> Unit) :
                     onSpotClick.invoke(item)
                 }
                 textViewItemFishingSpotName.text = field.fishing_spot_name
-                textViewItemFishingSpotAddress.text = field.address
-                textViewItemFishingSpotRoadAddress.text = field.road_address
-                textViewItemFishingSpotFishType.text = field.fish_type
+                textViewItemFishingSpotPhoneNumberData.text = field.number_address
+                textViewItemFishingSpotRoadAddressData.text = field.road_address
+                textViewItemFishingSpotFishTypeData.text = field.fish_type
                 textViewItemFishingSpotGroundType.text = field.fishing_ground_type
-                textViewItemFishingSpotMainPoint.text = field.main_point
-
+                textViewItemFishingSpotPhoneNumberData.text = field.phone_number
+                textViewItemFishingSpotMainPointData.text = field.main_point
+                textViewItemFishingSpotFeeData.text = field.fee
             }
         }
     }

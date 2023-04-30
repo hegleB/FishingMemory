@@ -15,11 +15,13 @@ data class FishingSpotUI(
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
     val fishing_ground_type: String = String.Empty,
-    val address: String = String.Empty,
+    val number_address: String = String.Empty,
     val data_base_date: String = String.Empty,
     val fish_type: String = String.Empty,
     val main_point: String = String.Empty,
     val fishing_spot_name: String = String.Empty,
+    val fee: String = String.Empty,
+    val phone_number: String = String.Empty,
 ): Parcelable
 
 fun FishingSpotUI.toTedClusterItem(): TedClusterItem {
@@ -41,10 +43,12 @@ fun FishingSpot.toFishingSpotUI(): FishingSpotUI {
         latitude = data.latitude.doubleValue,
         longitude = data.longitude.doubleValue,
         fishing_ground_type = data.fishing_ground_type.stringValue,
-        address = data.address.stringValue,
+        number_address = data.address.stringValue,
         data_base_date = data.data_base_date.stringValue,
         fish_type = data.fish_type.stringValue,
         main_point = data.main_point.stringValue,
         fishing_spot_name = data.fishing_spot_name.stringValue,
+        fee = data.fee.stringValue,
+        phone_number = data.phone_number.stringValue,
     )
 }

@@ -129,13 +129,6 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
                 viewModel.getFilteredMemo()
                 MarkerType.MEMO
             }
-            R.id.chip_activityMap_entire -> {
-                viewModel.getFishingSpot(MarkerType.SEA)
-                viewModel.getFishingSpot(MarkerType.RESERVOIR)
-                viewModel.getFishingSpot(MarkerType.FLATLAND)
-                viewModel.getFishingSpot(MarkerType.OTHER)
-                MarkerType.ENTIRE
-            }
             R.id.chip_activityMap_sea -> MarkerType.SEA
             R.id.chip_activityMap_reservoir -> MarkerType.RESERVOIR
             R.id.chip_activityMap_flatland -> MarkerType.FLATLAND
@@ -253,12 +246,17 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         return marker
     }
 
-    private fun setBottomSheetView(memos: List<Any>) {
+    private fun setBottomSheetView(items: List<Any>) {
         changeBottomSheetPeekHeight(300)
-        binding.bottomSheetActivityMap.textViewBottomSheetMemoListCount.text =
-            "${memos.size}개의 메모"
+        if (items.isNotEmpty() && items[0] is MemoUI) {
+            binding.bottomSheetActivityMap.textViewBottomSheetMemoListCount.text =
+                "${items.size}개의 메모"
+        } else {
+            binding.bottomSheetActivityMap.textViewBottomSheetMemoListCount.text =
+                "${items.size}개의 낚시터"
+        }
         binding.bottomSheetActivityMap.recyclerViewBottomSheetMemoList.adapter = adapter
-        adapter.submitList(memos)
+        adapter.submitList(items)
     }
 
     private fun openMapFragment() {

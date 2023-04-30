@@ -6,11 +6,17 @@
     <string name="terrain_map">지형지도</string>
 
     <string name="map_memo">메모</string>
-    <string name="map_entire">낚시터 전체</string>
     <string name="map_sea">바다</string>
     <string name="map_reservoir">저수지</string>
     <string name="map_flatland">평지</string>
     <string name="map_other">기타</string>
+
+    <string name="number_address">지번</string>
+    <string name="road_address">도로명</string>
+    <string name="phone_number">전화번호</string>
+    <string name="fish_type">주요어종</string>
+    <string name="fee">요금</string>
+    <string name="main_point">주요 포인트</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
