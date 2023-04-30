@@ -17,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.chip.Chip
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.NaverMap.OnMapClickListener
@@ -81,6 +82,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             NaverMap,
             OverlayImage>? = null
     private var preTedNaverClustering: TedNaverClustering<TedClusterItem>?? = null
+    private var preMarkerType: MarkerType = MarkerType.MEMO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,10 +122,10 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             R.id.chip_activityMap_satellite_map -> naverMap.mapType = NaverMap.MapType.Satellite
             R.id.chip_activityMap_terrain_map -> naverMap.mapType = NaverMap.MapType.Terrain
         }
+
     }
 
     private fun selectMarkerType(checkedId: Int) {
-
         val markerType = when (checkedId) {
             R.id.chip_activityMap_memo -> {
                 viewModel.getFilteredMemo()
@@ -133,8 +135,9 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             R.id.chip_activityMap_reservoir -> MarkerType.RESERVOIR
             R.id.chip_activityMap_flatland -> MarkerType.FLATLAND
             R.id.chip_activityMap_other -> MarkerType.OTHER
-            else -> throw IllegalArgumentException("Invalid checkedId")
+            else -> preMarkerType
         }
+        preMarkerType = markerType
         if (markerType != MarkerType.MEMO) {
             viewModel.getFishingSpot(markerType)
         }
@@ -291,7 +294,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
-        tedNaverClustering = TedNaverClustering.with<TedClusterItem>(this, naverMap)
+        tedNaverClustering = TedNaverClustering.with(this, naverMap)
         naverMap.setOnMapClickListener(this)
         setMapSettings()
         updateCurrentLocation()
