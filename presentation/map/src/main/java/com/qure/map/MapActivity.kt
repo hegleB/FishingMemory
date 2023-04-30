@@ -17,7 +17,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.chip.Chip
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.NaverMap.OnMapClickListener
@@ -26,7 +25,9 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.qure.core.BaseActivity
 import com.qure.core.extensions.dpToPx
+import com.qure.core.extensions.toCoordsString
 import com.qure.core.extensions.toReverseCoordsString
+import com.qure.core.extensions.toReverseLatlng
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.domain.entity.MarkerType
 import com.qure.map.databinding.ActivityMapBinding
@@ -202,7 +203,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             val filteredMarkers = markers.filter { item ->
                 when (item) {
                     is MemoUI -> item.coords == latLng
-                    is FishingSpotUI -> "${item.longitude},${item.latitude}" == latLng
+                    is FishingSpotUI -> LatLng(item.longitude, item.latitude).toCoordsString() == latLng
                     else -> false
                 }
             }
@@ -215,13 +216,13 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         marker: TedClusterItem,
         markers: List<Any>
     ): List<Any> {
-        val (lng, lat) = marker.getTedLatLng()
+        val latLng = marker.getTedLatLng().toReverseLatlng()
         val markerItems = markers.filter {
             when (it) {
-                is MemoUI -> it.coords == "${lat},${lng}"
+                is MemoUI -> it.coords == latLng.toCoordsString()
                 is FishingSpotUI ->
                     LatLng(it.longitude, it.latitude) ==
-                            LatLng(lat, lng)
+                            latLng
                 else -> false
             }
         }
