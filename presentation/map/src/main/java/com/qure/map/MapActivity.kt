@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.PointF
 import android.location.Location
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -37,13 +36,11 @@ import com.qure.memo.model.toTedClusterItem
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
 import ted.gun0912.clustering.BaseBuilder
 import ted.gun0912.clustering.clustering.Cluster
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.naver.TedNaverClustering
 import ted.gun0912.clustering.naver.TedNaverMarker
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
