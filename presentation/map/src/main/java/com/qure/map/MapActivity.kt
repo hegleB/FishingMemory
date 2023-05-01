@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.PointF
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -24,10 +25,7 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.qure.core.BaseActivity
-import com.qure.core.extensions.dpToPx
-import com.qure.core.extensions.toCoordsString
-import com.qure.core.extensions.toReverseCoordsString
-import com.qure.core.extensions.toReverseLatlng
+import com.qure.core.extensions.*
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.domain.entity.MarkerType
 import com.qure.map.databinding.ActivityMapBinding
@@ -39,11 +37,13 @@ import com.qure.memo.model.toTedClusterItem
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
 import ted.gun0912.clustering.BaseBuilder
 import ted.gun0912.clustering.clustering.Cluster
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.naver.TedNaverClustering
 import ted.gun0912.clustering.naver.TedNaverMarker
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -82,7 +82,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             TedNaverMarker,
             NaverMap,
             OverlayImage>? = null
-    private var preTedNaverClustering: TedNaverClustering<TedClusterItem>?? = null
+    private var preTedNaverClustering: TedNaverClustering<TedClusterItem>? = null
     private var preMarkerType: MarkerType = MarkerType.MEMO
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -147,8 +147,6 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
 
     private fun clearMpaMarker() {
         preTedNaverClustering?.clearItems()
-        preTedNaverClustering = tedNaverClustering?.make()
-        tedNaverClustering = null
     }
 
     private fun observe() {
@@ -158,6 +156,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
                     viewModel.markers.collect { markers ->
                         tedNaverClustering = initNaverClustering(markers)
                         preTedNaverClustering = tedNaverClustering?.make()
+                        naverMap.moveCamera(CameraUpdate.zoomBy(0.0))
                         tedNaverClustering = null
                     }
                 }
@@ -174,7 +173,8 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             }
         }
         return TedNaverClustering.with<TedClusterItem>(this, naverMap)
-            .customMarker { createMarker() }
+            .items(clusterItems)
+            .customMarker { createMarker(it) }
             .customCluster { setClusteringText(it) }
             .markerClickListener { marker ->
                 setBottomSheetView(
@@ -190,7 +190,6 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             }
             .minClusterSize(1)
             .clusterBuckets(intArrayOf(1000))
-            .items(clusterItems)
     }
 
     private fun getSelectedClustering(
@@ -229,17 +228,17 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         return markerItems
     }
 
-    private fun setClusteringText(it: Cluster<TedClusterItem>): View {
+    private fun setClusteringText(clusterItems: Cluster<TedClusterItem>): View {
         return TextView(this).apply {
             setBackgroundResource(com.qure.core_design.R.drawable.bg_oval_gray600)
             setTextColor(Color.WHITE)
             setPadding(50, 40, 50, 40)
-            text = "${it.size}"
+            text = "${clusterItems.size}"
         }
     }
 
-    private fun createMarker(): Marker {
-        val marker = Marker().apply {
+    private fun createMarker(tedClusterItem: TedClusterItem): Marker {
+        val marker = Marker(tedClusterItem.getTedLatLng().toLatlng()).apply {
             icon =
                 OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker)
             width = 100
@@ -300,7 +299,6 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         setMapSettings()
         updateCurrentLocation()
         observe()
-
     }
 
     private fun setMapSettings() {
