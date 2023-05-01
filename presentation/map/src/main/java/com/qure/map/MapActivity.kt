@@ -1,10 +1,12 @@
 package com.qure.map
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PointF
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -27,13 +29,15 @@ import com.qure.core.BaseActivity
 import com.qure.core.extensions.*
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.domain.entity.MarkerType
+import com.qure.fishingspot.FishingSpotActivity.Companion.SPOT_DATA
 import com.qure.map.databinding.ActivityMapBinding
-import com.qure.map.model.FishingSpotUI
-import com.qure.map.model.toTedClusterItem
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.memo.model.MemoUI
 import com.qure.memo.model.toTedClusterItem
+import com.qure.model.FishingSpotUI
+import com.qure.model.toTedClusterItem
 import com.qure.navigator.DetailMemoNavigator
+import com.qure.navigator.FishingSpotNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ted.gun0912.clustering.BaseBuilder
@@ -50,13 +54,16 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
+    @Inject
+    lateinit var fishingSpotNavigator: FishingSpotNavigator
+
     private val viewModel by viewModels<MapViewModel>()
     private val adapter: MapAdapter by lazy {
-        MapAdapter { item ->
+        MapAdapter({ item ->
             val intent = if (item is MemoUI) {
                 detailMemoNavigator.intent(this)
             } else {
-                detailMemoNavigator.intent(this)
+                fishingSpotNavigator.intent(this)
             }
 
             intent.apply {
@@ -64,11 +71,13 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
                     putExtra(MEMO_DATA, item)
                 }
                 if (item is FishingSpotUI) {
-                    putExtra("ITEM_ME", item)
+                    putExtra(SPOT_DATA, item)
                 }
             }
             startActivity(intent)
-        }
+        }, { phoneNumber ->
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("tel:${phoneNumber}")))
+        })
     }
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
@@ -199,7 +208,10 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             val filteredMarkers = markers.filter { item ->
                 when (item) {
                     is MemoUI -> item.coords == latLng
-                    is FishingSpotUI -> LatLng(item.longitude, item.latitude).toCoordsString() == latLng
+                    is FishingSpotUI -> LatLng(
+                        item.longitude,
+                        item.latitude
+                    ).toCoordsString() == latLng
                     else -> false
                 }
             }

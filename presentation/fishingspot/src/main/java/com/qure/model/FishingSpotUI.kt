@@ -1,4 +1,4 @@
-package com.qure.map.model
+package com.qure.model
 
 import android.os.Parcelable
 import com.qure.core.extensions.Empty

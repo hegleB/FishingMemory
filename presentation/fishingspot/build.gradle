@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace 'com.qure.map'
+    namespace 'com.qure.fishingspot'
     compileSdk 33
 
     defaultConfig {
@@ -43,7 +43,6 @@ dependencies {
     implementation project(path:':navigator')
     implementation project(path:':domain')
     implementation project(path:':presentation:memo')
-    implementation project(path:':presentation:fishingspot')
 
     implementation(jetpackDeps)
     implementation(coroutines)

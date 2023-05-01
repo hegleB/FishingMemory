@@ -31,6 +31,10 @@
         </provider>
 
         <activity
+            android:name="com.qure.fishingspot.FishingSpotActivity"
+            android:exported="false" />
+
+        <activity
             android:name="com.qure.map.MapActivity"
             android:exported="false" />
 

@@ -1,20 +1,18 @@
 package com.qure.map
 
 import androidx.lifecycle.viewModelScope
-import com.naver.maps.map.overlay.Marker
 import com.qure.core.BaseViewModel
 import com.qure.domain.entity.MarkerType
-import com.qure.domain.entity.fishingspot.*
+import com.qure.domain.entity.fishingspot.FishingSpotQuery
 import com.qure.domain.entity.fishingspot.StructuredQuery
 import com.qure.domain.entity.fishingspot.Where
 import com.qure.domain.entity.memo.*
-import com.qure.domain.entity.memo.CollectionId
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.fishingspot.GetFishingSpotUseCase
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
-import com.qure.map.model.toFishingSpotUI
 import com.qure.memo.MemoListViewModel
 import com.qure.memo.model.toMemoUI
+import com.qure.model.toFishingSpotUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,6 +1,7 @@
 package com.qure.map
 
 import android.annotation.SuppressLint
+import android.graphics.Paint
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,11 +13,14 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.map.databinding.ItemFishingSpotBinding
-import com.qure.map.model.FishingSpotUI
 import com.qure.memo.databinding.ItemMemoListBinding
 import com.qure.memo.model.MemoUI
+import com.qure.model.FishingSpotUI
 
-class MapAdapter(private val onItemClick: (item: Any) -> Unit) :
+class MapAdapter(
+    private val onItemClick: (item: Any) -> Unit,
+    private val onPhoneNumberClick: (phoneNumber: String) -> Unit,
+) :
     ListAdapter<Any, RecyclerView.ViewHolder>(DIFF_UTIL) {
 
     private val VIEW_TYPE_MEMO = 1
@@ -30,8 +34,12 @@ class MapAdapter(private val onItemClick: (item: Any) -> Unit) :
                 MemoViewHolder(binding, onItemClick)
             }
             VIEW_TYPE_FISHING_SPOT -> {
-                val binding = ItemFishingSpotBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                FishingSpotViewHolder(binding, onItemClick)
+                val binding = ItemFishingSpotBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                FishingSpotViewHolder(binding, onItemClick, onPhoneNumberClick)
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
@@ -91,7 +99,8 @@ class MapAdapter(private val onItemClick: (item: Any) -> Unit) :
 
     inner class FishingSpotViewHolder(
         private val binding: ItemFishingSpotBinding,
-        private val onSpotClick: (item: FishingSpotUI) -> Unit
+        private val onSpotClick: (item: FishingSpotUI) -> Unit,
+        private val onPhoneNumberClick: (phoneNumber: String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FishingSpotUI) {
 
@@ -101,6 +110,11 @@ class MapAdapter(private val onItemClick: (item: Any) -> Unit) :
                 root.setOnSingleClickListener {
                     onSpotClick.invoke(item)
                 }
+
+                textViewItemFishingSpotPhoneNumberData.setOnSingleClickListener {
+                    onPhoneNumberClick.invoke(field.phone_number)
+                }
+
                 textViewItemFishingSpotName.text = field.fishing_spot_name
                 textViewItemFishingSpotNumberAddressData.text = field.number_address
                 textViewItemFishingSpotRoadAddressData.text = field.road_address
@@ -109,6 +123,7 @@ class MapAdapter(private val onItemClick: (item: Any) -> Unit) :
                 textViewItemFishingSpotPhoneNumberData.text = field.phone_number
                 textViewItemFishingSpotMainPointData.text = field.main_point
                 textViewItemFishingSpotFeeData.text = field.fee
+                textViewItemFishingSpotPhoneNumberData.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             }
         }
     }
