@@ -65,4 +65,23 @@ class MemoRepositoryImpl @Inject constructor(
                 }
         }
     }
+
+    override fun deleteAllMemos(memoQuery: MemoQuery): Flow<Result<Boolean>> {
+        return flow {
+            memoRemoteDataSource.postMemoQuery(memoQuery)
+                .onSuccess { memos ->
+                    for (memo in memos) {
+                        val uuid = memo.document?.fields?.uuid?.stringValue ?: ""
+                        memoRemoteDataSource.deleteMemo(uuid)
+                            .onSuccess {
+                                emit(Result.success(true))
+                            }.onFailure { throwable ->
+                                emit(Result.failure(throwable))
+                            }
+                    }
+                }.onFailure { throwable ->
+                    emit(Result.failure(throwable))
+                }
+        }
+    }
 }

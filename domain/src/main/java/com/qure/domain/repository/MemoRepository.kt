@@ -10,5 +10,6 @@ interface MemoRepository {
     fun getUpdatedMemo(memoFields: MemoFields): Flow<Result<Document>>
     fun deleteMemo(uuid: String): Flow<Result<Unit>>
     fun getfilteredMemo(memoQuery: MemoQuery): Flow<Result<List<Memo>>>
+    fun deleteAllMemos(memoQuery: MemoQuery): Flow<Result<Boolean>>
 
 }

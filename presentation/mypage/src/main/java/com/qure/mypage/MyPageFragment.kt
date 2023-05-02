@@ -16,6 +16,7 @@ import com.qure.domain.repository.AuthRepository
 import com.qure.mypage.databinding.FragmentMyPageBinding
 import com.qure.navigator.LoginNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -76,6 +77,15 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
                         }
                     }
                 }
+
+                launch {
+                    viewModel.withdrawSucceed.collect { withdrawService ->
+                        if (withdrawService) {
+                            startActivity(loginNavigator.intent(requireContext()))
+                            activity?.finish()
+                        }
+                    }
+                }
             }
         }
 
@@ -86,7 +96,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
             if (throwable != null) {
                 FishingMemoryToast().error(requireContext(), throwable.message)
             } else {
-
+                viewModel.withdrawService()
             }
         }
     }
