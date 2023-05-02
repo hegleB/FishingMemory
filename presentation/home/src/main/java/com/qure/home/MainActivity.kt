@@ -10,6 +10,7 @@ import com.qure.home.databinding.ActivityMainBinding
 import com.qure.home.home.HomeFragment
 import com.qure.memo.detail.DetailMemoActivity
 import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
+import com.qure.mypage.MyPageFragment
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -48,7 +49,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
                         changeFragment(HistoryFragment())
                     }
                     R.id.mypageFragment -> {
-
+                        changeFragment(MyPageFragment())
                     }
                 }
                 true

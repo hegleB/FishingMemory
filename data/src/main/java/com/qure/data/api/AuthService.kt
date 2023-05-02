@@ -18,4 +18,10 @@ interface AuthService {
         @Path("projectId") projectId: String,
         @Path("documentId") email: String,
     ): Result<SignUpUserEntity>
+
+    @DELETE("/v1beta1/projects/{projectId}/databases/(default)/documents/auth/{documentId}")
+    suspend fun deleteUserEmail(
+        @Path("projectId") projectId: String,
+        @Path("documentId") documentId: String,
+    ): Result<Unit>
 }

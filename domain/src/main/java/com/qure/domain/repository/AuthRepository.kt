@@ -1,6 +1,7 @@
 package com.qure.domain.repository
 
 import com.qure.domain.entity.auth.SignUpUser
+import com.qure.domain.entity.memo.MemoQuery
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
@@ -15,4 +16,6 @@ interface AuthRepository {
 
     fun getEmailFromLocal(): String
     fun getSignedUpUser(email: String): Flow<Result<SignUpUser>>
+
+    fun removeEmailFromRemote(email: String): Flow<Result<Unit>>
 }

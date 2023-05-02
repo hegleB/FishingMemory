@@ -3,12 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id "kotlin-kapt"
     id 'dagger.hilt.android.plugin'
-    id 'kotlin-parcelize'
-//    id 'com.google.gms.google-services'
 }
 
 android {
-    namespace 'com.qure.home'
+    namespace 'com.qure.mypage'
     compileSdk 33
 
     defaultConfig {
@@ -43,9 +41,6 @@ dependencies {
     implementation project(path:':core')
     implementation project(path:':navigator')
     implementation project(path:':domain')
-    implementation project(path:':presentation:history')
-    implementation project(path:':presentation:memo')
-    implementation project(path:':presentation:mypage')
 
     implementation(jetpackDeps)
     implementation(coroutines)
@@ -58,9 +53,14 @@ dependencies {
 
     implementation(kakaoDeps)
 
+    implementation(firebaseDeps)
+    implementation platform(deps.firebase.bom)
+
     implementation(chartDeps)
 
     implementation(locationDeps)
+
+    implementation deps.navermap
 
     implementation(swipRefreshDeps)
 

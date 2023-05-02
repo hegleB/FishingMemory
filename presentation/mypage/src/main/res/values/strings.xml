@@ -1,0 +1,8 @@
+<resources>
+    <string name="mypage_version_info">버전 정보</string>
+    <string name="mypage_terms_of_service">이용 약관</string>
+    <string name="mypage_privacy_policy">개인정보처리방침</string>
+    <string name="mypage_logout">로그아웃</string>
+    <string name="mypage_withdraw">서비스 탈퇴</string>
+    <string name="mypage_opensource_license">오픈소스 라이선스</string>
+</resources>

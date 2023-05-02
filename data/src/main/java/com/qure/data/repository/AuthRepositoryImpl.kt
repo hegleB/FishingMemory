@@ -6,6 +6,7 @@ import com.qure.data.mapper.toSignUpUser
 import com.qure.domain.ACCESS_TOKEN_KEY
 import com.qure.domain.SIGNED_UP_EMAIL
 import com.qure.domain.entity.auth.SignUpUser
+import com.qure.domain.entity.memo.MemoQuery
 import com.qure.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -55,4 +56,16 @@ class AuthRepositoryImpl @Inject constructor(
                     emit(Result.failure(throwable))
                 }
         }
+
+    override fun removeEmailFromRemote(email: String): Flow<Result<Unit>> {
+        return flow {
+            authRemoteDataSource.deleteUserEmail(email)
+                .onSuccess { response ->
+                    emit(Result.success(response))
+                }
+                .onFailure { throwable ->
+                    emit(Result.failure(throwable))
+                }
+        }
+    }
 }

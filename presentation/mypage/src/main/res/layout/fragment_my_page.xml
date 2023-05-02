@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_background"
+        tools:context=".MyPageFragment">
+
+        <Space
+            android:id="@+id/space_fragmentMypage_header"
+            android:layout_width="0dp"
+            android:layout_height="73dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView_fragmentMypage_kakao"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="20dp"
+            android:text="카카오계정"
+            android:textAppearance="@style/Typography.Paragraph1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/space_fragmentMypage_header" />
+
+        <TextView
+            android:id="@+id/textView_fragmentMypage_kakaoEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:textAppearance="@style/Typography.Paragraph1"
+            android:textColor="@color/gray_700"
+            app:layout_constraintBottom_toBottomOf="@id/textView_fragmentMypage_kakao"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textView_fragmentMypage_kakao" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout_fragmenyMypage_app_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_fragmentMypage_kakao">
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_version"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="@string/mypage_version_info"
+                android:textAppearance="@style/Typography.Paragraph1"
+                android:textColor="@color/gray_700"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view_fragmentMypage_version_divider"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:background="@color/gray_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_fragmentMypage_version" />
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_version_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:textAppearance="@style/Typography.Paragraph1"
+                android:textColor="@color/gray_500"
+                app:layout_constraintBottom_toBottomOf="@id/textView_fragmentMypage_version"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/textView_fragmentMypage_version"
+                tools:text="1.0.0" />
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_policy_service"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="@string/mypage_terms_of_service"
+                android:textAppearance="@style/Typography.Paragraph1"
+                android:textColor="@color/gray_700"
+                app:drawableEndCompat="@drawable/ic_arrow_forward"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_fragmentMypage_version" />
+
+            <View
+                android:id="@+id/view_fragmentMypage_policyService_divider"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:background="@color/gray_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_fragmentMypage_policy_service" />
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_policy_privacy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="@string/mypage_privacy_policy"
+                android:textAppearance="@style/Typography.Paragraph1"
+                android:textColor="@color/gray_700"
+                app:drawableEndCompat="@drawable/ic_arrow_forward"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_fragmentMypage_policy_service" />
+
+            <View
+                android:id="@+id/view_fragmentMypage_policyPrivacy_divider"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:background="@color/gray_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_fragmentMypage_policy_privacy" />
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_opensource_license"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="@string/mypage_opensource_license"
+                android:textAppearance="@style/Typography.Paragraph1"
+                android:textColor="@color/gray_700"
+                app:drawableEndCompat="@drawable/ic_arrow_forward"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_fragmentMypage_policy_privacy" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/constraintLayout_fragmenyMypage_app_info">
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_logout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="@string/mypage_logout"
+                android:textAppearance="@style/Typography.Paragraph1"
+                android:textColor="@color/gray_700"
+                app:drawableEndCompat="@drawable/ic_arrow_forward"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view_fragmentMypage_lougout_divider"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:background="@color/gray_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_fragmentMypage_logout" />
+
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_withdrawalService"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="@string/mypage_withdraw"
+                android:textAppearance="@style/Typography.Paragraph1"
+                android:textColor="@color/gray_700"
+                app:drawableEndCompat="@drawable/ic_arrow_forward"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_fragmentMypage_logout" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
