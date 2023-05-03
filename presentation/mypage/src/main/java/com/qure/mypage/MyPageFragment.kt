@@ -12,11 +12,12 @@ import com.qure.core.BaseFragment
 import com.qure.core.extensions.Empty
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
+import com.qure.domain.WEB_URL
 import com.qure.domain.repository.AuthRepository
 import com.qure.mypage.databinding.FragmentMyPageBinding
 import com.qure.navigator.LoginNavigator
+import com.qure.navigator.ProgramInformationNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,6 +32,9 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
     @Inject
     lateinit var loginNavigator: LoginNavigator
+
+    @Inject
+    lateinit var programInformationNavigator: ProgramInformationNavigator
 
     private val viewModel by viewModels<MyPageViewModel>()
 
@@ -60,6 +64,36 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         binding.textViewFragmentMypageWithdrawalService.setOnSingleClickListener {
             withdrawService()
         }
+
+        binding.textViewFragmentMypagePolicyPrivacy.setOnSingleClickListener {
+            onPolicyPrivacyButtonClicked()
+        }
+
+        binding.textViewFragmentMypagePolicyService.setOnSingleClickListener {
+            onPolicyServiceButtonClicked()
+        }
+
+        binding.textViewFragmentMypageOpensourceLicense.setOnSingleClickListener {
+            onOpenSourceLicenseButtonClicked()
+        }
+    }
+
+    private fun onPolicyServiceButtonClicked() {
+        val intent = programInformationNavigator.intent(requireContext())
+        intent.putExtra(WEB_URL, POLICY_SERVICE)
+        startActivity(intent)
+    }
+
+    private fun onPolicyPrivacyButtonClicked() {
+        val intent = programInformationNavigator.intent(requireContext())
+        intent.putExtra(WEB_URL, POLICY_PRIVACY)
+        startActivity(intent)
+    }
+
+    private fun onOpenSourceLicenseButtonClicked() {
+        val intent = programInformationNavigator.intent(requireContext())
+        intent.putExtra(WEB_URL, OPENSOURCE_LICENSE)
+        startActivity(intent)
     }
 
     private fun observe() {
@@ -103,5 +137,11 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
     private fun onLogoutButtonClicked() {
         viewModel.logoutUser()
+    }
+
+    companion object {
+        private const val POLICY_SERVICE = "https://sites.google.com/view/fishingmemory-policyservice/%ED%99%88"
+        private const val POLICY_PRIVACY = "https://sites.google.com/view/fishingmemory-privacypolicy/%ED%99%88"
+        private const val OPENSOURCE_LICENSE = "https://sites.google.com/view/fishingmemory-license/%ED%99%88"
     }
 }

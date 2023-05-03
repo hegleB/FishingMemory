@@ -31,6 +31,10 @@
         </provider>
 
         <activity
+            android:name="com.qure.program_information.ProgramInformationActivity"
+            android:exported="false" />
+
+        <activity
             android:name="com.qure.fishingspot.FishingSpotActivity"
             android:exported="false" />
 
