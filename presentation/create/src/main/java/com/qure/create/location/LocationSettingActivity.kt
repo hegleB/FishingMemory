@@ -203,7 +203,6 @@ class LocationSettingActivity :
 
     companion object {
         private const val PAGE_INCREMENT_VALUE = 1
-        const val REQUEST_CODE_AREA = 0
     }
 
 }

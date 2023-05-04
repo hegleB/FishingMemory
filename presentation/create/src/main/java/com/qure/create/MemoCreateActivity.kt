@@ -34,7 +34,7 @@ import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.create.databinding.ActivityMemoCreateBinding
 import com.qure.create.location.LocationSettingActivity
-import com.qure.create.location.LocationSettingActivity.Companion.REQUEST_CODE_AREA
+import com.qure.domain.REQUEST_CODE_AREA
 import com.qure.domain.entity.auth.*
 import com.qure.domain.entity.memo.*
 import com.qure.history.MemoCalendarDialogFragment

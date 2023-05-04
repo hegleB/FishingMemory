@@ -13,6 +13,8 @@ import com.qure.core.extensions.Empty
 import com.qure.core.extensions.gone
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
+import com.qure.domain.MEMO_DATA
+import com.qure.domain.UPDATE_MEMO
 import com.qure.memo.R
 import com.qure.memo.databinding.ActivityDetailMemoBinding
 import com.qure.memo.delete.DeleteDialogFragment
@@ -140,7 +142,6 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
     }
 
     companion object {
-        const val MEMO_DATA = "memoData"
         const val SIZE_UNIT = "CM"
         const val QUERY_TITLE = "title"
         const val QUERY_WATER_TYPE = "waterType"
@@ -152,6 +153,5 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
         const val QUERY_BASE_URL = "baseUrl"
         const val QUERY_IMAGE_PATH = "imagePath"
         const val SLASH = "%2F"
-        const val UPDATE_MEMO = "updateMemo"
     }
 }
