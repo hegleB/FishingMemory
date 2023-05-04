@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id "kotlin-kapt"
     id 'dagger.hilt.android.plugin'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -49,6 +50,10 @@ dependencies {
     implementation deps.network.interceptor
 
     implementation deps.timber
+
+    implementation deps.room.runtime
+    implementation deps.room.ktx
+    kapt deps.room.complier
 
     testImplementation(testDeps)
     androidTestImplementation(androidTestDeps)

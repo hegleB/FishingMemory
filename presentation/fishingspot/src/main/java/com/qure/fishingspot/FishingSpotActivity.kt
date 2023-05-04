@@ -1,5 +1,6 @@
 package com.qure.fishingspot
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.graphics.Outline
 import android.graphics.Paint
@@ -8,7 +9,10 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
-import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
@@ -17,18 +21,24 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.qure.core.BaseActivity
+import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
+import com.qure.domain.SPOT_DATA
 import com.qure.fishingspot.databinding.ActivityFishingSpotBinding
 import com.qure.model.FishingSpotUI
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class FishingSpotActivity :
     BaseActivity<ActivityFishingSpotBinding>(R.layout.activity_fishing_spot), OnMapReadyCallback {
 
+    private val viewModel by viewModels<FishingSpotViewModel>()
     private var fishingSpot: FishingSpotUI = FishingSpotUI()
-
+    private var animator: ValueAnimator? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,9 +46,12 @@ class FishingSpotActivity :
         openMapFragment()
         setFishingSoptView()
         initView()
+        observe()
     }
 
     private fun initView() {
+        viewModel.checkBookmark(fishingSpot.number)
+
         binding.imageViewActivityFishingSpotBack.setOnSingleClickListener {
             finish()
         }
@@ -46,6 +59,28 @@ class FishingSpotActivity :
         binding.textViewActivityFishingSpotPhoneNumberData.setOnSingleClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("tel:${fishingSpot.phone_number}"))
             startActivity(intent)
+        }
+
+        val favoriteFishingSpot = binding.lottieAnimationActivityFishingSpotBookmark
+
+
+
+        favoriteFishingSpot.setOnSingleClickListener {
+            viewModel.toggleBookmarkButton(fishingSpot)
+            animator?.start()
+        }
+    }
+
+    private fun onBookmarkClicked(isBookmark: Boolean) {
+        animator = if (!isBookmark) {
+            ValueAnimator.ofFloat(0f, 0.6f).setDuration(1000)
+        } else {
+            ValueAnimator.ofFloat(0.4f, 0f).setDuration(700)
+        }
+
+        animator?.addUpdateListener { animation ->
+            binding.lottieAnimationActivityFishingSpotBookmark.progress =
+                animation.animatedValue as Float
         }
     }
 
@@ -89,6 +124,32 @@ class FishingSpotActivity :
         }
     }
 
+    private fun observe() {
+        viewModel.error
+            .onEach { errorMessage -> FishingMemoryToast().error(this, errorMessage) }
+            .launchIn(lifecycleScope)
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.isBookmarkClicked.collect {
+                        onBookmarkClicked(it)
+                    }
+                }
+
+                launch {
+                    viewModel.isBookmarked.collect {
+                        if (it) {
+                            binding.lottieAnimationActivityFishingSpotBookmark.progress = 0.6f
+                        } else {
+                            binding.lottieAnimationActivityFishingSpotBookmark.progress = 0f
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     override fun onMapReady(naverMap: NaverMap) {
         val latLng = LatLng(fishingSpot.latitude, fishingSpot.longitude)
@@ -101,9 +162,5 @@ class FishingSpotActivity :
         }
         marker.map = naverMap
         naverMap.moveCamera(cameraUpdate)
-    }
-
-    companion object {
-        const val SPOT_DATA = "fishingSpotData"
     }
 }

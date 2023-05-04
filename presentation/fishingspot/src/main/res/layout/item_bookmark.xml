@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/gray_200"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidLine_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLine_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="20dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLine_fishing_spot_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="115dp"/>
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="물만난고기"
+            android:textAppearance="@style/Typography.Title1"
+            app:layout_constraintStart_toStartOf="@id/guidLine_left"
+            app:layout_constraintTop_toTopOf="@id/guideLine_top" />
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_groundType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="기타"
+            android:textAppearance="@style/Typography.Title2"
+            android:textColor="@color/gray_500"
+            app:layout_constraintBottom_toBottomOf="@id/textView_itemFishingSpot_name"
+            app:layout_constraintStart_toEndOf="@id/textView_itemFishingSpot_name"
+            app:layout_constraintTop_toTopOf="@id/textView_itemFishingSpot_name" />
+
+        <ImageView
+            android:id="@+id/imageView_itemFishingSpot_address"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_empty_marker"
+            app:layout_constraintStart_toStartOf="@id/guidLine_left"
+            app:layout_constraintTop_toBottomOf="@id/textView_itemFishingSpot_name" />
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_number_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/number_address"
+            android:textAppearance="@style/Typography.SubTitle1"
+            android:textColor="@color/gray_300"
+            app:layout_constraintBottom_toBottomOf="@id/imageView_itemFishingSpot_address"
+            app:layout_constraintStart_toEndOf="@id/imageView_itemFishingSpot_address"
+            app:layout_constraintTop_toTopOf="@id/imageView_itemFishingSpot_address" />
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_number_address_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="경상북도 구미시 인의동 365-2"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAppearance="@style/Typography.SubTitle1"
+            app:layout_constraintBottom_toBottomOf="@+id/textView_itemFishingSpot_number_address"
+            app:layout_constraintStart_toEndOf="@id/guideLine_fishing_spot_data"
+            app:layout_constraintTop_toTopOf="@id/textView_itemFishingSpot_number_address" />
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_number_road_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="도로명"
+            android:textAppearance="@style/Typography.SubTitle1"
+            android:textColor="@color/gray_300"
+            app:layout_constraintStart_toStartOf="@id/textView_itemFishingSpot_number_address"
+            app:layout_constraintTop_toBottomOf="@id/textView_itemFishingSpot_number_address" />
+
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_road_address_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="경상북도 구미시 인동중앙로 42"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAppearance="@style/Typography.SubTitle1"
+            app:layout_constraintStart_toStartOf="@id/textView_itemFishingSpot_number_address_data"
+            app:layout_constraintTop_toBottomOf="@id/textView_itemFishingSpot_number_address_data" />
+
+        <ImageView
+            android:id="@+id/imageView_itemFishingSpot_phone_number"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_phone_number"
+            app:layout_constraintStart_toStartOf="@id/guidLine_left"
+            app:layout_constraintTop_toBottomOf="@id/textView_itemFishingSpot_number_road_address" />
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/phone_number"
+            android:textColor="@color/gray_300"
+            app:layout_constraintBottom_toBottomOf="@id/imageView_itemFishingSpot_phone_number"
+            app:layout_constraintStart_toEndOf="@id/imageView_itemFishingSpot_phone_number"
+            app:layout_constraintTop_toTopOf="@id/imageView_itemFishingSpot_phone_number" />
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_phone_number_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="02-1111-1111"
+            android:textColor="@color/blue_600"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAppearance="@style/Typography.SubTitle1"
+            app:layout_constraintBottom_toBottomOf="@id/textView_itemFishingSpot_phone_number"
+            app:layout_constraintStart_toEndOf="@id/guideLine_fishing_spot_data"
+            app:layout_constraintTop_toTopOf="@id/textView_itemFishingSpot_phone_number"
+            tools:layout_editor_absoluteY="122dp" />
+
+        <ImageView
+            android:id="@+id/imageView_itemFishingSpot_fish_type"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_fish"
+            app:layout_constraintStart_toStartOf="@id/guidLine_left"
+            app:layout_constraintTop_toBottomOf="@id/imageView_itemFishingSpot_phone_number" />
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_fish_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/fish_type"
+            android:textAppearance="@style/Typography.SubTitle1"
+            android:textColor="@color/gray_300"
+            app:layout_constraintBottom_toBottomOf="@id/imageView_itemFishingSpot_fish_type"
+            app:layout_constraintStart_toEndOf="@id/imageView_itemFishingSpot_fish_type"
+            app:layout_constraintTop_toTopOf="@id/imageView_itemFishingSpot_fish_type" />
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_fish_type_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="메기, 송어"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAppearance="@style/Typography.SubTitle1"
+            app:layout_constraintBottom_toBottomOf="@id/textView_itemFishingSpot_fish_type"
+            app:layout_constraintStart_toEndOf="@id/guideLine_fishing_spot_data"
+            app:layout_constraintTop_toTopOf="@id/textView_itemFishingSpot_fish_type" />
+
+        <ImageView
+            android:id="@+id/imageView_itemFishingSpot_fee"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_won"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="@id/guidLine_left"
+            app:layout_constraintTop_toBottomOf="@id/imageView_itemFishingSpot_fish_type"/>
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fee"
+            android:textColor="@color/gray_300"
+            android:layout_marginStart="10dp"
+            android:textAppearance="@style/Typography.SubTitle1"
+            app:layout_constraintStart_toEndOf="@id/imageView_itemFishingSpot_fee"
+            app:layout_constraintTop_toTopOf="@id/imageView_itemFishingSpot_fee"
+            app:layout_constraintBottom_toBottomOf="@id/imageView_itemFishingSpot_fee"/>
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_fee_data"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="1000원"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textAppearance="@style/Typography.SubTitle1"
+            app:layout_constraintTop_toTopOf="@id/textView_itemFishingSpot_fee"
+            app:layout_constraintBottom_toBottomOf="@id/textView_itemFishingSpot_fee"
+            app:layout_constraintStart_toEndOf="@id/guideLine_fishing_spot_data"/>
+
+        <ImageView
+            android:id="@+id/imageView_itemFishingSpot_main_point"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_fishing"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/textView_itemFishingSpot_fee_data"
+            app:layout_constraintStart_toStartOf="@id/guidLine_left"/>
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_main_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_point"
+            android:textColor="@color/gray_300"
+            android:layout_marginStart="10dp"
+            android:textAppearance="@style/Typography.SubTitle1"
+            app:layout_constraintTop_toTopOf="@id/imageView_itemFishingSpot_main_point"
+            app:layout_constraintBottom_toBottomOf="@id/imageView_itemFishingSpot_main_point"
+            app:layout_constraintStart_toEndOf="@id/imageView_itemFishingSpot_main_point"/>
+
+        <TextView
+            android:id="@+id/textView_itemFishingSpot_main_point_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="실내낚시터"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textAppearance="@style/Typography.SubTitle1"
+            app:layout_constraintStart_toEndOf="@id/guideLine_fishing_spot_data"
+            app:layout_constraintTop_toTopOf="@id/textView_itemFishingSpot_main_point"
+            app:layout_constraintBottom_toBottomOf="@id/textView_itemFishingSpot_main_point"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -15,6 +15,7 @@ import com.qure.core.util.setOnSingleClickListener
 import com.qure.domain.WEB_URL
 import com.qure.domain.repository.AuthRepository
 import com.qure.mypage.databinding.FragmentMyPageBinding
+import com.qure.navigator.BookmarkNavigator
 import com.qure.navigator.LoginNavigator
 import com.qure.navigator.ProgramInformationNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +36,9 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
     @Inject
     lateinit var programInformationNavigator: ProgramInformationNavigator
+
+    @Inject
+    lateinit var bookmarkNavigator: BookmarkNavigator
 
     private val viewModel by viewModels<MyPageViewModel>()
 
@@ -76,6 +80,10 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         binding.textViewFragmentMypageOpensourceLicense.setOnSingleClickListener {
             onOpenSourceLicenseButtonClicked()
         }
+
+        binding.textViewFragmentMypageBookmark.setOnSingleClickListener {
+            onBookmarkButtonClicked()
+        }
     }
 
     private fun onPolicyServiceButtonClicked() {
@@ -93,6 +101,11 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
     private fun onOpenSourceLicenseButtonClicked() {
         val intent = programInformationNavigator.intent(requireContext())
         intent.putExtra(WEB_URL, OPENSOURCE_LICENSE)
+        startActivity(intent)
+    }
+
+    private fun onBookmarkButtonClicked() {
+        val intent = bookmarkNavigator.intent(requireContext())
         startActivity(intent)
     }
 

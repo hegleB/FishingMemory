@@ -22,29 +22,58 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView_fragmentMypage_kakao"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout_fragmenyMypage_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:padding="20dp"
-            android:text="카카오계정"
-            android:textAppearance="@style/Typography.Paragraph1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/space_fragmentMypage_header" />
+            app:layout_constraintTop_toBottomOf="@id/space_fragmentMypage_header">
 
-        <TextView
-            android:id="@+id/textView_fragmentMypage_kakaoEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:textAppearance="@style/Typography.Paragraph1"
-            android:textColor="@color/gray_700"
-            app:layout_constraintBottom_toBottomOf="@id/textView_fragmentMypage_kakao"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/textView_fragmentMypage_kakao" />
+            <TextView
+                android:id="@+id/textView_fragmentMypage_kakao"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:text="@string/mypage_kakao_email"
+                android:textAppearance="@style/Typography.Paragraph1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
+            <View
+                android:id="@+id/view_fragmentMypage_data_divider"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:background="@color/gray_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_fragmentMypage_kakao" />
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_kakaoEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:textAppearance="@style/Typography.Paragraph1"
+                android:textColor="@color/gray_700"
+                app:layout_constraintBottom_toBottomOf="@id/textView_fragmentMypage_kakao"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/textView_fragmentMypage_kakao" />
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_bookmark"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_arrow_forward"
+                android:padding="20dp"
+                android:text="@string/mypage_fishingspot_bookmark"
+                android:textAppearance="@style/Typography.Paragraph1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_fragmentMypage_kakao" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout_fragmenyMypage_app_info"
@@ -54,7 +83,7 @@
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView_fragmentMypage_kakao">
+            app:layout_constraintTop_toBottomOf="@id/constraintLayout_fragmenyMypage_data">
 
             <TextView
                 android:id="@+id/textView_fragmentMypage_version"

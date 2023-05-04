@@ -47,4 +47,10 @@ abstract class RepositoryModule {
     abstract fun bindFishingSpotRepository(
         repository: FishingSpotRepositoryImpl,
     ): FishingSpotRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFishingSpotLocalRepository(
+        repository: FishingSpotLocalRepositoryImpl,
+    ): FishingSpotLocalRepository
 }

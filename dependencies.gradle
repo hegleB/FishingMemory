@@ -24,6 +24,7 @@ ext {
             "lottie"          : "5.2.0",
             "datastore"       : "1.0.0",
             "firebase"        : "31.2.3",
+            "room"            : "2.5.0"
     ]
     deps = [
             "kotlin"      : [
@@ -100,7 +101,12 @@ ext {
                     "com.naver.maps:map-sdk:3.16.0",
                     "io.github.ParkSangGwon:tedclustering-naver:1.0.2"
             ],
-            "swiprefresh" : "com.github.SimformSolutionsPvtLtd:SSPullToRefresh:1.5.1"
+            "swiprefresh" : "com.github.SimformSolutionsPvtLtd:SSPullToRefresh:1.5.1",
+            "room"        : [
+                    "runtime"  : "androidx.room:room-runtime:${versions.room}",
+                    "complier" : "androidx.room:room-compiler:${versions.room}",
+                    "ktx"      : "androidx.room:room-ktx:${versions.room}"
+            ]
     ]
 
     coroutines = [

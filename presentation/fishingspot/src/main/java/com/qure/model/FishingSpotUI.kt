@@ -3,6 +3,7 @@ package com.qure.model
 import android.os.Parcelable
 import com.qure.core.extensions.Empty
 import com.qure.domain.entity.fishingspot.FishingSpot
+import com.qure.domain.entity.fishingspot.FishingSpotBookmark
 import kotlinx.android.parcel.Parcelize
 
 import ted.gun0912.clustering.clustering.TedClusterItem
@@ -32,6 +33,40 @@ fun FishingSpotUI.toTedClusterItem(): TedClusterItem {
             return TedLatLng(lat, lng)
         }
     }
+}
+
+fun FishingSpotUI.toFishingSpotBookmark(): FishingSpotBookmark {
+    return FishingSpotBookmark(
+        number = number,
+        address = this.number_address,
+        data_base_date = data_base_date,
+        fish_type = fish_type,
+        latitude = latitude,
+        fishing_ground_type = fishing_ground_type,
+        fishing_spot_name = fishing_spot_name,
+        main_point = main_point,
+        road_address = road_address,
+        longitude = longitude,
+        phone_number = phone_number,
+        fee = fee
+    )
+}
+
+fun FishingSpotBookmark.toFishingSpotUI(): FishingSpotUI {
+    return FishingSpotUI(
+        number = this.number,
+        number_address = this.address,
+        data_base_date = this.data_base_date,
+        fish_type = this.fish_type,
+        latitude = this.latitude,
+        fishing_ground_type = this.fishing_ground_type,
+        fishing_spot_name = this.fishing_spot_name,
+        main_point = this.main_point,
+        road_address = this.road_address,
+        longitude = this.longitude,
+        phone_number = this.phone_number,
+        fee = this.fee
+    )
 }
 
 
