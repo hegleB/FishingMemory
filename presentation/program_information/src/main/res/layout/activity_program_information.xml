@@ -15,7 +15,7 @@
             android:id="@+id/view_activityPolicy"
             android:layout_width="0dp"
             android:layout_height="70dp"
-            android:background="@color/gray_600"
+            android:background="@color/bg_view_color"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

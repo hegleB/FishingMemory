@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".darkmode.DarkModeActivity">
+
+        <ImageView
+            android:id="@+id/imageView_activityDarkMode_back"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView_activityDarkMode_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dark_mode_setting"
+            android:textAppearance="@style/Typography.Title1"
+            app:layout_constraintTop_toTopOf="@id/imageView_activityDarkMode_back"
+            app:layout_constraintBottom_toBottomOf="@id/imageView_activityDarkMode_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <RadioGroup
+            android:id="@+id/radioGroup_activityDarkMode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:orientation="vertical"
+            android:layout_marginTop="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageView_activityDarkMode_back">
+
+            <RadioButton
+                android:id="@+id/radioButton_activityDarMode_systemMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_margin="4dp"
+                android:layoutDirection="rtl"
+                android:padding="20dp"
+                android:button="@drawable/radio_checked_unchecked"
+                android:buttonTint="@color/selector_radio_color"
+                android:text="@string/theme_system_mode"
+                android:textAlignment="textStart"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/radioButton_activityDarMode_darkMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_margin="4dp"
+                android:layoutDirection="rtl"
+                android:padding="20dp"
+                android:button="@drawable/radio_checked_unchecked"
+                android:buttonTint="@color/selector_radio_color"
+                android:text="@string/theme_dark_mode"
+                android:textAlignment="textStart"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/radioButton_activityDarMode_lightMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_margin="4dp"
+                android:layoutDirection="rtl"
+                android:padding="20dp"
+                android:button="@drawable/radio_checked_unchecked"
+                android:buttonTint="@color/selector_radio_color"
+                android:text="@string/theme_light_mode"
+                android:textAlignment="textStart"
+                android:textSize="14sp" />
+
+        </RadioGroup>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

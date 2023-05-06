@@ -21,11 +21,11 @@ import com.qure.core.extensions.*
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.core_design.custom.barchart.BarChartView
+import com.qure.domain.MEMO_DATA
 import com.qure.domain.entity.weather.SkyState
 import com.qure.home.R
 import com.qure.home.databinding.FragmentHomeBinding
 import com.qure.home.home.memo.MemoAdapter
-import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.memo.model.MemoUI
 import com.qure.navigator.DetailMemoNavigator
 import com.qure.navigator.MapNavigator
@@ -65,8 +65,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         )
     }
     private lateinit var fusedLocationProvierClient: FusedLocationProviderClient
-    private var latX = 0.0
-    private var longY = 0.0
+    private var latX = DEFAULT_LATITUE
+    private var longY = DEFAULT_LONGITUE
 
 
     override fun onCreateView(
@@ -369,5 +369,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     companion object {
         private const val PERMISSION_REQUEST_ACCESS_LOCATION = 100
+        private const val DEFAULT_LATITUE = 37.5751
+        private const val DEFAULT_LONGITUE = 126.9772
+
     }
 }

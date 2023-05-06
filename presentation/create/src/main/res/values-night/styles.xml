@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomDatePicker" parent="Theme.AppCompat.Light">
+
+        <!-- 상단 Title 배경색 -->
+        <item name="colorAccent">@color/gray_300</item>
+        <!-- 선택한 날짜 배경 색 -->
+        <item name="colorControlActivated">@color/blue_600</item>
+        <!-- Highlight item color-->
+        <item name="colorControlHighlight">@color/white</item>
+        <!--Calender Background color -->
+        <item name="android:colorBackground">@color/blue_400</item>
+        <!-- Week TextColor-->
+        <item name="android:textColorSecondary">@color/white</item>
+        <!-- Calender > Number color arrow color (<) -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <!--day , month TextColor-->
+        <item name="android:textColorPrimaryInverse">@color/white</item>
+        <!-- year-->
+        <item name="android:textColorSecondaryInverse">@color/white</item>
+        <!-- 취소/확인버튼 색상 -->
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="android:textSize">20sp</item>
+        <item name="cornerSize">16dp</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="fontFamily">@font/sc_medium_dream</item>
+
+    </style>
+</resources>

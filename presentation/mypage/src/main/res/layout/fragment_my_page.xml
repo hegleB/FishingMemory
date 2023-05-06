@@ -26,7 +26,7 @@
             android:id="@+id/constraintLayout_fragmenyMypage_data"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/bg_category_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/space_fragmentMypage_header">
@@ -73,6 +73,27 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textView_fragmentMypage_kakao" />
+
+            <View
+                android:id="@+id/view_fragmentMypage_bookmark_divider"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:background="@color/gray_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_fragmentMypage_bookmark" />
+
+            <TextView
+                android:id="@+id/textView_fragmentMypage_dark_mode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_arrow_forward"
+                android:padding="20dp"
+                android:text="@string/dark_mode_setting"
+                android:textAppearance="@style/Typography.Paragraph1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_fragmentMypage_bookmark" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -80,7 +101,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="@color/white"
+            android:background="@color/bg_category_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/constraintLayout_fragmenyMypage_data">
@@ -180,7 +201,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="@color/white"
+            android:background="@color/bg_category_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/constraintLayout_fragmenyMypage_app_info">

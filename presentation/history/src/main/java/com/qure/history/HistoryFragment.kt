@@ -2,6 +2,7 @@ package com.qure.history
 
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,9 +15,9 @@ import com.qure.core.extensions.initSwipeRefreshLayout
 import com.qure.core.extensions.visiable
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
+import com.qure.domain.MEMO_DATA
 import com.qure.history.databinding.FragmentHistoryBinding
 import com.qure.history.view.DayBind
-import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.navigator.DetailMemoNavigator
 import com.qure.navigator.MapNavigator
 import com.qure.navigator.MemoCreateNavigator
@@ -150,8 +151,10 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
             textViewFragmentHistoryYear.text = LocalDate.now().year.toString()
             calendarViewFragmentHistory.setup(firstMonth, firstMonth, firstDayOfWeek)
             calendarViewFragmentHistory.dayBinder = binder
-            tabLayoutFragmentHistoryMonth.tabs.post({
-                tabLayoutFragmentHistoryMonth.tabs.getTabAt(firstMonth.monthValue - 1)?.select()
+            Handler().post({
+                tabLayoutFragmentHistoryMonth.tabs.post({
+                    tabLayoutFragmentHistoryMonth.tabs.getTabAt(firstMonth.monthValue - 1)?.select()
+                })
             })
         }
     }

@@ -31,6 +31,10 @@
         </provider>
 
         <activity
+            android:name="com.qure.mypage.darkmode.DarkModeActivity"
+            android:exported="false" />
+
+        <activity
             android:name="com.qure.fishingspot.bookmark.BookmarkActivity"
             android:exported="false" />
 

@@ -35,6 +35,7 @@ import com.qure.core.util.setOnSingleClickListener
 import com.qure.create.databinding.ActivityMemoCreateBinding
 import com.qure.create.location.LocationSettingActivity
 import com.qure.domain.REQUEST_CODE_AREA
+import com.qure.domain.UPDATE_MEMO
 import com.qure.domain.entity.auth.*
 import com.qure.domain.entity.memo.*
 import com.qure.history.MemoCalendarDialogFragment
@@ -68,7 +69,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listener = this
-        createdMemo = intent.getParcelableExtra(DetailMemoActivity.UPDATE_MEMO)
+        createdMemo = intent.getParcelableExtra(UPDATE_MEMO)
         initView()
         setDate()
         observe()
@@ -209,7 +210,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             it.isUploadImage && it.isUpdated -> {
                 sendSuccessMessage(R.string.toast_update_memo)
                 val intent = detailMemoNavigator.intent(this).apply {
-                    putExtra(DetailMemoActivity.UPDATE_MEMO, it.memo)
+                    putExtra(UPDATE_MEMO, it.memo)
                 }
                 startActivity(intent)
             }

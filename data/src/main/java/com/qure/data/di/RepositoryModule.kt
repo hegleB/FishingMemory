@@ -53,4 +53,10 @@ abstract class RepositoryModule {
     abstract fun bindFishingSpotLocalRepository(
         repository: FishingSpotLocalRepositoryImpl,
     ): FishingSpotLocalRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDarkModeRepository(
+        repository: DarkModeRepositoryImpl,
+    ): DarkModeRepository
 }

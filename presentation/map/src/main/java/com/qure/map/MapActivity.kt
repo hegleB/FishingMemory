@@ -28,10 +28,10 @@ import com.naver.maps.map.util.FusedLocationSource
 import com.qure.core.BaseActivity
 import com.qure.core.extensions.*
 import com.qure.core.util.setOnSingleClickListener
+import com.qure.domain.MEMO_DATA
 import com.qure.domain.SPOT_DATA
 import com.qure.domain.entity.MarkerType
 import com.qure.map.databinding.ActivityMapBinding
-import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.memo.model.MemoUI
 import com.qure.memo.model.toTedClusterItem
 import com.qure.model.FishingSpotUI

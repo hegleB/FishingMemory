@@ -11,8 +11,8 @@ import com.qure.core.extensions.initSwipeRefreshLayout
 import com.qure.core.extensions.visiable
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
+import com.qure.domain.MEMO_DATA
 import com.qure.memo.databinding.ActivityMemoListBinding
-import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.navigator.DetailMemoNavigator
 import com.qure.navigator.MemoCreateNavigator
 import dagger.hilt.android.AndroidEntryPoint

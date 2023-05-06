@@ -57,7 +57,7 @@ class DayBind(
         }
 
         if (data.position == DayPosition.MonthDate) {
-            textView.setTextColor(context.getColor(android.R.color.black))
+            textView.setTextColor(context.getColorCompat(R.color.text_day_color))
             when (data.date) {
                 today -> {
                     roundBackgroundView.applyBackground(todayBackground)
@@ -68,7 +68,7 @@ class DayBind(
                 }
                 else -> {
                     roundBackgroundView.background = null
-                    textView.setTextColor(context.getColorCompat(R.color.black))
+                    textView.setTextColor(context.getColorCompat(R.color.text_day_color))
                 }
             }
 

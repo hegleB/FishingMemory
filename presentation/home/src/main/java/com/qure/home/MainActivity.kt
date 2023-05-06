@@ -3,16 +3,19 @@ package com.qure.home
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.qure.core.BaseActivity
+import com.qure.domain.MEMO_DATA
 import com.qure.history.HistoryFragment
 import com.qure.home.databinding.ActivityMainBinding
 import com.qure.home.home.HomeFragment
 import com.qure.memo.detail.DetailMemoActivity
-import com.qure.memo.detail.DetailMemoActivity.Companion.MEMO_DATA
 import com.qure.mypage.MyPageFragment
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -20,6 +23,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     @Inject
     lateinit var detaiMemoNavigator: DetailMemoNavigator
+
+    private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,13 +39,24 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
                 startActivity(detailMemoIntent)
             }
         }
-
         initNavigationBar()
+        observe()
+    }
+
+    private fun observe() {
+        lifecycleScope.launchWhenCreated {
+            viewModel.fragment.collect {
+                binding.bottomNavigationBarActivityMain.selectedItemId = it
+            }
+        }
     }
 
     private fun initNavigationBar() {
+        changeFragment(HomeFragment())
+
         binding.bottomNavigationBarActivityMain.run {
             setOnItemSelectedListener {
+                viewModel.setCurrentFragment(it.itemId)
                 when (it.itemId) {
                     R.id.homeFragment -> {
                         changeFragment(HomeFragment())
@@ -54,7 +70,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
                 }
                 true
             }
-            selectedItemId = R.id.homeFragment
         }
     }
 

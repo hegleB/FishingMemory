@@ -1,5 +1,6 @@
 package com.qure.mypage
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.domain.WEB_URL
 import com.qure.domain.repository.AuthRepository
+import com.qure.mypage.darkmode.DarkModeActivity
 import com.qure.mypage.databinding.FragmentMyPageBinding
 import com.qure.navigator.BookmarkNavigator
 import com.qure.navigator.LoginNavigator
@@ -83,6 +85,10 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
         binding.textViewFragmentMypageBookmark.setOnSingleClickListener {
             onBookmarkButtonClicked()
+        }
+
+        binding.textViewFragmentMypageDarkMode.setOnSingleClickListener {
+            startActivity(Intent(requireContext(), DarkModeActivity::class.java))
         }
     }
 

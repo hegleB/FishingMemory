@@ -10,7 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.splash.SplashActivity">
+        tools:context=".view.splash.SplashActivity"
+        android:background="@color/white">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottieAnimationView_splashActivity_logo"
