@@ -45,10 +45,14 @@ class MemoListActivity : BaseActivity<ActivityMemoListBinding>(R.layout.activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getFilteredMemo()
         observe()
         initView()
         initRecyclerView()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getFilteredMemo()
     }
 
     private fun initView() {

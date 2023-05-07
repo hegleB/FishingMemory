@@ -39,7 +39,6 @@ import com.qure.domain.UPDATE_MEMO
 import com.qure.domain.entity.auth.*
 import com.qure.domain.entity.memo.*
 import com.qure.history.MemoCalendarDialogFragment
-import com.qure.memo.detail.DetailMemoActivity
 import com.qure.memo.model.MemoUI
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,6 +73,15 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         setDate()
         observe()
         setCreatedMemo()
+
+    }
+    override fun onBackPressed() {
+        if (createdMemo != null) {
+            goToDetailMemoActivity(createdMemo)
+        } else {
+            finish()
+        }
+        super.onBackPressed()
     }
 
     private fun initView() {
@@ -103,6 +111,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     private fun setCreatedMemo() {
         createdMemo?.let { memo ->
+            viewModel.setCoords(memo.coords)
             with(binding) {
                 editTextActivityMemoCreateTitle.setText(memo.title)
                 editTextActivityMemoCreateFishSize.setText(memo.fishSize)
@@ -207,16 +216,21 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     private fun handleSaveOrUpdateState(it: UiState) {
         when {
             it.isUploadImage && !it.isSave && !it.isUpdated -> binding.progressBarActivityMemo.visiable()
-            it.isUploadImage && it.isUpdated -> {
+            it.isUpdated -> {
                 sendSuccessMessage(R.string.toast_update_memo)
-                val intent = detailMemoNavigator.intent(this).apply {
-                    putExtra(UPDATE_MEMO, it.memo)
-                }
-                startActivity(intent)
+                goToDetailMemoActivity(it.memo)
             }
             it.isUploadImage && it.isSave -> sendSuccessMessage(R.string.toast_save_memo)
             else -> binding.progressBarActivityMemo.gone()
         }
+    }
+
+    private fun goToDetailMemoActivity(memo: MemoUI?) {
+        val intent = detailMemoNavigator.intent(this).apply {
+            putExtra(UPDATE_MEMO, memo)
+        }
+        startActivity(intent)
+        finish()
     }
 
     private fun sendSuccessMessage(stringdId: Int) {

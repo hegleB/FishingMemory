@@ -69,8 +69,6 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         super.onViewCreated(view, savedInstanceState)
 
         listener = this
-        viewModel.getFilteredDayMemo(LocalDate.now())
-        viewModel.getFilteredMemo()
         initRecyclerView()
         initCalendar()
         initView()
@@ -78,6 +76,12 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         changeCalendarMonth()
         setCalendarYear()
         moveMemoCreate()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getFilteredDayMemo(LocalDate.now())
+        viewModel.getFilteredMemo()
     }
 
     private fun initView() {

@@ -36,9 +36,13 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
     private var memo: MemoUI = MemoUI()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        observe()
+    }
+
+    override fun onStart() {
+        super.onStart()
         initData()
         initView()
-        observe()
     }
 
     private fun observe() {
@@ -48,14 +52,15 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
     }
 
     private fun initData() {
+
         memo = when {
+            intent.getParcelableExtra<MemoUI>(UPDATE_MEMO) != null ->
+                intent.getParcelableExtra(UPDATE_MEMO) ?: MemoUI()
             Intent.ACTION_VIEW == intent.action -> {
                 val uri = intent.data
                 binding.imageViewActivityDetailMemoMore.gone()
                 uri?.let { createMemoUI(it) } ?: MemoUI()
             }
-            intent.getParcelableExtra<MemoUI>(UPDATE_MEMO) != null ->
-                intent.getParcelableExtra(UPDATE_MEMO) ?: MemoUI()
             else -> intent.getParcelableExtra(MEMO_DATA) ?: MemoUI()
         }
     }
@@ -140,7 +145,6 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
                 .into(imageViewActivityDetailMemoFishImage)
         }
     }
-
     companion object {
         const val SIZE_UNIT = "CM"
         const val QUERY_TITLE = "title"

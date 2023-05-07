@@ -88,6 +88,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.getFilteredMemo()
+    }
+
     private fun initRecyclerView() {
         binding.recyclerViewFragmentHomePost.adapter = adapter
     }
@@ -212,8 +217,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun initView() {
-        viewModel.getFilteredMemo()
-
         binding.swipeRefreshLayoutFragmentHome.initSwipeRefreshLayout()
         binding.swipeRefreshLayoutFragmentHome.setOnRefreshListener {
             getCurrentLocation()
