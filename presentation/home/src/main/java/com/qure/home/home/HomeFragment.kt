@@ -244,7 +244,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun refreshView() = lifecycleScope.launch {
         viewModel.getFilteredMemo()
-        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             launch {
                 delay(Long.SwipRefreshTime)
                 viewModel.UiState.collect {
