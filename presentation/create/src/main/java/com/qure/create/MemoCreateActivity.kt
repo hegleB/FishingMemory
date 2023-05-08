@@ -1,10 +1,13 @@
 package com.qure.create
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -12,7 +15,11 @@ import android.os.Handler
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewTreeObserver
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -64,20 +71,28 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     lateinit var listener: MemoCalendarDialogFragment.DatePickerListener
 
     private var createdMemo: MemoUI? = null
+    private lateinit var rootView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listener = this
         createdMemo = intent.getParcelableExtra(UPDATE_MEMO)
+        rootView = binding.nestedScrollViewActivityMemoCreate
         initView()
         setDate()
         observe()
         setCreatedMemo()
 
     }
+
     override fun onBackPressed() {
         if (createdMemo != null) {
-            goToDetailMemoActivity(createdMemo)
+            val intent = detailMemoNavigator.intent(this)
+            intent.putExtra(UPDATE_MEMO, createdMemo)
+            startActivity(intent)
+            Handler().postDelayed({
+                finish()
+            }, 2000)
         } else {
             finish()
         }
@@ -85,6 +100,8 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     }
 
     private fun initView() {
+        hideKeyboard()
+
         binding.imageViewActivityMemoCreateBack.setOnClickListener {
             finish()
         }
@@ -105,8 +122,30 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             saveMemo()
             uploadImage()
         }
-
+        rootView.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                scrollToFocusedEditText()
+            }
+        })
         validateMemo()
+    }
+
+    private fun scrollToFocusedEditText() {
+        val focusedView = currentFocus as? EditText ?: return
+        val rect = Rect()
+        focusedView.getGlobalVisibleRect(rect)
+
+        val rootViewTop = rootView.top
+        if (rect.top > rootViewTop) {
+            val scrollY = rect.top - rootViewTop
+            rootView.scrollBy(0, scrollY - 200)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        rootView.scrollBy(0, -rootView.scrollY)
     }
 
     private fun setCreatedMemo() {
@@ -142,6 +181,25 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                     break
                 }
             }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun hideKeyboard() {
+        binding.nestedScrollViewActivityMemoCreate.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                // 키보드 내리기
+                val rect = Rect()
+                binding.editTextActivityMemoCreateFishType.getGlobalVisibleRect(rect)
+                binding.nestedScrollViewActivityMemoCreate.scrollBy(0, 0);
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(
+                    binding.nestedScrollViewActivityMemoCreate.windowToken,
+                    0
+                )
+                return@setOnTouchListener true
+            }
+            false
         }
     }
 
@@ -218,14 +276,14 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             it.isUploadImage && !it.isSave && !it.isUpdated -> binding.progressBarActivityMemo.visiable()
             it.isUpdated -> {
                 sendSuccessMessage(R.string.toast_update_memo)
-                goToDetailMemoActivity(it.memo)
+                goToDetailMemo(it.memo)
             }
             it.isUploadImage && it.isSave -> sendSuccessMessage(R.string.toast_save_memo)
             else -> binding.progressBarActivityMemo.gone()
         }
     }
 
-    private fun goToDetailMemoActivity(memo: MemoUI?) {
+    private fun goToDetailMemo(memo: MemoUI?) {
         val intent = detailMemoNavigator.intent(this).apply {
             putExtra(UPDATE_MEMO, memo)
         }
