@@ -18,3 +18,6 @@ const val PHOTO_FILE = "photoFile"
 
 const val REQUEST_IMAGE_CAPTURE = 1
 const val DEFAULT_GALLERY_REQUEST_CODE = 2
+
+const val ARG_AREA = "ARG_AREA"
+const val ARG_AREA_COORDS = "ARG_AREA_COORDS"

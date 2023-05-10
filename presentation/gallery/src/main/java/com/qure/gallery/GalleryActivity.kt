@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import androidx.core.app.ActivityCompat
 import com.qure.core.BaseActivity
@@ -15,11 +17,10 @@ import com.qure.core.util.setOnSingleClickListener
 import com.qure.core_design.custom.recyclerview.RecyclerViewItemDecoration
 import com.qure.domain.DEFAULT_GALLERY_REQUEST_CODE
 import com.qure.domain.PHOTO_FILE
-import com.qure.domain.REQUEST_IMAGE_CAPTURE
 import com.qure.gallery.databinding.ActivityGalleryBinding
 import com.qure.navigator.MemoCreateNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.ByteArrayOutputStream
+import java.io.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -110,14 +111,34 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            val intent = Intent()
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            intent.putExtra(PHOTO_FILE, getImageUri(imageBitmap))
-            setResult(DEFAULT_GALLERY_REQUEST_CODE, intent)
+
+            val uri = Uri.parse(getImageUri(imageBitmap).toString())
+            val file = copyUriToExternalStorage(uri)
+
+            val intent = memoCreateNavigator.intent(this)
+
+            intent.putExtra(PHOTO_FILE, Uri.fromFile(file))
+            setResult(Activity.RESULT_OK, intent)
             finish()
+
         }
+    }
+
+    private fun copyUriToExternalStorage(uri: Uri): File {
+        val parcelFileDescriptor: ParcelFileDescriptor =
+            this.contentResolver.openFileDescriptor(uri, "r")
+                ?: throw IllegalArgumentException("파일 변환 실패")
+        val fileDescriptor: FileDescriptor = parcelFileDescriptor.fileDescriptor
+        val inputStream = FileInputStream(fileDescriptor)
+        val directory =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val fileName = "${System.currentTimeMillis()}.jpg"
+        val file = File(directory, fileName)
+        val outputStream = FileOutputStream(file)
+        inputStream.copyTo(outputStream)
+        return file
     }
 
     private fun getImageUri(bitmap: Bitmap): Uri {
@@ -142,6 +163,14 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
         if (ActivityCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             return true
@@ -154,6 +183,8 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
             this,
             arrayOf(
                 android.Manifest.permission.CAMERA,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             ),
             DEFAULT_GALLERY_REQUEST_CODE
         )

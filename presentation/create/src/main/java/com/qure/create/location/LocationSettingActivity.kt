@@ -12,10 +12,10 @@ import com.qure.core.extensions.Spacing
 import com.qure.core.extensions.getStringArrayCompat
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.create.MemoCreateActivity
-import com.qure.create.MemoCreateActivity.Companion.ARG_AREA
-import com.qure.create.MemoCreateActivity.Companion.ARG_AREA_COORDS
 import com.qure.create.R
 import com.qure.create.databinding.ActivityLocationSettingBinding
+import com.qure.domain.ARG_AREA
+import com.qure.domain.ARG_AREA_COORDS
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

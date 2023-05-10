@@ -9,9 +9,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
+import android.os.*
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
@@ -49,14 +47,10 @@ import com.qure.memo.model.MemoUI
 import com.qure.navigator.DetailMemoNavigator
 import com.qure.navigator.GalleryNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 
@@ -86,14 +80,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         setDate()
         observe()
         setCreatedMemo()
-
-        if (createdMemo == null) {
-            selectedImageUri = intent.getParcelableExtra(PHOTO_FILE)
-
-            if (selectedImageUri != null) {
-                loadFishImage(selectedImageUri as Uri)
-            }
-        }
     }
 
     override fun onBackPressed() {
@@ -218,15 +204,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     private fun uploadImage() {
         if (selectedImageUri != null) {
-            val parcelFileDescriptor = contentResolver.openFileDescriptor(
-                selectedImageUri!!, "r", null
-            ) ?: return
-
-            val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-            val file = File(cacheDir, contentResolver.getFileName(selectedImageUri!!))
-            val outputStream = FileOutputStream(file)
-            inputStream.copyTo(outputStream)
-            viewModel.setImage(file)
+            viewModel.setImage(File(selectedImageUri?.path))
             if (createdMemo == null) {
                 viewModel.uploadMemoImage()
             } else {
@@ -265,40 +243,57 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.uiState.collect {
-                        handleSaveOrUpdateState(it)
-                    }
-                }
-                launch {
-                    viewModel.location.collect {
-                        binding.textViewActivityMemoCreateLocationInfo.text = it
-                    }
-                }
+                observeUiState()
+                observeLocation()
+                observeDate()
+                observeImage()
+                observeWaterType()
+            }
+        }
+    }
 
-                launch {
-                    viewModel.date.collect {
-                        binding.textViewActivityMemoCreateDate.text = it
-                    }
-                }
+    private fun observeUiState() {
+        lifecycleScope.launch {
+            viewModel.uiState.collect {
+                handleSaveOrUpdateState(it)
+            }
+        }
+    }
 
-                launch {
-                    viewModel.image.collect {
-                        loadFishImage(it)
-                    }
-                }
+    private fun observeLocation() {
+        lifecycleScope.launch {
+            viewModel.location.collect {
+                binding.textViewActivityMemoCreateLocationInfo.text = it
+            }
+        }
+    }
 
-                launch {
-                    viewModel.waterType.collect {
-                        if (!it.equals(String.Empty)) {
-                            setSelectedChipText(binding.chipGroupActivityMemoCreateType, it)
-                        }
-                    }
+    private fun observeDate() {
+        lifecycleScope.launch {
+            viewModel.date.collect {
+                binding.textViewActivityMemoCreateDate.text = it
+            }
+        }
+    }
+
+    private fun observeImage() {
+        lifecycleScope.launch {
+            viewModel.image.collect {
+                loadFishImage(it)
+            }
+        }
+    }
+
+    private fun observeWaterType() {
+        lifecycleScope.launch {
+            viewModel.waterType.collect {
+                if (it.isNotEmpty()) {
+                    setSelectedChipText(binding.chipGroupActivityMemoCreateType, it)
                 }
             }
         }
-
     }
+
 
     private fun handleSaveOrUpdateState(it: UiState) {
         when {
@@ -466,7 +461,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null -> {
                 selectedImageUri = data.getParcelableExtra(PHOTO_FILE)
                 viewModel.setImage(File(selectedImageUri?.path))
-                loadFishImage(selectedImageUri as Uri)
             }
             else ->
                 Snackbar.make(
@@ -475,17 +469,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                     Snackbar.LENGTH_LONG
                 )
         }
-    }
-
-    private fun loadFishImage(image: Any) {
-        Glide.with(this)
-            .load(image)
-            .transform(CenterCrop(), RoundedCorners(15))
-            .override(360, 360)
-            .into(binding.imageViewActivityMemoCreateFishImage)
-        Handler().postDelayed({
-            checkInputs()
-        }, 100)
     }
 
     private fun ContentResolver.getFileName(selectedImageUri: Uri): String {
@@ -500,10 +483,19 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         return name
     }
 
+    private fun loadFishImage(image: Any) {
+        Glide.with(this)
+            .load(image)
+            .transform(CenterCrop(), RoundedCorners(15))
+            .override(360, 360)
+            .into(binding.imageViewActivityMemoCreateFishImage)
+        Handler().postDelayed({
+            checkInputs()
+        }, 100)
+    }
+
     companion object {
         const val PERMISSION_REQUEST_CODE = 1000
-        const val ARG_AREA = "ARG_AREA"
-        const val ARG_AREA_COORDS = "ARG_AREA_COORDS"
     }
 }
 
