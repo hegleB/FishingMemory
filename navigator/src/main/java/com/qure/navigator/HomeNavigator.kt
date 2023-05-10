@@ -1,3 +1,3 @@
 package com.qure.navigator
 
-interface HomeNavigator : Navigatior
+interface HomeNavigator : Navigator

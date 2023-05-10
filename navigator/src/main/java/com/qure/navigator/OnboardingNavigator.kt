@@ -1,3 +1,3 @@
 package com.qure.navigator
 
-interface OnboardingNavigator : Navigatior
+interface OnboardingNavigator : Navigator

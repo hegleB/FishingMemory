@@ -1,3 +1,3 @@
 package com.qure.navigator
 
-interface ProgramInformationNavigator : Navigatior
+interface ProgramInformationNavigator : Navigator

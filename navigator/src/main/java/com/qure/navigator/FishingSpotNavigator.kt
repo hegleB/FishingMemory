@@ -1,3 +1,3 @@
 package com.qure.navigator
 
-interface FishingSpotNavigator : Navigatior
+interface FishingSpotNavigator : Navigator

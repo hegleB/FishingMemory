@@ -1,3 +1,3 @@
 package com.qure.navigator
 
-interface BookmarkNavigator : Navigatior
+interface BookmarkNavigator : Navigator

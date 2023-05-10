@@ -1,3 +1,3 @@
 package com.qure.navigator
 
-interface MapNavigator : Navigatior
+interface MapNavigator : Navigator

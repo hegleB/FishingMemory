@@ -1,3 +1,3 @@
 package com.qure.navigator
 
-interface MemoCreateNavigator : Navigatior
+interface MemoCreateNavigator : Navigator
