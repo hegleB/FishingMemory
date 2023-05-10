@@ -11,7 +11,9 @@ import android.provider.MediaStore
 import androidx.core.app.ActivityCompat
 import com.qure.core.BaseActivity
 import com.qure.core.util.FishingMemoryToast
+import com.qure.core.util.setOnSingleClickListener
 import com.qure.core_design.custom.recyclerview.RecyclerViewItemDecoration
+import com.qure.domain.DEFAULT_GALLERY_REQUEST_CODE
 import com.qure.domain.PHOTO_FILE
 import com.qure.domain.REQUEST_IMAGE_CAPTURE
 import com.qure.gallery.databinding.ActivityGalleryBinding
@@ -30,6 +32,8 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
     private lateinit var adapter: GalleryAdapter
     private var images: List<GalleryImage> = emptyList()
     private var selectedImage: Uri? = null
+    private var preSelectedImage: Uri? = null
+
 
     private lateinit var itemListener: GalleryAdapter.OnItemClickListener
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +51,12 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
+
+        binding.imageViewActivityGalleryClose.setOnSingleClickListener {
+            finish()
+        }
+
+
     }
 
     private fun initRecyclerView() {
@@ -87,7 +97,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
-            REQUEST_IMAGE_CAPTURE -> {
+            DEFAULT_GALLERY_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startCamera()
                 } else {
@@ -102,10 +112,10 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            val intent = memoCreateNavigator.intent(this)
+            val intent = Intent()
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             intent.putExtra(PHOTO_FILE, getImageUri(imageBitmap))
-            startActivity(intent)
+            setResult(DEFAULT_GALLERY_REQUEST_CODE, intent)
             finish()
         }
     }
@@ -125,7 +135,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
 
     private fun startCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
+        startActivityForResult(intent, DEFAULT_GALLERY_REQUEST_CODE)
     }
 
     private fun checkPermission(): Boolean {
@@ -145,12 +155,15 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
             arrayOf(
                 android.Manifest.permission.CAMERA,
             ),
-            REQUEST_IMAGE_CAPTURE
+            DEFAULT_GALLERY_REQUEST_CODE
         )
     }
 
 
     override fun setOnItemClickListener(uri: Uri) {
+        binding.textViewActivityGalleryDone.isEnabled =
+            if (preSelectedImage == uri && binding.textViewActivityGalleryDone.isEnabled) false else true
+        preSelectedImage = uri
         selectedImage = uri
     }
 
