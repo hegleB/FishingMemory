@@ -1,5 +1,6 @@
 package com.qure.core.extensions
 
+import android.content.res.Configuration
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import com.simform.refresh.SSPullToRefreshLayout
@@ -11,7 +12,8 @@ fun SSPullToRefreshLayout.initSwipeRefreshLayout() {
             120
         )
     )
-    if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
+    val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
         setLottieAnimation("refresh.json")
     } else {
         setLottieAnimation("refresh_night.json")
