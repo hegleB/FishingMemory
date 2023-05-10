@@ -160,6 +160,8 @@ class MemoViewModel @Inject constructor(
         _image.value = image
     }
 
+
+
     fun setTitle(title: String) {
         _title.value = title
     }

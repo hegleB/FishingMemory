@@ -15,3 +15,6 @@ const val THEME_LIGHT = "lightMode"
 const val THEME_SYSTEM = "systemMode"
 
 const val PHOTO_FILE = "photoFile"
+
+const val REQUEST_IMAGE_CAPTURE = 1
+const val DEFAULT_GALLERY_REQUEST_CODE = 2

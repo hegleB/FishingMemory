@@ -41,9 +41,7 @@ import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.create.databinding.ActivityMemoCreateBinding
 import com.qure.create.location.LocationSettingActivity
-import com.qure.domain.PHOTO_FILE
-import com.qure.domain.REQUEST_CODE_AREA
-import com.qure.domain.UPDATE_MEMO
+import com.qure.domain.*
 import com.qure.domain.entity.auth.*
 import com.qure.domain.entity.memo.*
 import com.qure.history.MemoCalendarDialogFragment
@@ -51,9 +49,11 @@ import com.qure.memo.model.MemoUI
 import com.qure.navigator.DetailMemoNavigator
 import com.qure.navigator.GalleryNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -89,7 +89,10 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
         if (createdMemo == null) {
             selectedImageUri = intent.getParcelableExtra(PHOTO_FILE)
-            loadFishImage()
+
+            if (selectedImageUri != null) {
+                loadFishImage(selectedImageUri as Uri)
+            }
         }
     }
 
@@ -168,14 +171,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                 editTextActivityMemoCreateContent.setText(memo.content)
                 setSelectedChipText(chipGroupActivityMemoCreateType, memo.waterType)
                 buttonActivityMemoCreatePost.setText(getString(R.string.edit))
-                Glide.with(this@MemoCreateActivity)
-                    .load(memo.image)
-                    .transform(CenterCrop(), RoundedCorners(15))
-                    .override(360, 360)
-                    .into(imageViewActivityMemoCreateFishImage)
-                Handler().postDelayed({
-                    checkInputs()
-                }, 100)
+                loadFishImage(memo.image)
             }
         }
     }
@@ -274,6 +270,31 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                         handleSaveOrUpdateState(it)
                     }
                 }
+                launch {
+                    viewModel.location.collect {
+                        binding.textViewActivityMemoCreateLocationInfo.text = it
+                    }
+                }
+
+                launch {
+                    viewModel.date.collect {
+                        binding.textViewActivityMemoCreateDate.text = it
+                    }
+                }
+
+                launch {
+                    viewModel.image.collect {
+                        loadFishImage(it)
+                    }
+                }
+
+                launch {
+                    viewModel.waterType.collect {
+                        if (!it.equals(String.Empty)) {
+                            setSelectedChipText(binding.chipGroupActivityMemoCreateType, it)
+                        }
+                    }
+                }
             }
         }
 
@@ -310,6 +331,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     override fun selectDate(date: String) {
         binding.textViewActivityMemoCreateDate.text = date
+        viewModel.setDate(date)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -406,6 +428,8 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     private fun ChipGroup.setOnCheckedChangeListener() {
         this.setOnCheckedStateChangeListener { group, checkedIds ->
+            val chip = findViewById<Chip>(checkedIds.get(0))
+            viewModel.setWaterType(chip.text.toString())
             checkInputs()
         }
     }
@@ -433,15 +457,16 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
         when {
             requestCode == REQUEST_CODE_AREA && data != null -> {
-                binding.textViewActivityMemoCreateLocationInfo.text =
-                    data.getStringExtra(ARG_AREA)
+                val location = data.getStringExtra(ARG_AREA) ?: String.Empty
+                binding.textViewActivityMemoCreateLocationInfo.text = location
+                viewModel.setLocation(location)
                 viewModel.setCoords(data.getStringExtra(ARG_AREA_COORDS) ?: String.Empty)
             }
 
             requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null -> {
-                val data = data.data as Uri
-                selectedImageUri = data
-                loadFishImage()
+                selectedImageUri = data.getParcelableExtra(PHOTO_FILE)
+                viewModel.setImage(File(selectedImageUri?.path))
+                loadFishImage(selectedImageUri as Uri)
             }
             else ->
                 Snackbar.make(
@@ -452,10 +477,9 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         }
     }
 
-    private fun loadFishImage() {
-
+    private fun loadFishImage(image: Any) {
         Glide.with(this)
-            .load(selectedImageUri)
+            .load(image)
             .transform(CenterCrop(), RoundedCorners(15))
             .override(360, 360)
             .into(binding.imageViewActivityMemoCreateFishImage)
@@ -478,7 +502,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     companion object {
         const val PERMISSION_REQUEST_CODE = 1000
-        const val DEFAULT_GALLERY_REQUEST_CODE = 1002
         const val ARG_AREA = "ARG_AREA"
         const val ARG_AREA_COORDS = "ARG_AREA_COORDS"
     }

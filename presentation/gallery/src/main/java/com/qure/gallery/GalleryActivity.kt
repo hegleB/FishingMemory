@@ -1,6 +1,7 @@
 package com.qure.gallery
 
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -12,6 +13,7 @@ import com.qure.core.BaseActivity
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core_design.custom.recyclerview.RecyclerViewItemDecoration
 import com.qure.domain.PHOTO_FILE
+import com.qure.domain.REQUEST_IMAGE_CAPTURE
 import com.qure.gallery.databinding.ActivityGalleryBinding
 import com.qure.navigator.MemoCreateNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,10 +42,9 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
 
     private fun initView() {
         binding.textViewActivityGalleryDone.setOnClickListener {
-            val intent = memoCreateNavigator.intent(this)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            val intent = Intent()
             intent.putExtra(PHOTO_FILE, selectedImage)
-            startActivity(intent)
+            setResult(Activity.RESULT_OK, intent)
             finish()
         }
     }
@@ -160,9 +161,4 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
             requestPermission()
         }
     }
-
-    companion object {
-        const val REQUEST_IMAGE_CAPTURE = 1
-    }
-
 }
