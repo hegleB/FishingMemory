@@ -19,6 +19,7 @@ import com.naver.maps.map.util.MarkerIcons
 import com.qure.core.BaseFragment
 import com.qure.core.extensions.*
 import com.qure.core.util.FishingMemoryToast
+import com.qure.core_design.custom.recyclerview.RecyclerViewItemDecoration
 import com.qure.create.R
 import com.qure.create.databinding.FragmentLocationSettingBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -123,7 +124,7 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
     private fun initRecyclerView() {
         binding.apply {
             recyclerViewFragmentLocationSetting.adapter = adapter
-            recyclerViewFragmentLocationSetting.addItemDecoration(LocationItemDecoration(10))
+            recyclerViewFragmentLocationSetting.addItemDecoration(RecyclerViewItemDecoration(10))
         }
     }
 

@@ -41,6 +41,7 @@ import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.create.databinding.ActivityMemoCreateBinding
 import com.qure.create.location.LocationSettingActivity
+import com.qure.domain.PHOTO_FILE
 import com.qure.domain.REQUEST_CODE_AREA
 import com.qure.domain.UPDATE_MEMO
 import com.qure.domain.entity.auth.*
@@ -48,6 +49,7 @@ import com.qure.domain.entity.memo.*
 import com.qure.history.MemoCalendarDialogFragment
 import com.qure.memo.model.MemoUI
 import com.qure.navigator.DetailMemoNavigator
+import com.qure.navigator.GalleryNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -65,6 +67,9 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
+    @Inject
+    lateinit var galleryNavigator: GalleryNavigator
+
     private val viewModel by viewModels<MemoViewModel>()
     private var selectedImageUri: Uri? = null
 
@@ -72,7 +77,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     private var createdMemo: MemoUI? = null
     private lateinit var rootView: View
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listener = this
@@ -83,6 +87,10 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         observe()
         setCreatedMemo()
 
+        if (createdMemo == null) {
+            selectedImageUri = intent.getParcelableExtra(PHOTO_FILE)
+            loadFishImage()
+        }
     }
 
     override fun onBackPressed() {
@@ -188,7 +196,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     private fun hideKeyboard() {
         binding.nestedScrollViewActivityMemoCreate.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                // 키보드 내리기
+
                 val rect = Rect()
                 binding.editTextActivityMemoCreateFishType.getGlobalVisibleRect(rect)
                 binding.nestedScrollViewActivityMemoCreate.scrollBy(0, 0);
@@ -341,7 +349,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     }
 
     private fun startGallery() {
-        val intent = Intent()
+        val intent = galleryNavigator.intent(this)
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(intent, DEFAULT_GALLERY_REQUEST_CODE)
@@ -433,15 +441,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null -> {
                 val data = data.data as Uri
                 selectedImageUri = data
-
-                Glide.with(this)
-                    .load(data)
-                    .transform(CenterCrop(), RoundedCorners(15))
-                    .override(360, 360)
-                    .into(binding.imageViewActivityMemoCreateFishImage)
-                Handler().postDelayed({
-                    checkInputs()
-                }, 100)
+                loadFishImage()
             }
             else ->
                 Snackbar.make(
@@ -450,6 +450,18 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                     Snackbar.LENGTH_LONG
                 )
         }
+    }
+
+    private fun loadFishImage() {
+
+        Glide.with(this)
+            .load(selectedImageUri)
+            .transform(CenterCrop(), RoundedCorners(15))
+            .override(360, 360)
+            .into(binding.imageViewActivityMemoCreateFishImage)
+        Handler().postDelayed({
+            checkInputs()
+        }, 100)
     }
 
     private fun ContentResolver.getFileName(selectedImageUri: Uri): String {

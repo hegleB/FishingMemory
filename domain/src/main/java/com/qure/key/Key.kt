@@ -13,3 +13,5 @@ const val DARK_MODE_KEY = "darkModeKey"
 const val THEME_DARK = "darkMode"
 const val THEME_LIGHT = "lightMode"
 const val THEME_SYSTEM = "systemMode"
+
+const val PHOTO_FILE = "photoFile"

@@ -40,11 +40,13 @@ class HomeViewModel @Inject constructor(
                 ny = latXLngY.ny.toInt().toString(),
             ).collect { response ->
                 response.onSuccess { weather ->
-                    _UiState.update {
-                        it.copy(
-                            weatherUI = weather.response.body.items.item.map { it.toWeatherUI() },
-                            isWeatherInitialized = true,
-                        )
+                    if (weather.response.body != null) {
+                        _UiState.update {
+                            it.copy(
+                                weatherUI = weather.response.body.items.item.map { it.toWeatherUI() },
+                                isWeatherInitialized = true,
+                            )
+                        }
                     }
                 }.onFailure {
                     sendErrorMessage(it.message)

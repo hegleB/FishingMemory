@@ -1,10 +1,10 @@
-package com.qure.create.location
+package com.qure.core_design.custom.recyclerview
 
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class LocationItemDecoration(private val divWidth: Int) : RecyclerView.ItemDecoration() {
+class RecyclerViewItemDecoration(private val divWidth: Int) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(
         outRect: Rect,
