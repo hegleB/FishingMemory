@@ -21,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LocationSettingActivity :
     BaseActivity<ActivityLocationSettingBinding>(R.layout.activity_location_setting),
-    RegionPositionCallback, AreaNameCallback{
+    RegionPositionCallback, AreaNameCallback {
 
     lateinit var listener: RegionPositionCallback
     lateinit var arealistener: AreaNameCallback
@@ -95,7 +95,8 @@ class LocationSettingActivity :
         binding.apply {
             buttonActivityLocationSettingNext.setOnSingleClickListener {
                 if (currentItemPosition == 2) {
-                    val intent = Intent(this@LocationSettingActivity, MemoCreateActivity::class.java)
+                    val intent =
+                        Intent(this@LocationSettingActivity, MemoCreateActivity::class.java)
                     intent.putExtra(ARG_AREA, areaName)
                     intent.putExtra(ARG_AREA_COORDS, coords)
                     setResult(Activity.RESULT_OK, intent)
@@ -150,6 +151,9 @@ class LocationSettingActivity :
             selectedRegionName[1] == String.Empty && position == 1 -> {
                 binding.buttonActivityLocationSettingNext.isEnabled = false
             }
+            position == 2 -> {
+                binding.buttonActivityLocationSettingNext.isEnabled = true
+            }
         }
     }
 
@@ -196,6 +200,7 @@ class LocationSettingActivity :
             )
         )
     }
+
     override fun setAreaName(name: String, coords: String) {
         this.areaName = name
         this.coords = coords

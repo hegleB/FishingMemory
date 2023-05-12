@@ -33,7 +33,7 @@ private const val ARG_PARAM3 = "param3"
 private const val ARG_PARAM4 = "param4"
 
 @AndroidEntryPoint
-class LocationSettingFragment(listener: RegionPositionCallback, arealistener: AreaNameCallback) :
+class LocationSettingFragment(listener: RegionPositionCallback?, arealistener: AreaNameCallback?) :
     BaseFragment<FragmentLocationSettingBinding>(R.layout.fragment_location_setting),
     OnMapReadyCallback {
 
@@ -46,11 +46,15 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
     private var regionName: String? = null
     private var regionArray: Array<String> = emptyArray()
 
-    private var listener: RegionPositionCallback
-    private var arealistener: AreaNameCallback
+    private var listener: RegionPositionCallback? = null
+    private var arealistener: AreaNameCallback? = null
 
     private lateinit var adapter: LocationRegionAdapter
 
+    constructor() : this(
+        listener = null,
+        arealistener = null
+    )
     init {
         this.listener = listener
         this.arealistener = arealistener
@@ -85,7 +89,7 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
         adapter = LocationRegionAdapter(regionArray)
         adapter.setItemClickListener(object : LocationRegionAdapter.ItemClickListener {
             override fun onClick(position: Int) {
-                listener.setRegionPosition(position)
+                listener?.setRegionPosition(position)
             }
         })
     }
@@ -168,7 +172,7 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
                             moveMapCamera(it)
                         } else if (it.isReverseGeocodingInittialized) {
                             if (it.reverseGeocodingUI?.code == 0 && it.geocodingUI?.coords != String.Empty) {
-                                arealistener.setAreaName(
+                                arealistener?.setAreaName(
                                     it.reverseGeocodingUI.areaName,
                                     it.geocodingUI!!.coords,
                                 )
@@ -193,7 +197,7 @@ class LocationSettingFragment(listener: RegionPositionCallback, arealistener: Ar
         val longitude = uiState.geocodingUI?.x ?: String.DefaultLongitude
         val coords = "${latitude},${longitude}"
         viewModel.getReverseGeocoding(coords)
-        arealistener.setAreaName(regionName ?: String.Empty, "${longitude},${latitude}")
+        arealistener?.setAreaName(regionName ?: String.Empty, "${longitude},${latitude}")
         val cameraUpdate = CameraUpdate.scrollTo(
             LatLng(
                 latitude.toDouble(),
