@@ -19,14 +19,18 @@
 </br>
 
 ## ScreenShots
-<img src = "https://github.com/dltkd1395/FishingMemory/assets/39490416/bbd5c38d-f17e-4441-abd9-80e9cf8ec55c" height="225" width="500">
+<p align="center">
+<img src = "https://github.com/dltkd1395/FishingMemory/assets/39490416/bbd5c38d-f17e-4441-abd9-80e9cf8ec55c" height="225" style="width:100%;">
+</p>
 
 ||||||
 |---|---|---|---|---|
 |<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/6698a1bd-deb5-462a-8a34-956fca4462f3">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/c2991a10-96c7-4d30-ba4e-3a568c916124">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/ddc255be-b19c-460f-9df6-02d0dd7b31aa">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/5ae8db38-f61e-4bfe-b4de-429aea6a7ce5">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/cdaa9d74-fcb0-48f1-affe-30753f80a7be">|
 
 ## Project Architecture
-<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/44db0b32-3797-4ff2-ba8c-a95f485df29b" height="350" width="600">
+<p align="center">
+<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/44db0b32-3797-4ff2-ba8c-a95f485df29b" height="350" style="width:100%;">
+</p>
 
 ## Specifications used
 
