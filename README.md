@@ -20,7 +20,7 @@
 
 ## ScreenShots
 <p align="center">
-<img src = "https://github.com/dltkd1395/FishingMemory/assets/39490416/bbd5c38d-f17e-4441-abd9-80e9cf8ec55c" height="225" style="width:100%;">
+<img src = "https://github.com/dltkd1395/FishingMemory/assets/39490416/bbd5c38d-f17e-4441-abd9-80e9cf8ec55c" height="300" style="width:100%;">
 </p>
 
 ||||||
