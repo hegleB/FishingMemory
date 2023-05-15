@@ -18,12 +18,15 @@ import com.qure.domain.usecase.memo.UploadMemoImageUseCase
 import com.qure.memo.model.MemoUI
 import com.qure.memo.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
+import java.io.FileOutputStream
+import java.net.URL
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,8 +46,8 @@ class MemoViewModel @Inject constructor(
     val title: StateFlow<String>
         get() = _title
 
-    private val _image = MutableStateFlow(File("/path/to/file"))
-    val image: StateFlow<File>
+    private val _image = MutableStateFlow(String.Empty)
+    val image: StateFlow<String>
         get() = _image
 
     private val _waterType = MutableStateFlow(String.Empty)
@@ -114,7 +117,7 @@ class MemoViewModel @Inject constructor(
                     isUploadImage = true
                 )
             }
-            uploadMemoImageUseCase(image.value)
+            uploadMemoImageUseCase(File(image.value))
                 .onSuccess { storage ->
                     if (uuid == String.Empty) {
                         createMemo(getImageUrl(storage))
@@ -156,10 +159,9 @@ class MemoViewModel @Inject constructor(
                 "o/${fileName}?alt=media&token=${storage.downloadTokens}"
     }
 
-    fun setImage(image: File) {
+    fun setImage(image: String) {
         _image.value = image
     }
-
 
 
     fun setTitle(title: String) {

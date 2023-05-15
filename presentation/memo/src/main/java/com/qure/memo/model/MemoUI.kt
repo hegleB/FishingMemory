@@ -70,5 +70,6 @@ fun Document.toMemoUI(): MemoUI {
         fishSize = data.fishSize.stringValue,
         content = data.content.stringValue,
         createTime = data.createTime.stringValue,
+        coords = data.coords.stringValue,
     )
 }

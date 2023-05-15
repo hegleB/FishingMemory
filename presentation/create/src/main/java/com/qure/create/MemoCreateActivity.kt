@@ -50,7 +50,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 
@@ -146,21 +145,26 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     }
 
     private fun setCreatedMemo() {
+
         createdMemo?.let { memo ->
-            viewModel.setCoords(memo.coords)
+            with(viewModel) {
+                setCoords(memo.coords)
+                setDate(memo.date)
+                setLocation(memo.location)
+                setImage(memo.image)
+            }
+
             with(binding) {
                 editTextActivityMemoCreateTitle.setText(memo.title)
                 editTextActivityMemoCreateFishSize.setText(memo.fishSize)
-                textViewActivityMemoCreateLocationInfo.setText(memo.location)
-                textViewActivityMemoCreateDate.setText(memo.date)
                 editTextActivityMemoCreateFishType.setText(memo.fishType)
                 editTextActivityMemoCreateContent.setText(memo.content)
                 setSelectedChipText(chipGroupActivityMemoCreateType, memo.waterType)
                 buttonActivityMemoCreatePost.setText(getString(R.string.edit))
-                loadFishImage(memo.image)
             }
         }
     }
+
 
     private fun setSelectedChipText(chipGroup: ChipGroup, selectedText: String?) {
         selectedText?.let { text ->
@@ -204,7 +208,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     private fun uploadImage() {
         if (selectedImageUri != null) {
-            viewModel.setImage(File(selectedImageUri?.path))
+            selectedImageUri?.path?.let { viewModel.setImage(it) }
             if (createdMemo == null) {
                 viewModel.uploadMemoImage()
             } else {
@@ -311,6 +315,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         val intent = detailMemoNavigator.intent(this).apply {
             putExtra(UPDATE_MEMO, memo)
         }
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
         finish()
     }
@@ -460,7 +465,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
             requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null -> {
                 selectedImageUri = data.getParcelableExtra(PHOTO_FILE)
-                viewModel.setImage(File(selectedImageUri?.path))
+                selectedImageUri?.path?.let { viewModel.setImage(it) }
             }
             else ->
                 Snackbar.make(
