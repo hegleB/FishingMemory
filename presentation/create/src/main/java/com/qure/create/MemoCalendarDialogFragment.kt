@@ -9,13 +9,16 @@ import com.qure.core.extensions.twoDigitsFormat
 import com.qure.create.databinding.DialogMemoCalendarBinding
 import java.util.Date
 
-class MemoCalendarDialogFragment(listener: DatePickerListener) : DialogFragment() {
+class MemoCalendarDialogFragment(listener: DatePickerListener?) : DialogFragment() {
 
     private var _binding: DialogMemoCalendarBinding? = null
     private val binding get() = _binding!!
 
     private var dialogFragmentListener: DatePickerListener? = null
 
+    constructor(): this(
+        listener = null
+    )
     init {
         this.dialogFragmentListener = listener
     }
