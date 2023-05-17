@@ -50,6 +50,10 @@ class HistoryViewModel @Inject constructor(
     private val _selectedYear: MutableStateFlow<Int?> = MutableStateFlow(null)
     val selectedYear: StateFlow<Int?>
         get() = _selectedYear
+
+    private val _selectedMonth: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val selectedMonth: StateFlow<Int?>
+        get() = _selectedMonth
     fun getFilteredDayMemo(date: LocalDate) {
         viewModelScope.launch {
             getFilteredMemoUseCase(
@@ -147,6 +151,10 @@ class HistoryViewModel @Inject constructor(
 
     fun selectYear(year: Int) {
         _selectedYear.value = year
+    }
+
+    fun selectMonth(month: Int) {
+        _selectedMonth.value = month
     }
 
     fun onYearSelectEvent(year: Int) {

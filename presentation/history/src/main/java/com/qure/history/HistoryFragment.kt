@@ -23,6 +23,7 @@ import com.qure.navigator.MapNavigator
 import com.qure.navigator.MemoCreateNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -149,6 +150,15 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                         setYearCalendar(year ?: LocalDate.now().year)
                     }
                 }
+
+                launch {
+                    viewModel.selectedMonth.collect { month ->
+                        setupCalendarView(
+                            viewModel.selectedYear.value ?: LocalDate.now().year,
+                            month ?: LocalDate.now().monthValue
+                        )
+                    }
+                }
             }
         }
     }
@@ -159,12 +169,9 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
 
     private fun initCalendar() {
         firstMonth = YearMonth.of(LocalDate.now().year, LocalDate.now().month)
-        currentYear = LocalDate.now().year
         firstDayOfWeek = WeekFields.of(Locale.KOREAN).firstDayOfWeek
         binder = DayBind(binding.calendarViewFragmentHistory)
         with(binding) {
-//            textViewFragmentHistoryYear.text = LocalDate.now().year.toString()
-//            viewModel.selectYear(LocalDate.now().year)
             calendarViewFragmentHistory.setup(firstMonth, firstMonth, firstDayOfWeek)
             calendarViewFragmentHistory.dayBinder = binder
             Handler().post({
@@ -189,8 +196,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                 TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     val month = tab?.position?.plus(1)!!
-                    setupCalendarView(viewModel.selectedYear.value?: LocalDate.now().year, month)
-                    currentMonth = month
+                    viewModel.selectMonth(month)
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
@@ -228,11 +234,14 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         viewModel.getFilteredMemo()
         with(binding) {
             textViewFragmentHistoryYear.text = year.toString()
-            Handler().post {(
-                tabLayoutFragmentHistoryMonth.tabs.post({
-                    tabLayoutFragmentHistoryMonth.tabs.getTabAt(firstMonth.monthValue - 1)?.select()
-                })
-            )}
+            Handler().post {
+                (
+                        tabLayoutFragmentHistoryMonth.tabs.post({
+                            tabLayoutFragmentHistoryMonth.tabs.getTabAt(firstMonth.monthValue - 1)
+                                ?.select()
+                        })
+                        )
+            }
         }
     }
 }
