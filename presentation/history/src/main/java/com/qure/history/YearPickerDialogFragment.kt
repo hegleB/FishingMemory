@@ -4,21 +4,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.NumberPicker
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.history.databinding.DialogYearPickerBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-class YearPickerDialogFragment(listener: YearDialogListner) : DialogFragment() {
+@AndroidEntryPoint
+class YearPickerDialogFragment : DialogFragment() {
 
     private var _binding: DialogYearPickerBinding? = null
     private val binding get() = _binding!!
     private var year: Int = LocalDate.now().year
-    private var dialogFragmentListener: YearDialogListner? = null
-
-    init {
-        this.dialogFragmentListener = listener
-    }
+    private lateinit var yearPicker: NumberPicker
+    private val viewModel by activityViewModels<HistoryViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,19 +41,34 @@ class YearPickerDialogFragment(listener: YearDialogListner) : DialogFragment() {
 
         initView()
         setLayout()
+        observe()
+    }
+
+    private fun observe() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.pickedYear.collect {
+                    yearPicker.value = it
+                }
+            }
+        }
     }
 
     private fun initView() {
-        with(binding.numberPickerDialogYearPickerYear) {
+        yearPicker = binding.numberPickerDialogYearPickerYear
+        with(yearPicker) {
             minValue = 1000
             maxValue = 10000
             wrapSelectorWheel = false
             value = year
+        }
+        yearPicker.setOnValueChangedListener { picker, oldVal, newVal ->
+            viewModel.pickYear(newVal)
+        }
 
-            binding.buttonDialogYearPickerConfirm.setOnSingleClickListener {
-                dialogFragmentListener?.selectYearClick(value)
-                dismiss()
-            }
+        binding.buttonDialogYearPickerConfirm.setOnSingleClickListener {
+            viewModel.onYearSelectEvent(yearPicker.value)
+            dismiss()
         }
 
         binding.buttonDialogYearPickerCancel.setOnClickListener {
@@ -76,14 +96,9 @@ class YearPickerDialogFragment(listener: YearDialogListner) : DialogFragment() {
     companion object {
         const val TAG = "YearDialogFragment"
 
-        fun newInstance(year: Int, listener: YearDialogListner): YearPickerDialogFragment {
-            val fragment = YearPickerDialogFragment(listener)
-            fragment.year = year
+        fun newInstance(year: Int): YearPickerDialogFragment {
+            val fragment = YearPickerDialogFragment()
             return fragment
         }
-    }
-
-    interface YearDialogListner {
-        fun selectYearClick(year: Int)
     }
 }

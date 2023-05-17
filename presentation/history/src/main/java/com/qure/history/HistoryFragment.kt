@@ -4,7 +4,7 @@ package com.qure.history
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -35,8 +35,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_history),
-    YearPickerDialogFragment.YearDialogListner {
+class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_history) {
 
     @Inject
     lateinit var memoCreateNavigator: MemoCreateNavigator
@@ -47,7 +46,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
     @Inject
     lateinit var mapNavigator: MapNavigator
 
-    private val viewModel by viewModels<HistoryViewModel>()
+    private val viewModel by activityViewModels<HistoryViewModel>()
 
     private val adapter: HistoryAdapter by lazy {
         HistoryAdapter(
@@ -62,13 +61,10 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
     private lateinit var firstDayOfWeek: DayOfWeek
     private lateinit var binder: DayBind
     private var currentYear: Int = 0
-    private var currentMonth: Int = 0
-    lateinit var listener: YearPickerDialogFragment.YearDialogListner
+    private var currentMonth: Int = LocalDate.now().monthValue
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        listener = this
         initRecyclerView()
         initCalendar()
         initView()
@@ -126,7 +122,10 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                 launch {
                     viewModel.uiState.collect {
                         if (it.isFiltered) {
-                            binder = DayBind(binding.calendarViewFragmentHistory, it.filteredMemos).apply {
+                            binder = DayBind(
+                                binding.calendarViewFragmentHistory,
+                                it.filteredMemos
+                            ).apply {
                                 input = object : DayBind.Input() {
                                     override fun onDayClick(date: LocalDate) = dayClick(date)
                                 }
@@ -136,6 +135,18 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                         } else {
                             binding.progressBarFragmentHistory.visiable()
                         }
+                    }
+                }
+
+                launch {
+                    viewModel.selectedYearEvent.collect { year ->
+                        viewModel.selectYear(year)
+                    }
+                }
+
+                launch {
+                    viewModel.selectedYear.collect { year ->
+                        setYearCalendar(year ?: LocalDate.now().year)
                     }
                 }
             }
@@ -152,7 +163,8 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         firstDayOfWeek = WeekFields.of(Locale.KOREAN).firstDayOfWeek
         binder = DayBind(binding.calendarViewFragmentHistory)
         with(binding) {
-            textViewFragmentHistoryYear.text = LocalDate.now().year.toString()
+//            textViewFragmentHistoryYear.text = LocalDate.now().year.toString()
+//            viewModel.selectYear(LocalDate.now().year)
             calendarViewFragmentHistory.setup(firstMonth, firstMonth, firstDayOfWeek)
             calendarViewFragmentHistory.dayBinder = binder
             Handler().post({
@@ -167,7 +179,6 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         binding.textViewFragmentHistoryYear.setOnClickListener {
             YearPickerDialogFragment.newInstance(
                 year = currentYear,
-                listener = listener
             ).show(requireActivity().supportFragmentManager, YearPickerDialogFragment.TAG)
         }
     }
@@ -178,7 +189,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                 TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     val month = tab?.position?.plus(1)!!
-                    setupCalendarView(currentYear, month)
+                    setupCalendarView(viewModel.selectedYear.value?: LocalDate.now().year, month)
                     currentMonth = month
                 }
 
@@ -205,8 +216,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         }
     }
 
-    override fun selectYearClick(year: Int) {
-        this.currentYear = year
+    private fun setYearCalendar(year: Int) {
         setupCalendarView(year, currentMonth)
         viewModel.getFilteredDayMemo(
             LocalDate.of(
@@ -215,11 +225,14 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                 LocalDate.now().dayOfMonth
             )
         )
+        viewModel.getFilteredMemo()
         with(binding) {
             textViewFragmentHistoryYear.text = year.toString()
-            tabLayoutFragmentHistoryMonth.tabs.post({
-                tabLayoutFragmentHistoryMonth.tabs.getTabAt(firstMonth.monthValue - 1)?.select()
-            })
+            Handler().post {(
+                tabLayoutFragmentHistoryMonth.tabs.post({
+                    tabLayoutFragmentHistoryMonth.tabs.getTabAt(firstMonth.monthValue - 1)?.select()
+                })
+            )}
         }
     }
 }

@@ -16,9 +16,7 @@ import com.qure.memo.MemoListViewModel.Companion.EQUAL
 import com.qure.memo.model.MemoUI
 import com.qure.memo.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -41,6 +39,17 @@ class HistoryViewModel @Inject constructor(
     val selectedDate: StateFlow<LocalDate>
         get() = _selectedDate
 
+    private val _selectedYearEvent: MutableSharedFlow<Int> = MutableSharedFlow()
+    val selectedYearEvent: SharedFlow<Int>
+        get() = _selectedYearEvent
+
+    private val _pickedYear: MutableStateFlow<Int> = MutableStateFlow(LocalDate.now().year)
+    val pickedYear: StateFlow<Int>
+        get() = _pickedYear
+
+    private val _selectedYear: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val selectedYear: StateFlow<Int?>
+        get() = _selectedYear
     fun getFilteredDayMemo(date: LocalDate) {
         viewModelScope.launch {
             getFilteredMemoUseCase(
@@ -130,6 +139,20 @@ class HistoryViewModel @Inject constructor(
 
     fun selectDate(date: LocalDate) {
         _selectedDate.value = date
+    }
+
+    fun pickYear(year: Int) {
+        _pickedYear.value = year
+    }
+
+    fun selectYear(year: Int) {
+        _selectedYear.value = year
+    }
+
+    fun onYearSelectEvent(year: Int) {
+        viewModelScope.launch {
+            _selectedYearEvent.emit(year)
+        }
     }
 
     companion object {
