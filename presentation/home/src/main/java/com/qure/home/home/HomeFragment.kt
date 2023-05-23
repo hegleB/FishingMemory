@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -51,7 +51,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     @Inject
     lateinit var mapNavigator: MapNavigator
 
-    private val viewModel by viewModels<HomeViewModel>()
+    private val viewModel by activityViewModels<HomeViewModel>()
     private var memos: List<MemoUI> = emptyList()
 
     private val adapter: MemoAdapter by lazy {
@@ -68,16 +68,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private var latX = DEFAULT_LATITUE
     private var longY = DEFAULT_LONGITUE
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         fusedLocationProvierClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
         getCurrentLocation()
-        return super.onCreateView(inflater, container, savedInstanceState)
+        viewModel.getFilteredMemo()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,12 +81,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         observe()
         initView()
         initRecyclerView()
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.getFilteredMemo()
     }
 
     private fun initRecyclerView() {
@@ -225,7 +215,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         binding.swipeRefreshLayoutFragmentHome.setRefreshing(false)
 
         binding.chipGroupFragmentHome.setOnCheckedChangeListener { group, checkedId ->
-            initBarChart(checkedId)
+            viewModel.setCheckedId(checkedId)
         }
 
         binding.imageViewFragmentHomeRefresh.setOnSingleClickListener {
@@ -250,7 +240,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 viewModel.UiState.collect {
                     binding.swipeRefreshLayoutFragmentHome.setRefreshing(false)
                     if (it.isFilterInitialized) {
-                        handleFilterInitialized(it)
+                        handleFilterInitialized()
                     }
 
                     if (it.isWeatherInitialized) {
@@ -263,23 +253,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
 
     private fun initBarChart(checkedId: Int) {
-        val chartData = when (checkedId) {
-            R.id.chip_fragmentHome_fishType -> memos.map { it.fishType }
-            R.id.chip_fragmentHome_fishSize -> memos.map { it.fishSize }
-            else -> memos.map {
-                try {
-                    it.location.split(String.Spacing)[1]
-                } catch (e: IndexOutOfBoundsException) {
-                    it.location.split(String.Spacing)[0]
+        if (memos.isNotEmpty()) {
+            val chartData = when (checkedId) {
+                R.id.chip_fragmentHome_fishType -> memos.map { it.fishType }
+                R.id.chip_fragmentHome_fishSize -> memos.map { it.fishSize }
+                else -> memos.map {
+                    try {
+                        it.location.split(String.Spacing)[1]
+                    } catch (e: IndexOutOfBoundsException) {
+                        it.location.split(String.Spacing)[0]
+                    }
                 }
             }
+            BarChartView(
+                requireContext(),
+                resources,
+                countElements(chartData).values.toList(),
+                chartData.distinct(),
+            ).initBarChart(binding.barChartFragmentHomeChart)
         }
-        BarChartView(
-            requireContext(),
-            resources,
-            countElements(chartData).values.toList(),
-            chartData.distinct(),
-        ).initBarChart(binding.barChartFragmentHomeChart)
     }
 
     private fun observe() {
@@ -295,7 +287,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
                     viewModel.UiState.collect {
-                        handleUiState(it)
+                        if (it.filteredMemo.isNotEmpty()) {
+                            memos = it.filteredMemo
+                            handleUiState(it)
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.memos.collect {
+                        showViews()
+                        adapter.submitList(it) {
+                            binding.recyclerViewFragmentHomePost.scrollToPosition(0)
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.checkedId.collect {
+                        if (it != -1) {
+                            initBarChart(it)
+                            binding.chipGroupFragmentHome.check(it)
+                        } else {
+                            initBarChart(R.id.chip_fragmentHome_fishType)
+                            binding.chipGroupFragmentHome.check(R.id.chip_fragmentHome_fishType)
+                        }
                     }
                 }
             }
@@ -305,7 +325,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun handleUiState(uiState: UiState) {
         when {
             uiState.isWeatherInitialized -> handleWeatherInitialized(uiState)
-            uiState.isFilterInitialized -> handleFilterInitialized(uiState)
+            uiState.isFilterInitialized -> handleFilterInitialized()
         }
     }
 
@@ -319,16 +339,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
     }
 
-    private fun handleFilterInitialized(uiState: UiState) {
-        if (uiState.filteredMemo.isEmpty()) {
+    private fun handleFilterInitialized() {
+        if (memos.isEmpty()) {
             hideViews()
         } else {
             showViews()
-            adapter.submitList(uiState.filteredMemo) {
-                binding.recyclerViewFragmentHomePost.scrollToPosition(0)
-            }
-            memos = uiState.filteredMemo
             initBarChart(R.id.chip_fragmentHome_fishType)
+            binding.chipGroupFragmentHome.check(R.id.chip_fragmentHome_fishType)
         }
     }
 

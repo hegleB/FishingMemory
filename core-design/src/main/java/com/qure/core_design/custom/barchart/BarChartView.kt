@@ -63,7 +63,9 @@ class BarChartView(
             setDrawGridLines(false)
             spaceTop = 0f
             axisMinimum = 0f // this replaces setStartAtZero(true)
-            axisMaximum = values.max()
+            if (values.size > 0) {
+                axisMaximum = values.max()
+            }
             textColor = ContextCompat.getColor(context, R.color.gray_700)
             axisLineColor = ContextCompat.getColor(context, R.color.gray_700)
             zeroLineColor = ContextCompat.getColor(context, R.color.gray_700)

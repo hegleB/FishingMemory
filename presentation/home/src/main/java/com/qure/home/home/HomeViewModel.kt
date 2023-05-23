@@ -31,6 +31,15 @@ class HomeViewModel @Inject constructor(
     private val _UiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
     val UiState: StateFlow<UiState>
         get() = _UiState
+
+    private val _checkedId: MutableStateFlow<Int> = MutableStateFlow(-1)
+    val checkedId: StateFlow<Int>
+        get() = _checkedId
+
+    private val _memos: MutableStateFlow<List<MemoUI>> = MutableStateFlow(emptyList())
+    val memos: StateFlow<List<MemoUI>>
+        get() = _memos
+
     fun fetchWeater(latXLngY: LatXLngY) {
         viewModelScope.launch {
             getWeatherUseCase(
@@ -61,6 +70,7 @@ class HomeViewModel @Inject constructor(
                 getStructuredQuery()
             ).collect { response ->
                 response.onSuccess { result ->
+                    _memos.value = result.map { it.toMemoUI() }
                     _UiState.update {
                         it.copy(
                             isFilterInitialized = true,
@@ -72,6 +82,10 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun setCheckedId(checkedId: Int) {
+        _checkedId.value = checkedId
     }
 
     private fun getStructuredQuery(): MemoQuery {
