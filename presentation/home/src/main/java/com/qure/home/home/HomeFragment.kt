@@ -333,8 +333,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         setWeatherAnimation(uiState)
         val weatherData = uiState.weatherUI ?: emptyList()
         if (weatherData.isNotEmpty()) {
-            val latXLngY = LatXLngY(lat = latX, lng = longY)
-            binding.textViewFragmentHomeLocation.text = getCurrentAddress(latXLngY)
             binding.progressBarFragmentHome.gone()
         }
     }
@@ -385,6 +383,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         binding.textViewFragmentHomeTemperature.text = uiState.toTemperatureString()
         binding.textViewFragmentHomeWeatherState.text =
             SkyState.from(uiState.getSkyState().fcstValue.toInt())
+        binding.textViewFragmentHomeLocation.text = getCurrentAddress(uiState.latXLngY)
     }
 
     companion object {

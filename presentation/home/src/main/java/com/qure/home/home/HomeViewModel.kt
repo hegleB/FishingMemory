@@ -2,6 +2,8 @@ package com.qure.home.home
 
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
+import com.qure.core.extensions.DefaultLatitude
+import com.qure.core.extensions.DefaultLongitude
 import com.qure.core.extensions.twoDigitsFormat
 import com.qure.domain.entity.memo.*
 import com.qure.domain.entity.weather.WeatherCategory
@@ -39,7 +41,6 @@ class HomeViewModel @Inject constructor(
     private val _memos: MutableStateFlow<List<MemoUI>> = MutableStateFlow(emptyList())
     val memos: StateFlow<List<MemoUI>>
         get() = _memos
-
     fun fetchWeater(latXLngY: LatXLngY) {
         viewModelScope.launch {
             getWeatherUseCase(
@@ -54,6 +55,7 @@ class HomeViewModel @Inject constructor(
                             it.copy(
                                 weatherUI = weather.response.body.items.item.map { it.toWeatherUI() },
                                 isWeatherInitialized = true,
+                                latXLngY = latXLngY
                             )
                         }
                     }
@@ -135,6 +137,10 @@ data class UiState(
     val isWeatherInitialized: Boolean = false,
     val isFilterInitialized: Boolean = false,
     val filteredMemo: List<MemoUI> = emptyList(),
+    val latXLngY: LatXLngY = LatXLngY(
+        String.DefaultLatitude.toDouble(),
+        String.DefaultLongitude.toDouble()
+    )
 ) {
 
     fun toTemperatureString(): String {
