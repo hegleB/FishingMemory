@@ -27,8 +27,8 @@ class MapViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : BaseViewModel() {
 
-    private val _markers = MutableStateFlow<List<Any>>(emptyList())
-    val markers: StateFlow<List<Any>>
+    private val _markers = MutableStateFlow<List<Any>?>(null)
+    val markers: StateFlow<List<Any>?>
         get() = _markers
 
     private val _mapType = MutableStateFlow<NaverMap.MapType>(NaverMap.MapType.Basic)

@@ -95,7 +95,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
-        viewModel.getFilteredMemo()
+
         openMapFragment()
         initView()
         initRecyclerView()
@@ -160,7 +160,11 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.markers.collect { markers ->
-                        tedNaverClustering = initNaverClustering(markers)
+                        if (markers == null) {
+                            viewModel.getFilteredMemo()
+                        } else {
+                            tedNaverClustering = initNaverClustering(markers)
+                        }
                         preTedNaverClustering = tedNaverClustering?.make()
                         naverMap.moveCamera(CameraUpdate.zoomBy(0.0))
                         tedNaverClustering = null
