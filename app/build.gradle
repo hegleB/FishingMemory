@@ -90,6 +90,7 @@ dependencies {
     implementation project(path: ':presentation:program_information')
     implementation project(path: ':presentation:mypage')
     implementation project(path: ':presentation:gallery')
+    implementation project(path: ':presentation:permission')
 
 
     implementation(jetpackDeps)

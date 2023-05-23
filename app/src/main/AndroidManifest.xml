@@ -34,6 +34,10 @@
         </provider>
 
         <activity
+            android:name="com.qure.permission.PermissionActivity"
+            android:exported="false" />
+
+        <activity
             android:name="com.qure.gallery.GalleryActivity"
             android:exported="false" />
 

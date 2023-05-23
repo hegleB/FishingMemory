@@ -1,0 +1,14 @@
+<resources>
+    <string name="permission_title">접근 권한 설정 안내</string>
+    <string name="dot">·  </string>
+    <string name="permission_description">Fishing Memory 서비스를 제공하는 데 필요한 권한입니다.\n앱을 사용하기 위해서는 다음과 같은 권한 설정이 필요합니다.</string>
+    <string name="permission_location">·  위치</string>
+    <string name="permission_location_description">현재 위치의 날씨 정보를 가져올 때</string>
+    <string name="permission_camera">·  카메라</string>
+    <string name="permission_camera_description">물고기 사진을 찍을 때</string>
+    <string name="permission_storage">·  저장공간</string>
+    <string name="permission_storage_description">물고기 사진을 저장 할 때</string>
+    <string name="permission_optional_description">앱을 편리하게 사용하고 싶다면 선택적인 접근 권한을 허용하세요. 필수 접근 권한만 허용해도 기본 서비스를 이용할 수 있습니다.</string>
+    <string name="permission_optional_setting">접근 권한은 휴대폰의 [설정] -> [애플리케이션] -> [FishingMemory] -> [권한]에서 바꿀 수 있습니다.</string>
+    <string name="confirm">확인</string>
+</resources>

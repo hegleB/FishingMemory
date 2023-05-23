@@ -10,6 +10,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.qure.core.BaseActivity
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.navigator.LoginNavigator
+import com.qure.navigator.PermissionNavigator
 import com.qure.onboarding.databinding.ActivityOnboardingBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.activity_onboarding) {
 
     @Inject
-    lateinit var loginNavigator: LoginNavigator
+    lateinit var permissionNavigator: PermissionNavigator
 
     private val viewModel by viewModels<OnboardingViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +54,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                 viewpagerActivityOnboardingOnboarding.run {
                     if (currentItem == END_PAGE) {
                         viewModel.writeFirstVisitor()
-                        startActivity(loginNavigator.intent(this@OnboardingActivity))
+                        startActivity(permissionNavigator.intent(this@OnboardingActivity))
                         finish()
                     } else {
                         currentItem += PAGE_INCREMENT_VALUE
