@@ -1,6 +1,7 @@
 package com.qure.map
 
 import androidx.lifecycle.viewModelScope
+import com.naver.maps.map.NaverMap
 import com.qure.core.BaseViewModel
 import com.qure.domain.entity.MarkerType
 import com.qure.domain.entity.fishingspot.FishingSpotQuery
@@ -30,6 +31,10 @@ class MapViewModel @Inject constructor(
     val markers: StateFlow<List<Any>>
         get() = _markers
 
+    private val _mapType = MutableStateFlow<NaverMap.MapType>(NaverMap.MapType.Basic)
+    val mapType: StateFlow<NaverMap.MapType>
+        get() = _mapType
+
     fun getFishingSpot(fishingGroundType: MarkerType) {
         viewModelScope.launch {
             getFishingSpotUseCase(getStructuredQuery(fishingGroundType.value)).collect { response ->
@@ -54,6 +59,10 @@ class MapViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun setMapType(mapType: NaverMap.MapType) {
+        _mapType.value = mapType
     }
 
     private fun getMemoStructuredQuery(): MemoQuery {

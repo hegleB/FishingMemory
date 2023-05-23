@@ -111,7 +111,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         }
 
         binding.chipGroupActivityMap.setOnCheckedChangeListener { group, checkedId ->
-            selectMapType(checkedId)
+            viewModel.setMapType(selectMapType(checkedId))
         }
 
         binding.chipGroupActivityMapMarkertype.setOnCheckedChangeListener { group, checkedId ->
@@ -123,13 +123,13 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         binding.bottomSheetActivityMap.recyclerViewBottomSheetMemoList.adapter = adapter
     }
 
-    private fun selectMapType(checkedId: Int) {
-        when (checkedId) {
-            R.id.chip_activityMap_basic_map -> naverMap.mapType = NaverMap.MapType.Basic
-            R.id.chip_activityMap_satellite_map -> naverMap.mapType = NaverMap.MapType.Satellite
-            R.id.chip_activityMap_terrain_map -> naverMap.mapType = NaverMap.MapType.Terrain
+    private fun selectMapType(checkedId: Int): NaverMap.MapType {
+        return when (checkedId) {
+            R.id.chip_activityMap_basic_map -> NaverMap.MapType.Basic
+            R.id.chip_activityMap_satellite_map ->  NaverMap.MapType.Satellite
+            R.id.chip_activityMap_terrain_map -> NaverMap.MapType.Terrain
+            else -> NaverMap.MapType.Basic
         }
-
     }
 
     private fun selectMarkerType(checkedId: Int) {
@@ -157,13 +157,19 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
 
     private fun observe() {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.markers.collect { markers ->
                         tedNaverClustering = initNaverClustering(markers)
                         preTedNaverClustering = tedNaverClustering?.make()
                         naverMap.moveCamera(CameraUpdate.zoomBy(0.0))
                         tedNaverClustering = null
+                    }
+                }
+
+                launch {
+                    viewModel.mapType.collect { mapType ->
+                        naverMap.mapType = mapType
                     }
                 }
             }
