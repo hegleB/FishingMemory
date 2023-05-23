@@ -46,7 +46,7 @@ class GalleryAdapter(
         @SuppressLint("UseCompatLoadingForDrawables")
         fun bind(item: GalleryImage) {
             Glide.with(binding.root)
-                .load((item.path))
+                .load(File(item.path))
                 .into(binding.imageViewItemGalleryImage)
 
             binding.groupItemGalleryImage.setOnSingleClickListener {

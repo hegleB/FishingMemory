@@ -11,6 +11,7 @@ import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.qure.core.BaseActivity
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
@@ -31,7 +32,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
     lateinit var memoCreateNavigator: MemoCreateNavigator
 
     private lateinit var adapter: GalleryAdapter
-    private var images: List<GalleryImage> = emptyList()
+    private var images: MutableList<GalleryImage> = mutableListOf()
     private var selectedImage: Uri? = null
     private var preSelectedImage: Uri? = null
 
@@ -40,7 +41,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         itemListener = this
-        images = loadGalleryImages()
+        loadGalleryImages()
         initView()
         initRecyclerView()
     }
@@ -67,27 +68,30 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
         adapter.submitList(images)
     }
 
-    private fun loadGalleryImages(): List<GalleryImage> {
-        val images = mutableListOf<GalleryImage>()
-        val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DATA
-        )
-
-        val cursor = contentResolver.query(uri, projection, null, null, null)
-        cursor?.use {
-            val idColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val pathColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-
-            while (it.moveToNext()) {
-                val id = it.getLong(idColumn)
-                val path = it.getString(pathColumn)
-                images.add(GalleryImage(id, path))
+    private fun loadGalleryImages() {
+        val externalDirs = ContextCompat.getExternalFilesDirs(this, null)
+        externalDirs.forEach { externalDir ->
+            externalDir?.let {
+                val projection = arrayOf(MediaStore.Images.Media._ID,MediaStore.Images.Media.DATA)
+                val cursor = contentResolver.query(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    projection,
+                    null,
+                    null,
+                    null
+                )
+                cursor?.let {
+                    while (it.moveToNext()) {
+                        val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                        val idColumn = it.getColumnIndex(MediaStore.Images.Media._ID)
+                        val imagePath = it.getString(columnIndex)
+                        val id = it.getLong(idColumn)
+                        images.add(GalleryImage(id = id, path = imagePath))
+                    }
+                    it.close()
+                }
             }
         }
-
-        return images
     }
 
     override fun onRequestPermissionsResult(
@@ -173,6 +177,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            loadGalleryImages()
             return true
         }
         return false
