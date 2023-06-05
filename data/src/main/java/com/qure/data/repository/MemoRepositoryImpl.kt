@@ -70,14 +70,20 @@ class MemoRepositoryImpl @Inject constructor(
         return flow {
             memoRemoteDataSource.postMemoQuery(memoQuery)
                 .onSuccess { memos ->
-                    for (memo in memos) {
-                        val uuid = memo.document?.fields?.uuid?.stringValue ?: ""
-                        memoRemoteDataSource.deleteMemo(uuid)
-                            .onSuccess {
-                                emit(Result.success(true))
-                            }.onFailure { throwable ->
-                                emit(Result.failure(throwable))
-                            }
+                    val filteredMemos = memos.filter { it.document != null }
+
+                    if (filteredMemos.isNotEmpty()) {
+                        for (memo in memos) {
+                            val uuid = memo.document?.fields?.uuid?.stringValue ?: ""
+                            memoRemoteDataSource.deleteMemo(uuid)
+                                .onSuccess {
+                                    emit(Result.success(true))
+                                }.onFailure { throwable ->
+                                    emit(Result.failure(throwable))
+                                }
+                        }
+                    } else {
+                        emit(Result.success(true))
                     }
                 }.onFailure { throwable ->
                     emit(Result.failure(throwable))
