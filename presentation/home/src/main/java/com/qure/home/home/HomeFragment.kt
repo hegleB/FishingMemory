@@ -7,17 +7,23 @@ import android.location.Geocoder
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.qure.core.BaseFragment
-import com.qure.core.extensions.*
+import com.qure.core.extensions.Spacing
+import com.qure.core.extensions.SwipRefreshTime
+import com.qure.core.extensions.gone
+import com.qure.core.extensions.initSwipeRefreshLayout
+import com.qure.core.extensions.visiable
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core.util.setOnSingleClickListener
 import com.qure.core_design.custom.barchart.BarChartView
@@ -35,7 +41,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -68,19 +74,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private var latX = DEFAULT_LATITUE
     private var longY = DEFAULT_LONGITUE
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        fusedLocationProvierClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-        getCurrentLocation()
-        viewModel.getFilteredMemo()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fusedLocationProvierClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
         observe()
         initView()
         initRecyclerView()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getFilteredMemo()
+        getCurrentLocation()
     }
 
     private fun initRecyclerView() {
@@ -284,38 +290,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                launch {
-                    viewModel.UiState.collect {
-                        if (it.filteredMemo.isNotEmpty()) {
-                            memos = it.filteredMemo
-                            handleUiState(it)
-                        }
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.memos.collect {
-                        showViews()
-                        adapter.submitList(it) {
-                            binding.recyclerViewFragmentHomePost.scrollToPosition(0)
-                        }
-                    }
-                }
-
-                launch {
-                    viewModel.checkedId.collect {
-                        if (it != -1) {
-                            initBarChart(it)
-                            binding.chipGroupFragmentHome.check(it)
-                        } else {
-                            initBarChart(R.id.chip_fragmentHome_fishType)
-                            binding.chipGroupFragmentHome.check(R.id.chip_fragmentHome_fishType)
-                        }
+                    viewModel.UiState.collect {
+                        memos = it.filteredMemo
+                        handleUiState(it)
                     }
                 }
             }
@@ -323,9 +302,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun handleUiState(uiState: UiState) {
-        when {
-            uiState.isWeatherInitialized -> handleWeatherInitialized(uiState)
-            uiState.isFilterInitialized -> handleFilterInitialized()
+        if (uiState.checkedId != -1) {
+            initBarChart(uiState.checkedId)
+            binding.chipGroupFragmentHome.check(uiState.checkedId)
+        } else {
+            initBarChart(R.id.chip_fragmentHome_fishType)
+            binding.chipGroupFragmentHome.check(R.id.chip_fragmentHome_fishType)
+        }
+
+
+        if (uiState.isWeatherInitialized) {
+            handleWeatherInitialized(uiState)
+        }
+
+        if (uiState.isFilterInitialized) {
+            handleFilterInitialized()
+            adapter.submitList(uiState.filteredMemo) {
+                binding.recyclerViewFragmentHomePost.scrollToPosition(0)
+            }
         }
     }
 
@@ -342,8 +336,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             hideViews()
         } else {
             showViews()
-            initBarChart(R.id.chip_fragmentHome_fishType)
-            binding.chipGroupFragmentHome.check(R.id.chip_fragmentHome_fishType)
         }
     }
 

@@ -53,8 +53,8 @@ class MemoRepositoryImpl @Inject constructor(
         return flow {
             memoRemoteDataSource.postMemoQuery(memoQuery)
                 .onSuccess { memo ->
-                    val emptyMemoQueryEntity = memo.filter { it.document == null }
-                    if (emptyMemoQueryEntity.isNotEmpty()) {
+                    val emptyMemoQueryEntity = memo.filter { it.document != null }
+                    if (emptyMemoQueryEntity.isEmpty()) {
                         emit(Result.success(emptyList()))
                     } else {
                         emit(Result.success(memo.map { it.toMemo() }))
