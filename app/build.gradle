@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id "kotlin-kapt"
     id 'dagger.hilt.android.plugin'
-    id 'com.google.gms.google-services'
 }
 
 Properties properties = new Properties()
@@ -103,7 +102,20 @@ android {
     }
 }
 
+configurations {
+    ktlint
+    detekt
+}
+
+
 dependencies {
+    ktlint("com.pinterest:ktlint:0.47.0") {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
+        }
+    }
+    detekt 'io.gitlab.arturbosch.detekt:detekt-cli:1.23.0'
+
     implementation project(path: ':build-property')
     implementation project(path: ':domain')
     implementation project(path: ':data')
@@ -148,3 +160,33 @@ dependencies {
     testImplementation(testDeps)
     androidTestImplementation(androidTestDeps)
 }
+
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    classpath = configurations.ktlint
+    mainClass.set("com.pinterest.ktlint.Main")
+    args "src/**/*.kt"
+    // see https://pinterest.github.io/ktlint/install/cli/#command-line-usage for more information
+}
+check.dependsOn ktlint
+
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    classpath = configurations.ktlint
+    mainClass.set("com.pinterest.ktlint.Main")
+    args "-F", "src/**/*.kt"
+    // see https://pinterest.github.io/ktlint/install/cli/#command-line-usage for more information
+}
+
+task detekt(type: JavaExec) {
+    main = "io.gitlab.arturbosch.detekt.cli.Main"
+    classpath = configurations.detekt
+
+    def input = "$projectDir"
+    def exclude = ".*/build/.*,.*/resources/.*"
+    def params = [ '-i', input, '-ex', exclude]
+
+    args(params)
+}
+
+check.dependsOn detekt
