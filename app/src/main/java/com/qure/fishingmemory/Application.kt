@@ -2,7 +2,6 @@ package com.qure.fishingmemory
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.datastore.preferences.preferencesDataStoreFile
 import com.kakao.sdk.common.KakaoSdk
 import com.naver.maps.map.NaverMapSdk
 import com.qure.build_property.BuildProperty
@@ -33,14 +32,13 @@ class Application : Application() {
     }
 
     private fun initDarkMode() {
-        val isDarkMode = when(fishMemorySharedPreference.getTheme(DARK_MODE_KEY)) {
+        val isDarkMode = when (fishMemorySharedPreference.getTheme(DARK_MODE_KEY)) {
             THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
             THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
             else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         }
 
         AppCompatDelegate.setDefaultNightMode(isDarkMode)
-
     }
 
     private fun initNaverMapSdk() {
@@ -52,7 +50,7 @@ class Application : Application() {
     private fun initKakaoSdk() {
         KakaoSdk.init(
             context = this,
-            appKey = buildPropertyRepository.get(BuildProperty.KAKAO_API_KEY),
+            appKey = buildPropertyRepository.get(BuildProperty.KAKAO_API_KEY)
         )
     }
     private fun initTimber() {

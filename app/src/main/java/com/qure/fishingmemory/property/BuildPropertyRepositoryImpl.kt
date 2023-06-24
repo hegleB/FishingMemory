@@ -1,5 +1,6 @@
 package com.qure.fishingmemory.property
 
+
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.fishingmemory.BuildConfig
@@ -13,7 +14,7 @@ class BuildPropertyRepositoryImpl @Inject constructor() : BuildPropertyRepositor
             readBuildConfig(buildProperty = buildProperty)
         } catch (e: Exception) {
             throw IllegalStateException(
-                "Failed to read property from local.properties. key: ${buildProperty}",
+                "Failed to read property from local.properties. key: $buildProperty",
                 e
             )
         }

@@ -1,6 +1,5 @@
 package com.qure.fishingmemory.property
 
-import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import dagger.Module
 import dagger.Provides
