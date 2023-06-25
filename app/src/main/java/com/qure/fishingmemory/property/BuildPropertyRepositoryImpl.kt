@@ -5,6 +5,7 @@ import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.fishingmemory.BuildConfig
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 
 class BuildPropertyRepositoryImpl @Inject constructor() : BuildPropertyRepository {
@@ -12,7 +13,7 @@ class BuildPropertyRepositoryImpl @Inject constructor() : BuildPropertyRepositor
     override fun get(buildProperty: BuildProperty): String {
         return try {
             readBuildConfig(buildProperty = buildProperty)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             throw IllegalStateException(
                 "Failed to read property from local.properties. key: $buildProperty",
                 e
@@ -23,7 +24,7 @@ class BuildPropertyRepositoryImpl @Inject constructor() : BuildPropertyRepositor
     override fun getOrNull(buildProperty: BuildProperty): String? {
         return try {
             readBuildConfig(buildProperty = buildProperty)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             Timber.e(e, "Failed to read property from local.properties. key: $buildProperty")
             null
         }
