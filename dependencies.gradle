@@ -17,6 +17,8 @@ ext {
             "playServices"    : "4.3.10",
             "junit"           : "4.13.2",
             "junitext"        : "1.1.3",
+            "assertj"         : "3.11.1",
+            "mockk"           : "1.13.5",
             "jodaTime"        : "2.10.6",
             "espresso"        : "3.4.0",
             "interceptor"     : "4.9.3",
@@ -57,7 +59,8 @@ ext {
             ],
             "hilt"        : [
                     "core"    : "com.google.dagger:hilt-android:${versions.hilt}",
-                    "compiler": "com.google.dagger:hilt-compiler:${versions.hilt}"
+                    "compiler": "com.google.dagger:hilt-compiler:${versions.hilt}",
+                    "testing" : "com.google.dagger:hilt-android-testing:${versions.hilt}"
             ],
             "glide"       : [
                     "core"    : "com.github.bumptech.glide:glide:${versions.glide}",
@@ -69,6 +72,8 @@ ext {
             "test"        : [
                     "junit"       : "junit:junit:${versions.junit}",
                     "junitext"    : "androidx.test.ext:junit:${versions.junitext}",
+                    "assertj"     : "org.assertj:assertj-core:${versions.assertj}",
+                    "mockk"       : "io.mockk:mockk:${versions.mockk}",
                     "espressoCore": "androidx.test.espresso:espresso-core:${versions.espresso}",
                     "coruntines"  : "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutines}"
             ],
@@ -133,14 +138,15 @@ ext {
     ]
 
     androidTestDeps = [
-            deps.test.junit,
-            deps.test.junitext,
-            deps.test.espressoCore,
-            deps.test.coruntines
+            deps.test.espressoCore
     ]
 
     testDeps = [
-            deps.test.junit
+            deps.test.junit,
+            deps.test.coruntines,
+            deps.test.assertj,
+            deps.test.mockk,
+            deps.hilt.testing
     ]
 
     kakaoDeps = [
