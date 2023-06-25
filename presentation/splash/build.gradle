@@ -41,6 +41,7 @@ dependencies {
     implementation project(path:':navigator')
     implementation project(path:':domain')
     implementation project(path:':presentation:onboarding')
+    implementation project(path:':testing')
 
     implementation(jetpackDeps)
     implementation(coroutines)

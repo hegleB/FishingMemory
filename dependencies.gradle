@@ -146,7 +146,6 @@ ext {
             deps.test.coruntines,
             deps.test.assertj,
             deps.test.mockk,
-            deps.hilt.testing
     ]
 
     kakaoDeps = [
