@@ -44,14 +44,12 @@ class BookmarkActivity : BaseActivity<ActivityBookmarkBinding>(R.layout.activity
         })
 
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initRecyclerView()
         initView()
         observe()
     }
-
     private fun initView() {
         binding.imageViewActivityBookmarkBack.setOnSingleClickListener {
             finish()
@@ -61,7 +59,6 @@ class BookmarkActivity : BaseActivity<ActivityBookmarkBinding>(R.layout.activity
             onDeleteAllClicked()
         }
     }
-
     private fun onDeleteAllClicked() {
         BookmarkDeleteDialogFragment()
             .show(
@@ -69,11 +66,9 @@ class BookmarkActivity : BaseActivity<ActivityBookmarkBinding>(R.layout.activity
                 BookmarkDeleteDialogFragment.TAG,
             )
     }
-
     private fun initRecyclerView() {
         binding.recyclerViewActivityBookmark.adapter = adapter
     }
-
     private fun observe() {
         viewModel.error
             .onEach { errorMessage -> FishingMemoryToast().error(this, errorMessage) }
@@ -106,12 +101,10 @@ class BookmarkActivity : BaseActivity<ActivityBookmarkBinding>(R.layout.activity
             }
         }
     }
-
     override fun onStart() {
         super.onStart()
         viewModel.getBookmarks()
     }
-
     override fun onDeleteClicked() {
         viewModel.deleteAllBookmarks()
     }

@@ -25,7 +25,6 @@ class BookmarkViewModel @Inject constructor(
         MutableStateFlow(emptyList())
     val fishingSpotBookmarks: StateFlow<List<FishingSpotUI>>
         get() = _fishingSpotBookmarks
-
     fun getBookmarks() {
         viewModelScope.launch(Dispatchers.IO) {
             getFishingSpotBookmarksUseCase().collect { response ->
@@ -49,7 +48,6 @@ class BookmarkViewModel @Inject constructor(
             }
         }
     }
-
     fun deleteAllBookmarks() {
         viewModelScope.launch {
             deleteAllFishingSpotBookmarkUseCase()

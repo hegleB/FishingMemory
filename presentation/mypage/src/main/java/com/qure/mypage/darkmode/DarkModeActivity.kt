@@ -61,7 +61,6 @@ class DarkModeActivity : BaseActivity<ActivityDarkModeBinding>(R.layout.activity
                         THEME_LIGHT -> binding.radioButtonActivityDarModeLightMode.isChecked = true
                         else -> binding.radioButtonActivityDarModeSystemMode.isChecked = true
                     }
-
                 }
             }
         }

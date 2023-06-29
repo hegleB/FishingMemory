@@ -1,6 +1,5 @@
 package com.qure.gallery
 
-
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -36,7 +35,6 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
     private var selectedImage: Uri? = null
     private var preSelectedImage: Uri? = null
 
-
     private lateinit var itemListener: GalleryAdapter.OnItemClickListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +55,6 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
         binding.imageViewActivityGalleryClose.setOnSingleClickListener {
             finish()
         }
-
-
     }
 
     private fun initRecyclerView() {
@@ -126,7 +122,6 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
             intent.putExtra(PHOTO_FILE, Uri.fromFile(file))
             setResult(Activity.RESULT_OK, intent)
             finish()
-
         }
     }
 
@@ -156,7 +151,6 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
         )
         return Uri.parse(path)
     }
-
 
     private fun startCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -194,7 +188,6 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
             DEFAULT_GALLERY_REQUEST_CODE
         )
     }
-
 
     override fun setOnItemClickListener(uri: Uri) {
         binding.textViewActivityGalleryDone.isEnabled =

@@ -35,7 +35,6 @@ fun MemoUI.toTedClusterItem(): TedClusterItem {
     }
 }
 
-
 fun Memo.toMemoUI(): MemoUI {
     val data = this.fields!!.fields
     return MemoUI(

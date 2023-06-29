@@ -9,7 +9,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class FishingSpotModule {
-
     @Binds
     abstract fun bindFishingSpot(navigator: FishingSpotNavigatorImpl): FishingSpotNavigator
 }

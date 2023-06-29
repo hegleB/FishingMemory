@@ -10,6 +10,11 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 
 android {
 
+    packagingOptions {
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/LICENSE-notice.md'
+    }
+
     signingConfigs {
         debug {
             storeFile file(properties['store_file'])

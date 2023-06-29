@@ -110,7 +110,6 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                 }
             }
         }
-
     }
 
     companion object {

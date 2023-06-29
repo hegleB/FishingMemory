@@ -55,7 +55,6 @@ class HistoryAdapter(private val onMemoClick: (memo: MemoUI) -> Unit) :
                     .load(field.image)
                     .apply(RequestOptions.bitmapTransform(roundedCorners))
                     .into(imageViewItemCalendarMemoFish)
-
             }
         }
     }

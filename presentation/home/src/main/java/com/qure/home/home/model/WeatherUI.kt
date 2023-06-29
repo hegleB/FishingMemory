@@ -36,11 +36,9 @@ fun Item.toWeatherUI(): WeatherUI {
             WeatherCategory.PTY -> getPrecipitationState(this.fcstValue.toInt())
             else -> 0
         },
-
     )
 }
 
-// 1, 2, 5: 비 / 3, 6, 7: 눈
 fun getPrecipitationState(pty: Int): Int {
     return when (pty) {
         in listOf(1, 2, 5)-> if (isDayTime()) R.raw.weather_rainy_day else R.raw.weather_rainy_night
@@ -49,7 +47,7 @@ fun getPrecipitationState(pty: Int): Int {
     }
 }
 
-// 1: 맑음 3: 약간 구름 4: 흐림
+
 private fun getSky(sky: Int): Int {
     return when (sky) {
         1 -> if (isDayTime()) R.raw.weather_sunny_day else R.raw.weather_sunny_night

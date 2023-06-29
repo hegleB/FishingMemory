@@ -45,7 +45,6 @@ class MemoAdapter(
             val roundedCorners = RoundedCorners(radius.toInt())
 
             binding.apply {
-
                 root.setOnSingleClickListener {
                     onMemoClick.invoke(item)
                 }
@@ -64,7 +63,6 @@ class MemoAdapter(
     }
 
     companion object {
-        private const val ITEM_COUNT = 5
         private val DIFF_UTIL = object : DiffUtil.ItemCallback<MemoUI>() {
             override fun areItemsTheSame(oldItem: MemoUI, newItem: MemoUI): Boolean {
                 return oldItem.name == newItem.name

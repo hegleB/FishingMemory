@@ -21,13 +21,11 @@ class BookmarkAdatper(
             ItemBookmarkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FishingSpotViewHolder(binding, onItemClick, onPhoneNumberClick)
     }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         val spotItem = item as FishingSpotUI
         (holder as FishingSpotViewHolder).bind(spotItem)
     }
-
     inner class FishingSpotViewHolder(
         private val binding: ItemBookmarkBinding,
         private val onSpotClick: (item: FishingSpotUI) -> Unit,
@@ -58,7 +56,6 @@ class BookmarkAdatper(
             }
         }
     }
-
     companion object {
         private val DIFF_UTIL = object : DiffUtil.ItemCallback<FishingSpotUI>() {
             override fun areItemsTheSame(

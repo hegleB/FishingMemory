@@ -244,7 +244,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                 )
             }.launchIn(lifecycleScope)
 
-
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 observeUiState()

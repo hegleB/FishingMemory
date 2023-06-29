@@ -91,7 +91,6 @@ class MapViewModel @Inject constructor(
         )
     }
 
-
     private fun getStructuredQuery(fishingGroundType: String): FishingSpotQuery {
         val fieldFilter = FieldFilter(
             op = "EQUAL",

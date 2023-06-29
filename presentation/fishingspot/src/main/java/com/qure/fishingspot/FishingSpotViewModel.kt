@@ -34,7 +34,6 @@ class FishingSpotViewModel @Inject constructor(
             _isBookmarkClicked.value = false
         }
     }
-
     fun toggleBookmarkButton(fishingSpotUI: FishingSpotUI) {
         viewModelScope.launch {
             if (isBookmarkClicked.value) {
@@ -44,7 +43,6 @@ class FishingSpotViewModel @Inject constructor(
             }
         }
     }
-
     fun checkBookmark(number: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             checkFishingSpotBookmarkUseCase(number).collect { response ->
@@ -66,7 +64,6 @@ class FishingSpotViewModel @Inject constructor(
             }
         }
     }
-
     fun insertBookmark(fishingSpotBookmark: FishingSpotBookmark) {
         viewModelScope.launch {
             insertFishingSpotBookmarkUseCase(fishingSpotBookmark)

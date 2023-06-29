@@ -10,5 +10,4 @@ class FishingSpotNavigatorImpl @Inject constructor(): FishingSpotNavigator {
     override fun intent(context: Context): Intent {
         return Intent(context, FishingSpotActivity::class.java)
     }
-
 }

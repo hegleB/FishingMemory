@@ -63,8 +63,6 @@ class FishingSpotActivity :
 
         val favoriteFishingSpot = binding.lottieAnimationActivityFishingSpotBookmark
 
-
-
         favoriteFishingSpot.setOnSingleClickListener {
             viewModel.toggleBookmarkButton(fishingSpot)
             animator?.start()

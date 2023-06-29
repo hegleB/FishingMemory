@@ -5,20 +5,16 @@ class GpsTransfer {
     var TO_GRID = 0
     var TO_GPS = 1
 
-
     fun convertGRID_GPS(mode: Int, lat_X: Double, lng_Y: Double): LatXLngY {
-        val RE = 6371.00877 // 지구 반경(km)
-        val GRID = 5.0 // 격자 간격(km)
-        val SLAT1 = 30.0 // 투영 위도1(degree)
-        val SLAT2 = 60.0 // 투영 위도2(degree)
-        val OLON = 126.0 // 기준점 경도(degree)
-        val OLAT = 38.0 // 기준점 위도(degree)
-        val XO = 43.0 // 기준점 X좌표(GRID)
-        val YO = 136.0 // 기1준점 Y좌표(GRID)
+        val RE = 6371.00877
+        val GRID = 5.0
+        val SLAT1 = 30.0
+        val SLAT2 = 60.0
+        val OLON = 126.0
+        val OLAT = 38.0
+        val XO = 43.0
+        val YO = 136.0
 
-        //
-        // LCC DFS 좌표변환 ( code : "TO_GRID"(위경도->좌표, lat_X:위도,  lng_Y:경도), "TO_GPS"(좌표->위경도,  lat_X:x, lng_Y:y) )
-        //
         val DEGRAD = Math.PI / 180.0
         val RADDEG = 180.0 / Math.PI
         val re = RE / GRID

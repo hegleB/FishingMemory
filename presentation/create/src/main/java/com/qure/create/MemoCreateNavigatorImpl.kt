@@ -10,5 +10,4 @@ class MemoCreateNavigatorImpl @Inject constructor() : MemoCreateNavigator {
     override fun intent(context: Context): Intent {
         return Intent(context, MemoCreateActivity::class.java)
     }
-
 }

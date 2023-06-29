@@ -44,5 +44,4 @@ class OnboardingFragment : BaseFragment<FragmentOnboardingBinding>(R.layout.frag
                 }
             }
     }
-
 }

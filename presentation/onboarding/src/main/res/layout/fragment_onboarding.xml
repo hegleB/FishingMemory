@@ -35,7 +35,7 @@
             app:layout_constraintEnd_toStartOf="@+id/barrier_fragmentOnboarding_right"
             app:layout_constraintStart_toStartOf="@+id/barrier_fragmentOnboarding_left"
             app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:lottie_rawRes="@raw/fishing"
+            app:lottie_rawRes="@raw/first_page"
             app:lottie_loop="true" />
 
         <androidx.constraintlayout.widget.Guideline

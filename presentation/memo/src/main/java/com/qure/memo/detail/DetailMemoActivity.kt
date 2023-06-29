@@ -79,7 +79,6 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
         )
     }
 
-
     private fun initView() {
         setMemoView()
         binding.apply {
@@ -127,7 +126,6 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
         }
         popup.show()
     }
-
 
     private fun setMemoView() {
         binding.apply {

@@ -68,7 +68,6 @@ class MapAdapter(
             else -> throw IllegalArgumentException("Invalid item type")
         }
     }
-
     inner class MemoViewHolder(
         private val binding: ItemMemoListBinding,
         private val onMemoClick: (item: MemoUI) -> Unit

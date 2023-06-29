@@ -310,7 +310,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             binding.chipGroupFragmentHome.check(R.id.chip_fragmentHome_fishType)
         }
 
-
         if (uiState.isWeatherInitialized) {
             handleWeatherInitialized(uiState)
         }

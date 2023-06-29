@@ -91,7 +91,6 @@ class ShareDialogFragment(memo: MemoUI) : DialogFragment() {
         const val TAG = "ShareDialogFragment"
         fun newInstance(memo: MemoUI): ShareDialogFragment {
             return ShareDialogFragment(memo)
-
         }
     }
 }

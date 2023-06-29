@@ -9,5 +9,4 @@ class LoginNavigatorImpl @Inject constructor(): LoginNavigator {
     override fun intent(context: Context): Intent {
         return Intent(context, LoginActivity::class.java)
     }
-
 }

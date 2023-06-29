@@ -34,7 +34,6 @@ import java.time.temporal.WeekFields
 import java.util.*
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_history) {
 
@@ -96,7 +95,6 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                     }
                 }
             }
-
             imageViewFragmentHistoryMap.setOnSingleClickListener {
                 startActivity(mapNavigator.intent(requireContext()))
             }
@@ -107,7 +105,6 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         viewModel.error
             .onEach { errorMessage -> FishingMemoryToast().error(requireContext(), errorMessage) }
             .launchIn(viewLifecycleOwner.lifecycleScope)
-
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -235,12 +232,12 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         with(binding) {
             textViewFragmentHistoryYear.text = year.toString()
             Handler().post {
-                (
-                        tabLayoutFragmentHistoryMonth.tabs.post({
-                            tabLayoutFragmentHistoryMonth.tabs.getTabAt(firstMonth.monthValue - 1)
-                                ?.select()
-                        })
-                        )
+                (tabLayoutFragmentHistoryMonth.tabs
+                    .post({
+                        tabLayoutFragmentHistoryMonth.tabs
+                            .getTabAt(firstMonth.monthValue - 1)
+                            ?.select()
+                    }))
             }
         }
     }
