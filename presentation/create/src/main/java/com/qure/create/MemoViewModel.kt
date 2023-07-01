@@ -21,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -39,45 +40,13 @@ class MemoViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState>
-        get() = _uiState
-
-    private val _title = MutableStateFlow(String.Empty)
-    val title: StateFlow<String>
-        get() = _title
+    val uiState = _uiState.asStateFlow()
 
     private val _image = MutableStateFlow(String.Empty)
-    val image: StateFlow<String>
-        get() = _image
+    val image = _image.asStateFlow()
 
-    private val _waterType = MutableStateFlow(String.Empty)
-    val waterType: StateFlow<String>
-        get() = _waterType
-
-    private val _fishType = MutableStateFlow(String.Empty)
-    val fishType: StateFlow<String>
-        get() = _fishType
-
-    private val _fishSize = MutableStateFlow(String.Empty)
-    val fishSize: StateFlow<String>
-        get() = _fishSize
-
-    private val _location = MutableStateFlow(String.Empty)
-    val location: StateFlow<String>
-        get() = _location
-
-    private val _date = MutableStateFlow(String.Empty)
-    val date: StateFlow<String>
-        get() = _date
-
-    private val _content = MutableStateFlow(String.Empty)
-    val content: StateFlow<String>
-        get() = _content
-
-    private val _coords = MutableStateFlow(String.Empty)
-    val coords: StateFlow<String>
-        get() = _coords
-
+    private val _memo = MutableStateFlow(MemoUI())
+    val memo = _memo.asStateFlow()
     fun createMemo(imageUrl: String) {
         val memo = createMemoFields(imageUrl)
         viewModelScope.launch {
@@ -94,19 +63,23 @@ class MemoViewModel @Inject constructor(
         }
     }
 
+    fun setMemoUI(memoUI: MemoUI) {
+        _memo.value = memoUI
+    }
+
     private fun createMemoFields(imageUrl: String, uuid: String = String.UUID): MemoFields {
         return MemoFields(
             uuid = FieldStringValue(uuid),
             email = FieldStringValue(authRepository.getEmailFromLocal()),
-            title = FieldStringValue(title.value),
+            title = FieldStringValue(memo.value.title),
             image = FieldStringValue(imageUrl),
-            waterType = FieldStringValue(waterType.value),
-            fishType = FieldStringValue(fishType.value),
-            location = FieldStringValue(location.value),
-            date = FieldStringValue(date.value),
-            fishSize = FieldStringValue(fishSize.value),
-            content = FieldStringValue(content.value),
-            coords = FieldStringValue(coords.value)
+            waterType = FieldStringValue(memo.value.waterType),
+            fishType = FieldStringValue(memo.value.fishType),
+            location = FieldStringValue(memo.value.location),
+            date = FieldStringValue(memo.value.date),
+            fishSize = FieldStringValue(memo.value.fishSize),
+            content = FieldStringValue(memo.value.content),
+            coords = FieldStringValue(memo.value.coords)
         )
     }
 
@@ -161,39 +134,6 @@ class MemoViewModel @Inject constructor(
 
     fun setImage(image: String) {
         _image.value = image
-    }
-
-
-    fun setTitle(title: String) {
-        _title.value = title
-    }
-
-    fun setWaterType(watherType: String) {
-        _waterType.value = watherType
-    }
-
-    fun setFishType(fishType: String) {
-        _fishType.value = fishType
-    }
-
-    fun setFishSize(fishSize: String) {
-        _fishSize.value = fishSize
-    }
-
-    fun setLocation(location: String) {
-        _location.value = location
-    }
-
-    fun setDate(date: String) {
-        _date.value = date
-    }
-
-    fun setContent(content: String) {
-        _content.value = content
-    }
-
-    fun setCoords(coords: String) {
-        _coords.value = coords
     }
 }
 

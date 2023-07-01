@@ -148,9 +148,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
         createdMemo?.let { memo ->
             with(viewModel) {
-                setCoords(memo.coords)
-                setDate(memo.date)
-                setLocation(memo.location)
                 setImage(memo.image)
             }
 
@@ -160,6 +157,8 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                 editTextActivityMemoCreateFishType.setText(memo.fishType)
                 editTextActivityMemoCreateContent.setText(memo.content)
                 setSelectedChipText(chipGroupActivityMemoCreateType, memo.waterType)
+                textViewActivityMemoCreateLocationInfo.setText(memo.location)
+                textViewActivityMemoCreateDate.setText(memo.date)
                 buttonActivityMemoCreatePost.setText(getString(R.string.edit))
             }
         }
@@ -225,13 +224,17 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         val selectedChipId = binding.chipGroupActivityMemoCreateType.checkedChipId
         val selectedChip: Chip = chipGroup.findViewById(selectedChipId)
         with(viewModel) {
-            setTitle(binding.editTextActivityMemoCreateTitle.text.toString())
-            setWaterType(selectedChip.text.toString())
-            setFishType(binding.editTextActivityMemoCreateFishType.text.toString())
-            setFishSize(binding.editTextActivityMemoCreateFishSize.text.toString())
-            setLocation(binding.textViewActivityMemoCreateLocationInfo.text.toString())
-            setDate(binding.textViewActivityMemoCreateDate.text.toString())
-            setContent(binding.editTextActivityMemoCreateContent.text.toString())
+            setMemoUI(
+                MemoUI(
+                    title = binding.editTextActivityMemoCreateTitle.text.toString(),
+                    waterType = selectedChip.text.toString(),
+                    fishType = binding.editTextActivityMemoCreateFishType.text.toString(),
+                    fishSize = binding.editTextActivityMemoCreateFishSize.text.toString(),
+                    location = binding.textViewActivityMemoCreateLocationInfo.text.toString(),
+                    date = binding.textViewActivityMemoCreateDate.text.toString(),
+                    content = binding.editTextActivityMemoCreateContent.text.toString()
+                )
+            )
         }
     }
 
@@ -247,10 +250,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 observeUiState()
-                observeLocation()
-                observeDate()
                 observeImage()
-                observeWaterType()
             }
         }
     }
@@ -263,22 +263,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         }
     }
 
-    private fun observeLocation() {
-        lifecycleScope.launch {
-            viewModel.location.collect {
-                binding.textViewActivityMemoCreateLocationInfo.text = it
-            }
-        }
-    }
-
-    private fun observeDate() {
-        lifecycleScope.launch {
-            viewModel.date.collect {
-                binding.textViewActivityMemoCreateDate.text = it
-            }
-        }
-    }
-
     private fun observeImage() {
         lifecycleScope.launch {
             viewModel.image.collect {
@@ -287,17 +271,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         }
     }
 
-    private fun observeWaterType() {
-        lifecycleScope.launch {
-            viewModel.waterType.collect {
-                if (it.isNotEmpty()) {
-                    setSelectedChipText(binding.chipGroupActivityMemoCreateType, it)
-                }
-            }
-        }
-    }
-
-
     private fun handleSaveOrUpdateState(it: UiState) {
         when {
             it.isUploadImage && !it.isSave && !it.isUpdated -> binding.progressBarActivityMemo.visiable()
@@ -305,6 +278,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                 sendSuccessMessage(R.string.toast_update_memo)
                 goToDetailMemo(it.memo)
             }
+
             it.isUploadImage && it.isSave -> sendSuccessMessage(R.string.toast_save_memo)
             else -> binding.progressBarActivityMemo.gone()
         }
@@ -330,7 +304,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     override fun selectDate(date: String) {
         binding.textViewActivityMemoCreateDate.text = date
-        viewModel.setDate(date)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -342,9 +315,11 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             ) == PackageManager.PERMISSION_GRANTED -> {
                 uploadAction()
             }
+
             shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE) -> {
                 showPermissionContextPopup()
             }
+
             else -> {
                 requestPermissions(
                     arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
@@ -427,8 +402,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     private fun ChipGroup.setOnCheckedChangeListener() {
         this.setOnCheckedStateChangeListener { group, checkedIds ->
-            val chip = findViewById<Chip>(checkedIds.get(0))
-            viewModel.setWaterType(chip.text.toString())
             checkInputs()
         }
     }
@@ -458,14 +431,13 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             requestCode == REQUEST_CODE_AREA && data != null -> {
                 val location = data.getStringExtra(ARG_AREA) ?: String.Empty
                 binding.textViewActivityMemoCreateLocationInfo.text = location
-                viewModel.setLocation(location)
-                viewModel.setCoords(data.getStringExtra(ARG_AREA_COORDS) ?: String.Empty)
             }
 
             requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null -> {
                 selectedImageUri = data.getParcelableExtra(PHOTO_FILE)
                 selectedImageUri?.path?.let { viewModel.setImage(it) }
             }
+
             else ->
                 Snackbar.make(
                     binding.constraintLayoutActivityMemoCreate,
@@ -473,18 +445,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                     Snackbar.LENGTH_LONG
                 )
         }
-    }
-
-    private fun ContentResolver.getFileName(selectedImageUri: Uri): String {
-        var name = ""
-        val returnCursor = this.query(selectedImageUri, null, null, null, null, null)
-        if (returnCursor != null) {
-            val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            returnCursor.moveToFirst()
-            name = System.currentTimeMillis().toString() + returnCursor.getString(nameIndex)
-            returnCursor.close()
-        }
-        return name
     }
 
     private fun loadFishImage(image: Any) {
