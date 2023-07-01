@@ -8,25 +8,45 @@ class Region {
     companion object {
         fun getArray(context: Context, position: Int = -1): Array<String> {
             return when (position) {
-                0 -> context.getStringArrayCompat(R.array.array_region_seoul)
-                1 -> context.getStringArrayCompat(R.array.array_region_busan)
-                2 -> context.getStringArrayCompat(R.array.array_region_daegu)
-                3 -> context.getStringArrayCompat(R.array.array_region_incheon)
-                4 -> context.getStringArrayCompat(R.array.array_region_gwangju)
-                5 -> context.getStringArrayCompat(R.array.array_region_daejeon)
-                6 -> context.getStringArrayCompat(R.array.array_region_ulsan)
-                7 -> context.getStringArrayCompat(R.array.array_region_sejong)
-                8 -> context.getStringArrayCompat(R.array.array_region_gyeonggi)
-                9 -> context.getStringArrayCompat(R.array.array_region_gangwon)
-                10 -> context.getStringArrayCompat(R.array.array_region_chung_buk)
-                11 -> context.getStringArrayCompat(R.array.array_region_chung_nam)
-                12 -> context.getStringArrayCompat(R.array.array_region_gyeong_buk)
-                13 -> context.getStringArrayCompat(R.array.array_region_gyeong_nam)
-                14 -> context.getStringArrayCompat(R.array.array_region_jeon_buk)
-                15 -> context.getStringArrayCompat(R.array.array_region_jeon_nam)
-                16 -> context.getStringArrayCompat(R.array.array_region_jeju)
+                Province.SEOUL.number -> context.getStringArrayCompat(R.array.array_region_seoul)
+                Province.BUSAN.number -> context.getStringArrayCompat(R.array.array_region_busan)
+                Province.DAEGU.number -> context.getStringArrayCompat(R.array.array_region_daegu)
+                Province.INCHEON.number -> context.getStringArrayCompat(R.array.array_region_incheon)
+                Province.GWANGJU.number -> context.getStringArrayCompat(R.array.array_region_gwangju)
+                Province.DAEJEON.number -> context.getStringArrayCompat(R.array.array_region_daejeon)
+                Province.ULSAN.number -> context.getStringArrayCompat(R.array.array_region_ulsan)
+                Province.SEJONG.number -> context.getStringArrayCompat(R.array.array_region_sejong)
+                Province.GYEONGGI.number -> context.getStringArrayCompat(R.array.array_region_gyeonggi)
+                Province.GANGWON.number -> context.getStringArrayCompat(R.array.array_region_gangwon)
+                Province.CHUNG_BUK.number -> context.getStringArrayCompat(R.array.array_region_chung_buk)
+                Province.CHUNG_NAM.number -> context.getStringArrayCompat(R.array.array_region_chung_nam)
+                Province.GYEONG_BUK.number -> context.getStringArrayCompat(R.array.array_region_gyeong_buk)
+                Province.GYEONG_NAM.number -> context.getStringArrayCompat(R.array.array_region_gyeong_nam)
+                Province.JEON_BUK.number -> context.getStringArrayCompat(R.array.array_region_jeon_buk)
+                Province.JEON_NAM.number -> context.getStringArrayCompat(R.array.array_region_jeon_nam)
+                Province.JEJU.number -> context.getStringArrayCompat(R.array.array_region_jeju)
                 else -> context.getStringArrayCompat(R.array.array_region)
             }
         }
     }
+}
+
+enum class Province(val number: Int) {
+    SEOUL(0),
+    BUSAN(1),
+    DAEGU(2),
+    INCHEON(3),
+    GWANGJU(4),
+    DAEJEON(5),
+    ULSAN(6),
+    SEJONG(7),
+    GYEONGGI(8),
+    GANGWON(9),
+    CHUNG_BUK(10),
+    CHUNG_NAM(11),
+    GYEONG_BUK(12),
+    GYEONG_NAM(13),
+    JEON_BUK(14),
+    JEON_NAM(15),
+    JEJU(16),
 }

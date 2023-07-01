@@ -50,8 +50,8 @@ fun getPrecipitationState(pty: Int): Int {
 
 private fun getSky(sky: Int): Int {
     return when (sky) {
-        1 -> if (isDayTime()) R.raw.weather_sunny_day else R.raw.weather_sunny_night
-        3 -> if (isDayTime()) R.raw.weather_partly_cloudy_day else R.raw.weather_partly_cloudy_night
+        SKY_STATE.SUNNY.nubmer -> if (isDayTime()) R.raw.weather_sunny_day else R.raw.weather_sunny_night
+        SKY_STATE.CLOUDY.nubmer -> if (isDayTime()) R.raw.weather_partly_cloudy_day else R.raw.weather_partly_cloudy_night
         else -> R.raw.weather_cloudey
     }
 }
@@ -61,4 +61,9 @@ private fun isDayTime(): Boolean {
     val currentTime = Date(now)
     val formatTime = SimpleDateFormat("HH")
     return formatTime.format(currentTime).toInt() in 6..17
+}
+
+enum class SKY_STATE(val nubmer: Int) {
+    SUNNY(1),
+    CLOUDY(3),
 }

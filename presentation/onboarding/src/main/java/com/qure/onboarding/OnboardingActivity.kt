@@ -72,8 +72,8 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     when (position) {
-                        0 -> buttonActivityOnboardingNext.text = getString(R.string.onboarding_next)
-                        1 -> buttonActivityOnboardingNext.text = getString(R.string.onboarding_next)
+                        OnboardingPage.RECORD_PAGE.position -> buttonActivityOnboardingNext.text = getString(R.string.onboarding_next)
+                        OnboardingPage.STATISTICS_PAGE.position -> buttonActivityOnboardingNext.text = getString(R.string.onboarding_next)
                         else -> {
                             buttonActivityOnboardingNext.text =
                                 getString(R.string.onboarding_start)
@@ -90,18 +90,20 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> {
+                OnboardingPage.RECORD_PAGE.position -> {
                     OnboardingFragment.newInstance(
                         title = getString(R.string.onboarding_first_title),
                         onboardingLottieResId = R.raw.first_page
                     )
                 }
-                1 -> {
+
+                OnboardingPage.STATISTICS_PAGE.position -> {
                     OnboardingFragment.newInstance(
                         title = getString(R.string.onboarding_second_title),
                         onboardingLottieResId = R.raw.second_page
                     )
                 }
+
                 else -> {
                     OnboardingFragment.newInstance(
                         title = getString(R.string.onboarding_third_title),
@@ -119,3 +121,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
     }
 }
 
+enum class OnboardingPage(val position: Int) {
+    RECORD_PAGE(0),
+    STATISTICS_PAGE(1)
+}
