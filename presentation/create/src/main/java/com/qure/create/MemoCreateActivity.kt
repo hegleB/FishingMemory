@@ -148,6 +148,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
         createdMemo?.let { memo ->
             with(viewModel) {
+                setCoords(memo.coords)
                 setImage(memo.image)
             }
 
@@ -431,6 +432,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             requestCode == REQUEST_CODE_AREA && data != null -> {
                 val location = data.getStringExtra(ARG_AREA) ?: String.Empty
                 binding.textViewActivityMemoCreateLocationInfo.text = location
+                viewModel.setCoords(data.getStringExtra(ARG_AREA_COORDS) ?: String.Empty)
             }
 
             requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null -> {

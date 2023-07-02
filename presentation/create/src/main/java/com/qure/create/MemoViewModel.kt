@@ -76,7 +76,7 @@ class MemoViewModel @Inject constructor(
             date = FieldStringValue(memo.value.date),
             fishSize = FieldStringValue(memo.value.fishSize),
             content = FieldStringValue(memo.value.content),
-            coords = FieldStringValue(memo.value.coords)
+            coords = FieldStringValue(uiState.value.coords)
         )
     }
 
@@ -136,6 +136,14 @@ class MemoViewModel @Inject constructor(
             )
         }
     }
+
+    fun setCoords(coords: String) {
+        _uiState.update {
+            it.copy(
+                coords = coords
+            )
+        }
+    }
 }
 
 data class UiState(
@@ -144,4 +152,5 @@ data class UiState(
     val isUpdated: Boolean = false,
     val memo: MemoUI? = null,
     val image: String = String.Empty,
+    val coords: String = String.Empty,
 )
