@@ -11,6 +11,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,43 +22,49 @@ class FishingSpotViewModel @Inject constructor(
     private val insertFishingSpotBookmarkUseCase: InsertFishingSpotBookmarkUseCase,
     private val checkFishingSpotBookmarkUseCase: CheckFishingSpotBookmarkUseCase,
 ) : BaseViewModel() {
-    private val _isBookmarkClicked: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isBookmarkClicked: StateFlow<Boolean>
-        get() = _isBookmarkClicked
-
-    private val _isBookmarked: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isBookmarked: StateFlow<Boolean>
-        get() = _isBookmarked
-
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
+    val uiState = _uiState.asStateFlow()
     fun deleteBookmark(fishingSpotBookmark: FishingSpotBookmark) {
         viewModelScope.launch {
             deleteFishingSpotBookmarkUseCase(fishingSpotBookmark)
-            _isBookmarkClicked.value = false
+            _uiState.update {
+                it.copy(
+                    isBookmarkClicked = false
+                )
+            }
         }
     }
+
     fun toggleBookmarkButton(fishingSpotUI: FishingSpotUI) {
         viewModelScope.launch {
-            if (isBookmarkClicked.value) {
+            if (uiState.value.isBookmarkClicked) {
                 deleteBookmark(fishingSpotUI.toFishingSpotBookmark())
             } else {
                 insertBookmark(fishingSpotUI.toFishingSpotBookmark())
             }
         }
     }
+
     fun checkBookmark(number: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             checkFishingSpotBookmarkUseCase(number).collect { response ->
                 when (response) {
                     is Result.Loading -> startLoading()
                     is Result.Success -> {
-                        _isBookmarked.value = response.data
-                        _isBookmarkClicked.value = response.data
+                        _uiState.update {
+                            it.copy(
+                                isBookmarkClicked = response.data,
+                                isBookmarked = response.data
+                            )
+                        }
                         stopLoading()
                     }
+
                     is Result.Error -> {
                         sendErrorMessage(response.exception.message)
                         stopLoading()
                     }
+
                     is Result.Empty -> {
                         stopLoading()
                     }
@@ -64,10 +72,20 @@ class FishingSpotViewModel @Inject constructor(
             }
         }
     }
+
     fun insertBookmark(fishingSpotBookmark: FishingSpotBookmark) {
         viewModelScope.launch {
             insertFishingSpotBookmarkUseCase(fishingSpotBookmark)
-            _isBookmarkClicked.value = true
+            _uiState.update {
+                it.copy(
+                    isBookmarkClicked = true
+                )
+            }
         }
     }
 }
+
+data class UiState(
+    val isBookmarkClicked: Boolean = false,
+    val isBookmarked: Boolean = false,
+)

@@ -130,14 +130,9 @@ class FishingSpotActivity :
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.isBookmarkClicked.collect {
-                        onBookmarkClicked(it)
-                    }
-                }
-
-                launch {
-                    viewModel.isBookmarked.collect {
-                        if (it) {
+                    viewModel.uiState.collect {
+                        onBookmarkClicked(it.isBookmarkClicked)
+                        if (it.isBookmarked) {
                             binding.lottieAnimationActivityFishingSpotBookmark.progress = 0.6f
                         } else {
                             binding.lottieAnimationActivityFishingSpotBookmark.progress = 0f
@@ -147,7 +142,6 @@ class FishingSpotActivity :
             }
         }
     }
-
 
     override fun onMapReady(naverMap: NaverMap) {
         val latLng = LatLng(fishingSpot.latitude, fishingSpot.longitude)
