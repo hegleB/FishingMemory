@@ -265,8 +265,8 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     private fun observeImage() {
         lifecycleScope.launch {
-            viewModel.image.collect {
-                loadFishImage(it)
+            viewModel.uiState.collect {
+                loadFishImage(it.image)
             }
         }
     }

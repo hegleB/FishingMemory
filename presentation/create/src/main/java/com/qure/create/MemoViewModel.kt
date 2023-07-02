@@ -42,9 +42,6 @@ class MemoViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _image = MutableStateFlow(String.Empty)
-    val image = _image.asStateFlow()
-
     private val _memo = MutableStateFlow(MemoUI())
     val memo = _memo.asStateFlow()
     fun createMemo(imageUrl: String) {
@@ -90,7 +87,7 @@ class MemoViewModel @Inject constructor(
                     isUploadImage = true
                 )
             }
-            uploadMemoImageUseCase(File(image.value))
+            uploadMemoImageUseCase(File(uiState.value.image))
                 .onSuccess { storage ->
                     if (uuid == String.Empty) {
                         createMemo(getImageUrl(storage))
@@ -133,7 +130,11 @@ class MemoViewModel @Inject constructor(
     }
 
     fun setImage(image: String) {
-        _image.value = image
+        _uiState.update {
+            it.copy(
+                image = image
+            )
+        }
     }
 }
 
@@ -142,4 +143,5 @@ data class UiState(
     val isUploadImage: Boolean = false,
     val isUpdated: Boolean = false,
     val memo: MemoUI? = null,
+    val image: String = String.Empty,
 )
