@@ -140,3 +140,14 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-complier = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+
+[bundles]
+
+[plugins]
+
+com-android-application = { id = "com.android.application", version.ref = "application" }
+com-android-library = { id = "com.android.library", version.ref = "library" }
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+google-services = { id = "com.google.gms:google-services", version.ref = "googleServices"}
+detekt = { id = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
