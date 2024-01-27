@@ -58,6 +58,9 @@ detekt = "1.23.0"
 androidx-test-ext-junit = "1.1.5"
 
 gson = "2.10.1"
+
+javaInject = "1"
+
 [libraries]
 kotlin-stdilib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -108,7 +111,7 @@ network-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", ver
 
 splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 
-inject = { module = "javax.inject:javax.inject", version.ref = "1" }
+inject = { module = "javax.inject:javax.inject", version.ref = "javaInject"}
 
 jodaTime = { module = "joda-time:joda-time", version.ref = "jodaTime" }
 
