@@ -1,8 +1,8 @@
 [versions]
 
-kotlin = "1.7.21"
-application = "7.4.0"
-library = "7.4.0"
+kotlin = "1.9.21"
+application = "8.1.1"
+library = "8.1.1"
 
 coreKtx = "1.7.0"
 appCompat = "1.4.1"
