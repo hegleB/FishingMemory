@@ -61,6 +61,8 @@ gson = "2.10.1"
 
 javaInject = "1"
 
+androidChart = "v3.1.0"
+
 [libraries]
 kotlin-stdilib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -131,7 +133,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx"}
 firebase-link = { group = "com.google.firebase", name = "firebase-dynamic-links-ktx" }
 
-chart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "MPAndroidChart" }
+chart = { group = "com.github.PhilJay", name = "MPAndroidChart", version = "androidChart" }
 
 location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
