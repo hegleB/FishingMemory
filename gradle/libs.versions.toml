@@ -58,7 +58,7 @@ detekt = "1.23.0"
 androidx-test-ext-junit = "1.1.5"
 
 [libraries]
-kotlin-stdilib = { module = "org.jetbrains.kotlin-kotlin-stdlib-jdk8", version.ref = "kotlin" }
+kotlin-stdilib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutinesJvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 kotlin-coroutinesAndroid = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
