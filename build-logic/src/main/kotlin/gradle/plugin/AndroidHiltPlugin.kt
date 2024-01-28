@@ -18,7 +18,7 @@ class AndroidHiltPlugin : Plugin<Project> {
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             dependencies {
-                add("implementation", libs.findLibrary("hilt.android").get())
+                add("implementation", libs.findLibrary("hilt.core").get())
                 add("kapt", libs.findLibrary("hilt.compiler").get())
             }
         }
