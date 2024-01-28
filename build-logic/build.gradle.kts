@@ -21,5 +21,9 @@ gradlePlugin {
             id = "com.qure.library"
             implementationClass = "gradle.plugin.AndroidLibraryPlugin"
         }
+        register("androidHilt") {
+            id = "com.qure.hilt"
+            implementationClass = "gradle.plugin.AndroidHiltPlugin"
+        }
     }
 }
