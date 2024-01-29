@@ -152,6 +152,8 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 
 ktlint = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint" }
+detekt = { module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt"}
+
 [bundles]
 
 [plugins]
