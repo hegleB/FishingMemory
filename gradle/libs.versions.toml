@@ -33,7 +33,7 @@ kakao = "2.13.0"
 lottie = "5.2.0"
 datastore = "1.0.0"
 firebase = "31.2.3"
-room = "2.5.0"
+room = "2.6.1"
 
 bom = "2023.10.01"
 activityCompose = "1.8.2"
