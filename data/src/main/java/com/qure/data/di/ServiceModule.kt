@@ -36,7 +36,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class ServiceModule {
-
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class Auth
@@ -99,16 +98,17 @@ class ServiceModule {
     fun providesAuthRetrofit(
         @Auth okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory
+        resultCallAdapterFactory: ResultCallAdapterFactory,
     ): Retrofit {
-        val gsonWithAdapter: Gson = GsonBuilder()
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-            .create()
+        val gsonWithAdapter: Gson =
+            GsonBuilder()
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
+                .create()
 
         return Retrofit.Builder()
             .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_URL))
@@ -123,16 +123,17 @@ class ServiceModule {
     @Storage
     fun providesStorageRetrofit(
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory
+        resultCallAdapterFactory: ResultCallAdapterFactory,
     ): Retrofit {
-        val gsonWithAdapter: Gson = GsonBuilder()
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-            .create()
+        val gsonWithAdapter: Gson =
+            GsonBuilder()
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
+                .create()
 
         return Retrofit.Builder()
             .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_STORAGE_URL))
@@ -147,16 +148,17 @@ class ServiceModule {
     fun providesWeatherRetrofit(
         @Weather okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory
+        resultCallAdapterFactory: ResultCallAdapterFactory,
     ): Retrofit {
-        val gsonWithAdapter: Gson = GsonBuilder()
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-            .create()
+        val gsonWithAdapter: Gson =
+            GsonBuilder()
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
+                .create()
 
         return Retrofit.Builder()
             .client(okHttpClient)
@@ -172,16 +174,17 @@ class ServiceModule {
     fun providesMapRetrofit(
         @Map okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory
+        resultCallAdapterFactory: ResultCallAdapterFactory,
     ): Retrofit {
-        val gsonWithAdapter: Gson = GsonBuilder()
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-            .create()
+        val gsonWithAdapter: Gson =
+            GsonBuilder()
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
+                .create()
 
         return Retrofit.Builder()
             .client(okHttpClient)
@@ -197,16 +200,17 @@ class ServiceModule {
     fun providesFishingSpotRetrofit(
         @Map okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory
+        resultCallAdapterFactory: ResultCallAdapterFactory,
     ): Retrofit {
-        val gsonWithAdapter: Gson = GsonBuilder()
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-            .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-            .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-            .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-            .create()
+        val gsonWithAdapter: Gson =
+            GsonBuilder()
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
+                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
+                .create()
 
         return Retrofit.Builder()
             .client(okHttpClient)
@@ -226,21 +230,26 @@ class ServiceModule {
     fun providesAuthHttpClient(
         @ApplicationContext context: Context,
         gson: Gson,
-        buildPropertyRepository: BuildPropertyRepository
+        buildPropertyRepository: BuildPropertyRepository,
     ): OkHttpClient {
-        val client = OkHttpClient.Builder()
-            .readTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
-            .connectTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
-            .writeTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
-        val clientWithAuthInterceptor = client
-            .addInterceptor(
-                interceptor = AuthInterceptor(
-                    buildPropertyRepository = buildPropertyRepository,
-                ),
-            )
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BASIC
-            })
+        val client =
+            OkHttpClient.Builder()
+                .readTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+                .connectTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+                .writeTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+        val clientWithAuthInterceptor =
+            client
+                .addInterceptor(
+                    interceptor =
+                        AuthInterceptor(
+                            buildPropertyRepository = buildPropertyRepository,
+                        ),
+                )
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BASIC
+                    },
+                )
         return clientWithAuthInterceptor.build()
     }
 
@@ -250,22 +259,27 @@ class ServiceModule {
     fun providesWeatherHttpClient(
         @ApplicationContext context: Context,
         gson: Gson,
-        buildPropertyRepository: BuildPropertyRepository
+        buildPropertyRepository: BuildPropertyRepository,
     ): OkHttpClient {
-        val client = OkHttpClient.Builder()
-            .readTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
-            .connectTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
-            .writeTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
-        val clientWithAuthInterceptor = client
-            .addInterceptor(
-                interceptor = WeatherInterceptor(
-                    buildPropertyRepository = buildPropertyRepository,
-                    gson = gson,
-                ),
-            )
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BASIC
-            })
+        val client =
+            OkHttpClient.Builder()
+                .readTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+                .connectTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+                .writeTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+        val clientWithAuthInterceptor =
+            client
+                .addInterceptor(
+                    interceptor =
+                        WeatherInterceptor(
+                            buildPropertyRepository = buildPropertyRepository,
+                            gson = gson,
+                        ),
+                )
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BASIC
+                    },
+                )
         return clientWithAuthInterceptor.build()
     }
 
@@ -274,21 +288,26 @@ class ServiceModule {
     @Map
     fun providesMapHttpClient(
         @ApplicationContext context: Context,
-        buildPropertyRepository: BuildPropertyRepository
+        buildPropertyRepository: BuildPropertyRepository,
     ): OkHttpClient {
-        val client = OkHttpClient.Builder()
-            .readTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
-            .connectTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
-            .writeTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
-        val clientWithAuthInterceptor = client
-            .addInterceptor(
-                interceptor = MapInterceptor(
-                    buildPropertyRepository = buildPropertyRepository,
-                ),
-            )
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BASIC
-            })
+        val client =
+            OkHttpClient.Builder()
+                .readTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+                .connectTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+                .writeTimeout(TIME_OUT_COUNT, TimeUnit.SECONDS)
+        val clientWithAuthInterceptor =
+            client
+                .addInterceptor(
+                    interceptor =
+                        MapInterceptor(
+                            buildPropertyRepository = buildPropertyRepository,
+                        ),
+                )
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BASIC
+                    },
+                )
         return clientWithAuthInterceptor.build()
     }
 
@@ -299,6 +318,6 @@ class ServiceModule {
     }
 
     companion object {
-        private val TIME_OUT_COUNT : Long = 10
+        private val TIME_OUT_COUNT: Long = 10
     }
 }

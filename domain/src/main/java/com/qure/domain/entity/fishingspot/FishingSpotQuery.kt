@@ -4,7 +4,7 @@ import com.qure.domain.entity.memo.CollectionId
 import com.qure.domain.entity.memo.FieldFilter
 
 data class FishingSpotQuery(
-    val structuredQuery: StructuredQuery
+    val structuredQuery: StructuredQuery,
 )
 
 data class StructuredQuery(
@@ -13,9 +13,9 @@ data class StructuredQuery(
 )
 
 data class CollectionId(
-    val collectionId: String
+    val collectionId: String,
 )
 
 data class Where(
-    val fieldFilter: FieldFilter
+    val fieldFilter: FieldFilter,
 )

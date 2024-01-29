@@ -20,4 +20,4 @@ data class FishingSpotBookmarkEntity(
     val longitude: Double,
     val phone_number: String,
     val fee: String,
-): Parcelable
+) : Parcelable

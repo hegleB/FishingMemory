@@ -6,8 +6,10 @@ import com.qure.navigator.ProgramInformationNavigator
 import com.qure.program_information.ProgramInformationActivity
 import javax.inject.Inject
 
-class ProgramInformationNavigatorImpl @Inject constructor(): ProgramInformationNavigator {
-    override fun intent(context: Context): Intent {
-        return Intent(context, ProgramInformationActivity::class.java)
+class ProgramInformationNavigatorImpl
+    @Inject
+    constructor() : ProgramInformationNavigator {
+        override fun intent(context: Context): Intent {
+            return Intent(context, ProgramInformationActivity::class.java)
+        }
     }
-}

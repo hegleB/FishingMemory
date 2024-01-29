@@ -8,7 +8,7 @@ data class SignUpUser(
 )
 
 data class SignUpFieldsEntity(
-    val fields: SignUpFields
+    val fields: SignUpFields,
 )
 
 data class SignUpFields(

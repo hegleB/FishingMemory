@@ -9,7 +9,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class HomeModule {
-
     @Binds
     abstract fun bindHomeNavigator(navigator: HomeNavigatorImpl): HomeNavigator
 }

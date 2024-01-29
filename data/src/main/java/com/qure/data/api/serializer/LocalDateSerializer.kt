@@ -9,7 +9,7 @@ class LocalDateSerializer : JsonSerializer<LocalDate> {
     override fun serialize(
         src: LocalDate?,
         typeOfSrc: Type?,
-        context: JsonSerializationContext?
+        context: JsonSerializationContext?,
     ): JsonElement {
         return src?.let { JsonPrimitive(it.format(DateTimeFormatter.ISO_LOCAL_DATE)) }
             ?: JsonNull.INSTANCE

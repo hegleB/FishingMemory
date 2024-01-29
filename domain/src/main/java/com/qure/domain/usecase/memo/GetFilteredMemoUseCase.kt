@@ -6,10 +6,12 @@ import com.qure.domain.repository.MemoRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetFilteredMemoUseCase @Inject constructor(
-    private val memoRepository: MemoRepository,
-) {
-    operator fun invoke(memoQuery: MemoQuery): Flow<Result<List<Memo>>> {
-        return memoRepository.getfilteredMemo(memoQuery)
+class GetFilteredMemoUseCase
+    @Inject
+    constructor(
+        private val memoRepository: MemoRepository,
+    ) {
+        operator fun invoke(memoQuery: MemoQuery): Flow<Result<List<Memo>>> {
+            return memoRepository.getfilteredMemo(memoQuery)
+        }
     }
-}

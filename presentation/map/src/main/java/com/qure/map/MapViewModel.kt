@@ -21,94 +21,97 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MapViewModel @Inject constructor(
-    private val getFishingSpotUseCase: GetFishingSpotUseCase,
-    private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
-    private val authRepository: AuthRepository,
-) : BaseViewModel() {
+class MapViewModel
+    @Inject
+    constructor(
+        private val getFishingSpotUseCase: GetFishingSpotUseCase,
+        private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
+        private val authRepository: AuthRepository,
+    ) : BaseViewModel() {
+        private val _markers = MutableStateFlow<List<Any>?>(null)
+        val markers: StateFlow<List<Any>?>
+            get() = _markers
 
-    private val _markers = MutableStateFlow<List<Any>?>(null)
-    val markers: StateFlow<List<Any>?>
-        get() = _markers
+        private val _mapType = MutableStateFlow<NaverMap.MapType>(NaverMap.MapType.Basic)
+        val mapType: StateFlow<NaverMap.MapType>
+            get() = _mapType
 
-    private val _mapType = MutableStateFlow<NaverMap.MapType>(NaverMap.MapType.Basic)
-    val mapType: StateFlow<NaverMap.MapType>
-        get() = _mapType
-
-    fun getFishingSpot(fishingGroundType: MarkerType) {
-        viewModelScope.launch {
-            getFishingSpotUseCase(getStructuredQuery(fishingGroundType.value)).collect { response ->
-                response.onSuccess { result ->
-                    _markers.value = result.map { it.toFishingSpotUI() }
-                }.onFailure { throwable ->
-                    sendErrorMessage(throwable)
+        fun getFishingSpot(fishingGroundType: MarkerType) {
+            viewModelScope.launch {
+                getFishingSpotUseCase(getStructuredQuery(fishingGroundType.value)).collect { response ->
+                    response.onSuccess { result ->
+                        _markers.value = result.map { it.toFishingSpotUI() }
+                    }.onFailure { throwable ->
+                        sendErrorMessage(throwable)
+                    }
                 }
             }
         }
-    }
 
-    fun getFilteredMemo() {
-        viewModelScope.launch {
-            getFilteredMemoUseCase(
-                getMemoStructuredQuery()
-            ).collect { response ->
-                response.onSuccess { result ->
-                    _markers.value = result.map { it.toMemoUI() }
-                }.onFailure { throwable ->
-                    sendErrorMessage(throwable)
+        fun getFilteredMemo() {
+            viewModelScope.launch {
+                getFilteredMemoUseCase(
+                    getMemoStructuredQuery(),
+                ).collect { response ->
+                    response.onSuccess { result ->
+                        _markers.value = result.map { it.toMemoUI() }
+                    }.onFailure { throwable ->
+                        sendErrorMessage(throwable)
+                    }
                 }
             }
         }
-    }
 
-    fun setMapType(mapType: NaverMap.MapType) {
-        _mapType.value = mapType
-    }
+        fun setMapType(mapType: NaverMap.MapType) {
+            _mapType.value = mapType
+        }
 
-    private fun getMemoStructuredQuery(): MemoQuery {
-        val emailFilter = FieldFilter(
-            field = FieldPath(MemoListViewModel.EMAIL),
-            op = MemoListViewModel.EQUAL,
-            value = Value(authRepository.getEmailFromLocal())
-        )
-
-        val compositeFilter = CompositeFilter(
-            op = MemoListViewModel.AND,
-            filters = listOf(Filter(emailFilter))
-        )
-
-        return MemoQuery(
-            com.qure.domain.entity.memo.StructuredQuery(
-                from = listOf(CollectionId(MemoListViewModel.COLLECTION_ID)),
-                where = com.qure.domain.entity.memo.Where(compositeFilter),
-                orderBy = listOf(
-                    OrderBy(
-                        FieldPath(MemoListViewModel.DATE),
-                        MemoListViewModel.DESCENDING
-                    )
+        private fun getMemoStructuredQuery(): MemoQuery {
+            val emailFilter =
+                FieldFilter(
+                    field = FieldPath(MemoListViewModel.EMAIL),
+                    op = MemoListViewModel.EQUAL,
+                    value = Value(authRepository.getEmailFromLocal()),
                 )
+
+            val compositeFilter =
+                CompositeFilter(
+                    op = MemoListViewModel.AND,
+                    filters = listOf(Filter(emailFilter)),
+                )
+
+            return MemoQuery(
+                com.qure.domain.entity.memo.StructuredQuery(
+                    from = listOf(CollectionId(MemoListViewModel.COLLECTION_ID)),
+                    where = com.qure.domain.entity.memo.Where(compositeFilter),
+                    orderBy =
+                        listOf(
+                            OrderBy(
+                                FieldPath(MemoListViewModel.DATE),
+                                MemoListViewModel.DESCENDING,
+                            ),
+                        ),
+                ),
             )
-        )
-    }
+        }
 
-    private fun getStructuredQuery(fishingGroundType: String): FishingSpotQuery {
-        val fieldFilter = FieldFilter(
-            op = "EQUAL",
-            field = FieldPath("fishing_ground_type"),
-            value = Value(fishingGroundType),
-        )
+        private fun getStructuredQuery(fishingGroundType: String): FishingSpotQuery {
+            val fieldFilter =
+                FieldFilter(
+                    op = "EQUAL",
+                    field = FieldPath("fishing_ground_type"),
+                    value = Value(fishingGroundType),
+                )
 
-        return FishingSpotQuery(
-            StructuredQuery(
-                from = listOf(CollectionId(FISHING_SPOT_COLLECTION_ID)),
-                where = Where(fieldFilter),
+            return FishingSpotQuery(
+                StructuredQuery(
+                    from = listOf(CollectionId(FISHING_SPOT_COLLECTION_ID)),
+                    where = Where(fieldFilter),
+                ),
             )
-        )
+        }
 
+        companion object {
+            const val FISHING_SPOT_COLLECTION_ID = "fishingspot"
+        }
     }
-
-    companion object {
-        const val FISHING_SPOT_COLLECTION_ID = "fishingspot"
-    }
-}
-

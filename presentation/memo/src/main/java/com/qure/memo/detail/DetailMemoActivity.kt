@@ -28,12 +28,12 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.activity_detail_memo) {
-
     @Inject
     lateinit var memoCreateNavigator: MemoCreateNavigator
 
     private val viewModel by viewModels<DetailMemoViewModel>()
     private var memo: MemoUI = MemoUI()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observe()
@@ -52,17 +52,17 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
     }
 
     private fun initData() {
-
-        memo = when {
-            intent.getParcelableExtra<MemoUI>(UPDATE_MEMO) != null ->
-                intent.getParcelableExtra(UPDATE_MEMO) ?: MemoUI()
-            Intent.ACTION_VIEW == intent.action -> {
-                val uri = intent.data
-                binding.imageViewActivityDetailMemoMore.gone()
-                uri?.let { createMemoUI(it) } ?: MemoUI()
+        memo =
+            when {
+                intent.getParcelableExtra<MemoUI>(UPDATE_MEMO) != null ->
+                    intent.getParcelableExtra(UPDATE_MEMO) ?: MemoUI()
+                Intent.ACTION_VIEW == intent.action -> {
+                    val uri = intent.data
+                    binding.imageViewActivityDetailMemoMore.gone()
+                    uri?.let { createMemoUI(it) } ?: MemoUI()
+                }
+                else -> intent.getParcelableExtra(MEMO_DATA) ?: MemoUI()
             }
-            else -> intent.getParcelableExtra(MEMO_DATA) ?: MemoUI()
-        }
     }
 
     fun createMemoUI(uri: Uri): MemoUI {
@@ -74,8 +74,9 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
             date = uri.getQueryParameter(QUERY_CREATE_TIME) ?: String.Empty,
             location = uri.getQueryParameter(QUERY_LOCATION) ?: String.Empty,
             content = uri.getQueryParameter(QUERY_CONTENT) ?: String.Empty,
-            image = uri.getQueryParameter(QUERY_BASE_URL) + SLASH
-                    + uri.getQueryParameter(QUERY_IMAGE_PATH),
+            image =
+                uri.getQueryParameter(QUERY_BASE_URL) + SLASH +
+                    uri.getQueryParameter(QUERY_IMAGE_PATH),
         )
     }
 
@@ -90,7 +91,6 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
                 showPopUp(it)
             }
         }
-
     }
 
     private fun showPopUp(view: View) {
@@ -102,7 +102,7 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
                     ShareDialogFragment.newInstance(memo)
                         .show(
                             this.supportFragmentManager,
-                            ShareDialogFragment.TAG
+                            ShareDialogFragment.TAG,
                         )
                     true
                 }
@@ -110,7 +110,7 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
                     DeleteDialogFragment.newInstance(memo.uuid)
                         .show(
                             this.supportFragmentManager,
-                            DeleteDialogFragment.TAG
+                            DeleteDialogFragment.TAG,
                         )
                     true
                 }
@@ -143,6 +143,7 @@ class DetailMemoActivity : BaseActivity<ActivityDetailMemoBinding>(R.layout.acti
                 .into(imageViewActivityDetailMemoFishImage)
         }
     }
+
     companion object {
         const val SIZE_UNIT = "CM"
         const val QUERY_TITLE = "title"

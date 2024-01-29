@@ -13,27 +13,29 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val readOnboardingUseCase: ReadOnboardingUseCase,
-): BaseViewModel() {
+class SplashViewModel
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository,
+        private val readOnboardingUseCase: ReadOnboardingUseCase,
+    ) : BaseViewModel() {
+        private val _isFirstVisitor = MutableStateFlow(false)
+        val isFirstVisitor: StateFlow<Boolean>
+            get() = _isFirstVisitor
 
-    private val _isFirstVisitor = MutableStateFlow(false)
-    val isFirstVisitor: StateFlow<Boolean>
-        get() = _isFirstVisitor
-
-    init {
-        checkFirstVisitor()
-    }
-
-    fun isSignedUp(): Boolean {
-        return authRepository.getAccessTokenFromLocal().isNotEmpty()
-    }
-
-    fun checkFirstVisitor() = viewModelScope.launch {
-        val response = readOnboardingUseCase(OnboardingType.AFTER_SPLASH)
-        _isFirstVisitor.update {
-            response == null
+        init {
+            checkFirstVisitor()
         }
+
+        fun isSignedUp(): Boolean {
+            return authRepository.getAccessTokenFromLocal().isNotEmpty()
+        }
+
+        fun checkFirstVisitor() =
+            viewModelScope.launch {
+                val response = readOnboardingUseCase(OnboardingType.AFTER_SPLASH)
+                _isFirstVisitor.update {
+                    response == null
+                }
+            }
     }
-}

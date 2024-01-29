@@ -4,14 +4,19 @@ import com.qure.data.datasource.datastore.DataStoreDataSource
 import com.qure.domain.repository.OnboardingRepository
 import javax.inject.Inject
 
-class OnboardingRepositoryImpl @Inject constructor(
-    private val dataStoreDataSource: DataStoreDataSource
-): OnboardingRepository {
-    override suspend fun readOnboarding(key: String): String? {
-        return dataStoreDataSource.readDataSource(key)
-    }
+class OnboardingRepositoryImpl
+    @Inject
+    constructor(
+        private val dataStoreDataSource: DataStoreDataSource,
+    ) : OnboardingRepository {
+        override suspend fun readOnboarding(key: String): String? {
+            return dataStoreDataSource.readDataSource(key)
+        }
 
-    override suspend fun writeOnboarding(key: String, value: String) {
-        dataStoreDataSource.writeDataSource(key = key, value = value)
+        override suspend fun writeOnboarding(
+            key: String,
+            value: String,
+        ) {
+            dataStoreDataSource.writeDataSource(key = key, value = value)
+        }
     }
-}

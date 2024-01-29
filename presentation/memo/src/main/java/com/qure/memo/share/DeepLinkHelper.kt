@@ -20,7 +20,7 @@ class DeepLinkHelper(private val context: Context) {
             .setAndroidParameters(
                 DynamicLink.AndroidParameters.Builder(context.packageName)
                     .setMinimumVersion(1)
-                    .build()
+                    .build(),
             )
             .buildShortDynamicLink()
             .addOnCompleteListener { task ->
@@ -36,7 +36,7 @@ class DeepLinkHelper(private val context: Context) {
     private fun generateUri(
         memo: MemoUI,
         baseUrl: String,
-        imagePath: String
+        imagePath: String,
     ) = Uri.Builder()
         .scheme("https")
         .authority("fishingmemory.com")
@@ -54,16 +54,17 @@ class DeepLinkHelper(private val context: Context) {
         .toString()
 
     private fun shareDeepLink(deepLink: Uri) {
-        val sendIntent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, deepLink.toString())
-            type = "text/plain"
-        }
+        val sendIntent =
+            Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, deepLink.toString())
+                type = "text/plain"
+            }
 
         try {
             context.startActivity(Intent.createChooser(sendIntent, "Share"))
         } catch (ignored: ActivityNotFoundException) {
-            Timber.d("${ignored}")
+            Timber.d("$ignored")
         }
     }
 }

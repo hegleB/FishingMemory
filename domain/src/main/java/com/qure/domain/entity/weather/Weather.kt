@@ -6,21 +6,21 @@ data class Weather(
 
 data class Response(
     val header: Header,
-    val body: Body
+    val body: Body,
 )
 
 data class Header(
     val resultCode: Int,
-    val resultMsg: String
+    val resultMsg: String,
 )
 
 data class Body(
     val dataType: String,
-    val items: Items
+    val items: Items,
 )
 
 data class Items(
-    val item: List<Item>
+    val item: List<Item>,
 )
 
 data class Item(
@@ -31,6 +31,5 @@ data class Item(
     val fcstTime: Int,
     val fcstValue: String,
     val nx: Int,
-    val ny: Int
+    val ny: Int,
 )
-

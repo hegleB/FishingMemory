@@ -13,11 +13,12 @@ import com.qure.core.util.setOnSingleClickListener
 import com.qure.memo.databinding.ItemMemoListBinding
 import com.qure.memo.model.MemoUI
 
-
 class MemoListAdapter(private val onMemoClick: (memo: MemoUI) -> Unit) :
     ListAdapter<MemoUI, MemoListAdapter.MemoViewHoler>(DIFF_UTIL) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHoler {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): MemoViewHoler {
         val view = ItemMemoListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MemoViewHoler(
             binding = view,
@@ -25,7 +26,10 @@ class MemoListAdapter(private val onMemoClick: (memo: MemoUI) -> Unit) :
         )
     }
 
-    override fun onBindViewHolder(holder: MemoViewHoler, position: Int) {
+    override fun onBindViewHolder(
+        holder: MemoViewHoler,
+        position: Int,
+    ) {
         holder.bind(getItem(position))
     }
 
@@ -35,7 +39,7 @@ class MemoListAdapter(private val onMemoClick: (memo: MemoUI) -> Unit) :
 
     inner class MemoViewHoler(
         private val binding: ItemMemoListBinding,
-        private val onMemoClick: (memo: MemoUI) -> Unit
+        private val onMemoClick: (memo: MemoUI) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MemoUI) {
             val field = item
@@ -43,7 +47,6 @@ class MemoListAdapter(private val onMemoClick: (memo: MemoUI) -> Unit) :
             val radius = background.cornerRadius
             val roundedCorners = RoundedCorners(radius.toInt())
             binding.apply {
-
                 root.setOnSingleClickListener {
                     onMemoClick.invoke(item)
                 }
@@ -63,14 +66,21 @@ class MemoListAdapter(private val onMemoClick: (memo: MemoUI) -> Unit) :
 
     companion object {
         private const val ITEM_COUNT = 5
-        private val DIFF_UTIL = object : DiffUtil.ItemCallback<MemoUI>() {
-            override fun areItemsTheSame(oldItem: MemoUI, newItem: MemoUI): Boolean {
-                return oldItem.name == newItem.name
-            }
+        private val DIFF_UTIL =
+            object : DiffUtil.ItemCallback<MemoUI>() {
+                override fun areItemsTheSame(
+                    oldItem: MemoUI,
+                    newItem: MemoUI,
+                ): Boolean {
+                    return oldItem.name == newItem.name
+                }
 
-            override fun areContentsTheSame(oldItem: MemoUI, newItem: MemoUI): Boolean {
-                return oldItem == newItem
+                override fun areContentsTheSame(
+                    oldItem: MemoUI,
+                    newItem: MemoUI,
+                ): Boolean {
+                    return oldItem == newItem
+                }
             }
-        }
     }
 }

@@ -6,7 +6,10 @@ import com.qure.create.R
 
 class Region {
     companion object {
-        fun getArray(context: Context, position: Int = -1): Array<String> {
+        fun getArray(
+            context: Context,
+            position: Int = -1,
+        ): Array<String> {
             return when (position) {
                 Province.SEOUL.number -> context.getStringArrayCompat(R.array.array_region_seoul)
                 Province.BUSAN.number -> context.getStringArrayCompat(R.array.array_region_busan)

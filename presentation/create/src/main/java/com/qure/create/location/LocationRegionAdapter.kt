@@ -7,7 +7,6 @@ import com.qure.create.databinding.ItemRegionBinding
 
 class LocationRegionAdapter(val regionNames: Array<String>) :
     RecyclerView.Adapter<LocationRegionAdapter.RegionViewHolder>() {
-
     private var selectedPostion = -1
 
     interface ItemClickListener {
@@ -30,7 +29,10 @@ class LocationRegionAdapter(val regionNames: Array<String>) :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RegionViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): RegionViewHolder {
         val binding = ItemRegionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RegionViewHolder(binding)
     }
@@ -43,7 +45,10 @@ class LocationRegionAdapter(val regionNames: Array<String>) :
         return regionNames.get(position).hashCode().toLong()
     }
 
-    override fun onBindViewHolder(holder: RegionViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: RegionViewHolder,
+        position: Int,
+    ) {
         val regionName = regionNames[position]
         val isSelected = selectedPostion == position
 

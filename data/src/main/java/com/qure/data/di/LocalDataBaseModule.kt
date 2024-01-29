@@ -16,11 +16,11 @@ object LocalDataBaseModule {
     @Provides
     @Singleton
     fun providesFishingSpotDatabase(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ) = Room.databaseBuilder(
         context,
         FishingSpotDatabase::class.java,
-        "fishingspot_db"
+        "fishingspot_db",
     ).build()
 
     @Provides

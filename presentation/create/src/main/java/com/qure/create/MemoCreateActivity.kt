@@ -3,14 +3,12 @@ package com.qure.create
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.net.Uri
 import android.os.*
-import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MotionEvent
@@ -52,11 +50,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.activity_memo_create),
+class MemoCreateActivity :
+    BaseActivity<ActivityMemoCreateBinding>(R.layout.activity_memo_create),
     MemoCalendarDialogFragment.DatePickerListener {
-
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
@@ -70,6 +67,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
     private var createdMemo: MemoUI? = null
     private lateinit var rootView: View
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listener = this
@@ -110,7 +108,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         binding.textViewActivityMemoCreateLocationInfo.setOnClickListener {
             startActivityForResult(
                 Intent(this, LocationSettingActivity::class.java),
-                REQUEST_CODE_AREA
+                REQUEST_CODE_AREA,
             )
         }
 
@@ -118,12 +116,14 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             saveMemo()
             uploadImage()
         }
-        rootView.viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                scrollToFocusedEditText()
-            }
-        })
+        rootView.viewTreeObserver.addOnGlobalLayoutListener(
+            object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    scrollToFocusedEditText()
+                }
+            },
+        )
         validateMemo()
     }
 
@@ -145,7 +145,6 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     }
 
     private fun setCreatedMemo() {
-
         createdMemo?.let { memo ->
             with(viewModel) {
                 setCoords(memo.coords)
@@ -165,8 +164,10 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         }
     }
 
-
-    private fun setSelectedChipText(chipGroup: ChipGroup, selectedText: String?) {
+    private fun setSelectedChipText(
+        chipGroup: ChipGroup,
+        selectedText: String?,
+    ) {
         selectedText?.let { text ->
             for (i in 0 until chipGroup.childCount) {
                 val chip = chipGroup.getChildAt(i) as Chip
@@ -182,14 +183,13 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     private fun hideKeyboard() {
         binding.nestedScrollViewActivityMemoCreate.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-
                 val rect = Rect()
                 binding.editTextActivityMemoCreateFishType.getGlobalVisibleRect(rect)
-                binding.nestedScrollViewActivityMemoCreate.scrollBy(0, 0);
+                binding.nestedScrollViewActivityMemoCreate.scrollBy(0, 0)
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(
                     binding.nestedScrollViewActivityMemoCreate.windowToken,
-                    0
+                    0,
                 )
                 return@setOnTouchListener true
             }
@@ -201,7 +201,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         binding.textViewActivityMemoCreateDate.setOnClickListener {
             MemoCalendarDialogFragment(listener).show(
                 supportFragmentManager,
-                MemoCalendarDialogFragment.TAG
+                MemoCalendarDialogFragment.TAG,
             )
         }
     }
@@ -233,8 +233,8 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                     fishSize = binding.editTextActivityMemoCreateFishSize.text.toString(),
                     location = binding.textViewActivityMemoCreateLocationInfo.text.toString(),
                     date = binding.textViewActivityMemoCreateDate.text.toString(),
-                    content = binding.editTextActivityMemoCreateContent.text.toString()
-                )
+                    content = binding.editTextActivityMemoCreateContent.text.toString(),
+                ),
             )
         }
     }
@@ -286,9 +286,10 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     }
 
     private fun goToDetailMemo(memo: MemoUI?) {
-        val intent = detailMemoNavigator.intent(this).apply {
-            putExtra(UPDATE_MEMO, memo)
-        }
+        val intent =
+            detailMemoNavigator.intent(this).apply {
+                putExtra(UPDATE_MEMO, memo)
+            }
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
         finish()
@@ -297,11 +298,10 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     private fun sendSuccessMessage(stringdId: Int) {
         FishingMemoryToast().show(
             this@MemoCreateActivity,
-            getString(stringdId)
+            getString(stringdId),
         )
         finish()
     }
-
 
     override fun selectDate(date: String) {
         binding.textViewActivityMemoCreateDate.text = date
@@ -312,7 +312,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         when {
             ContextCompat.checkSelfPermission(
                 this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
             ) == PackageManager.PERMISSION_GRANTED -> {
                 uploadAction()
             }
@@ -324,7 +324,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             else -> {
                 requestPermissions(
                     arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                    PERMISSION_REQUEST_CODE
+                    PERMISSION_REQUEST_CODE,
                 )
             }
         }
@@ -338,7 +338,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
             .setPositiveButton(getString(R.string.agreement)) { _, _ ->
                 requestPermissions(
                     arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                    PERMISSION_REQUEST_CODE
+                    PERMISSION_REQUEST_CODE,
                 )
             }
             .create()
@@ -392,12 +392,12 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
 
             buttonActivityMemoCreatePost.isEnabled =
                 title.isNotBlank() &&
-                        fishType.isNotBlank() &&
-                        fishSize.isNotBlank() &&
-                        locationInfo.isNotBlank() &&
-                        date.isNotBlank() &&
-                        isChecked &&
-                        hasImage
+                fishType.isNotBlank() &&
+                fishSize.isNotBlank() &&
+                locationInfo.isNotBlank() &&
+                date.isNotBlank() &&
+                isChecked &&
+                hasImage
         }
     }
 
@@ -408,24 +408,43 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
     }
 
     private fun ImageView.addOnAttachStateChangeListener() {
-        this.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-            override fun onViewAttachedToWindow(v: View) {
+        this.addOnAttachStateChangeListener(
+            object : View.OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(v: View) {
+                    checkInputs()
+                }
+
+                override fun onViewDetachedFromWindow(v: View) = Unit
+            },
+        )
+    }
+
+    private val textWatcher =
+        object : TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int,
+            ) = Unit
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int,
+            ) = Unit
+
+            override fun afterTextChanged(s: Editable?) {
                 checkInputs()
             }
-
-            override fun onViewDetachedFromWindow(v: View) = Unit
-        })
-    }
-
-    private val textWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-        override fun afterTextChanged(s: Editable?) {
-            checkInputs()
         }
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?,
+    ) {
         super.onActivityResult(requestCode, resultCode, data)
 
         when {
@@ -444,7 +463,7 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
                 Snackbar.make(
                     binding.constraintLayoutActivityMemoCreate,
                     getString(R.string.can_not_get_image),
-                    Snackbar.LENGTH_LONG
+                    Snackbar.LENGTH_LONG,
                 )
         }
     }
@@ -464,5 +483,3 @@ class MemoCreateActivity : BaseActivity<ActivityMemoCreateBinding>(R.layout.acti
         const val PERMISSION_REQUEST_CODE = 1000
     }
 }
-
-

@@ -17,66 +17,72 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val createUserUseCase: CreateUserUseCase,
-    private val getUserTokenUseCase: GetUserTokenUseCase,
-    private val fishingSharedPreference: FishMemorySharedPreference,
-    private val authRepository: AuthRepository,
-) : BaseViewModel() {
+class LoginViewModel
+    @Inject
+    constructor(
+        private val createUserUseCase: CreateUserUseCase,
+        private val getUserTokenUseCase: GetUserTokenUseCase,
+        private val fishingSharedPreference: FishMemorySharedPreference,
+        private val authRepository: AuthRepository,
+    ) : BaseViewModel() {
+        private val _action = MutableSharedFlow<Action>()
+        val action: SharedFlow<Action>
+            get() = _action.asSharedFlow()
 
-    private val _action = MutableSharedFlow<Action>()
-    val action: SharedFlow<Action>
-        get() = _action.asSharedFlow()
-
-    fun createUser(email: String, accessToken: String) = viewModelScope.launch {
-        kotlin.runCatching {
-            createUserUseCase(
-                email = email,
-                socialToken = accessToken
-            ).onSuccess { value: SignUpUser ->
-                _action.emit(Action.FirstSignUp)
-            }.onFailure { throwable ->
-                if (isExistsEmail(throwable.message)) {
+        fun createUser(
+            email: String,
+            accessToken: String,
+        ) = viewModelScope.launch {
+            kotlin.runCatching {
+                createUserUseCase(
+                    email = email,
+                    socialToken = accessToken,
+                ).onSuccess { value: SignUpUser ->
+                    _action.emit(Action.FirstSignUp)
+                }.onFailure { throwable ->
+                    if (isExistsEmail(throwable.message)) {
+                        saveToLocalSignedUpUser(email)
+                        _action.emit(Action.AlreadySignUp)
+                    } else {
+                        sendErrorMessage(throwable.message)
+                    }
+                }
+            }.onFailure {
+                it as Exception
+                if (isExistsEmail(it.message)) {
                     saveToLocalSignedUpUser(email)
                     _action.emit(Action.AlreadySignUp)
                 } else {
-                    sendErrorMessage(throwable.message)
+                    sendErrorMessage(it.message)
                 }
             }
-        }.onFailure {
-            it as Exception
-            if (isExistsEmail(it.message)) {
-                saveToLocalSignedUpUser(email)
-                _action.emit(Action.AlreadySignUp)
-            } else {
-                sendErrorMessage(it.message)
+        }
+
+        private fun saveToLocalSignedUpUser(email: String) =
+            viewModelScope.launch {
+                authRepository.saveEmailToLocal(email)
+                getUserTokenUseCase(email = email).collect { response ->
+                    response.onSuccess { user ->
+                        fishingSharedPreference.putString(ACCESS_TOKEN_KEY, user.fields.token.stringValue)
+                    }.onFailure { throwable ->
+                        throwable as Exception
+                        sendErrorMessage(throwable.message)
+                    }
+                }
             }
+
+        private fun isExistsEmail(message: String?): Boolean {
+            val documentMessage = message?.split(String.Colon) ?: emptyList()
+            return documentMessage[0] == EMAIL_EXISTS
+        }
+
+        sealed class Action {
+            object FirstSignUp : Action()
+
+            object AlreadySignUp : Action()
+        }
+
+        companion object {
+            private const val EMAIL_EXISTS = "Document already exists"
         }
     }
-
-    private fun saveToLocalSignedUpUser(email: String) = viewModelScope.launch {
-        authRepository.saveEmailToLocal(email)
-        getUserTokenUseCase(email = email).collect { response ->
-            response.onSuccess { user ->
-                fishingSharedPreference.putString(ACCESS_TOKEN_KEY, user.fields.token.stringValue)
-            }.onFailure { throwable ->
-                throwable as Exception
-                sendErrorMessage(throwable.message)
-            }
-        }
-    }
-
-    private fun isExistsEmail(message: String?): Boolean {
-        val documentMessage = message?.split(String.Colon) ?: emptyList()
-        return documentMessage[0] == EMAIL_EXISTS
-    }
-
-    sealed class Action {
-        object FirstSignUp : Action()
-        object AlreadySignUp : Action()
-    }
-
-    companion object {
-        private const val EMAIL_EXISTS = "Document already exists"
-    }
-}

@@ -8,7 +8,7 @@ data class Memo(
 )
 
 data class MemoFieldsEntity(
-    val fields: MemoFields
+    val fields: MemoFields,
 )
 
 data class Document(
@@ -18,12 +18,13 @@ data class Document(
     val updateTime: String,
 ) {
     companion object {
-        val EMPTY = Document(
-            name = "",
-            fields = MemoFields.EMPTY,
-            createTime = "",
-            updateTime = "",
-        )
+        val EMPTY =
+            Document(
+                name = "",
+                fields = MemoFields.EMPTY,
+                createTime = "",
+                updateTime = "",
+            )
     }
 }
 
@@ -42,20 +43,21 @@ data class MemoFields(
     val coords: FieldStringValue,
 ) {
     companion object {
-        val EMPTY = MemoFields(
-            uuid = FieldStringValue.EMPTY,
-            email = FieldStringValue.EMPTY,
-            title = FieldStringValue.EMPTY,
-            image = FieldStringValue.EMPTY,
-            location = FieldStringValue.EMPTY,
-            date = FieldStringValue.EMPTY,
-            waterType = FieldStringValue.EMPTY,
-            fishType = FieldStringValue.EMPTY,
-            fishSize = FieldStringValue.EMPTY,
-            content = FieldStringValue.EMPTY,
-            createTime = FieldStringValue.EMPTY,
-            coords =  FieldStringValue.EMPTY,
-        )
+        val EMPTY =
+            MemoFields(
+                uuid = FieldStringValue.EMPTY,
+                email = FieldStringValue.EMPTY,
+                title = FieldStringValue.EMPTY,
+                image = FieldStringValue.EMPTY,
+                location = FieldStringValue.EMPTY,
+                date = FieldStringValue.EMPTY,
+                waterType = FieldStringValue.EMPTY,
+                fishType = FieldStringValue.EMPTY,
+                fishSize = FieldStringValue.EMPTY,
+                content = FieldStringValue.EMPTY,
+                createTime = FieldStringValue.EMPTY,
+                coords = FieldStringValue.EMPTY,
+            )
     }
 }
 
@@ -70,7 +72,6 @@ data class FieldStringValue(
 data class FieldIntegerValue(
     val integerValue: Int,
 )
-
 
 data class FieldDoubleValue(
     val doubleValue: Double,

@@ -20,7 +20,6 @@ class BarChartView(
     private val values: List<Float>,
     private val labels: List<String>,
 ) {
-
     fun initBarChart(barChart: BarChart) {
         barChart.setDrawBarShadow(false)
         barChart.setDrawValueAboveBar(false)
@@ -42,7 +41,6 @@ class BarChartView(
 
         val xAxisFormatter: ValueFormatter = IndexAxisValueFormatter(labels)
         val xAxis = barChart.xAxis
-
 
         xAxis.apply {
             valueFormatter = xAxisFormatter
@@ -92,7 +90,6 @@ class BarChartView(
     }
 
     private fun setData(barChart: BarChart) {
-
         // Zoom In / Out 가능 여부 설정
         barChart.setScaleEnabled(false)
 
@@ -127,7 +124,5 @@ class BarChartView(
             setFitBars(true)
             invalidate()
         }
-
     }
-
 }

@@ -4,8 +4,12 @@ import com.qure.data.entity.fishingspot.FishingSpotBookmarkEntity
 
 interface FishingSpotLocalDataSource {
     suspend fun insertFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
+
     fun getFishingSpots(): List<FishingSpotBookmarkEntity>
+
     suspend fun checkFishingSpot(number: Int): Boolean
+
     suspend fun deleteFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
+
     suspend fun deleteAllFishingSpots()
 }

@@ -36,7 +36,6 @@ private const val ARG_PARAM4 = "param4"
 class LocationSettingFragment(listener: RegionPositionCallback?, arealistener: AreaNameCallback?) :
     BaseFragment<FragmentLocationSettingBinding>(R.layout.fragment_location_setting),
     OnMapReadyCallback {
-
     private val viewModel by viewModels<LocationSettingViewModel>()
 
     private lateinit var naverMap: NaverMap
@@ -53,8 +52,9 @@ class LocationSettingFragment(listener: RegionPositionCallback?, arealistener: A
 
     constructor() : this(
         listener = null,
-        arealistener = null
+        arealistener = null,
     )
+
     init {
         this.listener = listener
         this.arealistener = arealistener
@@ -71,13 +71,21 @@ class LocationSettingFragment(listener: RegionPositionCallback?, arealistener: A
             regionName = it.getString(ARG_PARAM3)
             regionArray = it.getStringArray(ARG_PARAM4) as Array<String>
         }
-        regionName = if (isNotExistCityName()) regionName?.split(String.Spacing)?.get(0)
-            ?: String.Empty else regionName
+        regionName =
+            if (isNotExistCityName()) {
+                regionName?.split(String.Spacing)?.get(0)
+                    ?: String.Empty
+            } else {
+                regionName
+            }
         openMapFragment()
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
         initView()
@@ -87,11 +95,13 @@ class LocationSettingFragment(listener: RegionPositionCallback?, arealistener: A
 
     private fun initAdapter() {
         adapter = LocationRegionAdapter(regionArray)
-        adapter.setItemClickListener(object : LocationRegionAdapter.ItemClickListener {
-            override fun onClick(position: Int) {
-                listener?.setRegionPosition(position)
-            }
-        })
+        adapter.setItemClickListener(
+            object : LocationRegionAdapter.ItemClickListener {
+                override fun onClick(position: Int) {
+                    listener?.setRegionPosition(position)
+                }
+            },
+        )
     }
 
     private fun initView() {
@@ -162,7 +172,6 @@ class LocationSettingFragment(listener: RegionPositionCallback?, arealistener: A
                 )
             }.launchIn(lifecycleScope)
 
-
         viewModel.getGeocoding(regionName ?: String.Empty)
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -195,20 +204,22 @@ class LocationSettingFragment(listener: RegionPositionCallback?, arealistener: A
     private fun moveMapCamera(uiState: UiState) {
         val latitude = uiState.geocodingUI?.y ?: String.DefaultLatitude
         val longitude = uiState.geocodingUI?.x ?: String.DefaultLongitude
-        val coords = "${latitude},${longitude}"
+        val coords = "$latitude,$longitude"
         viewModel.getReverseGeocoding(coords)
-        arealistener?.setAreaName(regionName ?: String.Empty, "${longitude},${latitude}")
-        val cameraUpdate = CameraUpdate.scrollTo(
-            LatLng(
-                latitude.toDouble(),
-                longitude.toDouble()
+        arealistener?.setAreaName(regionName ?: String.Empty, "$longitude,$latitude")
+        val cameraUpdate =
+            CameraUpdate.scrollTo(
+                LatLng(
+                    latitude.toDouble(),
+                    longitude.toDouble(),
+                ),
             )
-        )
         naverMap.moveCamera(cameraUpdate)
     }
 
     companion object {
         private const val NOT_EXIST_CITY_NAME = "없음"
+
         fun newInstance(
             title: String,
             subTitle: String,
@@ -216,15 +227,15 @@ class LocationSettingFragment(listener: RegionPositionCallback?, arealistener: A
             regionName: String,
             listener: RegionPositionCallback,
             arealistener: AreaNameCallback,
-        ) =
-            LocationSettingFragment(listener, arealistener).apply {
-                arguments = Bundle().apply {
+        ) = LocationSettingFragment(listener, arealistener).apply {
+            arguments =
+                Bundle().apply {
                     putString(ARG_PARAM1, title)
                     putString(ARG_PARAM2, subTitle)
                     putString(ARG_PARAM3, regionName)
                     putStringArray(ARG_PARAM4, regionArray)
                 }
-            }
+        }
     }
 }
 
@@ -233,5 +244,8 @@ interface RegionPositionCallback {
 }
 
 interface AreaNameCallback {
-    fun setAreaName(name: String, coords: String)
+    fun setAreaName(
+        name: String,
+        coords: String,
+    )
 }

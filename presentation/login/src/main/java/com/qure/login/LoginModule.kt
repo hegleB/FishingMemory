@@ -9,7 +9,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class LoginModule {
-
     @Binds
     abstract fun bindLoginNavigator(navigator: LoginNavigatorImpl): LoginNavigator
 }

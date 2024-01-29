@@ -11,7 +11,7 @@ class LocalTimeDeserializer : JsonDeserializer<LocalTime?> {
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
-        context: JsonDeserializationContext?
+        context: JsonDeserializationContext?,
     ): LocalTime? {
         return json?.let {
             LocalTime.parse(

@@ -2,7 +2,6 @@ package com.qure.fishingspot.bookmark
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -16,19 +15,16 @@ import com.qure.core.util.setOnSingleClickListener
 import com.qure.domain.SPOT_DATA
 import com.qure.fishingspot.R
 import com.qure.fishingspot.databinding.ActivityBookmarkBinding
-import com.qure.memo.delete.DeleteDialogFragment
 import com.qure.navigator.FishingSpotNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BookmarkActivity : BaseActivity<ActivityBookmarkBinding>(R.layout.activity_bookmark), OnDeleteClickListener {
-
     @Inject
     lateinit var fishingSpotNavigator: FishingSpotNavigator
 
@@ -39,17 +35,18 @@ class BookmarkActivity : BaseActivity<ActivityBookmarkBinding>(R.layout.activity
             intent.putExtra(SPOT_DATA, it)
             startActivity(intent)
         }, {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("tel:${it}"))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("tel:$it"))
             startActivity(intent)
         })
-
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initRecyclerView()
         initView()
         observe()
     }
+
     private fun initView() {
         binding.imageViewActivityBookmarkBack.setOnSingleClickListener {
             finish()
@@ -59,6 +56,7 @@ class BookmarkActivity : BaseActivity<ActivityBookmarkBinding>(R.layout.activity
             onDeleteAllClicked()
         }
     }
+
     private fun onDeleteAllClicked() {
         BookmarkDeleteDialogFragment()
             .show(
@@ -66,9 +64,11 @@ class BookmarkActivity : BaseActivity<ActivityBookmarkBinding>(R.layout.activity
                 BookmarkDeleteDialogFragment.TAG,
             )
     }
+
     private fun initRecyclerView() {
         binding.recyclerViewActivityBookmark.adapter = adapter
     }
+
     private fun observe() {
         viewModel.error
             .onEach { errorMessage -> FishingMemoryToast().error(this, errorMessage) }
@@ -101,10 +101,12 @@ class BookmarkActivity : BaseActivity<ActivityBookmarkBinding>(R.layout.activity
             }
         }
     }
+
     override fun onStart() {
         super.onStart()
         viewModel.getBookmarks()
     }
+
     override fun onDeleteClicked() {
         viewModel.deleteAllBookmarks()
     }

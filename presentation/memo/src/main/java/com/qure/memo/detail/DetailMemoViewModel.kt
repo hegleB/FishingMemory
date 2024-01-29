@@ -12,36 +12,36 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailMemoViewModel @Inject constructor(
-    private val deleteMemoUseCase: DeleteMemoUseCase,
-) : BaseViewModel() {
+class DetailMemoViewModel
+    @Inject
+    constructor(
+        private val deleteMemoUseCase: DeleteMemoUseCase,
+    ) : BaseViewModel() {
+        private val _uiState = MutableStateFlow(UiState())
+        val uiState: StateFlow<UiState>
+            get() = _uiState
 
-    private val _uiState = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState>
-        get() = _uiState
-
-    fun deleteMemo(uuid: String) {
-        viewModelScope.launch {
-            deleteMemoUseCase(uuid).collect { response ->
-                response.onSuccess {
-                    _uiState.update {
-                        it.copy(
-                            isDeleteInitialized = true,
-                            deleteSuccessMessage = DELETE_SUCCESS_MESSAGE
-                        )
+        fun deleteMemo(uuid: String) {
+            viewModelScope.launch {
+                deleteMemoUseCase(uuid).collect { response ->
+                    response.onSuccess {
+                        _uiState.update {
+                            it.copy(
+                                isDeleteInitialized = true,
+                                deleteSuccessMessage = DELETE_SUCCESS_MESSAGE,
+                            )
+                        }
+                    }.onFailure { throwable ->
+                        sendErrorMessage(throwable)
                     }
-
-                }.onFailure { throwable ->
-                    sendErrorMessage(throwable)
                 }
             }
         }
-    }
 
-    companion object {
-        const val DELETE_SUCCESS_MESSAGE = "삭제가 완료되었습니다"
+        companion object {
+            const val DELETE_SUCCESS_MESSAGE = "삭제가 완료되었습니다"
+        }
     }
-}
 
 data class UiState(
     val isDeleteInitialized: Boolean = false,

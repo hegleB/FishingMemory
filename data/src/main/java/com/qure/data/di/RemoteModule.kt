@@ -21,40 +21,27 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RemoteModule {
+    @Binds
+    @Singleton
+    abstract fun bindAuthRemoteDataResource(dataSource: AuthRemoteDataSourceImpl): AuthRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindAuthRemoteDataResource(
-        dataSource: AuthRemoteDataSourceImpl,
-    ): AuthRemoteDataSource
+    abstract fun bindWeatherRemoteDataResource(dataSource: WeatherRemoteDataSourceImpl): WeatherRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindWeatherRemoteDataResource(
-        dataSource: WeatherRemoteDataSourceImpl,
-    ): WeatherRemoteDataSource
+    abstract fun bindMapRemoteDataResource(dataSource: MapRemoteRemoteDataSourceImpl): MapRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindMapRemoteDataResource(
-        dataSource: MapRemoteRemoteDataSourceImpl,
-    ): MapRemoteDataSource
+    abstract fun bindMemoRemoteDataResource(dataSource: MemoRemoteDataSourceImpl): MemoRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindMemoRemoteDataResource(
-        dataSource: MemoRemoteDataSourceImpl,
-    ): MemoRemoteDataSource
+    abstract fun bindFishingSpotRemoteDataResource(dataSource: FishingSpotRemoteDataSourceImpl): FishingSpotRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindFishingSpotRemoteDataResource(
-        dataSource: FishingSpotRemoteDataSourceImpl,
-    ): FishingSpotRemoteDataSource
-
-    @Binds
-    @Singleton
-    abstract fun bindMemoStorageRemoteDataResource(
-        dataSource: MemoStorageRemoteDataSourceImpl
-    ): MemoStorageRemoteDataSource
+    abstract fun bindMemoStorageRemoteDataResource(dataSource: MemoStorageRemoteDataSourceImpl): MemoStorageRemoteDataSource
 }

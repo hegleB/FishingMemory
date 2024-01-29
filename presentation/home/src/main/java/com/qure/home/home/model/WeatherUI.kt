@@ -16,7 +16,7 @@ data class WeatherUI(
     val fcstValue: String = String.Empty,
     val nx: Int = 0,
     val ny: Int = 0,
-    val checkedWeather: Int = if (isDayTime()) R.raw.weather_sunny_day else R.raw.weather_sunny_night
+    val checkedWeather: Int = if (isDayTime()) R.raw.weather_sunny_day else R.raw.weather_sunny_night,
 )
 
 fun Item.toWeatherUI(): WeatherUI {
@@ -29,24 +29,24 @@ fun Item.toWeatherUI(): WeatherUI {
         fcstValue = this.fcstValue,
         nx = this.nx,
         ny = this.ny,
-        checkedWeather = when (this.category) {
-            WeatherCategory.T1H -> this.fcstValue.toInt()
-            WeatherCategory.LGT -> R.raw.weather_thunder
-            WeatherCategory.SKY -> getSky(this.fcstValue.toInt())
-            WeatherCategory.PTY -> getPrecipitationState(this.fcstValue.toInt())
-            else -> 0
-        },
+        checkedWeather =
+            when (this.category) {
+                WeatherCategory.T1H -> this.fcstValue.toInt()
+                WeatherCategory.LGT -> R.raw.weather_thunder
+                WeatherCategory.SKY -> getSky(this.fcstValue.toInt())
+                WeatherCategory.PTY -> getPrecipitationState(this.fcstValue.toInt())
+                else -> 0
+            },
     )
 }
 
 fun getPrecipitationState(pty: Int): Int {
     return when (pty) {
-        in listOf(1, 2, 5)-> if (isDayTime()) R.raw.weather_rainy_day else R.raw.weather_rainy_night
+        in listOf(1, 2, 5) -> if (isDayTime()) R.raw.weather_rainy_day else R.raw.weather_rainy_night
         in listOf(3, 6, 7) -> if (isDayTime()) R.raw.weather_snow_day else R.raw.weather_snow_night
         else -> 0
     }
 }
-
 
 private fun getSky(sky: Int): Int {
     return when (sky) {

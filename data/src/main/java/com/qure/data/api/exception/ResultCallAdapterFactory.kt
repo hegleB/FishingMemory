@@ -6,12 +6,11 @@ import retrofit2.Retrofit
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
-class ResultCallAdapterFactory: CallAdapter.Factory() {
-
+class ResultCallAdapterFactory : CallAdapter.Factory() {
     override fun get(
         returnType: Type,
         annotations: Array<out Annotation>,
-        retrofit: Retrofit
+        retrofit: Retrofit,
     ): CallAdapter<*, *>? {
         if (getRawType(returnType) != Call::class.java || returnType !is ParameterizedType) {
             return null
@@ -22,8 +21,7 @@ class ResultCallAdapterFactory: CallAdapter.Factory() {
             object : CallAdapter<Any, Call<Result<*>>> {
                 override fun responseType(): Type = getParameterUpperBound(0, upperBound)
 
-                override fun adapt(call: Call<Any>): Call<Result<*>> =
-                    ResultCall(call, retrofit) as Call<Result<*>>
+                override fun adapt(call: Call<Any>): Call<Result<*>> = ResultCall(call, retrofit) as Call<Result<*>>
             }
         } else {
             null

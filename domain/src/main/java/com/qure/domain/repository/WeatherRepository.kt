@@ -8,6 +8,6 @@ interface WeatherRepository {
         base_date: Int,
         base_time: String,
         nx: String,
-        ny: String
+        ny: String,
     ): Flow<Result<Weather>>
 }

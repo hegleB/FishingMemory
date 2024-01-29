@@ -1,7 +1,7 @@
 package com.qure.domain.entity.memo
 
 data class MemoQuery(
-    val structuredQuery: StructuredQuery
+    val structuredQuery: StructuredQuery,
 )
 
 data class StructuredQuery(
@@ -11,11 +11,11 @@ data class StructuredQuery(
 )
 
 data class CollectionId(
-    val collectionId: String
+    val collectionId: String,
 )
 
 data class Where(
-    val compositeFilter: CompositeFilter
+    val compositeFilter: CompositeFilter,
 )
 
 data class OrderBy(
@@ -25,23 +25,23 @@ data class OrderBy(
 
 data class CompositeFilter(
     val op: String,
-    val filters: List<Filter>
+    val filters: List<Filter>,
 )
 
 data class Filter(
-    val fieldFilter: FieldFilter
+    val fieldFilter: FieldFilter,
 )
 
 data class FieldFilter(
     val field: FieldPath,
     val op: String,
-    val value: Value
+    val value: Value,
 )
 
 data class FieldPath(
-    val fieldPath: String
+    val fieldPath: String,
 )
 
 data class Value(
-    val stringValue: String
+    val stringValue: String,
 )

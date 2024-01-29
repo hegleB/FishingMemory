@@ -1,7 +1,7 @@
 package com.qure.build_property
 
 enum class BuildProperty(
-    private val description: String
+    private val description: String,
 ) {
     KAKAO_API_KEY("kakao native app key"),
     FIREBASE_DATABASE_PROJECT_ID("firebase 프로젝트 ID"),
@@ -12,7 +12,8 @@ enum class BuildProperty(
     WEATHER_API_KEY("weather api key"),
     NAVER_MAP_BASE_URL("naver map base 주소"),
     NAVER_MAP_API_CLIENT_ID("naver map client id"),
-    NAVER_MAP_API_CLIENT_SECRET("naver_map_api_client_secret");
+    NAVER_MAP_API_CLIENT_SECRET("naver_map_api_client_secret"),
+    ;
 
     val key: String = this.name
 

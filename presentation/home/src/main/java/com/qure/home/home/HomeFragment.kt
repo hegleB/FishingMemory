@@ -44,10 +44,8 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
-
     @Inject
     lateinit var memoNavigator: MemoNavigator
 
@@ -66,15 +64,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 val intent = detailMemoNavigator.intent(requireContext())
                 intent.putExtra(MEMO_DATA, memo)
                 startActivity(intent)
-
-            }
+            },
         )
     }
     private lateinit var fusedLocationProvierClient: FusedLocationProviderClient
     private var latX = DEFAULT_LATITUE
     private var longY = DEFAULT_LONGITUE
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         fusedLocationProvierClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -127,30 +127,32 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         fusedLocationProvierClient.lastLocation.addOnCompleteListener { task ->
             val location = task.result
             if (location == null) {
-                val request = LocationRequest.create()
-                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(300)
-                    .setFastestInterval(200)
-                val locationCallback = object : LocationCallback() {
-                    override fun onLocationResult(locationResult: LocationResult) {
-                        for (location in locationResult.locations) {
-                            val latXlngY = GpsTransfer().convertGRID_GPS(
-                                0,
-                                location.latitude,
-                                location.longitude
-                            )
-                            viewModel.fetchWeater(latXlngY)
-                            fusedLocationProvierClient.removeLocationUpdates(this)
+                val request =
+                    LocationRequest.create()
+                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                        .setInterval(300)
+                        .setFastestInterval(200)
+                val locationCallback =
+                    object : LocationCallback() {
+                        override fun onLocationResult(locationResult: LocationResult) {
+                            for (location in locationResult.locations) {
+                                val latXlngY =
+                                    GpsTransfer().convertGRID_GPS(
+                                        0,
+                                        location.latitude,
+                                        location.longitude,
+                                    )
+                                viewModel.fetchWeater(latXlngY)
+                                fusedLocationProvierClient.removeLocationUpdates(this)
+                            }
                         }
                     }
-                }
                 fusedLocationProvierClient.requestLocationUpdates(request, locationCallback, null)
             } else {
                 latX = location.latitude
                 longY = location.longitude
                 val latXlngY = GpsTransfer().convertGRID_GPS(0, latX, longY)
                 viewModel.fetchWeater(latXlngY)
-
             }
         }
     }
@@ -167,7 +169,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         val locationManager: LocationManager =
             requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     private fun requestPermission() {
@@ -175,9 +177,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             requireActivity(),
             arrayOf(
                 android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
             ),
-            PERMISSION_REQUEST_ACCESS_LOCATION
+            PERMISSION_REQUEST_ACCESS_LOCATION,
         )
     }
 
@@ -200,11 +202,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private fun checkPermission(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
             ) == PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
                 requireContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             return true
@@ -238,39 +240,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
     }
 
-    private fun refreshView() = lifecycleScope.launch {
-        viewModel.getFilteredMemo()
-        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch {
-                delay(Long.SwipRefreshTime)
-                viewModel.UiState.collect {
-                    binding.swipeRefreshLayoutFragmentHome.setRefreshing(false)
-                    if (it.isFilterInitialized) {
-                        handleFilterInitialized()
-                    }
+    private fun refreshView() =
+        lifecycleScope.launch {
+            viewModel.getFilteredMemo()
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    delay(Long.SwipRefreshTime)
+                    viewModel.UiState.collect {
+                        binding.swipeRefreshLayoutFragmentHome.setRefreshing(false)
+                        if (it.isFilterInitialized) {
+                            handleFilterInitialized()
+                        }
 
-                    if (it.isWeatherInitialized) {
-                        handleWeatherInitialized(it)
+                        if (it.isWeatherInitialized) {
+                            handleWeatherInitialized(it)
+                        }
                     }
                 }
             }
         }
-    }
-
 
     private fun initBarChart(checkedId: Int) {
         if (memos.isNotEmpty()) {
-            val chartData = when (checkedId) {
-                R.id.chip_fragmentHome_fishType -> memos.map { it.fishType }
-                R.id.chip_fragmentHome_fishSize -> memos.map { it.fishSize }
-                else -> memos.map {
-                    try {
-                        it.location.split(String.Spacing)[1]
-                    } catch (e: IndexOutOfBoundsException) {
-                        it.location.split(String.Spacing)[0]
-                    }
+            val chartData =
+                when (checkedId) {
+                    R.id.chip_fragmentHome_fishType -> memos.map { it.fishType }
+                    R.id.chip_fragmentHome_fishSize -> memos.map { it.fishSize }
+                    else ->
+                        memos.map {
+                            try {
+                                it.location.split(String.Spacing)[1]
+                            } catch (e: IndexOutOfBoundsException) {
+                                it.location.split(String.Spacing)[0]
+                            }
+                        }
                 }
-            }
             BarChartView(
                 requireContext(),
                 resources,
@@ -345,7 +349,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             recyclerViewFragmentHomePost.gone()
             textViewFragmentHomeEmptyBarchart.visiable()
             textViewFragmentHomeEmptyRecyclerview.visiable()
-
         }
     }
 
@@ -369,7 +372,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun setWeatherAnimation(uiState: UiState) {
         binding.lottieAnimationViewFragmentHomeWeather.setAnimation(
-            uiState.toWeatherAnimation()
+            uiState.toWeatherAnimation(),
         )
         binding.textViewFragmentHomeTemperature.text = uiState.toTemperatureString()
         binding.textViewFragmentHomeWeatherState.text =
@@ -381,6 +384,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         private const val PERMISSION_REQUEST_ACCESS_LOCATION = 100
         private const val DEFAULT_LATITUE = 37.5751
         private const val DEFAULT_LONGITUE = 126.9772
-
     }
 }

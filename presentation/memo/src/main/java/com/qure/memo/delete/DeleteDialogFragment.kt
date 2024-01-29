@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DeleteDialogFragment(uuid: String) : DialogFragment() {
-
     private var _binding: FragmentDeleteDialogBinding? = null
     private val binding get() = _binding!!
 
@@ -36,15 +35,17 @@ class DeleteDialogFragment(uuid: String) : DialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View? {
-        _binding = DataBindingUtil.inflate(
-            LayoutInflater.from(context),
-            R.layout.fragment_delete_dialog,
-            container,
-            false
-        )
+        _binding =
+            DataBindingUtil.inflate(
+                LayoutInflater.from(context),
+                R.layout.fragment_delete_dialog,
+                container,
+                false,
+            )
         setCancelable(false)
         return binding.root
     }
@@ -58,7 +59,10 @@ class DeleteDialogFragment(uuid: String) : DialogFragment() {
         dialog?.window?.setLayout(width, height)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         initView()
         observe()
@@ -100,6 +104,7 @@ class DeleteDialogFragment(uuid: String) : DialogFragment() {
 
     companion object {
         const val TAG = "DeleteDialogFragment"
+
         fun newInstance(uuid: String): DeleteDialogFragment {
             return DeleteDialogFragment(uuid)
         }

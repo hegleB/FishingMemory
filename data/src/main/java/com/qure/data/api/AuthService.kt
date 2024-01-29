@@ -5,7 +5,6 @@ import com.qure.domain.entity.auth.SignUpFieldsEntity
 import retrofit2.http.*
 
 interface AuthService {
-
     @POST("/v1beta1/projects/{projectId}/databases/(default)/documents/auth")
     suspend fun postSignUp(
         @Path("projectId") projectId: String,

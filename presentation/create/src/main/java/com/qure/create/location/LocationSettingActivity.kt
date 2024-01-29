@@ -21,8 +21,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LocationSettingActivity :
     BaseActivity<ActivityLocationSettingBinding>(R.layout.activity_location_setting),
-    RegionPositionCallback, AreaNameCallback {
-
+    RegionPositionCallback,
+    AreaNameCallback {
     lateinit var listener: RegionPositionCallback
     lateinit var arealistener: AreaNameCallback
 
@@ -75,7 +75,7 @@ class LocationSettingActivity :
                 regionName = String.Empty,
                 listener = listener,
                 arealistener = arealistener,
-            )
+            ),
         )
     }
 
@@ -118,17 +118,19 @@ class LocationSettingActivity :
 
     private fun setButtonoPageTransition() {
         binding.apply {
-            viewPagerActivityLocationSetting.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    when (position) {
-                        0 -> setPreViousAndNextButton(position)
-                        1 -> setPreViousAndNextButton(position)
-                        else -> setPreViousAndNextButton(position)
+            viewPagerActivityLocationSetting.registerOnPageChangeCallback(
+                object :
+                    ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        when (position) {
+                            0 -> setPreViousAndNextButton(position)
+                            1 -> setPreViousAndNextButton(position)
+                            else -> setPreViousAndNextButton(position)
+                        }
                     }
-                }
-            })
+                },
+            )
         }
     }
 
@@ -137,8 +139,11 @@ class LocationSettingActivity :
             buttonActivityLocationSettingPrevious.visibility =
                 if (position == 0) View.INVISIBLE else View.VISIBLE
             buttonActivityLocationSettingNext.text =
-                if (position == 2) getString(R.string.location_setting_setting) else
+                if (position == 2) {
+                    getString(R.string.location_setting_setting)
+                } else {
                     getString(R.string.location_setting_next)
+                }
             setEnabledNetxtButton(position)
         }
     }
@@ -156,7 +161,6 @@ class LocationSettingActivity :
             }
         }
     }
-
 
     override fun setRegionPosition(postion: Int) {
         binding.buttonActivityLocationSettingNext.isEnabled = true
@@ -187,7 +191,11 @@ class LocationSettingActivity :
         }
     }
 
-    private fun setRefreshAdapter(regionArray: Array<String>, title: Int, subTitle: Int) {
+    private fun setRefreshAdapter(
+        regionArray: Array<String>,
+        title: Int,
+        subTitle: Int,
+    ) {
         adapter.refreshFragment(
             currentItemPosition + 1,
             LocationSettingFragment.newInstance(
@@ -197,11 +205,14 @@ class LocationSettingActivity :
                 regionName = selectedRegionName.joinToString(String.Spacing),
                 listener = listener,
                 arealistener = arealistener,
-            )
+            ),
         )
     }
 
-    override fun setAreaName(name: String, coords: String) {
+    override fun setAreaName(
+        name: String,
+        coords: String,
+    ) {
         this.areaName = name
         this.coords = coords
     }
@@ -209,5 +220,4 @@ class LocationSettingActivity :
     companion object {
         private const val PAGE_INCREMENT_VALUE = 1
     }
-
 }

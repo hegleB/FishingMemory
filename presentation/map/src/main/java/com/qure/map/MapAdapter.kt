@@ -22,11 +22,13 @@ class MapAdapter(
     private val onPhoneNumberClick: (phoneNumber: String) -> Unit,
 ) :
     ListAdapter<Any, RecyclerView.ViewHolder>(DIFF_UTIL) {
-
     private val VIEW_TYPE_MEMO = 1
     private val VIEW_TYPE_FISHING_SPOT = 2
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_MEMO -> {
                 val binding =
@@ -34,18 +36,22 @@ class MapAdapter(
                 MemoViewHolder(binding, onItemClick)
             }
             VIEW_TYPE_FISHING_SPOT -> {
-                val binding = ItemFishingSpotBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
+                val binding =
+                    ItemFishingSpotBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false,
+                    )
                 FishingSpotViewHolder(binding, onItemClick, onPhoneNumberClick)
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+    ) {
         val item = getItem(position)
         when (holder.itemViewType) {
             VIEW_TYPE_MEMO -> {
@@ -68,9 +74,10 @@ class MapAdapter(
             else -> throw IllegalArgumentException("Invalid item type")
         }
     }
+
     inner class MemoViewHolder(
         private val binding: ItemMemoListBinding,
-        private val onMemoClick: (item: MemoUI) -> Unit
+        private val onMemoClick: (item: MemoUI) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MemoUI) {
             val field = item
@@ -78,7 +85,6 @@ class MapAdapter(
             val radius = background.cornerRadius
             val roundedCorners = RoundedCorners(radius.toInt())
             binding.apply {
-
                 root.setOnSingleClickListener {
                     onMemoClick.invoke(item)
                 }
@@ -95,14 +101,12 @@ class MapAdapter(
         }
     }
 
-
     inner class FishingSpotViewHolder(
         private val binding: ItemFishingSpotBinding,
         private val onSpotClick: (item: FishingSpotUI) -> Unit,
         private val onPhoneNumberClick: (phoneNumber: String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FishingSpotUI) {
-
             val field = item
 
             binding.apply {
@@ -128,25 +132,34 @@ class MapAdapter(
     }
 
     companion object {
-        private val DIFF_UTIL = object : DiffUtil.ItemCallback<Any>() {
-            override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-                val diffOldItem = when (oldItem) {
-                    is MemoUI -> oldItem.name
-                    is FishingSpotUI -> oldItem.number
-                    else -> oldItem
+        private val DIFF_UTIL =
+            object : DiffUtil.ItemCallback<Any>() {
+                override fun areItemsTheSame(
+                    oldItem: Any,
+                    newItem: Any,
+                ): Boolean {
+                    val diffOldItem =
+                        when (oldItem) {
+                            is MemoUI -> oldItem.name
+                            is FishingSpotUI -> oldItem.number
+                            else -> oldItem
+                        }
+                    val diffNewItem =
+                        when (newItem) {
+                            is MemoUI -> newItem.name
+                            is FishingSpotUI -> newItem.number
+                            else -> newItem
+                        }
+                    return diffOldItem == diffNewItem
                 }
-                val diffNewItem = when (newItem) {
-                    is MemoUI -> newItem.name
-                    is FishingSpotUI -> newItem.number
-                    else -> newItem
-                }
-                return diffOldItem == diffNewItem
-            }
 
-            @SuppressLint("DiffUtilEquals")
-            override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-                return oldItem == newItem
+                @SuppressLint("DiffUtilEquals")
+                override fun areContentsTheSame(
+                    oldItem: Any,
+                    newItem: Any,
+                ): Boolean {
+                    return oldItem == newItem
+                }
             }
-        }
     }
 }

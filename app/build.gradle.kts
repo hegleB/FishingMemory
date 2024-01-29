@@ -95,7 +95,6 @@ android {
 val ktlint by configurations.creating
 val detekt by configurations.creating
 
-
 dependencies {
     ktlint(libs.ktlint) {
         attributes {
@@ -157,7 +156,7 @@ tasks.register<JavaExec>("ktlintFormat") {
     )
 }
 
-val detektTask  by tasks.registering(JavaExec::class) {
+val detektTask by tasks.registering(JavaExec::class) {
     classpath = detekt
 
     val input = projectDir

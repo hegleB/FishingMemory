@@ -13,12 +13,13 @@ import com.qure.core.util.setOnSingleClickListener
 import com.qure.home.databinding.ItemMemoBinding
 import com.qure.memo.model.MemoUI
 
-
 class MemoAdapter(
-    private val onMemoClick: (memo: MemoUI) -> Unit
+    private val onMemoClick: (memo: MemoUI) -> Unit,
 ) : ListAdapter<MemoUI, MemoAdapter.MemoViewHoler>(DIFF_UTIL) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHoler {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): MemoViewHoler {
         val view = ItemMemoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MemoViewHoler(
             binding = view,
@@ -26,7 +27,10 @@ class MemoAdapter(
         )
     }
 
-    override fun onBindViewHolder(holder: MemoViewHoler, position: Int) {
+    override fun onBindViewHolder(
+        holder: MemoViewHoler,
+        position: Int,
+    ) {
         holder.bind(getItem(position))
     }
 
@@ -36,7 +40,7 @@ class MemoAdapter(
 
     inner class MemoViewHoler(
         private val binding: ItemMemoBinding,
-        private val onMemoClick: (memo: MemoUI) -> Unit
+        private val onMemoClick: (memo: MemoUI) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MemoUI) {
             val field = item
@@ -63,14 +67,21 @@ class MemoAdapter(
     }
 
     companion object {
-        private val DIFF_UTIL = object : DiffUtil.ItemCallback<MemoUI>() {
-            override fun areItemsTheSame(oldItem: MemoUI, newItem: MemoUI): Boolean {
-                return oldItem.name == newItem.name
-            }
+        private val DIFF_UTIL =
+            object : DiffUtil.ItemCallback<MemoUI>() {
+                override fun areItemsTheSame(
+                    oldItem: MemoUI,
+                    newItem: MemoUI,
+                ): Boolean {
+                    return oldItem.name == newItem.name
+                }
 
-            override fun areContentsTheSame(oldItem: MemoUI, newItem: MemoUI): Boolean {
-                return oldItem == newItem
+                override fun areContentsTheSame(
+                    oldItem: MemoUI,
+                    newItem: MemoUI,
+                ): Boolean {
+                    return oldItem == newItem
+                }
             }
-        }
     }
 }

@@ -19,9 +19,8 @@ import java.time.LocalDate
 
 class DayBind(
     private val calendarView: CalendarView,
-    private val memos: List<MemoUI> = emptyList()
+    private val memos: List<MemoUI> = emptyList(),
 ) : MonthDayBinder<DayBind.DayContainer> {
-
     private val today = LocalDate.now()
     private var calendar: LocalDate? = null
 
@@ -33,7 +32,10 @@ class DayBind(
         this.calendarView.notifyCalendarChanged()
     }
 
-    override fun bind(container: DayContainer, data: CalendarDay) {
+    override fun bind(
+        container: DayContainer,
+        data: CalendarDay,
+    ) {
         val context = container.binding.root.context
         val textView = container.binding.textViewDay
         val roundBackgroundView = container.binding.viewRound
@@ -50,9 +52,10 @@ class DayBind(
         textView.text = data.date.dayOfMonth.toString()
 
         if (memos.isNotEmpty()) {
-            val hasMemo = memos.any {
-                it.date == data.date.toString().split(String.Dash).joinToString(String.Slash)
-            }
+            val hasMemo =
+                memos.any {
+                    it.date == data.date.toString().split(String.Dash).joinToString(String.Slash)
+                }
             dot.visibility = if (hasMemo) View.VISIBLE else View.INVISIBLE
         }
 
@@ -71,7 +74,6 @@ class DayBind(
                     textView.setTextColor(context.getColorCompat(R.color.text_day_color))
                 }
             }
-
         } else {
             textView.setTextColor(context.getColorCompat(com.qure.core_design.R.color.gray_300))
         }

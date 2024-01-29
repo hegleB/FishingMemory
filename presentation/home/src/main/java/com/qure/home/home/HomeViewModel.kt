@@ -25,111 +25,116 @@ import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val getWeatherUseCase: GetWeatherUseCase,
-    private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
-    private val authRepository: AuthRepository,
-) : BaseViewModel() {
-    private val _UiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
-    val UiState: StateFlow<UiState>
-        get() = _UiState
+class HomeViewModel
+    @Inject
+    constructor(
+        private val getWeatherUseCase: GetWeatherUseCase,
+        private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
+        private val authRepository: AuthRepository,
+    ) : BaseViewModel() {
+        private val _UiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
+        val UiState: StateFlow<UiState>
+            get() = _UiState
 
-    private val _checkedId: MutableStateFlow<Int> = MutableStateFlow(-1)
-    val checkedId: StateFlow<Int>
-        get() = _checkedId
-    fun fetchWeater(latXLngY: LatXLngY) {
-        viewModelScope.launch {
-            getWeatherUseCase(
-                base_date = getBaseDate(),
-                base_time = getBaseTime(),
-                nx = latXLngY.nx.toInt().toString(),
-                ny = latXLngY.ny.toInt().toString(),
-            ).collect { response ->
-                response.onSuccess { weather ->
-                    if (weather.response.body != null) {
+        private val _checkedId: MutableStateFlow<Int> = MutableStateFlow(-1)
+        val checkedId: StateFlow<Int>
+            get() = _checkedId
+
+        fun fetchWeater(latXLngY: LatXLngY) {
+            viewModelScope.launch {
+                getWeatherUseCase(
+                    base_date = getBaseDate(),
+                    base_time = getBaseTime(),
+                    nx = latXLngY.nx.toInt().toString(),
+                    ny = latXLngY.ny.toInt().toString(),
+                ).collect { response ->
+                    response.onSuccess { weather ->
+                        if (weather.response.body != null) {
+                            _UiState.update {
+                                it.copy(
+                                    weatherUI = weather.response.body.items.item.map { it.toWeatherUI() },
+                                    isWeatherInitialized = true,
+                                    latXLngY = latXLngY,
+                                )
+                            }
+                        }
+                    }.onFailure {
+                        sendErrorMessage(it.message)
+                    }
+                }
+            }
+        }
+
+        fun getFilteredMemo() {
+            viewModelScope.launch {
+                getFilteredMemoUseCase(
+                    getStructuredQuery(),
+                ).collect { response ->
+                    response.onSuccess { result ->
                         _UiState.update {
                             it.copy(
-                                weatherUI = weather.response.body.items.item.map { it.toWeatherUI() },
-                                isWeatherInitialized = true,
-                                latXLngY = latXLngY
+                                isFilterInitialized = true,
+                                filteredMemo = result.map { it.toMemoUI() },
                             )
                         }
+                    }.onFailure { throwable ->
+                        sendErrorMessage(throwable)
                     }
-                }.onFailure {
-                    sendErrorMessage(it.message)
                 }
             }
         }
-    }
 
-    fun getFilteredMemo() {
-        viewModelScope.launch {
-            getFilteredMemoUseCase(
-                getStructuredQuery()
-            ).collect { response ->
-                response.onSuccess { result ->
-                    _UiState.update {
-                        it.copy(
-                            isFilterInitialized = true,
-                            filteredMemo = result.map { it.toMemoUI() }
-                        )
-                    }
-                }.onFailure { throwable ->
-                    sendErrorMessage(throwable)
-                }
+        fun setCheckedId(checkedId: Int) {
+            _UiState.update {
+                it.copy(
+                    checkedId = checkedId,
+                )
             }
         }
-    }
 
-    fun setCheckedId(checkedId: Int) {
-        _UiState.update {
-            it.copy(
-                checkedId = checkedId
+        private fun getStructuredQuery(): MemoQuery {
+            val emailFilter =
+                FieldFilter(
+                    field = FieldPath(EMAIL),
+                    op = EQUAL,
+                    value = Value(authRepository.getEmailFromLocal()),
+                )
+
+            val compositeFilter =
+                CompositeFilter(
+                    op = AND,
+                    filters = listOf(Filter(emailFilter)),
+                )
+
+            return MemoQuery(
+                StructuredQuery(
+                    from = listOf(CollectionId(COLLECTION_ID)),
+                    where = Where(compositeFilter),
+                    orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING)),
+                ),
             )
         }
+
+        private fun getBaseTime(): String {
+            val baseTime = "${(LocalTime.now().hour - 1).twoDigitsFormat()}30"
+            return baseTime
+        }
+
+        private fun getBaseDate(): Int {
+            val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+            val baseDate = LocalDate.now().format(formatter).toInt()
+            return baseDate
+        }
+
+        companion object {
+            private const val EMAIL = "email"
+            private const val DATE = "date"
+            private const val DESCENDING = "DESCENDING"
+            private const val EQUAL = "EQUAL"
+            private const val AND = "AND"
+            private const val COLLECTION_ID = "memo"
+        }
     }
-
-    private fun getStructuredQuery(): MemoQuery {
-        val emailFilter = FieldFilter(
-            field = FieldPath(EMAIL),
-            op = EQUAL,
-            value = Value(authRepository.getEmailFromLocal())
-        )
-
-        val compositeFilter = CompositeFilter(
-            op = AND,
-            filters = listOf(Filter(emailFilter))
-        )
-
-        return MemoQuery(
-            StructuredQuery(
-                from = listOf(CollectionId(COLLECTION_ID)),
-                where = Where(compositeFilter),
-                orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING))
-            )
-        )
-    }
-
-    private fun getBaseTime(): String {
-        val baseTime = "${(LocalTime.now().hour - 1).twoDigitsFormat()}30"
-        return baseTime
-    }
-
-    private fun getBaseDate(): Int {
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-        val baseDate = LocalDate.now().format(formatter).toInt()
-        return baseDate
-    }
-
-    companion object {
-        private const val EMAIL = "email"
-        private const val DATE = "date"
-        private const val DESCENDING = "DESCENDING"
-        private const val EQUAL = "EQUAL"
-        private const val AND = "AND"
-        private const val COLLECTION_ID = "memo"
-    }
-}
 
 data class UiState(
     val weatherUI: List<WeatherUI>? = null,
@@ -137,12 +142,12 @@ data class UiState(
     val isFilterInitialized: Boolean = false,
     val filteredMemo: List<MemoUI> = emptyList(),
     val checkedId: Int = -1,
-    val latXLngY: LatXLngY = LatXLngY(
-        String.DefaultLatitude.toDouble(),
-        String.DefaultLongitude.toDouble()
-    )
+    val latXLngY: LatXLngY =
+        LatXLngY(
+            String.DefaultLatitude.toDouble(),
+            String.DefaultLongitude.toDouble(),
+        ),
 ) {
-
     fun toTemperatureString(): String {
         return "${getTemperatureState().checkedWeather}°"
     }

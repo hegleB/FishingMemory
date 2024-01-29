@@ -8,21 +8,25 @@ import okhttp3.RequestBody
 import java.io.File
 import javax.inject.Inject
 
-class MemoStorageRemoteDataSourceImpl @Inject constructor(
-    private val storageService: StorageService,
-) : MemoStorageRemoteDataSource {
-    override suspend fun postMemoStorage(image: File): Result<MemoStorageEntity> {
-        val profileImage: RequestBody = RequestBody.create(
-            "image/jpg".toMediaTypeOrNull(),
-            image
-        )
+class MemoStorageRemoteDataSourceImpl
+    @Inject
+    constructor(
+        private val storageService: StorageService,
+    ) : MemoStorageRemoteDataSource {
+        override suspend fun postMemoStorage(image: File): Result<MemoStorageEntity> {
+            val profileImage: RequestBody =
+                RequestBody.create(
+                    "image/jpg".toMediaTypeOrNull(),
+                    image,
+                )
 
-        val profileImageBody: MultipartBody.Part =
-            MultipartBody.Part.createFormData(
-                "file",
-                image.name, profileImage
-            )
+            val profileImageBody: MultipartBody.Part =
+                MultipartBody.Part.createFormData(
+                    "file",
+                    image.name,
+                    profileImage,
+                )
 
-        return storageService.postMemoImage(image.name, profileImageBody)
+            return storageService.postMemoImage(image.name, profileImageBody)
+        }
     }
-}

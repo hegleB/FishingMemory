@@ -9,7 +9,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class MapModule {
-
     @Binds
     abstract fun bindMapNavigator(navigator: MapNavigatorImpl): MapNavigator
 }

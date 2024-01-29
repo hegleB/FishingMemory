@@ -7,6 +7,6 @@ interface WeatherRemoteDataSource {
         base_date: Int,
         base_time: String,
         nx: String,
-        ny: String
+        ny: String,
     ): Result<WeatherEntity>
 }

@@ -15,12 +15,10 @@ import com.qure.memo.detail.DetailMemoActivity
 import com.qure.mypage.MyPageFragment
 import com.qure.navigator.DetailMemoNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
-
     @Inject
     lateinit var detaiMemoNavigator: DetailMemoNavigator
 
@@ -33,9 +31,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
             val uri = intent.data ?: Uri.EMPTY
             if (uri != null) {
                 val memo = DetailMemoActivity().createMemoUI(uri)
-                val detailMemoIntent = detaiMemoNavigator.intent(this).apply {
-                    putExtra(MEMO_DATA, memo)
-                }
+                val detailMemoIntent =
+                    detaiMemoNavigator.intent(this).apply {
+                        putExtra(MEMO_DATA, memo)
+                    }
                 startActivity(detailMemoIntent)
             }
         }

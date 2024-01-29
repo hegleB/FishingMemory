@@ -7,13 +7,14 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-) : BaseViewModel() {
-    private val _fragment :MutableStateFlow<Int> = MutableStateFlow(0)
-    val fragment : StateFlow<Int>
-        get() = _fragment
+class MainViewModel
+    @Inject
+    constructor() : BaseViewModel() {
+        private val _fragment: MutableStateFlow<Int> = MutableStateFlow(0)
+        val fragment: StateFlow<Int>
+            get() = _fragment
 
-    fun setCurrentFragment(currentFragment: Int) {
-        _fragment.value = currentFragment
+        fun setCurrentFragment(currentFragment: Int) {
+            _fragment.value = currentFragment
+        }
     }
-}

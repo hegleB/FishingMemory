@@ -39,7 +39,7 @@ fun MemoQueryEntity.toMemo(): Memo {
 
 fun MemoFields.toMemoFieldsEntity(): MemoFieldsEntity {
     return MemoFieldsEntity(
-        fields = this
+        fields = this,
     )
 }
 

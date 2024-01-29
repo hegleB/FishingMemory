@@ -23,8 +23,8 @@ data class MemoUI(
     val fishSize: String = String.Empty,
     val content: String = String.Empty,
     val createTime: String? = System.currentTimeMillis().toString(),
-    val coords: String = String.Empty
-): Parcelable
+    val coords: String = String.Empty,
+) : Parcelable
 
 fun MemoUI.toTedClusterItem(): TedClusterItem {
     val (lng, lat) = this.coords.split(String.Comma).map { it.toDouble() }

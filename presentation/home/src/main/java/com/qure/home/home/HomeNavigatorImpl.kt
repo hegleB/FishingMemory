@@ -6,8 +6,10 @@ import com.qure.home.MainActivity
 import com.qure.navigator.HomeNavigator
 import javax.inject.Inject
 
-class HomeNavigatorImpl @Inject constructor() : HomeNavigator {
-    override fun intent(context: Context): Intent {
-        return Intent(context, MainActivity::class.java)
+class HomeNavigatorImpl
+    @Inject
+    constructor() : HomeNavigator {
+        override fun intent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java)
+        }
     }
-}

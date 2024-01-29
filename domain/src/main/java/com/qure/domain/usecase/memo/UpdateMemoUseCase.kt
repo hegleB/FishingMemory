@@ -6,10 +6,12 @@ import com.qure.domain.repository.MemoRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class UpdateMemoUseCase @Inject constructor(
-    private val memoRepository: MemoRepository,
-) {
-    operator fun invoke(memoFields: MemoFields): Flow<Result<Document>> {
-        return memoRepository.getUpdatedMemo(memoFields)
+class UpdateMemoUseCase
+    @Inject
+    constructor(
+        private val memoRepository: MemoRepository,
+    ) {
+        operator fun invoke(memoFields: MemoFields): Flow<Result<Document>> {
+            return memoRepository.getUpdatedMemo(memoFields)
+        }
     }
-}

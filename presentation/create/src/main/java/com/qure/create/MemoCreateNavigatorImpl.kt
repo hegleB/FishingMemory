@@ -5,9 +5,10 @@ import android.content.Intent
 import com.qure.navigator.MemoCreateNavigator
 import javax.inject.Inject
 
-class MemoCreateNavigatorImpl @Inject constructor() : MemoCreateNavigator {
-
-    override fun intent(context: Context): Intent {
-        return Intent(context, MemoCreateActivity::class.java)
+class MemoCreateNavigatorImpl
+    @Inject
+    constructor() : MemoCreateNavigator {
+        override fun intent(context: Context): Intent {
+            return Intent(context, MemoCreateActivity::class.java)
+        }
     }
-}

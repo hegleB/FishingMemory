@@ -5,9 +5,8 @@ import android.view.View
 
 class OnSingleClickListener(
     private val interval: Int,
-    private val onSingleClick: (View) -> Unit
+    private val onSingleClick: (View) -> Unit,
 ) : View.OnClickListener {
-
     private var lastClickedTime: Long = 0L
 
     override fun onClick(v: View) {
@@ -22,7 +21,7 @@ class OnSingleClickListener(
 
 fun View.setOnSingleClickListener(
     interval: Int = 200,
-    onClick: (View) -> Unit = {}
+    onClick: (View) -> Unit = {},
 ) {
     setOnClickListener(OnSingleClickListener(interval, onClick))
 }

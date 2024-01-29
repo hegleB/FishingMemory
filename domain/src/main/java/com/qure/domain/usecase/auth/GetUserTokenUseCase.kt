@@ -5,8 +5,10 @@ import com.qure.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetUserTokenUseCase @Inject constructor(
-    private val authRepository: AuthRepository
-) {
-    operator fun invoke(email: String): Flow<Result<SignUpUser>> = authRepository.getSignedUpUser(email)
-}
+class GetUserTokenUseCase
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository,
+    ) {
+        operator fun invoke(email: String): Flow<Result<SignUpUser>> = authRepository.getSignedUpUser(email)
+    }

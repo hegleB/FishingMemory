@@ -26,10 +26,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_page) {
-
     @Inject
     lateinit var authRepository: AuthRepository
 
@@ -44,7 +42,10 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
     private val viewModel by viewModels<MyPageViewModel>()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
@@ -141,11 +142,10 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
                 }
             }
         }
-
     }
 
     private fun withdrawService() {
-        UserApiClient.instance.unlink {throwable ->
+        UserApiClient.instance.unlink { throwable ->
             if (throwable != null) {
                 FishingMemoryToast().error(requireContext(), throwable.message)
             } else {

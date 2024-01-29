@@ -7,7 +7,6 @@ import com.qure.domain.entity.memo.*
 import retrofit2.http.*
 
 interface MemoService {
-
     @POST("/v1beta1/projects/{projectId}/databases/(default)/documents/memo")
     suspend fun postMemo(
         @Path("projectId") projectId: String,

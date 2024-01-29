@@ -20,7 +20,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login) {
-
     @Inject
     lateinit var homeNavigator: HomeNavigator
 
@@ -44,7 +43,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                             user.kakaoAccount?.email?.let { email ->
                                 viewModel.createUser(
                                     email = email,
-                                    accessToken = oAuthToken.accessToken
+                                    accessToken = oAuthToken.accessToken,
                                 )
                             }
                         }
@@ -53,12 +52,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
                     if (throwable is ClientError && throwable.reason == ClientErrorCause.Cancelled) {
                         FishingMemoryToast().error(
                             this@LoginActivity,
-                            getString(R.string.message_kakao_cancellation_requested_User)
+                            getString(R.string.message_kakao_cancellation_requested_User),
                         )
                     } else {
                         FishingMemoryToast().error(
                             this@LoginActivity,
-                            getString(R.string.message_kakao_login_failure)
+                            getString(R.string.message_kakao_login_failure),
                         )
                     }
                 }
@@ -76,14 +75,15 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>(R.layout.activity_login
             }.launchIn(lifecycleScope)
 
         viewModel.action.onEach { action ->
-            val intent = when (action) {
-                LoginViewModel.Action.AlreadySignUp -> {
-                    homeNavigator.intent(this)
+            val intent =
+                when (action) {
+                    LoginViewModel.Action.AlreadySignUp -> {
+                        homeNavigator.intent(this)
+                    }
+                    LoginViewModel.Action.FirstSignUp -> {
+                        homeNavigator.intent(this)
+                    }
                 }
-                LoginViewModel.Action.FirstSignUp -> {
-                    homeNavigator.intent(this)
-                }
-            }
             startActivity(intent)
             finish()
         }.launchIn(lifecycleScope)

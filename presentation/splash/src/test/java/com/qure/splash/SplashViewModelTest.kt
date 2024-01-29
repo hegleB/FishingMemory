@@ -15,10 +15,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-
 @ExperimentalCoroutinesApi
 class SplashViewModelTest {
-
     @get:Rule
     val croutineTestRule = CoroutinesTestRule()
 
@@ -33,52 +31,56 @@ class SplashViewModelTest {
     }
 
     @Test
-    fun `카카오로그인 시 해당 아이디가 가입되어 있지 않다`() = runTest {
-        // Given
-        coEvery { authRepository.getAccessTokenFromLocal() } returns String.Empty
+    fun `카카오로그인 시 해당 아이디가 가입되어 있지 않다`() =
+        runTest {
+            // Given
+            coEvery { authRepository.getAccessTokenFromLocal() } returns String.Empty
 
-        // When
-        val isSignUp = splashViewModel.isSignedUp()
+            // When
+            val isSignUp = splashViewModel.isSignedUp()
 
-        // Then
-        assertThat(isSignUp).isFalse()
-    }
-
-    @Test
-    fun `카카오로그인 시 해당 아이디가 가입되어 있다`() = runTest {
-        // Given
-        coEvery { authRepository.getAccessTokenFromLocal() } returns "123"
-
-        // When
-        val isSignUp = splashViewModel.isSignedUp()
-
-        // Then
-        assertThat(isSignUp).isTrue()
-    }
+            // Then
+            assertThat(isSignUp).isFalse()
+        }
 
     @Test
-    fun `로그인 시 해당 아이디는 처음 방문한 유저이다`() = runTest {
-        // Given
-        coEvery { readOnboardingUseCase(OnboardingType.AFTER_SPLASH) } returns null
+    fun `카카오로그인 시 해당 아이디가 가입되어 있다`() =
+        runTest {
+            // Given
+            coEvery { authRepository.getAccessTokenFromLocal() } returns "123"
 
-        // When
-        splashViewModel.checkFirstVisitor()
-        advanceUntilIdle()
+            // When
+            val isSignUp = splashViewModel.isSignedUp()
 
-        // Then
-        assertThat(splashViewModel.isFirstVisitor.value).isTrue()
-    }
+            // Then
+            assertThat(isSignUp).isTrue()
+        }
 
     @Test
-    fun `로그인 시 해당 아이디는 처음 방문한 유저가 아니다`() = runTest {
-        // Given
-        coEvery { readOnboardingUseCase(OnboardingType.AFTER_SPLASH) } returns "user"
+    fun `로그인 시 해당 아이디는 처음 방문한 유저이다`() =
+        runTest {
+            // Given
+            coEvery { readOnboardingUseCase(OnboardingType.AFTER_SPLASH) } returns null
 
-        // When
-        splashViewModel.checkFirstVisitor()
-        advanceUntilIdle()
+            // When
+            splashViewModel.checkFirstVisitor()
+            advanceUntilIdle()
 
-        // Then
-        assertThat(splashViewModel.isFirstVisitor.value).isFalse()
-    }
+            // Then
+            assertThat(splashViewModel.isFirstVisitor.value).isTrue()
+        }
+
+    @Test
+    fun `로그인 시 해당 아이디는 처음 방문한 유저가 아니다`() =
+        runTest {
+            // Given
+            coEvery { readOnboardingUseCase(OnboardingType.AFTER_SPLASH) } returns "user"
+
+            // When
+            splashViewModel.checkFirstVisitor()
+            advanceUntilIdle()
+
+            // Then
+            assertThat(splashViewModel.isFirstVisitor.value).isFalse()
+        }
 }

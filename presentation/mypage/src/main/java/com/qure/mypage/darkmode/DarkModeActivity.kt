@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DarkModeActivity : BaseActivity<ActivityDarkModeBinding>(R.layout.activity_dark_mode) {
-
     private val viewModel by viewModels<DarkModeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +28,6 @@ class DarkModeActivity : BaseActivity<ActivityDarkModeBinding>(R.layout.activity
     }
 
     private fun initView() {
-
         binding.imageViewActivityDarkModeBack.setOnSingleClickListener {
             finish()
         }

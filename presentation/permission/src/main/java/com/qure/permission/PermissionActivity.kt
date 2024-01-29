@@ -13,10 +13,8 @@ import com.qure.permission.databinding.ActivityPermissionBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class PermissionActivity : BaseActivity<ActivityPermissionBinding>(R.layout.activity_permission) {
-
     @Inject
     lateinit var loginNavigator: LoginNavigator
 
@@ -37,20 +35,20 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>(R.layout.acti
             this,
             arrayOf(
                 android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
             ),
-            PERMISSION_REQUEST_ACCESS_LOCATION
+            PERMISSION_REQUEST_ACCESS_LOCATION,
         )
     }
 
     private fun checkPermission(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
             ) == PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
                 this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             return true

@@ -9,7 +9,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class MemoCreateModule {
-
     @Binds
     abstract fun bindMemoCreateNavigator(navigator: MemoCreateNavigatorImpl): MemoCreateNavigator
 }

@@ -14,25 +14,30 @@ class BookmarkAdatper(
     private val onItemClick: (item: FishingSpotUI) -> Unit,
     private val onPhoneNumberClick: (phoneNumber: String) -> Unit,
 ) : ListAdapter<FishingSpotUI, RecyclerView.ViewHolder>(DIFF_UTIL) {
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): RecyclerView.ViewHolder {
         val binding =
             ItemBookmarkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FishingSpotViewHolder(binding, onItemClick, onPhoneNumberClick)
     }
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+    ) {
         val item = getItem(position)
         val spotItem = item as FishingSpotUI
         (holder as FishingSpotViewHolder).bind(spotItem)
     }
+
     inner class FishingSpotViewHolder(
         private val binding: ItemBookmarkBinding,
         private val onSpotClick: (item: FishingSpotUI) -> Unit,
         private val onPhoneNumberClick: (phoneNumber: String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FishingSpotUI) {
-
             val field = item
 
             binding.apply {
@@ -56,21 +61,23 @@ class BookmarkAdatper(
             }
         }
     }
-    companion object {
-        private val DIFF_UTIL = object : DiffUtil.ItemCallback<FishingSpotUI>() {
-            override fun areItemsTheSame(
-                oldItem: FishingSpotUI,
-                newItem: FishingSpotUI
-            ): Boolean {
-                return oldItem.number == newItem.number
-            }
 
-            override fun areContentsTheSame(
-                oldItem: FishingSpotUI,
-                newItem: FishingSpotUI
-            ): Boolean {
-                return oldItem == newItem
+    companion object {
+        private val DIFF_UTIL =
+            object : DiffUtil.ItemCallback<FishingSpotUI>() {
+                override fun areItemsTheSame(
+                    oldItem: FishingSpotUI,
+                    newItem: FishingSpotUI,
+                ): Boolean {
+                    return oldItem.number == newItem.number
+                }
+
+                override fun areContentsTheSame(
+                    oldItem: FishingSpotUI,
+                    newItem: FishingSpotUI,
+                ): Boolean {
+                    return oldItem == newItem
+                }
             }
-        }
     }
 }

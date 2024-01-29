@@ -11,7 +11,10 @@ class LocationSettingPagerAdapter(
     FragmentStateAdapter(fragmentActivity) {
     override fun getItemCount(): Int = 3
 
-    fun refreshFragment(index: Int, fragment: Fragment) {
+    fun refreshFragment(
+        index: Int,
+        fragment: Fragment,
+    ) {
         fragments[index] = fragment
         notifyItemChanged(index)
     }

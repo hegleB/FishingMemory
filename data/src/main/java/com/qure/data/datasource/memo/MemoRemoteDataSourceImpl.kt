@@ -11,37 +11,39 @@ import com.qure.domain.entity.memo.MemoFieldsEntity
 import com.qure.domain.entity.memo.MemoQuery
 import javax.inject.Inject
 
-class MemoRemoteDataSourceImpl @Inject constructor(
-    private val memoService: MemoService,
-    private val buildPropertyRepository: BuildPropertyRepository,
-) : MemoRemoteDataSource {
-    override suspend fun postMemo(memoFields: MemoFields): Result<MemoEntity> {
-        return memoService.postMemo(
-            buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
-            memoFields.uuid.stringValue,
-            MemoFieldsEntity(memoFields)
-        )
-    }
+class MemoRemoteDataSourceImpl
+    @Inject
+    constructor(
+        private val memoService: MemoService,
+        private val buildPropertyRepository: BuildPropertyRepository,
+    ) : MemoRemoteDataSource {
+        override suspend fun postMemo(memoFields: MemoFields): Result<MemoEntity> {
+            return memoService.postMemo(
+                buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
+                memoFields.uuid.stringValue,
+                MemoFieldsEntity(memoFields),
+            )
+        }
 
-    override suspend fun postMemoQuery(memoQuery: MemoQuery): Result<List<MemoQueryEntity>> {
-        return memoService.postMemoFiltering(
-            buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
-            memoQuery
-        )
-    }
+        override suspend fun postMemoQuery(memoQuery: MemoQuery): Result<List<MemoQueryEntity>> {
+            return memoService.postMemoFiltering(
+                buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
+                memoQuery,
+            )
+        }
 
-    override suspend fun deleteMemo(uuid: String): Result<Unit> {
-        return memoService.deleteMemo(
-            buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
-            uuid
-        )
-    }
+        override suspend fun deleteMemo(uuid: String): Result<Unit> {
+            return memoService.deleteMemo(
+                buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
+                uuid,
+            )
+        }
 
-    override suspend fun updateMemo(memoFields: MemoFields): Result<UpdatedMemoEntity> {
-        return memoService.updateMemo(
-            buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
-            memoFields.uuid.stringValue,
-            MemoFieldsEntity(memoFields),
-        )
+        override suspend fun updateMemo(memoFields: MemoFields): Result<UpdatedMemoEntity> {
+            return memoService.updateMemo(
+                buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
+                memoFields.uuid.stringValue,
+                MemoFieldsEntity(memoFields),
+            )
+        }
     }
-}

@@ -2,15 +2,14 @@ package com.qure.core.extensions
 
 import android.content.res.Configuration
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDelegate
 import com.simform.refresh.SSPullToRefreshLayout
 
 fun SSPullToRefreshLayout.initSwipeRefreshLayout() {
     setRefreshViewParams(
         ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            120
-        )
+            120,
+        ),
     )
     val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
     if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {

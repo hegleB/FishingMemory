@@ -9,11 +9,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor(
-    private val writeOnboardingUseCase: WriteOnboardingUseCase,
-): BaseViewModel() {
-
-    fun writeFirstVisitor() = viewModelScope.launch {
-        writeOnboardingUseCase(OnboardingType.AFTER_SPLASH)
+class OnboardingViewModel
+    @Inject
+    constructor(
+        private val writeOnboardingUseCase: WriteOnboardingUseCase,
+    ) : BaseViewModel() {
+        fun writeFirstVisitor() =
+            viewModelScope.launch {
+                writeOnboardingUseCase(OnboardingType.AFTER_SPLASH)
+            }
     }
-}

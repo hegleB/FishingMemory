@@ -5,7 +5,6 @@ import com.qure.data.entity.fishingspot.FishingSpotBookmarkEntity
 
 @Dao
 interface FishingSpotDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
 

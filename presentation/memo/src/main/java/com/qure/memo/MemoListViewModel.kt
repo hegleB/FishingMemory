@@ -15,64 +15,68 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MemoListViewModel @Inject constructor(
-    private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
-    private val authRepository: AuthRepository,
-) : BaseViewModel() {
+class MemoListViewModel
+    @Inject
+    constructor(
+        private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
+        private val authRepository: AuthRepository,
+    ) : BaseViewModel() {
+        private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
+        val uiState: StateFlow<UiState>
+            get() = _uiState
 
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState>
-        get() = _uiState
-    fun getFilteredMemo() {
-        viewModelScope.launch {
-            getFilteredMemoUseCase(
-                getStructuredQuery()
-            ).collect { response ->
-                response.onSuccess { result ->
-                    val memoUI = result.map { it.toMemoUI() }
-                    _uiState.update {
-                        it.copy(
-                            isFilterInitialized = true,
-                            filteredMemo = memoUI
-                        )
+        fun getFilteredMemo() {
+            viewModelScope.launch {
+                getFilteredMemoUseCase(
+                    getStructuredQuery(),
+                ).collect { response ->
+                    response.onSuccess { result ->
+                        val memoUI = result.map { it.toMemoUI() }
+                        _uiState.update {
+                            it.copy(
+                                isFilterInitialized = true,
+                                filteredMemo = memoUI,
+                            )
+                        }
+                    }.onFailure { throwable ->
+                        sendErrorMessage(throwable)
                     }
-                }.onFailure { throwable ->
-                    sendErrorMessage(throwable)
                 }
             }
         }
-    }
 
-    private fun getStructuredQuery(): MemoQuery {
-        val emailFilter = FieldFilter(
-            field = FieldPath(EMAIL),
-            op = EQUAL,
-            value = Value(authRepository.getEmailFromLocal())
-        )
+        private fun getStructuredQuery(): MemoQuery {
+            val emailFilter =
+                FieldFilter(
+                    field = FieldPath(EMAIL),
+                    op = EQUAL,
+                    value = Value(authRepository.getEmailFromLocal()),
+                )
 
-        val compositeFilter = CompositeFilter(
-            op = AND,
-            filters = listOf(Filter(emailFilter))
-        )
+            val compositeFilter =
+                CompositeFilter(
+                    op = AND,
+                    filters = listOf(Filter(emailFilter)),
+                )
 
-        return MemoQuery(
-            StructuredQuery(
-                from = listOf(CollectionId(COLLECTION_ID)),
-                where = Where(compositeFilter),
-                orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING))
+            return MemoQuery(
+                StructuredQuery(
+                    from = listOf(CollectionId(COLLECTION_ID)),
+                    where = Where(compositeFilter),
+                    orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING)),
+                ),
             )
-        )
-    }
+        }
 
-    companion object {
-        const val EMAIL = "email"
-        const val DATE = "date"
-        const val DESCENDING = "DESCENDING"
-        const val EQUAL = "EQUAL"
-        const val AND = "AND"
-        const val COLLECTION_ID = "memo"
+        companion object {
+            const val EMAIL = "email"
+            const val DATE = "date"
+            const val DESCENDING = "DESCENDING"
+            const val EQUAL = "EQUAL"
+            const val AND = "AND"
+            const val COLLECTION_ID = "memo"
+        }
     }
-}
 
 data class UiState(
     val isFilterInitialized: Boolean = false,

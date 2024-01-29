@@ -6,10 +6,12 @@ import com.qure.domain.repository.FishingSpotRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetFishingSpotUseCase @Inject constructor(
-    private val fishingSpotRepository: FishingSpotRepository,
-) {
-    operator fun invoke(fishingSpotQuery: FishingSpotQuery): Flow<Result<List<FishingSpot>>> {
-        return fishingSpotRepository.getFishingSpot(fishingSpotQuery)
+class GetFishingSpotUseCase
+    @Inject
+    constructor(
+        private val fishingSpotRepository: FishingSpotRepository,
+    ) {
+        operator fun invoke(fishingSpotQuery: FishingSpotQuery): Flow<Result<List<FishingSpot>>> {
+            return fishingSpotRepository.getFishingSpot(fishingSpotQuery)
+        }
     }
-}

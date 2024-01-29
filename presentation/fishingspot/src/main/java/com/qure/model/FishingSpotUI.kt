@@ -5,7 +5,6 @@ import com.qure.core.extensions.Empty
 import com.qure.domain.entity.fishingspot.FishingSpot
 import com.qure.domain.entity.fishingspot.FishingSpotBookmark
 import kotlinx.android.parcel.Parcelize
-
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.geometry.TedLatLng
 
@@ -23,7 +22,7 @@ data class FishingSpotUI(
     val fishing_spot_name: String = String.Empty,
     val fee: String = String.Empty,
     val phone_number: String = String.Empty,
-): Parcelable
+) : Parcelable
 
 fun FishingSpotUI.toTedClusterItem(): TedClusterItem {
     val lat = this.latitude
@@ -48,7 +47,7 @@ fun FishingSpotUI.toFishingSpotBookmark(): FishingSpotBookmark {
         road_address = road_address,
         longitude = longitude,
         phone_number = phone_number,
-        fee = fee
+        fee = fee,
     )
 }
 
@@ -65,10 +64,9 @@ fun FishingSpotBookmark.toFishingSpotUI(): FishingSpotUI {
         road_address = this.road_address,
         longitude = this.longitude,
         phone_number = this.phone_number,
-        fee = this.fee
+        fee = this.fee,
     )
 }
-
 
 fun FishingSpot.toFishingSpotUI(): FishingSpotUI {
     val data = this.document.fields

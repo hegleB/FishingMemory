@@ -18,7 +18,6 @@ import java.time.LocalDate
 
 @AndroidEntryPoint
 class YearPickerDialogFragment : DialogFragment() {
-
     private var _binding: DialogYearPickerBinding? = null
     private val binding get() = _binding!!
     private var year: Int = LocalDate.now().year
@@ -36,7 +35,10 @@ class YearPickerDialogFragment : DialogFragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
@@ -86,7 +88,7 @@ class YearPickerDialogFragment : DialogFragment() {
             requireNotNull(window).apply {
                 setLayout(
                     (resources.displayMetrics.widthPixels * 0.78).toInt(),
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
                 )
                 setBackgroundDrawableResource(com.qure.core_design.R.drawable.bg_rect_gray100_r10)
             }

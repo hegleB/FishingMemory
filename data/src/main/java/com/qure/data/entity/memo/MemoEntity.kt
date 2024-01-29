@@ -20,12 +20,13 @@ data class UpdatedMemoEntity(
 
 data class MemoQueryEntity(
     val document: Document?,
-    val readTime: String
+    val readTime: String,
 ) {
     companion object {
-        val EMPTY = MemoQueryEntity(
-            document = Document.EMPTY,
-            readTime = "",
-        )
+        val EMPTY =
+            MemoQueryEntity(
+                document = Document.EMPTY,
+                readTime = "",
+            )
     }
 }

@@ -15,7 +15,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_splash) {
-
     @Inject
     lateinit var onboardingNavigator: OnboardingNavigator
 
@@ -38,13 +37,14 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private fun goToHomeOrSignupActivityWithDelay() {
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = if (isFirstVisitor) {
-                onboardingNavigator.intent(this)
-            } else if (viewModel.isSignedUp()) {
-                homeNavigator.intent(this)
-            } else {
-                loginNavigator.intent(this)
-            }
+            val intent =
+                if (isFirstVisitor) {
+                    onboardingNavigator.intent(this)
+                } else if (viewModel.isSignedUp()) {
+                    homeNavigator.intent(this)
+                } else {
+                    loginNavigator.intent(this)
+                }
             startActivity(intent)
             finish()
         }, DELAYED_MILLIS)

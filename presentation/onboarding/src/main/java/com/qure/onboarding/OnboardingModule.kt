@@ -9,7 +9,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class OnboardingModule {
-
     @Binds
     abstract fun bindOnboardingNavigator(navigator: OnboardingNavigatorImpl): OnboardingNavigator
 }

@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Group
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -21,9 +19,8 @@ import java.io.File
 class GalleryAdapter(
     private val context: Context,
     private val images: List<GalleryImage>,
-    private val setOnItemClickListener: OnItemClickListener
+    private val setOnItemClickListener: OnItemClickListener,
 ) : ListAdapter<GalleryImage, RecyclerView.ViewHolder>(DIFF_UTIL) {
-
     private val VIEW_TYPE_CAMERA = 1
     private val VIEW_TYPE_IMAGE = 2
     private var preSelectedItem: String? = null
@@ -32,7 +29,6 @@ class GalleryAdapter(
 
     inner class CarmeraViewHoler(private val binding: ItemGalleryCameraBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         init {
             binding.root.setOnSingleClickListener {
                 setOnItemClickListener.setOnItemClickListener()
@@ -42,7 +38,6 @@ class GalleryAdapter(
 
     inner class ImageViewHoler(private val binding: ItemGalleryImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         @SuppressLint("UseCompatLoadingForDrawables")
         fun bind(item: GalleryImage) {
             Glide.with(binding.root)
@@ -55,9 +50,11 @@ class GalleryAdapter(
                     preGroup?.background = null
                 }
                 binding.groupItemGalleryImage.background =
-                    if (binding.groupItemGalleryImage.background == null)
+                    if (binding.groupItemGalleryImage.background == null) {
                         context.getDrawable(com.qure.core_design.R.drawable.bg_rect_blue500_outline)
-                    else null
+                    } else {
+                        null
+                    }
                 binding.checkBoxItemGalleryImage.isChecked =
                     !binding.checkBoxItemGalleryImage.isChecked
                 preSelectedItem = item.path
@@ -68,15 +65,18 @@ class GalleryAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): RecyclerView.ViewHolder {
         return when (viewType) {
             VIEW_TYPE_CAMERA -> {
                 CarmeraViewHoler(
                     ItemGalleryCameraBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
-                        false
-                    )
+                        false,
+                    ),
                 )
             }
             VIEW_TYPE_IMAGE -> {
@@ -84,15 +84,18 @@ class GalleryAdapter(
                     ItemGalleryImageBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
-                        false
-                    )
+                        false,
+                    ),
                 )
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+    ) {
         if (getItemViewType(position) == VIEW_TYPE_IMAGE) {
             (holder as ImageViewHoler).bind(images[position - 1])
         }
@@ -107,19 +110,27 @@ class GalleryAdapter(
     }
 
     companion object {
-        private val DIFF_UTIL = object : DiffUtil.ItemCallback<GalleryImage>() {
-            override fun areItemsTheSame(oldItem: GalleryImage, newItem: GalleryImage): Boolean {
-                return oldItem.id == newItem.id
-            }
+        private val DIFF_UTIL =
+            object : DiffUtil.ItemCallback<GalleryImage>() {
+                override fun areItemsTheSame(
+                    oldItem: GalleryImage,
+                    newItem: GalleryImage,
+                ): Boolean {
+                    return oldItem.id == newItem.id
+                }
 
-            override fun areContentsTheSame(oldItem: GalleryImage, newItem: GalleryImage): Boolean {
-                return oldItem == newItem
+                override fun areContentsTheSame(
+                    oldItem: GalleryImage,
+                    newItem: GalleryImage,
+                ): Boolean {
+                    return oldItem == newItem
+                }
             }
-        }
     }
 
     interface OnItemClickListener {
         fun setOnItemClickListener(uri: Uri)
+
         fun setOnItemClickListener()
     }
 }

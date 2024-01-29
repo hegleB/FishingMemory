@@ -24,9 +24,9 @@ import java.io.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_gallery),
+class GalleryActivity :
+    BaseActivity<ActivityGalleryBinding>(R.layout.activity_gallery),
     GalleryAdapter.OnItemClickListener {
-
     @Inject
     lateinit var memoCreateNavigator: MemoCreateNavigator
 
@@ -36,6 +36,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
     private var preSelectedImage: Uri? = null
 
     private lateinit var itemListener: GalleryAdapter.OnItemClickListener
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         itemListener = this
@@ -68,14 +69,15 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
         val externalDirs = ContextCompat.getExternalFilesDirs(this, null)
         externalDirs.forEach { externalDir ->
             externalDir?.let {
-                val projection = arrayOf(MediaStore.Images.Media._ID,MediaStore.Images.Media.DATA)
-                val cursor = contentResolver.query(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    projection,
-                    null,
-                    null,
-                    null
-                )
+                val projection = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA)
+                val cursor =
+                    contentResolver.query(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        projection,
+                        null,
+                        null,
+                        null,
+                    )
                 cursor?.let {
                     while (it.moveToNext()) {
                         val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
@@ -93,7 +95,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -109,7 +111,11 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?,
+    ) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == DEFAULT_GALLERY_REQUEST_CODE && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
@@ -143,12 +149,13 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
     private fun getImageUri(bitmap: Bitmap): Uri {
         val bytes = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path = MediaStore.Images.Media.insertImage(
-            contentResolver,
-            bitmap,
-            System.currentTimeMillis().toString(),
-            null
-        )
+        val path =
+            MediaStore.Images.Media.insertImage(
+                contentResolver,
+                bitmap,
+                System.currentTimeMillis().toString(),
+                null,
+            )
         return Uri.parse(path)
     }
 
@@ -160,15 +167,15 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
     private fun checkPermission(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 this,
-                android.Manifest.permission.CAMERA
+                android.Manifest.permission.CAMERA,
             ) == PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
                 this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
             ) == PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
                 this,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             loadGalleryImages()
@@ -185,7 +192,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>(R.layout.activity_g
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             ),
-            DEFAULT_GALLERY_REQUEST_CODE
+            DEFAULT_GALLERY_REQUEST_CODE,
         )
     }
 

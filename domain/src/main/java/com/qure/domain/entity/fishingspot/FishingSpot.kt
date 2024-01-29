@@ -1,17 +1,15 @@
 package com.qure.domain.entity.fishingspot
 
-
-
 data class FishingSpot(
     val document: Document,
-    val readTime: String
+    val readTime: String,
 )
 
 data class Document(
     val name: String,
     val fields: Fields,
     val createTime: String,
-    val updateTime: String
+    val updateTime: String,
 )
 
 data class Fields(
@@ -38,5 +36,5 @@ data class StringValue(
 )
 
 data class DoubleValue(
-    val doubleValue: Double
+    val doubleValue: Double,
 )

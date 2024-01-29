@@ -1,6 +1,5 @@
 package com.qure.history
 
-
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -36,7 +35,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_history) {
-
     @Inject
     lateinit var memoCreateNavigator: MemoCreateNavigator
 
@@ -54,7 +52,8 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                 val intent = detailMemoNavigator.intent(requireContext())
                 intent.putExtra(MEMO_DATA, it)
                 startActivity(intent)
-            })
+            },
+        )
     }
 
     private lateinit var firstMonth: YearMonth
@@ -63,7 +62,10 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
     private var currentYear: Int = 0
     private var currentMonth: Int = LocalDate.now().monthValue
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
         initCalendar()
@@ -120,14 +122,16 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                 launch {
                     viewModel.uiState.collect {
                         if (it.isFiltered) {
-                            binder = DayBind(
-                                binding.calendarViewFragmentHistory,
-                                it.filteredMemos
-                            ).apply {
-                                input = object : DayBind.Input() {
-                                    override fun onDayClick(date: LocalDate) = dayClick(date)
+                            binder =
+                                DayBind(
+                                    binding.calendarViewFragmentHistory,
+                                    it.filteredMemos,
+                                ).apply {
+                                    input =
+                                        object : DayBind.Input() {
+                                            override fun onDayClick(date: LocalDate) = dayClick(date)
+                                        }
                                 }
-                            }
                             binding.calendarViewFragmentHistory.dayBinder = binder
                             binding.progressBarFragmentHistory.gone()
                         } else {
@@ -152,7 +156,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
                     viewModel.selectedMonth.collect { month ->
                         setupCalendarView(
                             viewModel.selectedYear.value ?: LocalDate.now().year,
-                            month ?: LocalDate.now().monthValue
+                            month ?: LocalDate.now().monthValue,
                         )
                     }
                 }
@@ -189,16 +193,19 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
 
     private fun changeCalendarMonth() {
         with(binding) {
-            tabLayoutFragmentHistoryMonth.tabs.addOnTabSelectedListener(object :
-                TabLayout.OnTabSelectedListener {
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    val month = tab?.position?.plus(1)!!
-                    viewModel.selectMonth(month)
-                }
+            tabLayoutFragmentHistoryMonth.tabs.addOnTabSelectedListener(
+                object :
+                    TabLayout.OnTabSelectedListener {
+                    override fun onTabSelected(tab: TabLayout.Tab?) {
+                        val month = tab?.position?.plus(1)!!
+                        viewModel.selectMonth(month)
+                    }
 
-                override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
-                override fun onTabReselected(tab: TabLayout.Tab?) = Unit
-            })
+                    override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
+
+                    override fun onTabReselected(tab: TabLayout.Tab?) = Unit
+                },
+            )
         }
     }
 
@@ -208,7 +215,10 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
         binder.updateCalendar(date)
     }
 
-    private fun setupCalendarView(year: Int, month: Int) {
+    private fun setupCalendarView(
+        year: Int,
+        month: Int,
+    ) {
         firstMonth = YearMonth.of(year, month)
         binding.calendarViewFragmentHistory.setup(firstMonth, firstMonth, firstDayOfWeek)
     }
@@ -225,19 +235,21 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>(R.layout.fragment_h
             LocalDate.of(
                 year,
                 currentMonth,
-                LocalDate.now().dayOfMonth
-            )
+                LocalDate.now().dayOfMonth,
+            ),
         )
         viewModel.getFilteredMemo()
         with(binding) {
             textViewFragmentHistoryYear.text = year.toString()
             Handler().post {
-                (tabLayoutFragmentHistoryMonth.tabs
-                    .post({
-                        tabLayoutFragmentHistoryMonth.tabs
-                            .getTabAt(firstMonth.monthValue - 1)
-                            ?.select()
-                    }))
+                (
+                    tabLayoutFragmentHistoryMonth.tabs
+                        .post({
+                            tabLayoutFragmentHistoryMonth.tabs
+                                .getTabAt(firstMonth.monthValue - 1)
+                                ?.select()
+                        })
+                )
             }
         }
     }

@@ -24,7 +24,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MemoListActivity : BaseActivity<ActivityMemoListBinding>(R.layout.activity_memo_list) {
-
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
@@ -39,7 +38,7 @@ class MemoListActivity : BaseActivity<ActivityMemoListBinding>(R.layout.activity
                 val intent = detailMemoNavigator.intent(this)
                 intent.putExtra(MEMO_DATA, memo)
                 startActivity(intent)
-            }
+            },
         )
     }
 
@@ -75,22 +74,23 @@ class MemoListActivity : BaseActivity<ActivityMemoListBinding>(R.layout.activity
         }
     }
 
-    private fun refreshMemoList() = lifecycleScope.launch {
-        viewModel.getFilteredMemo()
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch {
-                delay(500)
-                viewModel.uiState.collect { uiState ->
-                    if (uiState.isFilterInitialized) {
-                        binding.swipeRefreshLayoutActivityMemoList.setRefreshing(false)
-                        adapter.submitList(uiState.filteredMemo) {
-                            binding.recyclerViewActivityMemoList.scrollToPosition(0)
+    private fun refreshMemoList() =
+        lifecycleScope.launch {
+            viewModel.getFilteredMemo()
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    delay(500)
+                    viewModel.uiState.collect { uiState ->
+                        if (uiState.isFilterInitialized) {
+                            binding.swipeRefreshLayoutActivityMemoList.setRefreshing(false)
+                            adapter.submitList(uiState.filteredMemo) {
+                                binding.recyclerViewActivityMemoList.scrollToPosition(0)
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
     private fun observe() {
         viewModel.error

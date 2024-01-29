@@ -7,18 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.qure.core.extensions.twoDigitsFormat
 import com.qure.create.databinding.DialogMemoCalendarBinding
-import java.util.Date
 
 class MemoCalendarDialogFragment(listener: DatePickerListener?) : DialogFragment() {
-
     private var _binding: DialogMemoCalendarBinding? = null
     private val binding get() = _binding!!
 
     private var dialogFragmentListener: DatePickerListener? = null
 
-    constructor(): this(
-        listener = null
+    constructor() : this(
+        listener = null,
     )
+
     init {
         this.dialogFragmentListener = listener
     }
@@ -34,7 +33,10 @@ class MemoCalendarDialogFragment(listener: DatePickerListener?) : DialogFragment
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         initView()
         setLayout()
@@ -59,7 +61,7 @@ class MemoCalendarDialogFragment(listener: DatePickerListener?) : DialogFragment
 
         val month = (binding.dataPickerDialogMemoCalendar.month + 1).twoDigitsFormat()
         val day = (binding.dataPickerDialogMemoCalendar.dayOfMonth).twoDigitsFormat()
-        val selectedDate = "${year}/${month}/${day}"
+        val selectedDate = "$year/$month/$day"
         return selectedDate
     }
 
@@ -68,7 +70,7 @@ class MemoCalendarDialogFragment(listener: DatePickerListener?) : DialogFragment
             requireNotNull(window).apply {
                 setLayout(
                     (resources.displayMetrics.widthPixels * 0.78).toInt(),
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
                 )
                 setBackgroundDrawableResource(com.qure.core_design.R.drawable.bg_rect_gray100_r10)
             }

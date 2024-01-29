@@ -11,52 +11,35 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(repository: AuthRepositoryImpl): AuthRepository
 
     @Binds
     @Singleton
-    abstract fun bindAuthRepository(
-        repository: AuthRepositoryImpl,
-    ): AuthRepository
+    abstract fun bindOnboardingRepository(repository: OnboardingRepositoryImpl): OnboardingRepository
 
     @Binds
     @Singleton
-    abstract fun bindOnboardingRepository(
-        repository: OnboardingRepositoryImpl,
-    ): OnboardingRepository
+    abstract fun bindWeatherRepository(repository: WeatherRepositoryImpl): WeatherRepository
 
     @Binds
     @Singleton
-    abstract fun bindWeatherRepository(
-        repository: WeatherRepositoryImpl,
-    ): WeatherRepository
+    abstract fun bindMapRepository(repository: MapRepositoryImpl): MapRepository
 
     @Binds
     @Singleton
-    abstract fun bindMapRepository(
-        repository: MapRepositoryImpl,
-    ): MapRepository
+    abstract fun bindMemoRepository(repository: MemoRepositoryImpl): MemoRepository
 
     @Binds
     @Singleton
-    abstract fun bindMemoRepository(
-        repository: MemoRepositoryImpl,
-    ): MemoRepository
+    abstract fun bindFishingSpotRepository(repository: FishingSpotRepositoryImpl): FishingSpotRepository
 
     @Binds
     @Singleton
-    abstract fun bindFishingSpotRepository(
-        repository: FishingSpotRepositoryImpl,
-    ): FishingSpotRepository
+    abstract fun bindFishingSpotLocalRepository(repository: FishingSpotLocalRepositoryImpl): FishingSpotLocalRepository
 
     @Binds
     @Singleton
-    abstract fun bindFishingSpotLocalRepository(
-        repository: FishingSpotLocalRepositoryImpl,
-    ): FishingSpotLocalRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindDarkModeRepository(
-        repository: DarkModeRepositoryImpl,
-    ): DarkModeRepository
+    abstract fun bindDarkModeRepository(repository: DarkModeRepositoryImpl): DarkModeRepository
 }

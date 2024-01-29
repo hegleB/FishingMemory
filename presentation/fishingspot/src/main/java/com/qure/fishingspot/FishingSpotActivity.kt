@@ -31,14 +31,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
 class FishingSpotActivity :
     BaseActivity<ActivityFishingSpotBinding>(R.layout.activity_fishing_spot), OnMapReadyCallback {
-
     private val viewModel by viewModels<FishingSpotViewModel>()
     private var fishingSpot: FishingSpotUI = FishingSpotUI()
     private var animator: ValueAnimator? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -70,11 +69,12 @@ class FishingSpotActivity :
     }
 
     private fun onBookmarkClicked(isBookmark: Boolean) {
-        animator = if (!isBookmark) {
-            ValueAnimator.ofFloat(0f, 0.6f).setDuration(1000)
-        } else {
-            ValueAnimator.ofFloat(0.4f, 0f).setDuration(700)
-        }
+        animator =
+            if (!isBookmark) {
+                ValueAnimator.ofFloat(0f, 0.6f).setDuration(1000)
+            } else {
+                ValueAnimator.ofFloat(0.4f, 0f).setDuration(700)
+            }
 
         animator?.addUpdateListener { animation ->
             binding.lottieAnimationActivityFishingSpotBookmark.progress =
@@ -90,11 +90,15 @@ class FishingSpotActivity :
         val fm = supportFragmentManager
         val frameLayout = findViewById<FrameLayout>(R.id.frameLayout_activityFishingSpot_map)
         frameLayout.clipToOutline = true
-        val outline = object : ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: Outline) {
-                outline.setRoundRect(0, 0, view.width, view.height, 50f)
+        val outline =
+            object : ViewOutlineProvider() {
+                override fun getOutline(
+                    view: View,
+                    outline: Outline,
+                ) {
+                    outline.setRoundRect(0, 0, view.width, view.height, 50f)
+                }
             }
-        }
         frameLayout.outlineProvider = outline
 
         val mapFragment =
@@ -146,12 +150,13 @@ class FishingSpotActivity :
     override fun onMapReady(naverMap: NaverMap) {
         val latLng = LatLng(fishingSpot.latitude, fishingSpot.longitude)
         val cameraUpdate = CameraUpdate.scrollTo(latLng)
-        val marker = Marker().apply {
-            position = latLng
-            height = 100
-            width = 120
-            icon = OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker)
-        }
+        val marker =
+            Marker().apply {
+                position = latLng
+                height = 100
+                width = 120
+                icon = OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker)
+            }
         marker.map = naverMap
         naverMap.moveCamera(cameraUpdate)
     }

@@ -25,7 +25,6 @@ import com.qure.memo.detail.DetailMemoActivity.Companion.SLASH
 import com.qure.memo.model.MemoUI
 
 class KakaoLinkSender(private val context: Context, private val memo: MemoUI) {
-
     private val imageBaseUrl: String by lazy { memo.image.split(SLASH)[0] }
     private val imagePath: String by lazy { memo.image.split(SLASH)[1] }
 
@@ -39,22 +38,25 @@ class KakaoLinkSender(private val context: Context, private val memo: MemoUI) {
     }
 
     private fun createFeedTemplate(): FeedTemplate {
-        val tags = listOf(
-            memo.waterType,
-            memo.fishType,
-            memo.fishSize + SIZE_UNIT
-        ).joinToString(String.HashTag)
+        val tags =
+            listOf(
+                memo.waterType,
+                memo.fishType,
+                memo.fishSize + SIZE_UNIT,
+            ).joinToString(String.HashTag)
         return FeedTemplate(
-            content = Content(
-                title = memo.title,
-                description = "#$tags",
-                imageUrl = memo.image,
-                link = Link(
-                    mobileWebUrl = MOBILE_WEB_URL,
-                    androidExecutionParams = createLinkParams()
-                )
-            ),
-            buttons = listOf(createFeedButton())
+            content =
+                Content(
+                    title = memo.title,
+                    description = "#$tags",
+                    imageUrl = memo.image,
+                    link =
+                        Link(
+                            mobileWebUrl = MOBILE_WEB_URL,
+                            androidExecutionParams = createLinkParams(),
+                        ),
+                ),
+            buttons = listOf(createFeedButton()),
         )
     }
 
@@ -68,15 +70,14 @@ class KakaoLinkSender(private val context: Context, private val memo: MemoUI) {
             QUERY_LOCATION to memo.location,
             QUERY_CONTENT to memo.content,
             QUERY_BASE_URL to imageBaseUrl,
-            QUERY_IMAGE_PATH to imagePath
+            QUERY_IMAGE_PATH to imagePath,
         )
     }
 
     private fun createFeedButton(): Button {
-
         return Button(
             title = FEED_BUTTON_DETAIL,
-            link = Link(androidExecutionParams = createLinkParams())
+            link = Link(androidExecutionParams = createLinkParams()),
         )
     }
 

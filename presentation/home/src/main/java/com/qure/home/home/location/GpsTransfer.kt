@@ -1,11 +1,14 @@
 package com.qure.home.home
 
 class GpsTransfer {
-
     var TO_GRID = 0
     var TO_GPS = 1
 
-    fun convertGRID_GPS(mode: Int, lat_X: Double, lng_Y: Double): LatXLngY {
+    fun convertGRID_GPS(
+        mode: Int,
+        lat_X: Double,
+        lng_Y: Double,
+    ): LatXLngY {
         val RE = 6371.00877
         val GRID = 5.0
         val SLAT1 = 30.0

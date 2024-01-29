@@ -34,6 +34,7 @@ val String.Companion.DefaultLatitude
 
 val String.Companion.DefaultLongitude
     get() = "126.9783881"
+
 fun generateUniqueId(): String {
-    return UUID.randomUUID().toString().replace(String.Dash,String.Empty)
+    return UUID.randomUUID().toString().replace(String.Dash, String.Empty)
 }

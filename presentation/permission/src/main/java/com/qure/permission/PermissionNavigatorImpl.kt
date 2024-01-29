@@ -5,8 +5,10 @@ import android.content.Intent
 import com.qure.navigator.PermissionNavigator
 import javax.inject.Inject
 
-class PermissionNavigatorImpl @Inject constructor(): PermissionNavigator {
-    override fun intent(context: Context): Intent {
-        return Intent(context, PermissionActivity::class.java)
+class PermissionNavigatorImpl
+    @Inject
+    constructor() : PermissionNavigator {
+        override fun intent(context: Context): Intent {
+            return Intent(context, PermissionActivity::class.java)
+        }
     }
-}

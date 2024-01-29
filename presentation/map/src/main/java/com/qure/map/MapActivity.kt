@@ -48,9 +48,10 @@ import ted.gun0912.clustering.naver.TedNaverMarker
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnMapReadyCallback,
+class MapActivity :
+    BaseActivity<ActivityMapBinding>(R.layout.activity_map),
+    OnMapReadyCallback,
     OnMapClickListener {
-
     @Inject
     lateinit var detailMemoNavigator: DetailMemoNavigator
 
@@ -60,11 +61,12 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     private val viewModel by viewModels<MapViewModel>()
     private val adapter: MapAdapter by lazy {
         MapAdapter({ item ->
-            val intent = if (item is MemoUI) {
-                detailMemoNavigator.intent(this)
-            } else {
-                fishingSpotNavigator.intent(this)
-            }
+            val intent =
+                if (item is MemoUI) {
+                    detailMemoNavigator.intent(this)
+                } else {
+                    fishingSpotNavigator.intent(this)
+                }
 
             intent.apply {
                 if (item is MemoUI) {
@@ -76,18 +78,20 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             }
             startActivity(intent)
         }, { phoneNumber ->
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("tel:${phoneNumber}")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("tel:$phoneNumber")))
         })
     }
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var tedNaverClustering: BaseBuilder<TedNaverClustering<TedClusterItem>,
-            TedClusterItem,
-            Marker,
-            TedNaverMarker,
-            NaverMap,
-            OverlayImage>? = null
+    private var tedNaverClustering: BaseBuilder<
+        TedNaverClustering<TedClusterItem>,
+        TedClusterItem,
+        Marker,
+        TedNaverMarker,
+        NaverMap,
+        OverlayImage,
+    >? = null
     private var preTedNaverClustering: TedNaverClustering<TedClusterItem>? = null
     private var preMarkerType: MarkerType = MarkerType.MEMO
 
@@ -126,24 +130,25 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     private fun selectMapType(checkedId: Int): NaverMap.MapType {
         return when (checkedId) {
             R.id.chip_activityMap_basic_map -> NaverMap.MapType.Basic
-            R.id.chip_activityMap_satellite_map ->  NaverMap.MapType.Satellite
+            R.id.chip_activityMap_satellite_map -> NaverMap.MapType.Satellite
             R.id.chip_activityMap_terrain_map -> NaverMap.MapType.Terrain
             else -> NaverMap.MapType.Basic
         }
     }
 
     private fun selectMarkerType(checkedId: Int) {
-        val markerType = when (checkedId) {
-            R.id.chip_activityMap_memo -> {
-                viewModel.getFilteredMemo()
-                MarkerType.MEMO
+        val markerType =
+            when (checkedId) {
+                R.id.chip_activityMap_memo -> {
+                    viewModel.getFilteredMemo()
+                    MarkerType.MEMO
+                }
+                R.id.chip_activityMap_sea -> MarkerType.SEA
+                R.id.chip_activityMap_reservoir -> MarkerType.RESERVOIR
+                R.id.chip_activityMap_flatland -> MarkerType.FLATLAND
+                R.id.chip_activityMap_other -> MarkerType.OTHER
+                else -> preMarkerType
             }
-            R.id.chip_activityMap_sea -> MarkerType.SEA
-            R.id.chip_activityMap_reservoir -> MarkerType.RESERVOIR
-            R.id.chip_activityMap_flatland -> MarkerType.FLATLAND
-            R.id.chip_activityMap_other -> MarkerType.OTHER
-            else -> preMarkerType
-        }
         preMarkerType = markerType
         if (markerType != MarkerType.MEMO) {
             viewModel.getFishingSpot(markerType)
@@ -180,14 +185,17 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         }
     }
 
-    private fun initNaverClustering(markers: List<Any>): BaseBuilder<TedNaverClustering<TedClusterItem>, TedClusterItem, Marker, TedNaverMarker, NaverMap, OverlayImage> {
-        val clusterItems = markers.map {
-            when (it) {
-                is MemoUI -> it.toTedClusterItem()
-                is FishingSpotUI -> it.toTedClusterItem()
-                else -> throw IllegalStateException("create Marker error")
+    private fun initNaverClustering(
+        markers: List<Any>,
+    ): BaseBuilder<TedNaverClustering<TedClusterItem>, TedClusterItem, Marker, TedNaverMarker, NaverMap, OverlayImage> {
+        val clusterItems =
+            markers.map {
+                when (it) {
+                    is MemoUI -> it.toTedClusterItem()
+                    is FishingSpotUI -> it.toTedClusterItem()
+                    else -> throw IllegalStateException("create Marker error")
+                }
             }
-        }
         return TedNaverClustering.with<TedClusterItem>(this, naverMap)
             .items(clusterItems)
             .customMarker { createMarker(it) }
@@ -196,8 +204,8 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
                 setBottomSheetView(
                     getSelectedMarker(
                         marker,
-                        markers
-                    )
+                        markers,
+                    ),
                 )
             }
             .clusterClickListener { clusterItems ->
@@ -210,21 +218,23 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
 
     private fun getSelectedClustering(
         clusterItems: Cluster<TedClusterItem>,
-        markers: List<Any>
+        markers: List<Any>,
     ): MutableSet<Any> {
         val clusterMarkers = mutableSetOf<Any>()
         clusterItems.items.forEach {
             val latLng = it.getTedLatLng().toReverseCoordsString()
-            val filteredMarkers = markers.filter { item ->
-                when (item) {
-                    is MemoUI -> item.coords == latLng
-                    is FishingSpotUI -> LatLng(
-                        item.longitude,
-                        item.latitude
-                    ).toCoordsString() == latLng
-                    else -> false
+            val filteredMarkers =
+                markers.filter { item ->
+                    when (item) {
+                        is MemoUI -> item.coords == latLng
+                        is FishingSpotUI ->
+                            LatLng(
+                                item.longitude,
+                                item.latitude,
+                            ).toCoordsString() == latLng
+                        else -> false
+                    }
                 }
-            }
             clusterMarkers.addAll(filteredMarkers)
         }
         return clusterMarkers
@@ -232,18 +242,19 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
 
     private fun getSelectedMarker(
         marker: TedClusterItem,
-        markers: List<Any>
+        markers: List<Any>,
     ): List<Any> {
         val latLng = marker.getTedLatLng().toReverseLatlng()
-        val markerItems = markers.filter {
-            when (it) {
-                is MemoUI -> it.coords == latLng.toCoordsString()
-                is FishingSpotUI ->
-                    LatLng(it.longitude, it.latitude) ==
+        val markerItems =
+            markers.filter {
+                when (it) {
+                    is MemoUI -> it.coords == latLng.toCoordsString()
+                    is FishingSpotUI ->
+                        LatLng(it.longitude, it.latitude) ==
                             latLng
-                else -> false
+                    else -> false
+                }
             }
-        }
         return markerItems
     }
 
@@ -257,14 +268,15 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     }
 
     private fun createMarker(tedClusterItem: TedClusterItem): Marker {
-        val marker = Marker(tedClusterItem.getTedLatLng().toLatlng()).apply {
-            icon =
-                OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker)
-            width = 100
-            height = 120
-            isHideCollidedCaptions = true
-            isHideCollidedSymbols = true
-        }
+        val marker =
+            Marker(tedClusterItem.getTedLatLng().toLatlng()).apply {
+                icon =
+                    OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker)
+                width = 100
+                height = 120
+                isHideCollidedCaptions = true
+                isHideCollidedSymbols = true
+            }
         return marker
     }
 
@@ -296,11 +308,12 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         if (locationSource.onRequestPermissionsResult(
-                requestCode, permissions,
-                grantResults
+                requestCode,
+                permissions,
+                grantResults,
             )
         ) {
             if (!locationSource.isActivated) { // 권한 거부됨
@@ -338,10 +351,10 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
         var currentLocation: Location?
         if (ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION,
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return
@@ -353,17 +366,21 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
                     isVisible = true
                     position = LatLng(currentLocation!!.latitude, currentLocation!!.longitude)
                 }
-                val cameraUpdate = CameraUpdate.scrollTo(
-                    LatLng(
-                        currentLocation!!.latitude,
-                        currentLocation!!.longitude
+                val cameraUpdate =
+                    CameraUpdate.scrollTo(
+                        LatLng(
+                            currentLocation!!.latitude,
+                            currentLocation!!.longitude,
+                        ),
                     )
-                )
                 naverMap.moveCamera(cameraUpdate)
             }
     }
 
-    override fun onMapClick(p0: PointF, p1: LatLng) {
+    override fun onMapClick(
+        p0: PointF,
+        p1: LatLng,
+    ) {
         changeBottomSheetPeekHeight(50)
     }
 
@@ -372,48 +389,58 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map), OnM
             BottomSheetBehavior.from(binding.bottomSheetActivityMap.constraintLayoutBottomSheetMemoList)
         bottomSheet.setPeekHeight(height.dpToPx(this), true)
 
-        bottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheetView: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_SETTLING) {
-                    bottomSheetView.animate()
-                        .translationY(0f)
-                }
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    bottomSheetView.animate()
-                        .setDuration(200)
-                        .translationY(20f)
-                }
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetView.animate()
-                        .setDuration(200)
-                        .translationY(-20f)
-                }
-            }
-
-            override fun onSlide(bottomSheetView: View, slideOffset: Float) {
-                when {
-                    slideOffset < 0f -> {
-                        if (bottomSheet.peekHeight == 300.dpToPx(this@MapActivity)) {
-                            updateUiOnSlide(310, 250)
-                        } else {
-                            updateUiOnSlide(60, 0)
-                        }
+        bottomSheet.addBottomSheetCallback(
+            object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(
+                    bottomSheetView: View,
+                    newState: Int,
+                ) {
+                    if (newState == BottomSheetBehavior.STATE_SETTLING) {
+                        bottomSheetView.animate()
+                            .translationY(0f)
                     }
-
-                    slideOffset > 0f -> {
-                        if (bottomSheet.peekHeight == 300.dpToPx(this@MapActivity)) {
-                            updateUiOnSlide(310, 250)
-                        } else {
-                            updateUiOnSlide(60, 0)
-                        }
+                    if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                        bottomSheetView.animate()
+                            .setDuration(200)
+                            .translationY(20f)
+                    }
+                    if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                        bottomSheetView.animate()
+                            .setDuration(200)
+                            .translationY(-20f)
                     }
                 }
-            }
 
-        })
+                override fun onSlide(
+                    bottomSheetView: View,
+                    slideOffset: Float,
+                ) {
+                    when {
+                        slideOffset < 0f -> {
+                            if (bottomSheet.peekHeight == 300.dpToPx(this@MapActivity)) {
+                                updateUiOnSlide(310, 250)
+                            } else {
+                                updateUiOnSlide(60, 0)
+                            }
+                        }
+
+                        slideOffset > 0f -> {
+                            if (bottomSheet.peekHeight == 300.dpToPx(this@MapActivity)) {
+                                updateUiOnSlide(310, 250)
+                            } else {
+                                updateUiOnSlide(60, 0)
+                            }
+                        }
+                    }
+                }
+            },
+        )
     }
 
-    private fun updateUiOnSlide(mapUIheight: Int, layoutHeight: Int) {
+    private fun updateUiOnSlide(
+        mapUIheight: Int,
+        layoutHeight: Int,
+    ) {
         val uiSettings = naverMap.uiSettings
         uiSettings.apply {
             isCompassEnabled = false

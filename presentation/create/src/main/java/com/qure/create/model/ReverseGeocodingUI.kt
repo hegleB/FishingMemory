@@ -18,16 +18,17 @@ fun ReverseGeocoding.toReverseGeocodingUI(): ReverseGeocodingUI {
     val status = this.status
     val region = results.region
     val land = results.land
-    val areaName = results.run {
-        listOf(
-            region.area1.name,
-            region.area2.name,
-            region.area3.name,
-            region.area4.name,
-            land.number1,
-            land.number2,
-        ).filter { it != String.Empty }.joinToString(String.Spacing)
-    }
+    val areaName =
+        results.run {
+            listOf(
+                region.area1.name,
+                region.area2.name,
+                region.area3.name,
+                region.area4.name,
+                land.number1,
+                land.number2,
+            ).filter { it != String.Empty }.joinToString(String.Spacing)
+        }
     return ReverseGeocodingUI(
         name = results.name,
         code = status.code,

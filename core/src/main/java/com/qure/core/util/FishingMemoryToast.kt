@@ -11,7 +11,7 @@ class FishingMemoryToast {
     fun show(
         context: Context,
         title: String,
-        duration: Int = Toast.LENGTH_SHORT
+        duration: Int = Toast.LENGTH_SHORT,
     ) {
         val inflater = LayoutInflater.from(context)
         val toast = Toast(context)
@@ -24,13 +24,12 @@ class FishingMemoryToast {
         toast.show()
     }
 
-
     fun error(
         context: Context,
         title: String?,
-        duration: Int = Toast.LENGTH_SHORT
+        duration: Int = Toast.LENGTH_SHORT,
     ) {
-        if(title != null) {
+        if (title != null) {
             val inflater = LayoutInflater.from(context)
             val toast = Toast(context)
             val view = inflater.inflate(R.layout.error_toast_fishing_memory, null)

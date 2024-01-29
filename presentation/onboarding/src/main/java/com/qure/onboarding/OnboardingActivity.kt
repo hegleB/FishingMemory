@@ -9,7 +9,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.qure.core.BaseActivity
 import com.qure.core.util.setOnSingleClickListener
-import com.qure.navigator.LoginNavigator
 import com.qure.navigator.PermissionNavigator
 import com.qure.onboarding.databinding.ActivityOnboardingBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,11 +16,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.activity_onboarding) {
-
     @Inject
     lateinit var permissionNavigator: PermissionNavigator
 
     private val viewModel by viewModels<OnboardingViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,7 +38,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
 
         TabLayoutMediator(
             binding.tabLayoutActivityOnboardingDot,
-            binding.viewpagerActivityOnboardingOnboarding
+            binding.viewpagerActivityOnboardingOnboarding,
         ) { tab, position -> }.attach()
     }
 
@@ -61,26 +60,31 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                     }
                 }
             }
-
         }
     }
 
     private fun setButtonTextToPageTransition() {
         binding.apply {
-            viewpagerActivityOnboardingOnboarding.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    when (position) {
-                        OnboardingPage.RECORD_PAGE.position -> buttonActivityOnboardingNext.text = getString(R.string.onboarding_next)
-                        OnboardingPage.STATISTICS_PAGE.position -> buttonActivityOnboardingNext.text = getString(R.string.onboarding_next)
-                        else -> {
-                            buttonActivityOnboardingNext.text =
-                                getString(R.string.onboarding_start)
+            viewpagerActivityOnboardingOnboarding.registerOnPageChangeCallback(
+                object :
+                    ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        when (position) {
+                            OnboardingPage.RECORD_PAGE.position -> buttonActivityOnboardingNext.text = getString(R.string.onboarding_next)
+                            OnboardingPage.STATISTICS_PAGE.position ->
+                                buttonActivityOnboardingNext.text =
+                                    getString(
+                                        R.string.onboarding_next,
+                                    )
+                            else -> {
+                                buttonActivityOnboardingNext.text =
+                                    getString(R.string.onboarding_start)
+                            }
                         }
                     }
-                }
-            })
+                },
+            )
         }
     }
 
@@ -93,21 +97,21 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                 OnboardingPage.RECORD_PAGE.position -> {
                     OnboardingFragment.newInstance(
                         title = getString(R.string.onboarding_first_title),
-                        onboardingLottieResId = R.raw.first_page
+                        onboardingLottieResId = R.raw.first_page,
                     )
                 }
 
                 OnboardingPage.STATISTICS_PAGE.position -> {
                     OnboardingFragment.newInstance(
                         title = getString(R.string.onboarding_second_title),
-                        onboardingLottieResId = R.raw.second_page
+                        onboardingLottieResId = R.raw.second_page,
                     )
                 }
 
                 else -> {
                     OnboardingFragment.newInstance(
                         title = getString(R.string.onboarding_third_title),
-                        onboardingLottieResId = R.raw.third_page
+                        onboardingLottieResId = R.raw.third_page,
                     )
                 }
             }
@@ -123,5 +127,5 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
 
 enum class OnboardingPage(val position: Int) {
     RECORD_PAGE(0),
-    STATISTICS_PAGE(1)
+    STATISTICS_PAGE(1),
 }

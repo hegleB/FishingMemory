@@ -16,7 +16,7 @@ fun FishingSpotBookmarkEntity.toFishingSpotBookmark(): FishingSpotBookmark {
         road_address = this.road_address,
         longitude = this.longitude,
         phone_number = this.phone_number,
-        fee = this.fee
+        fee = this.fee,
     )
 }
 
@@ -33,6 +33,6 @@ fun FishingSpotBookmark.toFishingSpotBookmarkEntity(): FishingSpotBookmarkEntity
         road_address = this.road_address,
         longitude = this.longitude,
         phone_number = this.phone_number,
-        fee = this.fee
+        fee = this.fee,
     )
 }

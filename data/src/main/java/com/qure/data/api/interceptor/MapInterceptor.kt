@@ -6,17 +6,17 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
-class MapInterceptor @Inject constructor(
-    private val buildPropertyRepository: BuildPropertyRepository
-): Interceptor {
-
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request().newBuilder()
-        request.apply {
-            addHeader("X-NCP-APIGW-API-KEY-ID", buildPropertyRepository.get(BuildProperty.NAVER_MAP_API_CLIENT_ID))
-            addHeader("X-NCP-APIGW-API-KEY", buildPropertyRepository.get(BuildProperty.NAVER_MAP_API_CLIENT_SECRET))
+class MapInterceptor
+    @Inject
+    constructor(
+        private val buildPropertyRepository: BuildPropertyRepository,
+    ) : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request().newBuilder()
+            request.apply {
+                addHeader("X-NCP-APIGW-API-KEY-ID", buildPropertyRepository.get(BuildProperty.NAVER_MAP_API_CLIENT_ID))
+                addHeader("X-NCP-APIGW-API-KEY", buildPropertyRepository.get(BuildProperty.NAVER_MAP_API_CLIENT_SECRET))
+            }
+            return chain.proceed(request.build())
         }
-        return chain.proceed(request.build())
     }
-
-}
