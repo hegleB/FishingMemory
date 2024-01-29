@@ -162,5 +162,4 @@ com-android-application = { id = "com.android.application", version.ref = "appli
 com-android-library = { id = "com.android.library", version.ref = "library" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-google-services = { id = "com.google.gms:google-services", version.ref = "googleServices"}
-detekt = { id = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices"}
