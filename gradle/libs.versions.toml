@@ -15,7 +15,7 @@ coroutines = "1.6.1"
 
 timber = "5.0.1"
 calendar = "2.0.1"
-hilt = "2.42"
+hilt = "2.48"
 splashscreen = "1.0.0-rc01"
 glide = "4.13.2"
 lifecycle = "2.4.1"
