@@ -32,27 +32,29 @@ class Application : Application() {
     }
 
     private fun initDarkMode() {
-        val isDarkMode = when (fishMemorySharedPreference.getTheme(DARK_MODE_KEY)) {
-            THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
-            THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
-            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        }
+        val isDarkMode =
+            when (fishMemorySharedPreference.getTheme(DARK_MODE_KEY)) {
+                THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
+                THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
 
         AppCompatDelegate.setDefaultNightMode(isDarkMode)
     }
 
     private fun initNaverMapSdk() {
         NaverMapSdk.getInstance(this).setClient(
-            NaverMapSdk.NaverCloudPlatformClient(buildPropertyRepository.get(BuildProperty.NAVER_MAP_API_CLIENT_ID))
+            NaverMapSdk.NaverCloudPlatformClient(buildPropertyRepository.get(BuildProperty.NAVER_MAP_API_CLIENT_ID)),
         )
     }
 
     private fun initKakaoSdk() {
         KakaoSdk.init(
             context = this,
-            appKey = buildPropertyRepository.get(BuildProperty.KAKAO_API_KEY)
+            appKey = buildPropertyRepository.get(BuildProperty.KAKAO_API_KEY),
         )
     }
+
     private fun initTimber() {
         Timber.plant(Timber.DebugTree())
     }

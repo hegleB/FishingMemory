@@ -10,10 +10,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class BuildPropertyModule {
-
     @Provides
     @Singleton
-    fun provideBuildPropertyRepository(
-        buildPropertyRepositoryImpl: BuildPropertyRepositoryImpl
-    ): BuildPropertyRepository = buildPropertyRepositoryImpl
+    fun provideBuildPropertyRepository(buildPropertyRepositoryImpl: BuildPropertyRepositoryImpl): BuildPropertyRepository =
+        buildPropertyRepositoryImpl
 }
