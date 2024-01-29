@@ -142,7 +142,7 @@ chart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "androidCh
 location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
 navermap-sdk = { module = "com.naver.maps:map-sdk", version.ref = "navermap" }
-navermap-clustering = { module = "io.github.ParkSangGwon:tedclustering-naver" }
+navermap-clustering = { module = "io.github.ParkSangGwon:tedclustering-naver", version.ref = "naverclustering" }
 
 swiprefesh = { module = "com.github.SimformSolutionsPvtLtd:SSPullToRefresh", version.ref = "swiprefesh" }
 
