@@ -25,5 +25,9 @@ gradlePlugin {
             id = "com.qure.hilt"
             implementationClass = "gradle.plugin.AndroidHiltPlugin"
         }
+        register("androidFeature") {
+            id = "com.qure.feature"
+            implementationClass = "gradle.plugin.AndroidFeaturePlugin"
+        }
     }
 }
