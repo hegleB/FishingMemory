@@ -20,8 +20,8 @@ class CustomMarkerView @JvmOverloads constructor(
     }
 
     // draw override를 사용해 marker의 위치 조정 (bar의 상단 중앙)
-    override fun draw(canvas: Canvas?) {
-        canvas!!.translate(-(width / 2).toFloat(), -(height / 5).toFloat())
+    override fun draw(canvas: Canvas) {
+        canvas.translate(-(width / 2).toFloat(), -(height / 5).toFloat())
 
         super.draw(canvas)
     }
