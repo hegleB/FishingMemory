@@ -137,7 +137,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx"}
 firebase-link = { module = "com.google.firebase:firebase-dynamic-links-ktx" }
 
-chart = { group = "com.github.PhilJay", name = "MPAndroidChart", version = "androidChart" }
+chart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "androidChart" }
 
 location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
