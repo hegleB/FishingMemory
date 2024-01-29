@@ -135,7 +135,7 @@ splash = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx"}
-firebase-link = { group = "com.google.firebase", name = "firebase-dynamic-links-ktx" }
+firebase-link = { module = "com.google.firebase:firebase-dynamic-links-ktx" }
 
 chart = { group = "com.github.PhilJay", name = "MPAndroidChart", version = "androidChart" }
 
