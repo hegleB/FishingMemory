@@ -166,6 +166,7 @@ compose-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-
 compose-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleCompose" }
 compose-glide = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 [bundles]
 
