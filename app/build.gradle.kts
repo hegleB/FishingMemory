@@ -74,6 +74,7 @@ android {
     buildFeatures {
         dataBinding = true
         buildConfig = true
+        compose = true
     }
 
     buildTypes {
@@ -89,6 +90,10 @@ android {
 
     lint {
         checkReleaseBuilds = false
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
 }
 
