@@ -1,6 +1,5 @@
 plugins {
-    id("com.qure.library")
-    id("com.qure.hilt")
+    id("com.qure.feature")
 }
 
 android {

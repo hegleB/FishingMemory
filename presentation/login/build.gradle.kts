@@ -2,8 +2,7 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    id("com.qure.library")
-    id("com.qure.hilt")
+    id("com.qure.feature")
     alias(libs.plugins.google.services)
 }
 
