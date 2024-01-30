@@ -160,7 +160,7 @@ compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 compose-ui-preview = { group = "androidx.compose.ui", name = "ui-tooling-preivew" }
 compose-ui-tolling = { group = "androidx.compose.ui", name = "ui-tooling" }
-compose-activity = { module = "ndroidx.activity:activity-compose", version.ref = "activityCompose" }
+compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 compose-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleCompose" }
 compose-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleCompose" }
 compose-glide = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
