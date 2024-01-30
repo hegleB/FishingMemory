@@ -30,7 +30,8 @@ espresso = "3.4.0"
 
 interceptor = "4.9.3"
 kakao = "2.13.0"
-lottie = "5.2.0"
+
+lottie = "6.3.0"
 datastore = "1.0.0"
 firebase = "31.2.3"
 room = "2.6.1"
