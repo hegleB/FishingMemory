@@ -13,6 +13,7 @@ dependencies {
     api(libs.jetpack.recyclerView)
     api(libs.jetpack.material)
     kapt(libs.hilt.compiler)
+    api(platform(libs.compose.bom))
     api(libs.bundles.androidx.compose)
     debugImplementation(libs.compose.ui.tolling)
 }
