@@ -159,7 +159,7 @@ compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeB
 compose-material = { module = "androidx.compose.material3:material3" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-compose-ui-preview = { group = "androidx.compose.ui", name = "ui-tooling-preivew" }
+compose-ui-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-ui-tolling = { group = "androidx.compose.ui", name = "ui-tooling" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 compose-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleCompose" }
