@@ -180,7 +180,8 @@ androidx-compose = [
     "compose-lifecycle-viewmodel",
     "compose-lifecycle-runtime",
     "compose-glide",
-    "compose-navigation"
+    "compose-navigation",
+    "compose-lottie"
 ]
 
 [plugins]
