@@ -19,12 +19,14 @@ class AndroidFeaturePlugin : Plugin<Project> {
             extensions.configure<LibraryExtension> {
                 buildFeatures {
                     dataBinding = true
+                    compose = true
                 }
             }
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             dependencies {
+                add("implementation", project(":core-design"))
                 add("api", project(":presentation"))
                 add("implementation", project(":domain"))
                 add("testImplementation", libs.findLibrary("junit").get())
