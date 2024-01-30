@@ -168,6 +168,19 @@ compose-navigation = { module = "androidx.navigation:navigation-compose", versio
 
 [bundles]
 
+androidx-compose = [
+    "compose-bom",
+    "compose-material",
+    "compose-ui",
+    "compose-ui-graphics",
+    "compose-ui-preview",
+    "compose-activity",
+    "compose-lifecycle-viewmodel",
+    "compose-lifecycle-runtime",
+    "compose-glide",
+    "compose-navigation"
+]
+
 [plugins]
 
 com-android-application = { id = "com.android.application", version.ref = "application" }
