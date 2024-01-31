@@ -6,6 +6,10 @@ android {
     namespace = "com.qure.splash"
     buildFeatures {
         dataBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
 }
 

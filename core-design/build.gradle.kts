@@ -5,6 +5,12 @@ plugins {
 
 android {
     namespace = "com.qure.core_design"
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.7"
+    }
 }
 
 dependencies {

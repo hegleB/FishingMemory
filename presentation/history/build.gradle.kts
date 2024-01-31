@@ -4,6 +4,13 @@ plugins {
 
 android {
     namespace = "com.qure.history"
+    buildFeatures {
+        dataBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.7"
+    }
 }
 
 dependencies {

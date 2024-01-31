@@ -21,6 +21,10 @@ android {
     buildFeatures {
         dataBinding = true
         buildConfig = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
 }
 
