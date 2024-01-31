@@ -74,7 +74,7 @@ android {
     buildFeatures {
         dataBinding = true
         buildConfig = true
-        compose = true
+//        compose = true
     }
 
     buildTypes {
@@ -92,9 +92,9 @@ android {
         checkReleaseBuilds = false
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.7"
-    }
+//    composeOptions {
+//        kotlinCompilerExtensionVersion = "1.5.7"
+//    }
 }
 
 val ktlint by configurations.creating
