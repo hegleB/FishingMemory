@@ -1,20 +1,17 @@
 package com.qure.splash
 
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.qure.core.BaseActivity
+import androidx.compose.runtime.Composable
+import com.qure.core.BaseComposeActivity
+import com.qure.core_design.compose.theme.FishingMemoryTheme
 import com.qure.navigator.HomeNavigator
 import com.qure.navigator.LoginNavigator
 import com.qure.navigator.OnboardingNavigator
-import com.qure.splash.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_splash) {
+class SplashActivity : BaseComposeActivity() {
     @Inject
     lateinit var onboardingNavigator: OnboardingNavigator
 
@@ -26,48 +23,15 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private val viewModel by viewModels<SplashViewModel>()
 
-    private var isFirstVisitor = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        playAnimation()
-        goToHomeOrSignupActivityWithDelay()
-        observeViewModel()
-    }
-
-    private fun goToHomeOrSignupActivityWithDelay() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            val intent =
-                if (isFirstVisitor) {
-                    onboardingNavigator.intent(this)
-                } else if (viewModel.isSignedUp()) {
-                    homeNavigator.intent(this)
-                } else {
-                    loginNavigator.intent(this)
-                }
-            startActivity(intent)
-            finish()
-        }, DELAYED_MILLIS)
-    }
-
-    private fun playAnimation() {
-        binding.lottieAnimationViewSplashActivityLogo.apply {
-            layoutParams.width = (width * 0.61).toInt() // 220/360 = 0.611
-            layoutParams.height = layoutParams.width
-            setAnimation(R.raw.splash_logo)
-            playAnimation()
+    @Composable
+    override fun Screen() {
+        FishingMemoryTheme {
+            SplashScreen(
+                viewModel = viewModel,
+                navigateToOnBoarding = { startActivity(onboardingNavigator.intent(this)); finish() },
+                navigateToHome = { startActivity(homeNavigator.intent(this)); finish() },
+                navigateToLogin = { startActivity(loginNavigator.intent(this)); finish() },
+            )
         }
-    }
-
-    private fun observeViewModel() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.isFirstVisitor.collect {
-                isFirstVisitor = it
-            }
-        }
-    }
-
-    companion object {
-        private const val DELAYED_MILLIS = 3500L
     }
 }
