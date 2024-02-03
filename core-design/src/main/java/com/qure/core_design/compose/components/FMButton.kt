@@ -15,7 +15,7 @@ import androidx.compose.ui.text.TextStyle
 @Composable
 fun FMButton(
     modifier: Modifier = Modifier,
-    @StringRes textId: Int,
+    text: String = "",
     onClick: () -> Unit,
     textStyle: TextStyle = TextStyle(),
     textModifier: Modifier = Modifier,
@@ -33,7 +33,7 @@ fun FMButton(
     ) {
         Text(
             modifier = textModifier,
-            text = stringResource(id = textId),
+            text = text,
             style = textStyle,
             color = fontColor,
         )

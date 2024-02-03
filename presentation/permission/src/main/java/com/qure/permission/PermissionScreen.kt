@@ -125,7 +125,7 @@ fun PermissionContent(
         Spacer(modifier = Modifier.weight(1f, fill = true))
         FMButton(
             onClick = { onPermissionClick() },
-            textId = R.string.confirm,
+            text = stringResource(id = R.string.confirm),
             textStyle = MaterialTheme.typography.displayMedium,
             textModifier = Modifier,
             buttonColor = Blue600,
