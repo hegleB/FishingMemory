@@ -29,7 +29,7 @@ fun FMButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = buttonColor,
         ),
-        shape = shape
+        shape = shape,
     ) {
         Text(
             modifier = textModifier,
