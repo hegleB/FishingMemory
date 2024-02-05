@@ -74,7 +74,11 @@ constructor(
             }
         }
 
+    fun onClickedKakaoLogin() {
+        viewModelScope.launch {
+            _action.emit(Action.LauchKakaoLogin)
         }
+    }
 
     private fun isExistsEmail(message: String?): Boolean {
         val documentMessage = message?.split(String.Colon) ?: emptyList()
