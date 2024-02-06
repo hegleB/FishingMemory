@@ -65,6 +65,8 @@ androidChart = "v3.1.0"
 
 ktlint = "1.0.1"
 
+materialCompose = "1.6.0"
+
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "application" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -156,7 +158,8 @@ ktlint = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt" }
 
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
-compose-material = { module = "androidx.compose.material3:material3" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "materialCompose" }
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 compose-ui-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
@@ -173,6 +176,7 @@ compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "
 androidx-compose = [
     "compose-bom",
     "compose-material",
+    "compose-material3",
     "compose-ui",
     "compose-ui-graphics",
     "compose-ui-preview",
