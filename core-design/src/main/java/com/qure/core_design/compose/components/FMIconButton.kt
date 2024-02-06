@@ -22,3 +22,20 @@ fun FMBackButton(
         )
     }
 }
+
+@Composable
+fun FMCircleAddButton(
+    modifier: Modifier = Modifier,
+    onClickAdd: () -> Unit,
+    circleAddIcon: Painter,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = { onClickAdd() },
+    ) {
+        Icon(
+            painter = circleAddIcon,
+            contentDescription = null,
+        )
+    }
+}
