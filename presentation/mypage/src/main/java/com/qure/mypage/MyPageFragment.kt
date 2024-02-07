@@ -1,33 +1,23 @@
 package com.qure.mypage
 
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Bundle
-import android.view.View
+import androidx.compose.runtime.Composable
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.kakao.sdk.user.UserApiClient
-import com.qure.core.BaseFragment
-import com.qure.core.extensions.Empty
+import com.qure.core.BaseComposeFragment
 import com.qure.core.util.FishingMemoryToast
-import com.qure.core.util.setOnSingleClickListener
+import com.qure.core_design.compose.theme.FishingMemoryTheme
 import com.qure.domain.WEB_URL
 import com.qure.domain.repository.AuthRepository
 import com.qure.mypage.darkmode.DarkModeActivity
-import com.qure.mypage.databinding.FragmentMyPageBinding
 import com.qure.navigator.BookmarkNavigator
 import com.qure.navigator.LoginNavigator
 import com.qure.navigator.ProgramInformationNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_page) {
+class MyPageFragment : BaseComposeFragment() {
     @Inject
     lateinit var authRepository: AuthRepository
 
@@ -42,54 +32,25 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
 
     private val viewModel by viewModels<MyPageViewModel>()
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
-
-        initView()
-        observe()
-    }
-
-    private fun initView() {
-        try {
-            val pInfo =
-                context?.packageManager?.getPackageInfo(context?.packageName ?: String.Empty, 0)
-            val versionName = pInfo?.versionName
-            binding.textViewFragmentMypageVersionName.text = versionName
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-        }
-
-        binding.textViewFragmentMypageKakaoEmail.text = authRepository.getEmailFromLocal()
-
-        binding.textViewFragmentMypageLogout.setOnSingleClickListener {
-            onLogoutButtonClicked()
-        }
-
-        binding.textViewFragmentMypageWithdrawalService.setOnSingleClickListener {
-            withdrawService()
-        }
-
-        binding.textViewFragmentMypagePolicyPrivacy.setOnSingleClickListener {
-            onPolicyPrivacyButtonClicked()
-        }
-
-        binding.textViewFragmentMypagePolicyService.setOnSingleClickListener {
-            onPolicyServiceButtonClicked()
-        }
-
-        binding.textViewFragmentMypageOpensourceLicense.setOnSingleClickListener {
-            onOpenSourceLicenseButtonClicked()
-        }
-
-        binding.textViewFragmentMypageBookmark.setOnSingleClickListener {
-            onBookmarkButtonClicked()
-        }
-
-        binding.textViewFragmentMypageDarkMode.setOnSingleClickListener {
-            startActivity(Intent(requireContext(), DarkModeActivity::class.java))
+    @Composable
+    override fun Screen() {
+        FishingMemoryTheme {
+            MyPageScreen(
+                viewModel = viewModel,
+                email = authRepository.getEmailFromLocal(),
+                navigateToBookmark = { onBookmarkButtonClicked() },
+                navigateToLogin = { startActivity(loginNavigator.intent(requireContext())); activity?.finish() },
+                onClickLogout = { onLogoutButtonClicked() },
+                onClickWithdrawService = { withdrawService() },
+                navigateToPolicyPrivacy = { onPolicyPrivacyButtonClicked() },
+                navigateToPolicyService = { onPolicyServiceButtonClicked() },
+                navigateToOpenSourceLicense = { onOpenSourceLicenseButtonClicked() },
+                navigateToDarkMode = {
+                    startActivity(
+                        Intent(requireContext(), DarkModeActivity::class.java),
+                    )
+                },
+            )
         }
     }
 
@@ -116,34 +77,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
         startActivity(intent)
     }
 
-    private fun observe() {
-        viewModel.error
-            .onEach { errorMessage -> FishingMemoryToast().error(requireContext(), errorMessage) }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.logutSucceed.collect { logoutSucceed ->
-                        if (logoutSucceed) {
-                            startActivity(loginNavigator.intent(requireContext()))
-                            activity?.finish()
-                        }
-                    }
-                }
-
-                launch {
-                    viewModel.withdrawSucceed.collect { withdrawService ->
-                        if (withdrawService) {
-                            startActivity(loginNavigator.intent(requireContext()))
-                            activity?.finish()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun withdrawService() {
         UserApiClient.instance.unlink { throwable ->
             if (throwable != null) {
@@ -159,8 +92,11 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(R.layout.fragment_my_
     }
 
     companion object {
-        private const val POLICY_SERVICE = "https://sites.google.com/view/fishingmemory-policyservice/%ED%99%88"
-        private const val POLICY_PRIVACY = "https://sites.google.com/view/fishingmemory-privacypolicy/%ED%99%88"
-        private const val OPENSOURCE_LICENSE = "https://sites.google.com/view/fishingmemory-license/%ED%99%88"
+        private const val POLICY_SERVICE =
+            "https://sites.google.com/view/fishingmemory-policyservice/%ED%99%88"
+        private const val POLICY_PRIVACY =
+            "https://sites.google.com/view/fishingmemory-privacypolicy/%ED%99%88"
+        private const val OPENSOURCE_LICENSE =
+            "https://sites.google.com/view/fishingmemory-license/%ED%99%88"
     }
 }
