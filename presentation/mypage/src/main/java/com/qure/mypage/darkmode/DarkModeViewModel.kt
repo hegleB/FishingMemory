@@ -13,24 +13,29 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DarkModeViewModel
-    @Inject
-    constructor(
-        private val setDarkModeUseCase: SetDarkModeUseCase,
-        private val getDarkModeUseCase: GetDarkModeUseCase,
-    ) : BaseViewModel() {
-        private val _currentThemeMode: MutableStateFlow<String> = MutableStateFlow(String.Empty)
-        val currentThemeMode: StateFlow<String>
-            get() = _currentThemeMode
+@Inject
+constructor(
+    private val setDarkModeUseCase: SetDarkModeUseCase,
+    private val getDarkModeUseCase: GetDarkModeUseCase,
+) : BaseViewModel() {
+    private val _currentThemeMode: MutableStateFlow<String> = MutableStateFlow(String.Empty)
+    val currentThemeMode: StateFlow<String>
+        get() = _currentThemeMode
 
-        fun setDarkMode(selectedDarMode: String) {
-            viewModelScope.launch {
-                setDarkModeUseCase(selectedDarMode)
-            }
-        }
+    init {
+        getDarkMode()
+    }
 
-        fun getDarkMode() {
-            viewModelScope.launch {
-                _currentThemeMode.value = getDarkModeUseCase()
-            }
+    fun setDarkMode(selectedDarMode: String) {
+        viewModelScope.launch {
+            setDarkModeUseCase(selectedDarMode)
+            _currentThemeMode.value = selectedDarMode
         }
     }
+
+    fun getDarkMode() {
+        viewModelScope.launch {
+            _currentThemeMode.value = getDarkModeUseCase()
+        }
+    }
+}
