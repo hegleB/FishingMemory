@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
@@ -64,14 +64,14 @@ fun FMRefreshLayout(
     )
     Column(
         modifier = Modifier
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colorScheme.background)
             .pullRefresh(state),
     ) {
         Box(
             modifier = Modifier
-                .background(color = Color.White)
                 .fillMaxWidth()
-                .height(animatedHeight),
+                .height(animatedHeight)
+                .background(color = MaterialTheme.colorScheme.background),
         ) {
             ProgressIndicator(
                 context = context,

@@ -1,6 +1,8 @@
 package com.qure.splash
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,7 +21,11 @@ fun SplashScreen(
     navigateToLogin: () -> Unit,
 ) {
     val isFirstVisitor by viewModel.isFirstVisitor.collectAsStateWithLifecycle()
-    SplashContent(modifier = Modifier.fillMaxSize())
+    SplashContent(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background),
+    )
     LaunchedEffect(Unit) {
         delay(3500)
         when {

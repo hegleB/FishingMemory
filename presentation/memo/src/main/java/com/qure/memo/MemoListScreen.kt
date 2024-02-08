@@ -121,16 +121,20 @@ private fun MemoListContent(
     isFilterInitialized: Boolean,
     isLoading: Boolean,
 ) {
-    Column(modifier = modifier.padding(top = 30.dp)) {
+    Column(
+        modifier = modifier
+            .background(color = MaterialTheme.colorScheme.background),
+    ) {
         Box(
             modifier = Modifier
-                .padding(start = 30.dp, end = 30.dp)
+                .padding(start = 30.dp, end = 30.dp, top = 30.dp)
                 .fillMaxWidth(),
         ) {
             FMBackButton(
                 modifier = Modifier.size(25.dp),
                 onClickBack = { onBack() },
                 backIcon = painterResource(id = com.qure.core_design.R.drawable.ic_arrow_back),
+                iconColor = MaterialTheme.colorScheme.onBackground,
             )
             FMCircleAddButton(
                 modifier = Modifier
@@ -138,6 +142,7 @@ private fun MemoListContent(
                     .align(Alignment.CenterEnd),
                 onClickAdd = { navigateToMemoCreate() },
                 circleAddIcon = painterResource(id = com.qure.core_design.R.drawable.ic_circle_add),
+                iconColor = MaterialTheme.colorScheme.onBackground,
             )
         }
         FMRefreshLayout(
@@ -147,7 +152,8 @@ private fun MemoListContent(
                 val scrollState = rememberScrollState()
                 Row(
                     modifier = modifier
-                        .verticalScroll(scrollState),
+                        .verticalScroll(scrollState)
+                        .background(color = MaterialTheme.colorScheme.background),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     FMProgressBar(
@@ -159,7 +165,9 @@ private fun MemoListContent(
                 if (isFilterInitialized) {
                     if (memos.isNotEmpty()) {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colorScheme.background),
                             state = memoListState,
                         ) {
                             items(memos) { memo ->
@@ -179,14 +187,18 @@ private fun MemoListContent(
                         )
                         val scrollState = rememberScrollState()
                         Column(
-                            modifier = Modifier.verticalScroll(scrollState),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scrollState)
+                                .background(color = MaterialTheme.colorScheme.background),
                         ) {
                             LottieAnimation(
                                 composition = composition,
                                 progress = { progress },
                                 modifier = Modifier
                                     .height(350.dp)
-                                    .fillMaxWidth(),
+                                    .fillMaxWidth()
+                                    .background(color = MaterialTheme.colorScheme.background),
                             )
 
                             Text(
@@ -194,6 +206,7 @@ private fun MemoListContent(
                                 text = stringResource(id = R.string.empty_memo_title),
                                 fontSize = 18.sp,
                                 style = MaterialTheme.typography.headlineLarge,
+                                color = MaterialTheme.colorScheme.onBackground,
                             )
                             Text(
                                 modifier = Modifier
@@ -202,6 +215,7 @@ private fun MemoListContent(
                                 text = stringResource(id = R.string.empty_memo_description),
                                 fontSize = 12.sp,
                                 style = MaterialTheme.typography.displayMedium,
+                                color = MaterialTheme.colorScheme.onBackground,
                             )
                         }
                     }

@@ -25,7 +25,10 @@ class SplashActivity : BaseComposeActivity() {
 
     @Composable
     override fun Screen() {
-        FishingMemoryTheme {
+        FishingMemoryTheme(
+            darkTheme = false,
+            dynamicColor = false,
+        ) {
             SplashScreen(
                 viewModel = viewModel,
                 navigateToOnBoarding = { startActivity(onboardingNavigator.intent(this)); finish() },
