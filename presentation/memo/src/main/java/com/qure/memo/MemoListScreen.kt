@@ -45,15 +45,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core_design.compose.components.FMBackButton
 import com.qure.core_design.compose.components.FMCircleAddButton
+import com.qure.core_design.compose.components.FMLottieAnimation
 import com.qure.core_design.compose.components.FMProgressBar
 import com.qure.core_design.compose.components.FMRefreshLayout
 import com.qure.core_design.compose.theme.Gray200
@@ -179,13 +176,6 @@ private fun MemoListContent(
                             }
                         }
                     } else {
-                        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.fishing))
-                        val progress by animateLottieCompositionAsState(
-                            composition = composition,
-                            isPlaying = true,
-                            restartOnPlay = true,
-                            iterations = Int.MAX_VALUE,
-                        )
                         val scrollState = rememberScrollState()
                         Column(
                             modifier = Modifier
@@ -193,13 +183,12 @@ private fun MemoListContent(
                                 .verticalScroll(scrollState)
                                 .background(color = MaterialTheme.colorScheme.background),
                         ) {
-                            LottieAnimation(
-                                composition = composition,
-                                progress = { progress },
+                            FMLottieAnimation(
                                 modifier = Modifier
                                     .height(350.dp)
                                     .fillMaxWidth()
                                     .background(color = MaterialTheme.colorScheme.background),
+                                lottieId = R.raw.fishing,
                             )
 
                             Text(
