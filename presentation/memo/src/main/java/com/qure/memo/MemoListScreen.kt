@@ -74,6 +74,7 @@ fun MemoListScreen(
     val memoListState = rememberLazyListState()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
     LaunchedEffect(error) {
         error.collectLatest { message ->
@@ -105,7 +106,7 @@ fun MemoListScreen(
         navigateToMemoCreate = navigateToMemoCreate,
         navigateToMemoDetail = navigateToMemoDetail,
         isFilterInitialized = uiState.isFilterInitialized,
-        isLoading = viewModel.isLoading.value,
+        isLoading = isLoading,
     )
 }
 
