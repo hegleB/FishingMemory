@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -131,7 +130,6 @@ private fun MemoListContent(
             FMBackButton(
                 modifier = Modifier.size(25.dp),
                 onClickBack = { onBack() },
-                backIcon = painterResource(id = com.qure.core_design.R.drawable.ic_arrow_back),
                 iconColor = MaterialTheme.colorScheme.onBackground,
             )
             FMCircleAddButton(
@@ -139,7 +137,6 @@ private fun MemoListContent(
                     .size(25.dp)
                     .align(Alignment.CenterEnd),
                 onClickAdd = { navigateToMemoCreate() },
-                circleAddIcon = painterResource(id = com.qure.core_design.R.drawable.ic_circle_add),
                 iconColor = MaterialTheme.colorScheme.onBackground,
             )
         }
