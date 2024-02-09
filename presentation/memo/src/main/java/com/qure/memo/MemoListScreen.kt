@@ -264,6 +264,7 @@ private fun MemoItem(
                     style = MaterialTheme.typography.displayMedium,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
                 Text(
                     modifier = Modifier.padding(top = 5.dp),
@@ -271,6 +272,7 @@ private fun MemoItem(
                     fontSize = 12.sp,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
                 Text(
                     modifier = Modifier
@@ -279,6 +281,7 @@ private fun MemoItem(
                     fontSize = 12.sp,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
             }
             Box(
@@ -317,6 +320,7 @@ private fun MemoItem(
                     text = memo.date,
                     fontSize = 12.sp,
                     style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
             }
         }
