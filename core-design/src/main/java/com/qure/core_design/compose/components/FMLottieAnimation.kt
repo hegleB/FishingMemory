@@ -14,12 +14,20 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 fun FMLottieAnimation(
     modifier: Modifier = Modifier,
     @RawRes lottieId: Int,
+    isPlaying: Boolean = true,
+    restartOnPlay: Boolean = true,
+    iterations: Int = Int.MAX_VALUE,
 ) {
     Box(
         modifier = modifier,
     ) {
         val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieId))
-        val progress by animateLottieCompositionAsState(lottieComposition)
+        val progress by animateLottieCompositionAsState(
+            composition = lottieComposition,
+            isPlaying = isPlaying,
+            restartOnPlay = restartOnPlay,
+            iterations = iterations,
+        )
         LottieAnimation(
             modifier = modifier,
             composition = lottieComposition,
