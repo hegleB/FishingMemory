@@ -3,7 +3,9 @@ package com.qure.fishingspot
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
 import com.qure.domain.entity.fishingspot.FishingSpotBookmark
-import com.qure.domain.usecase.bookmark.*
+import com.qure.domain.usecase.bookmark.CheckFishingSpotBookmarkUseCase
+import com.qure.domain.usecase.bookmark.DeleteFishingSpotBookmarkUseCase
+import com.qure.domain.usecase.bookmark.InsertFishingSpotBookmarkUseCase
 import com.qure.domain.util.Result
 import com.qure.model.FishingSpotUI
 import com.qure.model.toFishingSpotBookmark
@@ -56,7 +58,6 @@ class FishingSpotViewModel
                             _uiState.update {
                                 it.copy(
                                     isBookmarkClicked = response.data,
-                                    isBookmarked = response.data,
                                 )
                             }
                             stopLoading()
@@ -89,5 +90,4 @@ class FishingSpotViewModel
 
 data class UiState(
     val isBookmarkClicked: Boolean = false,
-    val isBookmarked: Boolean = false,
 )
