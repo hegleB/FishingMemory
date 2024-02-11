@@ -78,6 +78,7 @@ data class FishingSpotData(
     @DrawableRes val iconRes: Int?,
     @StringRes val type: Int,
     val description: String,
+    val onClickPhoneNumber: () -> Unit = { },
 )
 
 @OptIn(ExperimentalNaverMapApi::class)
