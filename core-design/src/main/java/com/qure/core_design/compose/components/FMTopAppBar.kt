@@ -21,20 +21,18 @@ import com.qure.core_design.compose.utils.FMPreview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FMTopAppBar(
+    modifier: Modifier = Modifier,
     title: String = "",
     titleFontSize: TextUnit = 22.sp,
     titleColor: Color = MaterialTheme.colorScheme.onBackground,
     navigationIconColor: Color = MaterialTheme.colorScheme.onBackground,
     containerColor: Color = MaterialTheme.colorScheme.background,
     onBack: () -> Unit = { },
-    onClick: () -> Unit = { },
-    hasActionIcon: Boolean = false,
-    @DrawableRes actionIconRes: Int? = null,
-    actions: @Composable (RowScope.() -> Unit) = { },
     style: TextStyle = MaterialTheme.typography.displayLarge,
+    actions: @Composable (RowScope.() -> Unit) = { },
 ) {
     CenterAlignedTopAppBar(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         title = {
             Text(
