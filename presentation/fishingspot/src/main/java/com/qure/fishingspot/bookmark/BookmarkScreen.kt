@@ -95,7 +95,7 @@ private fun BookmarkContent(
                 onDismiss = { dialogState.value = false },
                 cancel = stringResource(id = com.qure.memo.R.string.cancel),
                 delete = stringResource(id = com.qure.memo.R.string.delete),
-                onClickDelete = { onClickDelete() }
+                onClickDelete = { onClickDelete() },
             )
         }
         if (isLoading) {
