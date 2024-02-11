@@ -84,9 +84,6 @@ private fun DarkModeContent(
         FMTopAppBar(
             title = stringResource(id = R.string.dark_mode_setting),
             onBack = { onBack() },
-            titleFontSize = 22.sp,
-            titleColor = MaterialTheme.colorScheme.onBackground,
-            navigationIconColor = MaterialTheme.colorScheme.onBackground,
         )
         modeTypes.forEach { (modeType, mode) ->
             DarkModeItem(
