@@ -45,7 +45,7 @@ glideCompose = "1.0.0-beta01"
 splash = "1.0.0"
 retrofit = "2.9.0"
 
-playServicesLocation = "16.0.0"
+playServicesLocation = "21.0.1"
 
 navermap = "3.16.0"
 naverclustering = "1.0.2"
@@ -66,6 +66,8 @@ androidChart = "v3.1.0"
 ktlint = "1.0.1"
 
 materialCompose = "1.6.0"
+
+navermapCompose = "1.5.4"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "application" }
@@ -170,7 +172,8 @@ compose-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-ru
 compose-glide = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
-
+compose-navermap = { module = "io.github.fornewid:naver-map-compose", version.ref = "navermapCompose"}
+compose-navermap-location = { module = "io.github.fornewid:naver-map-location", version.ref = "playServicesLocation" }
 [bundles]
 
 androidx-compose = [
@@ -186,6 +189,11 @@ androidx-compose = [
     "compose-glide",
     "compose-navigation",
     "compose-lottie"
+]
+
+navermap-compose = [
+    "compose-navermap",
+    "compose-navermap-location",
 ]
 
 [plugins]
