@@ -21,5 +21,6 @@ dependencies {
     kapt(libs.hilt.compiler)
     api(platform(libs.compose.bom))
     api(libs.bundles.androidx.compose)
+    api(libs.bundles.navermap.compose)
     debugImplementation(libs.compose.ui.tolling)
 }

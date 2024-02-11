@@ -19,6 +19,6 @@ dependencies {
     implementation(project(":navigator"))
     implementation(project(":domain"))
     implementation(project(":presentation:memo"))
-
+    api(libs.bundles.navermap.compose)
     api(libs.jetpack.activity)
 }
