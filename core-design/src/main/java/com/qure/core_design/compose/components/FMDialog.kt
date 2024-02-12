@@ -1,10 +1,16 @@
 package com.qure.core_design.compose.components
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -35,7 +41,10 @@ import androidx.compose.ui.window.Dialog
 import com.qure.core_design.R
 import com.qure.core_design.compose.theme.Blue200
 import com.qure.core_design.compose.theme.Blue600
+import com.qure.core_design.compose.theme.Gray300
+import com.qure.core_design.compose.theme.Gray400
 import com.qure.core_design.compose.utils.FMPreview
+import com.qure.core_design.compose.utils.clickableWithoutRipple
 
 @Composable
 fun FMDeleteDialog(
@@ -121,6 +130,99 @@ fun FMDeleteDialog(
     }
 }
 
+@Composable
+fun FMShareDialog(
+    title: String = "",
+    kakaoTalkShare: String = "",
+    moreShare: String = "",
+    onClickKakao: () -> Unit = { },
+    onClickMore: () -> Unit = { },
+    onDismiss: () -> Unit = { },
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .wrapContentHeight()
+                .width(280.dp),
+            shape = RectangleShape,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(top = 15.dp, bottom = 30.dp, end = 15.dp)
+                    .fillMaxWidth(),
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    text = title,
+                    style = MaterialTheme.typography.displayLarge,
+                    fontSize = 15.sp,
+                )
+                FMCloseButton(
+                    modifier = Modifier
+                        .size(25.dp)
+                        .align(Alignment.TopEnd),
+                    onClickClose = { onDismiss() },
+                    iconColor = Gray300,
+                )
+
+                Row(
+                    modifier = Modifier
+                        .padding(top = 40.dp, start = 20.dp, end = 5.dp),
+                ) {
+                    ShareButton(
+                        modifier = Modifier
+                            .clickableWithoutRipple { onClickKakao() },
+                        text = kakaoTalkShare,
+                        shareImage = R.drawable.ic_kakao_share,
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    ShareButton(
+                        modifier = Modifier
+                            .clickableWithoutRipple { onClickMore() },
+                        text = moreShare,
+                        shareImage = R.drawable.ic_more,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShareButton(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    @DrawableRes shareImage: Int,
+
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Image(
+            modifier = Modifier
+                .size(50.dp)
+                .border(
+                    border = BorderStroke(width = 0.5.dp, color = Gray400),
+                    shape = CircleShape,
+                ),
+            painter = painterResource(id = shareImage),
+            contentDescription = null,
+        )
+        Text(
+            modifier = Modifier
+                .padding(top = 5.dp)
+                .align(Alignment.CenterHorizontally),
+            text = text,
+            fontSize = 12.sp,
+        )
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun FMBookmarkDeleteDialogPreview() = FMPreview {
@@ -129,5 +231,15 @@ private fun FMBookmarkDeleteDialogPreview() = FMPreview {
         description = "이 작업은 모든 북마크가 \n삭제됩니다.",
         cancel = "취소",
         delete = "삭제",
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@Composable
+private fun FMShareDialogPreview() = FMPreview {
+    FMShareDialog(
+        title = "공유하기",
+        kakaoTalkShare = "카카오톡",
+        moreShare = "더보기",
     )
 }
