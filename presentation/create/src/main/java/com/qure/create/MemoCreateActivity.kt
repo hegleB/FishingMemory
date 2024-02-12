@@ -79,19 +79,19 @@ class MemoCreateActivity :
         setCreatedMemo()
     }
 
-    override fun onBackPressed() {
-        if (createdMemo != null) {
-            val intent = detailMemoNavigator.intent(this)
-            intent.putExtra(UPDATE_MEMO, createdMemo)
-            startActivity(intent)
-            Handler().postDelayed({
-                finish()
-            }, 2000)
-        } else {
-            finish()
-        }
-        super.onBackPressed()
-    }
+//    override fun onBackPressed() {
+//        if (createdMemo != null) {
+//            val intent = detailMemoNavigator.intent(this)
+//            intent.putExtra(UPDATE_MEMO, createdMemo)
+//            startActivity(intent)
+//            Handler().postDelayed({
+//                finish()
+//            }, 2000)
+//        } else {
+//            finish()
+//        }
+//        super.onBackPressed()
+//    }
 
     private fun initView() {
         hideKeyboard()
