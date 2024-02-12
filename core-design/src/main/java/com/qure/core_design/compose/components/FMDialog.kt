@@ -38,7 +38,7 @@ import com.qure.core_design.compose.theme.Blue600
 import com.qure.core_design.compose.utils.FMPreview
 
 @Composable
-fun FMBookmarkDeleteDialog(
+fun FMDeleteDialog(
     title: String = "",
     description: String = "",
     cancel: String = "",
@@ -124,7 +124,7 @@ fun FMBookmarkDeleteDialog(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun FMBookmarkDeleteDialogPreview() = FMPreview {
-    FMBookmarkDeleteDialog(
+    FMDeleteDialog(
         title = "북마크를 전체 삭제하시겠습니까?",
         description = "이 작업은 모든 북마크가 \n삭제됩니다.",
         cancel = "취소",

@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qure.core.extensions.Empty
-import com.qure.core_design.compose.components.FMBookmarkDeleteDialog
+import com.qure.core_design.compose.components.FMDeleteDialog
 import com.qure.core_design.compose.components.FMProgressBar
 import com.qure.core_design.compose.components.FMTopAppBar
 import com.qure.core_design.compose.theme.Blue600
@@ -89,7 +89,7 @@ private fun BookmarkContent(
     }
     Box(modifier = modifier) {
         if (dialogState.value) {
-            FMBookmarkDeleteDialog(
+            FMDeleteDialog(
                 title = stringResource(id = R.string.message_deleteAll_bookmark),
                 description = stringResource(id = R.string.message_deleteAll_description),
                 onDismiss = { dialogState.value = false },
