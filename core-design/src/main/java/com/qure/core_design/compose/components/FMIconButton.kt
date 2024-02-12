@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +19,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.qure.core_design.R
+import com.qure.core_design.compose.theme.Gray300
 import com.qure.core_design.compose.utils.clickableWithoutRipple
 
 @Composable
@@ -101,6 +103,24 @@ fun FMMoreButton(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_more_vert),
+            contentDescription = null,
+            tint = iconColor,
+        )
+    }
+}
+
+@Composable
+fun FMCloseButton(
+    modifier: Modifier = Modifier,
+    onClickClose: () -> Unit,
+    iconColor: Color = MaterialTheme.colorScheme.background,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = { onClickClose() },
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_close),
             contentDescription = null,
             tint = iconColor,
         )
