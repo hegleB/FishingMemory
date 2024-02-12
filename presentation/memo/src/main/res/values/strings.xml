@@ -10,4 +10,8 @@
     <string name="delete_memo_title">메모를 삭제하시겠어요?</string>
     <string name="delete_memo_description">이 작업은 연관된 \n모든 데이터를 삭제합니다.</string>
 
+    <string name="fish_length">%sCM</string>
+    <string name="share_memo">공유하기</string>
+    <string name="kakao_talk">카카오톡</string>
+    <string name="more">더보기</string>
 </resources>
