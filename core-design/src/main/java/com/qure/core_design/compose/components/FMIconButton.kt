@@ -88,3 +88,21 @@ fun FMBookmarkButton(
         )
     }
 }
+
+@Composable
+fun FMMoreButton(
+    modifier: Modifier = Modifier,
+    onClickMore: () -> Unit,
+    iconColor: Color = MaterialTheme.colorScheme.onBackground,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = { onClickMore() },
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_more_vert),
+            contentDescription = null,
+            tint = iconColor,
+        )
+    }
+}
