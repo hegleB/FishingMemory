@@ -26,8 +26,6 @@ import androidx.compose.ui.unit.sp
 import com.qure.core.extensions.Empty
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core_design.compose.theme.Gray500
-import com.qure.core_design.compose.theme.Gray700
-import com.qure.core_design.compose.theme.GrayBackground
 import com.qure.core_design.compose.utils.FMPreview
 import com.qure.core_design.compose.utils.clickableWithoutRipple
 import kotlinx.coroutines.flow.collectLatest
@@ -84,7 +82,7 @@ fun MyPageScreen(
     MyPageContent(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = GrayBackground),
+            .background(color = MaterialTheme.colorScheme.surfaceTint),
         email = email,
         navigateToBookmark = navigateToBookmark,
         versionName = versionName,
@@ -115,14 +113,18 @@ private fun MyPageContent(
             R.string.mypage_kakao_email,
             hasDescription = true,
             description = email,
-            descriptionColor = Color.Black,
+            descriptionColor = MaterialTheme.colorScheme.onBackground,
         ),
         MyPageItemData(
             R.string.mypage_fishingspot_bookmark,
             hasIcon = true,
             onClick = navigateToBookmark,
         ),
-        MyPageItemData(R.string.dark_mode_setting, hasIcon = true, onClick = navigateToDarkMode),
+        MyPageItemData(
+            R.string.dark_mode_setting,
+            hasIcon = true,
+            onClick = navigateToDarkMode,
+        ),
     )
 
     val infoAndPolicyModels = listOf(
@@ -181,7 +183,7 @@ private fun MyPageContent(
                     modifier = Modifier
                         .height(20.dp)
                         .fillMaxWidth()
-                        .background(color = GrayBackground),
+                        .background(color = MaterialTheme.colorScheme.surfaceTint),
                 )
             }
         }
@@ -200,18 +202,19 @@ private fun MyPageItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = Color.White)
+            .background(color = MaterialTheme.colorScheme.background)
             .clickableWithoutRipple { onClick() },
     ) {
         Row(
             modifier = Modifier
-                .padding(20.dp),
+                .padding(20.dp)
+                .background(color = MaterialTheme.colorScheme.background),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,
-                color = Gray700,
+                color = MaterialTheme.colorScheme.outline,
                 fontSize = 18.sp,
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -220,6 +223,7 @@ private fun MyPageItem(
                     Icon(
                         painter = painterResource(id = com.qure.core_design.R.drawable.ic_arrow_forward),
                         contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground,
                     )
                 }
 
@@ -237,7 +241,7 @@ private fun MyPageItem(
             modifier = Modifier
                 .height(3.dp)
                 .fillMaxWidth()
-                .background(color = GrayBackground),
+                .background(color = MaterialTheme.colorScheme.surfaceTint),
         )
     }
 }
