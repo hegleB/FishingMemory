@@ -29,6 +29,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.qure.core_design.compose.theme.Gray100
 import com.qure.core_design.compose.theme.Gray700
+import com.qure.core_design.compose.theme.White
 import com.qure.core_design.compose.utils.FMPreview
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -77,6 +78,7 @@ fun FMMemoItem(
                     style = MaterialTheme.typography.displayMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
 
                 Box(
@@ -97,7 +99,7 @@ fun FMMemoItem(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.background,
+                        color = White,
                         fontSize = 13.sp,
                         style = MaterialTheme.typography.bodyMedium,
                     )
@@ -113,6 +115,7 @@ fun FMMemoItem(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
 
@@ -125,6 +128,7 @@ fun FMMemoItem(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             Text(
@@ -136,6 +140,7 @@ fun FMMemoItem(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground,
             )
         }
     }
