@@ -1,5 +1,6 @@
 package com.qure.core_design.compose.components
 
+import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -27,6 +29,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +47,7 @@ import androidx.compose.ui.window.Dialog
 import com.qure.core_design.R
 import com.qure.core_design.compose.theme.Blue200
 import com.qure.core_design.compose.theme.Blue600
+import com.qure.core_design.compose.theme.Gray200
 import com.qure.core_design.compose.theme.Gray300
 import com.qure.core_design.compose.theme.Gray400
 import com.qure.core_design.compose.utils.FMPreview
@@ -198,7 +205,7 @@ private fun ShareButton(
     text: String = "",
     @DrawableRes shareImage: Int,
 
-) {
+    ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -223,6 +230,87 @@ private fun ShareButton(
     }
 }
 
+@Composable
+fun FMYearPickerDialog(
+    title: String,
+    cancel: String,
+    selection: String,
+    year: Int,
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit = { },
+    onSelectedYearChanged: (Int) -> Unit,
+) {
+    var yearState by remember { mutableIntStateOf(year) }
+
+    Dialog({ onDismissRequest() }) {
+        Card(
+            modifier = modifier
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
+            border = BorderStroke(width = 1.dp, color = Color.White),
+        ) {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth(),
+            ) {
+                Text(
+                    text = title,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                        .wrapContentWidth(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 20.sp,
+                )
+
+                FMYearPicker(
+                    modifier = modifier
+                        .width(150.dp)
+                        .align(Alignment.CenterHorizontally),
+                    value = yearState,
+                    onValueChange = {
+                        yearState = it
+                    },
+                )
+
+                Row(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                ) {
+                    FMButton(
+                        modifier = modifier
+                            .padding(end = 10.dp)
+                            .weight(1f)
+                            .border(
+                                border = BorderStroke(width = 1.dp, color = Gray200),
+                                shape = CircleShape,
+                            )
+                            .height(40.dp),
+                        text = cancel,
+                        onClick = { onDismissRequest() },
+                    )
+
+                    FMButton(
+                        modifier = modifier
+                            .height(40.dp)
+                            .padding(start = 10.dp)
+                            .weight(1f),
+                        text = selection,
+                        onClick = { onSelectedYearChanged(yearState) },
+                        fontColor = Color.White,
+                        buttonColor = Blue600,
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun FMBookmarkDeleteDialogPreview() = FMPreview {
@@ -241,5 +329,18 @@ private fun FMShareDialogPreview() = FMPreview {
         title = "공유하기",
         kakaoTalkShare = "카카오톡",
         moreShare = "더보기",
+    )
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+private fun FMYearDialogPreview() = FMPreview {
+    FMYearPickerDialog(
+        title = "년도 선택",
+        year = 2024,
+        cancel = "취소",
+        selection = "선택",
+        onSelectedYearChanged = {},
     )
 }
