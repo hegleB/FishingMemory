@@ -23,7 +23,7 @@ class HistoryFragment : BaseComposeFragment() {
     lateinit var mapNavigator: MapNavigator
 
     private val viewModel by activityViewModels<HistoryViewModel>()
-    
+
     @Composable
     override fun Screen() {
         FishingMemoryTheme {
