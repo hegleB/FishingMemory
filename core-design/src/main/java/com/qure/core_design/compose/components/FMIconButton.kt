@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -15,11 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.qure.core_design.R
-import com.qure.core_design.compose.theme.Gray300
 import com.qure.core_design.compose.utils.clickableWithoutRipple
 
 @Composable
@@ -121,6 +122,26 @@ fun FMCloseButton(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_close),
+            contentDescription = null,
+            tint = iconColor,
+        )
+    }
+}
+
+@Composable
+fun FMMapButton(
+    modifier: Modifier = Modifier,
+    onClickMap: () -> Unit,
+    iconColor: Color = MaterialTheme.colorScheme.background,
+) {
+    IconButton(
+        modifier = modifier,
+        onClick = { onClickMap() },
+    ) {
+        Icon(
+            modifier = Modifier
+                .padding(2.dp),
+            painter = painterResource(id = R.drawable.ic_map),
             contentDescription = null,
             tint = iconColor,
         )
