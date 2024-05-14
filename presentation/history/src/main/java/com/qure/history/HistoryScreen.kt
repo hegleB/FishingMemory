@@ -94,7 +94,7 @@ fun HistoryScreen(
         selectedDayMemos = selectedDayMemos,
         isFiltered = uiState.isFiltered,
         year = selectedYear ?: LocalDate.now().year,
-        month = selectedMonth ?: LocalDate.now().month.value,
+        month = selectedMonth ?: LocalDate.now().month.value.minus(1),
         navigateToMap = navigateToMap,
         navigateToMemoDetail = navigateToMemoDetail,
         navigateToMemoCreate = navigateToMemoCreate,
@@ -112,7 +112,7 @@ private fun HistoryContent(
     isFiltered: Boolean = false,
     selectedDayMemos: List<MemoUI> = emptyList(),
     year: Int = LocalDate.now().year,
-    month: Int = LocalDate.now().month.value,
+    month: Int = LocalDate.now().month.value.minus(1),
     navigateToMap: () -> Unit = { },
     navigateToMemoDetail: (MemoUI) -> Unit = { },
     navigateToMemoCreate: () -> Unit = { },
@@ -164,7 +164,7 @@ private fun HistoryContent(
                     )
                     HistoryMonthTabRow(
                         onSelectedMonthChange = { onSelectedMonthChange(it) },
-                        monthIndex = month.minus(1),
+                        monthIndex = month,
                     )
                     HistoryCalendar(
                         onSelectedDayChange = onSelectedDayChange,
