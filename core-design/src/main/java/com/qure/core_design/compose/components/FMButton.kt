@@ -20,6 +20,7 @@ fun FMButton(
     buttonColor: Color = Color.White,
     fontColor: Color = Color.Black,
     shape: Shape = CircleShape,
+    isEnabled: Boolean = true,
 ) {
     Button(
         modifier = modifier,
@@ -28,6 +29,7 @@ fun FMButton(
             containerColor = buttonColor,
         ),
         shape = shape,
+        enabled = isEnabled,
     ) {
         Text(
             modifier = textModifier,
