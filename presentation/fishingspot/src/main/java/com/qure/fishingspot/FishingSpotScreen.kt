@@ -39,13 +39,12 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.CameraPositionState
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
-import com.naver.maps.map.compose.Marker
 import com.naver.maps.map.compose.MarkerState
-import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
 import com.qure.core_design.compose.components.FMBackButton
 import com.qure.core_design.compose.components.FMBookmarkButton
+import com.qure.core_design.compose.components.FMNaverMap
 import com.qure.core_design.compose.theme.Blue600
 import com.qure.core_design.compose.theme.Gray300
 import com.qure.core_design.compose.theme.Gray500
@@ -154,21 +153,18 @@ private fun FishingSpotContent(
             position = CameraPosition(fishingSpotPosition, 14.0)
         }
 
-        NaverMap(
+        FMNaverMap(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 20.dp)
                 .height(300.dp)
                 .clip(RoundedCornerShape(25.dp)),
             cameraPositionState = cameraPositionState,
-        ) {
-            Marker(
-                state = MarkerState(position = fishingSpotPosition),
-                height = 30.dp,
-                width = 35.dp,
-                icon = OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker),
-            )
-        }
+            markerState = MarkerState(position = fishingSpotPosition),
+            markerHeight = 30.dp,
+            markerWidth = 35.dp,
+            icon = OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker),
+        )
 
         Row(modifier = Modifier.padding(top = 30.dp)) {
             Text(
