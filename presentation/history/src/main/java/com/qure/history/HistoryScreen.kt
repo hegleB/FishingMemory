@@ -50,6 +50,8 @@ import com.kizitonwose.calendar.core.OutDateStyle
 import com.kizitonwose.calendar.view.CalendarView
 import com.qure.core_design.compose.components.FMMapButton
 import com.qure.core_design.compose.components.FMMemoItem
+import com.qure.core_design.compose.components.FMProgressBar
+import com.qure.core_design.compose.components.FMRefreshLayout
 import com.qure.core_design.compose.components.FMYearPickerDialog
 import com.qure.core_design.compose.theme.Blue400
 import com.qure.core_design.compose.theme.Blue600
@@ -99,6 +101,7 @@ fun HistoryScreen(
         onSelectedDayChange = onSelectedDayChange,
         onSelectedMonthChange = onSelectedMonthChange,
         onSelectedYearChange = onSelectedYearChange,
+        onRefresh = { viewModel.getFilteredMemo() }
     )
 }
 
@@ -116,6 +119,7 @@ private fun HistoryContent(
     onSelectedDayChange: (LocalDate) -> Unit = { },
     onSelectedMonthChange: (Int) -> Unit = { },
     onSelectedYearChange: (Int) -> Unit = { },
+    onRefresh: () -> Unit = { },
 ) {
     val state = rememberLazyListState()
 
@@ -142,58 +146,70 @@ private fun HistoryContent(
             .fillMaxSize()
             .padding(horizontal = 25.dp),
     ) {
-        LazyColumn(
-            modifier = modifier,
-            state = state,
+        FMRefreshLayout(
+            onRefresh = { onRefresh() },
         ) {
-            item {
-                HistoryTopAppBar(
-                    year = year,
-                    onClickMap = navigateToMap,
-                    onClickYear = {
-                        onSelectedYearChange(it)
-                        showYearDialog = true
-                    },
-                )
-                HistoryMonthTabRow(
-                    onSelectedMonthChange = { onSelectedMonthChange(it) },
-                    monthIndex = month.minus(1),
-                )
-                HistoryCalendar(
-                    onSelectedDayChange = onSelectedDayChange,
-                    year = year,
-                    month = YearMonth.of(year, month.plus(1)),
-                    memos = memos,
-                )
-            }
-        }
-
-        Box(
-            modifier = modifier
-                .fillMaxSize(),
-        ) {
-            MemoList(
+            LazyColumn(
                 modifier = modifier,
-                isFiltered = isFiltered,
-                navigateToMemoDetail = navigateToMemoDetail,
-                selectedDayMemos = selectedDayMemos,
-            )
-
-            FloatingActionButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 24.dp),
-                onClick = { navigateToMemoCreate() },
-                shape = CircleShape.copy(
-                    bottomStart = CornerSize(0.dp),
-                ),
-                containerColor = Blue400,
+                state = state,
             ) {
-                Icon(
-                    painter = painterResource(id = com.qure.core_design.R.drawable.ic_add),
-                    contentDescription = null,
-                    tint = Color.White,
-                )
+                item {
+                    HistoryTopAppBar(
+                        year = year,
+                        onClickMap = navigateToMap,
+                        onClickYear = {
+                            onSelectedYearChange(it)
+                            showYearDialog = true
+                        },
+                    )
+                    HistoryMonthTabRow(
+                        onSelectedMonthChange = { onSelectedMonthChange(it) },
+                        monthIndex = month.minus(1),
+                    )
+                    HistoryCalendar(
+                        onSelectedDayChange = onSelectedDayChange,
+                        year = year,
+                        month = YearMonth.of(year, month.plus(1)),
+                        memos = memos,
+                    )
+                }
+            }
+
+            Box(
+                modifier = modifier
+                    .fillMaxSize(),
+            ) {
+                if (isFiltered) {
+                    MemoList(
+                        modifier = modifier,
+                        isFiltered = isFiltered,
+                        navigateToMemoDetail = navigateToMemoDetail,
+                        selectedDayMemos = selectedDayMemos,
+                    )
+
+                } else {
+                    FMProgressBar(
+                        modifier = modifier
+                            .align(Alignment.Center),
+                    )
+                }
+
+                FloatingActionButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 24.dp),
+                    onClick = { navigateToMemoCreate() },
+                    shape = CircleShape.copy(
+                        bottomStart = CornerSize(0.dp),
+                    ),
+                    containerColor = Blue400,
+                ) {
+                    Icon(
+                        painter = painterResource(id = com.qure.core_design.R.drawable.ic_add),
+                        contentDescription = null,
+                        tint = Color.White,
+                    )
+                }
             }
         }
     }
