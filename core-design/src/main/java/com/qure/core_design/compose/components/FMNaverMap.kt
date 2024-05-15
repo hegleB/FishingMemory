@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.compose.CameraPositionState
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.Marker
@@ -22,10 +23,14 @@ fun FMNaverMap(
     markerHeight: Dp = 0.dp,
     markerWidth: Dp = 0.dp,
     icon: OverlayImage = OverlayImage.fromResource(R.drawable.bg_map_fill_marker),
+    onMapClick: (LatLng) -> Unit = { },
 ) {
     NaverMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState,
+        onMapClick = { _, latLng ->
+            onMapClick(latLng)
+        }
     ) {
         Marker(
             state = markerState,
