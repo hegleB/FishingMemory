@@ -85,7 +85,12 @@ data class UiState(
     val geocodingUI: GeocodingUI? = null,
     val reverseGeocodingUI: ReverseGeocodingUI? = null,
     val isGeocodingInitialized: Boolean = false,
-    val isReverseGeocodingInittialized: Boolean = false,
+    val isReverseGeocodingInitialized: Boolean = false,
+    val currentPage: Int = 0,
+    val doIndex: Int = -1,
+    val cityIndex: Int = -1,
+    val regions: List<String> = emptyList(),
+    val selectedRegions: List<String> = List(3) { "" },
 )
 
 sealed interface UiEffect {
