@@ -40,4 +40,6 @@
     <string name="permission_required">권한이 필요합니다.</string>
     <string name="required_to_import_image">사진을 가져오기 위해 필요합니다.</string>
     <string name="agreement">동의</string>
+
+    <string name="not_exist_city_name">없음</string>
 </resources>
