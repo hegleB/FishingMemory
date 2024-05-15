@@ -150,7 +150,8 @@ private fun HistoryContent(
             onRefresh = { onRefresh() },
         ) {
             LazyColumn(
-                modifier = modifier,
+                modifier = modifier
+                    .weight(3.5f),
                 state = state,
             ) {
                 item {
@@ -177,11 +178,13 @@ private fun HistoryContent(
 
             Box(
                 modifier = modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .weight(2f),
             ) {
                 if (isFiltered) {
                     MemoList(
-                        modifier = modifier,
+                        modifier = modifier
+                            .align(Alignment.TopStart),
                         isFiltered = isFiltered,
                         navigateToMemoDetail = navigateToMemoDetail,
                         selectedDayMemos = selectedDayMemos,
