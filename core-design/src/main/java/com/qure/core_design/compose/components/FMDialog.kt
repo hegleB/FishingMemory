@@ -1,7 +1,11 @@
 package com.qure.core_design.compose.components
 
 import android.content.res.Configuration
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.DatePicker
+import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +29,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -43,15 +50,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import com.qure.core_design.R
 import com.qure.core_design.compose.theme.Blue200
+import com.qure.core_design.compose.theme.Blue500
 import com.qure.core_design.compose.theme.Blue600
 import com.qure.core_design.compose.theme.Gray200
 import com.qure.core_design.compose.theme.Gray300
 import com.qure.core_design.compose.theme.Gray400
+import com.qure.core_design.compose.theme.White
 import com.qure.core_design.compose.utils.FMPreview
 import com.qure.core_design.compose.utils.clickableWithoutRipple
+import java.util.Calendar
 
 @Composable
 fun FMDeleteDialog(
@@ -311,6 +322,75 @@ fun FMYearPickerDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FMCalendarDialog(
+    modifier: Modifier = Modifier,
+    cancel: String = "",
+    selection: String = "",
+    onDismissRequest: () -> Unit = { },
+    onDateSelected: (String) -> Unit = { },
+) {
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    DatePickerDialog(
+        colors = DatePickerDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.background,
+            todayContentColor = White,
+            yearContentColor = MaterialTheme.colorScheme.onBackground,
+            dayContentColor = MaterialTheme.colorScheme.onBackground,
+            selectedDayContainerColor = Blue600,
+            currentYearContentColor = MaterialTheme.colorScheme.onBackground,
+            selectedDayContentColor = White,
+        ),
+        onDismissRequest = { onDismissRequest() },
+        confirmButton = {
+            FMButton(
+                modifier = modifier
+                    .height(30.dp),
+                text = selection,
+                onClick = { },
+                fontColor = Color.White,
+                buttonColor = Blue500,
+            )
+        },
+        dismissButton = {
+            FMButton(
+                modifier = modifier
+                    .border(
+                        border = BorderStroke(width = 1.dp, color = Gray200),
+                        shape = CircleShape,
+                    )
+                    .height(30.dp),
+                text = cancel,
+                onClick = { onDismissRequest() },
+                textStyle = MaterialTheme.typography.displaySmall,
+            )
+        },
+        shape = RoundedCornerShape(10.dp),
+    ) {
+        AndroidView(
+            factory = { context ->
+                DatePicker(ContextThemeWrapper(context, R.style.CustomDatePicker))
+            }
+        ) { datePicker ->
+            with(datePicker) {
+                init(year, month, day) { _, selectedYear, selectedMonth, selectedDay ->
+                    val selectedDateStr = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+                    onDateSelected(selectedDateStr)
+                }
+                layoutParams =
+                    LinearLayout.LayoutParams(
+                        (context.resources.displayMetrics.widthPixels * 0.78).toInt(),
+                        WRAP_CONTENT
+                    )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun FMBookmarkDeleteDialogPreview() = FMPreview {
@@ -343,4 +423,10 @@ private fun FMYearDialogPreview() = FMPreview {
         selection = "선택",
         onSelectedYearChanged = {},
     )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@Composable
+private fun FMCalendarDialogPreview() = FMPreview {
+    FMCalendarDialog()
 }
