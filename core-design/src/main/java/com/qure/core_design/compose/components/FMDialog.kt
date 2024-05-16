@@ -29,8 +29,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,7 +57,6 @@ import com.qure.core_design.compose.theme.Blue600
 import com.qure.core_design.compose.theme.Gray200
 import com.qure.core_design.compose.theme.Gray300
 import com.qure.core_design.compose.theme.Gray400
-import com.qure.core_design.compose.theme.White
 import com.qure.core_design.compose.utils.FMPreview
 import com.qure.core_design.compose.utils.clickableWithoutRipple
 import java.util.Calendar
@@ -335,57 +332,67 @@ fun FMCalendarDialog(
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
-    DatePickerDialog(
-        colors = DatePickerDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.background,
-            todayContentColor = White,
-            yearContentColor = MaterialTheme.colorScheme.onBackground,
-            dayContentColor = MaterialTheme.colorScheme.onBackground,
-            selectedDayContainerColor = Blue600,
-            currentYearContentColor = MaterialTheme.colorScheme.onBackground,
-            selectedDayContentColor = White,
-        ),
+    Dialog(
         onDismissRequest = { onDismissRequest() },
-        confirmButton = {
-            FMButton(
-                modifier = modifier
-                    .height(30.dp),
-                text = selection,
-                onClick = { },
-                fontColor = Color.White,
-                buttonColor = Blue500,
-            )
-        },
-        dismissButton = {
-            FMButton(
-                modifier = modifier
-                    .border(
-                        border = BorderStroke(width = 1.dp, color = Gray200),
-                        shape = CircleShape,
-                    )
-                    .height(30.dp),
-                text = cancel,
-                onClick = { onDismissRequest() },
-                textStyle = MaterialTheme.typography.displaySmall,
-            )
-        },
-        shape = RoundedCornerShape(10.dp),
     ) {
-        AndroidView(
-            factory = { context ->
-                DatePicker(ContextThemeWrapper(context, R.style.CustomDatePicker))
-            }
-        ) { datePicker ->
-            with(datePicker) {
-                init(year, month, day) { _, selectedYear, selectedMonth, selectedDay ->
-                    val selectedDateStr = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-                    onDateSelected(selectedDateStr)
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(shape = RoundedCornerShape(10.dp))
+                .background(
+                    color = MaterialTheme.colorScheme.background,
+                ),
+        ) {
+            AndroidView(
+                factory = { context ->
+                    DatePicker(ContextThemeWrapper(context, R.style.CustomDatePicker))
                 }
-                layoutParams =
-                    LinearLayout.LayoutParams(
-                        (context.resources.displayMetrics.widthPixels * 0.78).toInt(),
-                        WRAP_CONTENT
-                    )
+            ) { datePicker ->
+                with(datePicker) {
+                    init(year, month, day) { _, selectedYear, selectedMonth, selectedDay ->
+                        val selectedDateStr = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+                        onDateSelected(selectedDateStr)
+                    }
+                    layoutParams =
+                        LinearLayout.LayoutParams(
+                            (context.resources.displayMetrics.widthPixels * 0.8).toInt(),
+                            WRAP_CONTENT
+                        )
+                }
+            }
+
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp, end = 10.dp),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                FMButton(
+                    modifier = modifier
+                        .border(
+                            border = BorderStroke(width = 1.dp, color = Gray200),
+                            shape = CircleShape,
+                        )
+                        .height(30.dp),
+                    text = cancel,
+                    onClick = { onDismissRequest() },
+                    textStyle = MaterialTheme.typography.displaySmall,
+                )
+
+                Spacer(
+                    modifier = modifier
+                        .width(10.dp)
+                )
+
+                FMButton(
+                    modifier = modifier
+                        .height(30.dp),
+                    text = selection,
+                    onClick = { },
+                    fontColor = Color.White,
+                    buttonColor = Blue500,
+                    textStyle = MaterialTheme.typography.displaySmall,
+                )
             }
         }
     }
