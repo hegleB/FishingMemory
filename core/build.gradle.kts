@@ -28,4 +28,5 @@ dependencies {
     api(libs.hilt.core)
     kapt(libs.hilt.compiler)
     api(libs.hilt.okhttp)
+    api(libs.accompanist.permissions)
 }

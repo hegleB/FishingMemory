@@ -69,6 +69,8 @@ materialCompose = "1.6.0"
 
 navermapCompose = "1.5.4"
 
+permission = "v0.35.0-alpha"
+
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "application" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -104,6 +106,8 @@ hilt-okhttp = { group = "com.google.dagger", name = "hilt-android-testing", vers
 glide-core = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-comiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 glide-okhttp = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
+
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permission" }
 
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
