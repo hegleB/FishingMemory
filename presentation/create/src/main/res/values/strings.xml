@@ -42,4 +42,6 @@
     <string name="agreement">동의</string>
 
     <string name="not_exist_city_name">없음</string>
+
+    <string name="selection">선택</string>
 </resources>
