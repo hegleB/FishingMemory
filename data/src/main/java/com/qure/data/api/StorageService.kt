@@ -13,5 +13,5 @@ interface StorageService {
     suspend fun postMemoImage(
         @Path("imageName") memoImage: String,
         @Part image: MultipartBody.Part,
-    ): Result<MemoStorageEntity>
+    ): MemoStorageEntity
 }

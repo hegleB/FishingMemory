@@ -4,5 +4,5 @@ import com.qure.data.entity.memo.MemoStorageEntity
 import java.io.File
 
 interface MemoStorageRemoteDataSource {
-    suspend fun postMemoStorage(image: File): Result<MemoStorageEntity>
+    suspend fun postMemoStorage(image: File): MemoStorageEntity
 }

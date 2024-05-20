@@ -7,7 +7,7 @@ interface AuthRepository {
     suspend fun createUser(
         email: String,
         socialToken: String,
-    ): Result<SignUpUser>
+    ): SignUpUser
 
     fun saveTokenToLocal(token: String)
 
@@ -21,7 +21,7 @@ interface AuthRepository {
 
     fun getEmailFromLocal(): String
 
-    fun getSignedUpUser(email: String): Flow<Result<SignUpUser>>
+    fun getSignedUpUser(email: String): Flow<SignUpUser>
 
-    fun removeEmailFromRemote(email: String): Flow<Result<Unit>>
+    fun removeEmailFromRemote(email: String): Flow<Unit>
 }

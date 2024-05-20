@@ -15,5 +15,5 @@ class GetWeatherUseCase
             base_time: String,
             nx: String,
             ny: String,
-        ): Flow<Result<Weather>> = weatherRepository.getWeather(base_date, base_time, nx, ny)
+        ): Flow<Weather> = weatherRepository.getWeather(base_date, base_time, nx, ny)
     }

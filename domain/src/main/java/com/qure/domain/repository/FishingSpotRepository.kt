@@ -5,5 +5,5 @@ import com.qure.domain.entity.fishingspot.FishingSpotQuery
 import kotlinx.coroutines.flow.Flow
 
 interface FishingSpotRepository {
-    fun getFishingSpot(fishingSpotQuery: FishingSpotQuery): Flow<Result<List<FishingSpot>>>
+    fun getFishingSpot(fishingSpotQuery: FishingSpotQuery): Flow<List<FishingSpot>>
 }

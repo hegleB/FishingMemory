@@ -9,5 +9,5 @@ interface WeatherRepository {
         base_time: String,
         nx: String,
         ny: String,
-    ): Flow<Result<Weather>>
+    ): Flow<Weather>
 }

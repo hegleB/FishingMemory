@@ -9,7 +9,7 @@ class DeleteMemoUseCase
     constructor(
         private val memoRepository: MemoRepository,
     ) {
-        suspend operator fun invoke(uuid: String): Flow<Result<Unit>> {
+        suspend operator fun invoke(uuid: String): Flow<Unit> {
             return memoRepository.deleteMemo(uuid)
         }
     }

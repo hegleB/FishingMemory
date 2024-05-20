@@ -10,18 +10,13 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class FishingSpotRepositoryImpl
-    @Inject
-    constructor(
-        private val fishingSpotRemoteDataSource: FishingSpotRemoteDataSource,
-    ) : FishingSpotRepository {
-        override fun getFishingSpot(fishingSpotQuery: FishingSpotQuery): Flow<Result<List<FishingSpot>>> {
-            return flow {
-                fishingSpotRemoteDataSource.getFishingSopt(fishingSpotQuery)
-                    .onSuccess {
-                        emit(Result.success(it.map { it.toFishingSpot() }))
-                    }.onFailure { throwable ->
-                        emit(Result.failure(throwable))
-                    }
-            }
+@Inject
+constructor(
+    private val fishingSpotRemoteDataSource: FishingSpotRemoteDataSource,
+) : FishingSpotRepository {
+    override fun getFishingSpot(fishingSpotQuery: FishingSpotQuery): Flow<List<FishingSpot>> {
+        return flow {
+            fishingSpotRemoteDataSource.getFishingSopt(fishingSpotQuery)
         }
     }
+}

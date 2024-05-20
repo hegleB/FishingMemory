@@ -11,5 +11,5 @@ interface WeatherService {
         @Query("base_time") baseTime: String,
         @Query("nx") nx: String,
         @Query("ny") ny: String,
-    ): Result<WeatherEntity>
+    ): WeatherEntity
 }

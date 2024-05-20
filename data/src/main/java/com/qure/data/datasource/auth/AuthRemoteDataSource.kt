@@ -6,9 +6,9 @@ interface AuthRemoteDataSource {
     suspend fun postSignUp(
         email: String,
         userId: String,
-    ): Result<SignUpUserEntity>
+    ): SignUpUserEntity
 
-    suspend fun getSignedUpUser(email: String): Result<SignUpUserEntity>
+    suspend fun getSignedUpUser(email: String): SignUpUserEntity
 
-    suspend fun deleteUserEmail(email: String): Result<Unit>
+    suspend fun deleteUserEmail(email: String)
 }

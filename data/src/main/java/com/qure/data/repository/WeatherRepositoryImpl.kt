@@ -1,7 +1,6 @@
 package com.qure.data.repository
 
 import com.qure.data.datasource.weather.WeatherRemoteDataSource
-import com.qure.data.mapper.toWeather
 import com.qure.domain.entity.weather.Weather
 import com.qure.domain.repository.WeatherRepository
 import kotlinx.coroutines.flow.Flow
@@ -18,14 +17,9 @@ class WeatherRepositoryImpl
             base_time: String,
             nx: String,
             ny: String,
-        ): Flow<Result<Weather>> {
+        ): Flow<Weather> {
             return flow {
                 weatherRemoteDataSource.getWeather(base_date, base_time, nx, ny)
-                    .onSuccess { weather ->
-                        emit(Result.success(weather.toWeather()))
-                    }.onFailure { throwable ->
-                        emit(Result.failure(throwable))
-                    }
             }
         }
     }

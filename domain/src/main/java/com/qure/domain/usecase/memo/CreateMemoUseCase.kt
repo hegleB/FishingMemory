@@ -10,11 +10,7 @@ class CreateMemoUseCase
     constructor(
         private val memoRepository: MemoRepository,
     ) {
-        suspend operator fun invoke(memoFields: MemoFields): Result<Memo> {
+        suspend operator fun invoke(memoFields: MemoFields): Memo {
             return memoRepository.createMemo(memoFields)
-                .onSuccess {
-                }.onFailure {
-                    throw it as Exception
-                }
         }
     }

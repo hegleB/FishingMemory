@@ -10,5 +10,5 @@ class GetUserTokenUseCase
     constructor(
         private val authRepository: AuthRepository,
     ) {
-        operator fun invoke(email: String): Flow<Result<SignUpUser>> = authRepository.getSignedUpUser(email)
+        operator fun invoke(email: String): Flow<SignUpUser> = authRepository.getSignedUpUser(email)
     }

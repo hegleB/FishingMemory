@@ -11,5 +11,5 @@ interface FishingSpotService {
     suspend fun getFishingSpot(
         @Path("projectId") projectId: String,
         @Body fishingSpotQuery: FishingSpotQuery,
-    ): Result<List<FishingSpotEntity>>
+    ): List<FishingSpotEntity>
 }

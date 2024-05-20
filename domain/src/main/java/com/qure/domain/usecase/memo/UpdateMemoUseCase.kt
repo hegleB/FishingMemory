@@ -11,7 +11,7 @@ class UpdateMemoUseCase
     constructor(
         private val memoRepository: MemoRepository,
     ) {
-        operator fun invoke(memoFields: MemoFields): Flow<Result<Document>> {
+        operator fun invoke(memoFields: MemoFields): Flow<Document> {
             return memoRepository.getUpdatedMemo(memoFields)
         }
     }

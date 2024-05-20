@@ -10,5 +10,5 @@ class GetGeocodingUseCase
     constructor(
         private val mapRepository: MapRepository,
     ) {
-        operator fun invoke(query: String): Flow<Result<Geocoding>> = mapRepository.getGeocoding(query)
+        operator fun invoke(query: String): Flow<Geocoding> = mapRepository.getGeocoding(query)
     }

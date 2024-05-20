@@ -9,7 +9,7 @@ class LogoutUserUseCase
     constructor(
         private val authRepository: AuthRepository,
     ) {
-        operator fun invoke(email: String): Flow<Result<Unit>> {
+        operator fun invoke(email: String): Flow<Unit> {
             authRepository.removeTokenFromLocal()
             authRepository.removeEmailFromLocal()
             return authRepository.removeEmailFromRemote(email)

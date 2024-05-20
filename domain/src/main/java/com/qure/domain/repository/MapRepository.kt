@@ -5,7 +5,7 @@ import com.qure.domain.entity.map.ReverseGeocoding
 import kotlinx.coroutines.flow.Flow
 
 interface MapRepository {
-    fun getGeocoding(query: String): Flow<Result<Geocoding>>
+    fun getGeocoding(query: String): Flow<Geocoding>
 
-    fun getReverseGeocoding(coords: String): Flow<Result<ReverseGeocoding>>
+    fun getReverseGeocoding(coords: String): Flow<ReverseGeocoding>
 }

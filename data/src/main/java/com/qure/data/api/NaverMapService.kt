@@ -9,12 +9,12 @@ interface NaverMapService {
     @GET("/map-geocode/v2/geocode")
     suspend fun getGeocoding(
         @Query("query") query: String,
-    ): Result<GeocodingEntity>
+    ): GeocodingEntity
 
     @GET("/map-reversegeocode/v2/gc")
     suspend fun getReverseGeocoding(
         @Query("coords") coords: String,
         @Query("orders") orders: String = "addr",
         @Query("output") output: String = "json",
-    ): Result<ReverseGeocodingEntity>
+    ): ReverseGeocodingEntity
 }

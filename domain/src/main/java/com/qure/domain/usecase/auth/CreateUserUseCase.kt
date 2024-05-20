@@ -12,13 +12,7 @@ class CreateUserUseCase
         suspend operator fun invoke(
             email: String,
             socialToken: String,
-        ): Result<SignUpUser> {
+        ): SignUpUser {
             return authRepository.createUser(email, socialToken)
-                .onSuccess {
-                    authRepository.saveTokenToLocal(it.fields.token.stringValue)
-                    authRepository.saveEmailToLocal(email)
-                }.onFailure {
-                    throw it as Exception
-                }
         }
     }

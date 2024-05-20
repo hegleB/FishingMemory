@@ -1,19 +1,23 @@
 package com.qure.domain.repository
 
-import com.qure.domain.entity.memo.*
+import com.qure.domain.entity.memo.Document
+import com.qure.domain.entity.memo.Memo
+import com.qure.domain.entity.memo.MemoFields
+import com.qure.domain.entity.memo.MemoQuery
+import com.qure.domain.entity.memo.MemoStorage
 import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 interface MemoRepository {
-    suspend fun createMemo(memoFields: MemoFields): Result<Memo>
+    suspend fun createMemo(memoFields: MemoFields): Memo
 
-    suspend fun uploadMemoImage(image: File): Result<MemoStorage>
+    suspend fun uploadMemoImage(image: File): MemoStorage
 
-    fun getUpdatedMemo(memoFields: MemoFields): Flow<Result<Document>>
+    fun getUpdatedMemo(memoFields: MemoFields): Flow<Document>
 
-    fun deleteMemo(uuid: String): Flow<Result<Unit>>
+    fun deleteMemo(uuid: String): Flow<Unit>
 
-    fun getfilteredMemo(memoQuery: MemoQuery): Flow<Result<List<Memo>>>
+    fun getfilteredMemo(memoQuery: MemoQuery): Flow<List<Memo>>
 
-    fun deleteAllMemos(memoQuery: MemoQuery): Flow<Result<Boolean>>
+    fun deleteAllMemos(memoQuery: MemoQuery): Flow<Boolean>
 }

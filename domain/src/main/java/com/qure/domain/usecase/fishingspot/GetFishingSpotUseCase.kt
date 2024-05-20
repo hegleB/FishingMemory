@@ -11,7 +11,7 @@ class GetFishingSpotUseCase
     constructor(
         private val fishingSpotRepository: FishingSpotRepository,
     ) {
-        operator fun invoke(fishingSpotQuery: FishingSpotQuery): Flow<Result<List<FishingSpot>>> {
+        operator fun invoke(fishingSpotQuery: FishingSpotQuery): Flow<List<FishingSpot>> {
             return fishingSpotRepository.getFishingSpot(fishingSpotQuery)
         }
     }

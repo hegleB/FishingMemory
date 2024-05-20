@@ -1,15 +1,14 @@
 package com.qure.domain.repository
 
 import com.qure.domain.entity.fishingspot.FishingSpotBookmark
-import com.qure.domain.util.Result
 import kotlinx.coroutines.flow.Flow
 
 interface FishingSpotLocalRepository {
     suspend fun insertFishingSpot(fishingSpotBookmark: FishingSpotBookmark)
 
-    suspend fun getFishingSpots(): Flow<Result<List<FishingSpotBookmark>>>
+    fun getFishingSpots(): Flow<List<FishingSpotBookmark>>
 
-    suspend fun checkFishingSpot(number: Int): Flow<Result<Boolean>>
+    fun checkFishingSpot(number: Int): Flow<Boolean>
 
     suspend fun deleteFishingSpot(fishingSpotBookmark: FishingSpotBookmark)
 

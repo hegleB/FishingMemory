@@ -15,27 +15,15 @@ class MapRepositoryImpl
     constructor(
         private val mapRemoteDataSource: MapRemoteDataSource,
     ) : MapRepository {
-        override fun getGeocoding(query: String): Flow<Result<Geocoding>> {
+        override fun getGeocoding(query: String): Flow<Geocoding> {
             return flow {
                 mapRemoteDataSource.getGeocoding(query)
-                    .onSuccess { geocoding ->
-                        emit(Result.success(geocoding.toGeocoding()))
-                    }
-                    .onFailure { throwable ->
-                        emit(Result.failure(throwable))
-                    }
             }
         }
 
-        override fun getReverseGeocoding(coords: String): Flow<Result<ReverseGeocoding>> {
+        override fun getReverseGeocoding(coords: String): Flow<ReverseGeocoding> {
             return flow {
                 mapRemoteDataSource.getReverseGeocoding(coords)
-                    .onSuccess { reverseGeocoding ->
-                        emit(Result.success(reverseGeocoding.toReverseGeocoding()))
-                    }
-                    .onFailure { throwable ->
-                        emit(Result.failure(throwable))
-                    }
             }
         }
     }

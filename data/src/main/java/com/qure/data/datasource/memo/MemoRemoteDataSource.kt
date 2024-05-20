@@ -7,11 +7,11 @@ import com.qure.domain.entity.memo.MemoFields
 import com.qure.domain.entity.memo.MemoQuery
 
 interface MemoRemoteDataSource {
-    suspend fun postMemo(memoFields: MemoFields): Result<MemoEntity>
+    suspend fun postMemo(memoFields: MemoFields): MemoEntity
 
-    suspend fun postMemoQuery(memoQuery: MemoQuery): Result<List<MemoQueryEntity>>
+    suspend fun postMemoQuery(memoQuery: MemoQuery): List<MemoQueryEntity>
 
-    suspend fun deleteMemo(uuid: String): Result<Unit>
+    suspend fun deleteMemo(uuid: String): Unit
 
-    suspend fun updateMemo(memoFields: MemoFields): Result<UpdatedMemoEntity>
+    suspend fun updateMemo(memoFields: MemoFields): UpdatedMemoEntity
 }

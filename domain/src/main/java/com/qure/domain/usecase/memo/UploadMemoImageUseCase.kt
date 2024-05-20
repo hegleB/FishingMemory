@@ -10,12 +10,7 @@ class UploadMemoImageUseCase
     constructor(
         private val memoRepository: MemoRepository,
     ) {
-        suspend operator fun invoke(image: File): Result<MemoStorage> {
+        suspend operator fun invoke(image: File): MemoStorage {
             return memoRepository.uploadMemoImage(image)
-                .onSuccess {
-                }
-                .onFailure {
-                    throw it as Exception
-                }
         }
     }
