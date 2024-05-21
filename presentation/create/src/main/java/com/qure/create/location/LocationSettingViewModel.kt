@@ -34,6 +34,7 @@ constructor(
         get() = _uiEffect
 
     fun getGeocoding(query: String) {
+    fun fetchGeocoding(query: String) {
         viewModelScope.launch {
             getGeocodingUseCase(query).collect { response ->
                 response.onSuccess { geocoding ->
@@ -53,6 +54,7 @@ constructor(
     }
 
     fun getReverseGeocoding(coords: String) {
+    fun fetchReverseGeocoding(coords: String) {
         viewModelScope.launch {
             getReverseGeocodingUseCase(coords).collect { response ->
                 response.onSuccess { reverseGeocoding ->
