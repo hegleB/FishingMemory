@@ -19,6 +19,7 @@ class LocationSettingActivity : BaseComposeActivity() {
     override fun Screen() {
         FishingMemoryTheme {
             LocationSettingScreen(
+            LocationSettingRoute(
                 viewModel = viewModel,
                 onClickClose = { finish() },
                 onClickNext = viewModel::onClickNext,
