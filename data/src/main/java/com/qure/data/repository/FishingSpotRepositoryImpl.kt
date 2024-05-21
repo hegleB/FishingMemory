@@ -16,7 +16,7 @@ constructor(
 ) : FishingSpotRepository {
     override fun getFishingSpot(fishingSpotQuery: FishingSpotQuery): Flow<List<FishingSpot>> {
         return flow {
-            fishingSpotRemoteDataSource.getFishingSopt(fishingSpotQuery)
+            emit(fishingSpotRemoteDataSource.getFishingSopt(fishingSpotQuery).map { it.toFishingSpot() })
         }
     }
 }

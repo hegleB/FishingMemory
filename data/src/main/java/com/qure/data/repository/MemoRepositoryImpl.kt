@@ -32,25 +32,25 @@ constructor(
 
     override fun getUpdatedMemo(memoFields: MemoFields): Flow<Document> {
         return flow {
-            memoRemoteDataSource.updateMemo(memoFields).toDocument()
+            emit(memoRemoteDataSource.updateMemo(memoFields).toDocument())
         }
     }
 
     override fun deleteMemo(uuid: String): Flow<Unit> {
         return flow {
-            memoRemoteDataSource.deleteMemo(uuid)
+            emit(memoRemoteDataSource.deleteMemo(uuid))
         }
     }
 
     override fun getfilteredMemo(memoQuery: MemoQuery): Flow<List<Memo>> {
         return flow {
-            memoRemoteDataSource.postMemoQuery(memoQuery)
+            emit(memoRemoteDataSource.postMemoQuery(memoQuery).map { it.toMemo() })
         }
     }
 
     override fun deleteAllMemos(memoQuery: MemoQuery): Flow<Boolean> {
         return flow {
-            memoRemoteDataSource.postMemoQuery(memoQuery)
+            emit(memoRemoteDataSource.postMemoQuery(memoQuery).isEmpty())
         }
     }
 }

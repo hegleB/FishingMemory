@@ -17,13 +17,13 @@ class MapRepositoryImpl
     ) : MapRepository {
         override fun getGeocoding(query: String): Flow<Geocoding> {
             return flow {
-                mapRemoteDataSource.getGeocoding(query)
+                emit(mapRemoteDataSource.getGeocoding(query).toGeocoding())
             }
         }
 
         override fun getReverseGeocoding(coords: String): Flow<ReverseGeocoding> {
             return flow {
-                mapRemoteDataSource.getReverseGeocoding(coords)
+                emit(mapRemoteDataSource.getReverseGeocoding(coords).toReverseGeocoding())
             }
         }
     }

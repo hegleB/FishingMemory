@@ -20,13 +20,13 @@ constructor(
 
     override fun getFishingSpots(): Flow<List<FishingSpotBookmark>> {
         return flow {
-            fishingSpotLocalDataSource.getFishingSpots().map { it.toFishingSpotBookmark() }
+            emit(fishingSpotLocalDataSource.getFishingSpots().map { it.toFishingSpotBookmark() })
         }
     }
 
     override fun checkFishingSpot(number: Int): Flow<Boolean> {
         return flow {
-            fishingSpotLocalDataSource.checkFishingSpot(number)
+            emit(fishingSpotLocalDataSource.checkFishingSpot(number))
         }
     }
 
