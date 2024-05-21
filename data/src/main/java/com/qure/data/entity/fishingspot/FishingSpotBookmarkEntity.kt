@@ -1,12 +1,11 @@
 package com.qure.data.entity.fishingspot
 
-import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
+import kotlinx.serialization.Serializable
 
 @Entity(tableName = "fishingspot_table")
-@Parcelize
+@Serializable
 data class FishingSpotBookmarkEntity(
     @PrimaryKey val number: Int,
     val address: String,
@@ -20,4 +19,4 @@ data class FishingSpotBookmarkEntity(
     val longitude: Double,
     val phone_number: String,
     val fee: String,
-) : Parcelable
+)
