@@ -21,3 +21,6 @@ const val DEFAULT_GALLERY_REQUEST_CODE = 2
 
 const val ARG_AREA = "ARG_AREA"
 const val ARG_AREA_COORDS = "ARG_AREA_COORDS"
+
+const val EXTRA_REQUEST_CODE = "extra_request_code"
+const val REQUEST_UPDATE_MEMO = 3
