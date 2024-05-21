@@ -59,7 +59,9 @@ import com.qure.core_design.compose.theme.Gray300
 import com.qure.core_design.compose.theme.Gray400
 import com.qure.core_design.compose.utils.FMPreview
 import com.qure.core_design.compose.utils.clickableWithoutRipple
-import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun FMDeleteDialog(
@@ -327,11 +329,10 @@ fun FMCalendarDialog(
     selection: String = "",
     onDismissRequest: () -> Unit = { },
     onDateSelected: (String) -> Unit = { },
+    date: String = SimpleDateFormat("yyyy/MM/dd", Locale.KOREA).format(Date()),
 ) {
-    val calendar = Calendar.getInstance()
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    var (year, month, day) = date.split("/").map { it.toInt() }
+
     Dialog(
         onDismissRequest = { onDismissRequest() },
     ) {
@@ -349,9 +350,10 @@ fun FMCalendarDialog(
                 }
             ) { datePicker ->
                 with(datePicker) {
-                    init(year, month, day) { _, selectedYear, selectedMonth, selectedDay ->
-                        val selectedDateStr = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-                        onDateSelected(selectedDateStr)
+                    init(year, month.minus(1), day) { _, selectedYear, selectedMonth, selectedDay ->
+                        year = selectedYear
+                        month = selectedMonth.plus(1)
+                        day = selectedDay
                     }
                     layoutParams =
                         LinearLayout.LayoutParams(
@@ -388,7 +390,12 @@ fun FMCalendarDialog(
                     modifier = modifier
                         .height(30.dp),
                     text = selection,
-                    onClick = { },
+                    onClick = {
+                        val monthString = String.format("%02d", month)
+                        val dayString = String.format("%02d", day)
+                        onDateSelected("$year/$monthString/$dayString")
+                        onDismissRequest()
+                    },
                     fontColor = Color.White,
                     buttonColor = Blue500,
                     textStyle = MaterialTheme.typography.displaySmall,
