@@ -10,7 +10,7 @@ class GetFishingSpotBookmarksUseCase
     constructor(
         private val fishingSpotLocalRepository: FishingSpotLocalRepository,
     ) {
-        suspend operator fun invoke(): Flow<List<FishingSpotBookmark>> {
+        operator fun invoke(): Flow<List<FishingSpotBookmark>> {
             return fishingSpotLocalRepository.getFishingSpots()
         }
     }
