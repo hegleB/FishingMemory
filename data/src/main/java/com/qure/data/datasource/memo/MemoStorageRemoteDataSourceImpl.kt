@@ -13,7 +13,7 @@ class MemoStorageRemoteDataSourceImpl
     constructor(
         private val storageService: StorageService,
     ) : MemoStorageRemoteDataSource {
-        override suspend fun postMemoStorage(image: File): Result<MemoStorageEntity> {
+        override suspend fun postMemoStorage(image: File): MemoStorageEntity {
             val profileImage: RequestBody =
                 RequestBody.create(
                     "image/jpg".toMediaTypeOrNull(),

@@ -3,7 +3,6 @@ package com.qure.data.datasource.auth
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.data.api.AuthService
-import com.qure.data.api.MemoService
 import com.qure.data.entity.auth.SignUpUserEntity
 import com.qure.domain.entity.auth.Email
 import com.qure.domain.entity.auth.SignUpFields
@@ -16,12 +15,11 @@ class AuthRemoteDataSourceImpl
     constructor(
         private val authService: AuthService,
         private val buildPropertyRepository: BuildPropertyRepository,
-        private val memoService: MemoService,
     ) : AuthRemoteDataSource {
         override suspend fun postSignUp(
             email: String,
             socialToken: String,
-        ): Result<SignUpUserEntity> {
+        ): SignUpUserEntity {
             return authService.postSignUp(
                 buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
                 email,
@@ -29,14 +27,14 @@ class AuthRemoteDataSourceImpl
             )
         }
 
-        override suspend fun getSignedUpUser(email: String): Result<SignUpUserEntity> {
+        override suspend fun getSignedUpUser(email: String): SignUpUserEntity {
             return authService.getUserInfo(
                 buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
                 email,
             )
         }
 
-        override suspend fun deleteUserEmail(email: String): Result<Unit> {
+        override suspend fun deleteUserEmail(email: String) {
             return authService.deleteUserEmail(
                 buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
                 email,

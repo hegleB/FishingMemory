@@ -4,7 +4,7 @@ import com.qure.data.entity.map.GeocodingEntity
 import com.qure.data.entity.map.ReverseGeocodingEntity
 
 interface MapRemoteDataSource {
-    suspend fun getGeocoding(query: String): Result<GeocodingEntity>
+    suspend fun getGeocoding(query: String): GeocodingEntity
 
-    suspend fun getReverseGeocoding(coords: String): Result<ReverseGeocodingEntity>
+    suspend fun getReverseGeocoding(coords: String): ReverseGeocodingEntity
 }

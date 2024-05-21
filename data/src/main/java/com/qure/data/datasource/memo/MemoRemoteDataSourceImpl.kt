@@ -17,7 +17,7 @@ class MemoRemoteDataSourceImpl
         private val memoService: MemoService,
         private val buildPropertyRepository: BuildPropertyRepository,
     ) : MemoRemoteDataSource {
-        override suspend fun postMemo(memoFields: MemoFields): Result<MemoEntity> {
+        override suspend fun postMemo(memoFields: MemoFields): MemoEntity {
             return memoService.postMemo(
                 buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
                 memoFields.uuid.stringValue,
@@ -25,21 +25,21 @@ class MemoRemoteDataSourceImpl
             )
         }
 
-        override suspend fun postMemoQuery(memoQuery: MemoQuery): Result<List<MemoQueryEntity>> {
+        override suspend fun postMemoQuery(memoQuery: MemoQuery): List<MemoQueryEntity> {
             return memoService.postMemoFiltering(
                 buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
                 memoQuery,
             )
         }
 
-        override suspend fun deleteMemo(uuid: String): Result<Unit> {
+        override suspend fun deleteMemo(uuid: String) {
             return memoService.deleteMemo(
                 buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
                 uuid,
             )
         }
 
-        override suspend fun updateMemo(memoFields: MemoFields): Result<UpdatedMemoEntity> {
+        override suspend fun updateMemo(memoFields: MemoFields): UpdatedMemoEntity {
             return memoService.updateMemo(
                 buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
                 memoFields.uuid.stringValue,

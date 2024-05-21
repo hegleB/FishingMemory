@@ -10,11 +10,11 @@ class MapRemoteRemoteDataSourceImpl
     constructor(
         private val naverMapService: NaverMapService,
     ) : MapRemoteDataSource {
-        override suspend fun getGeocoding(query: String): Result<GeocodingEntity> {
+        override suspend fun getGeocoding(query: String): GeocodingEntity {
             return naverMapService.getGeocoding(query)
         }
 
-        override suspend fun getReverseGeocoding(coords: String): Result<ReverseGeocodingEntity> {
+        override suspend fun getReverseGeocoding(coords: String): ReverseGeocodingEntity {
             return naverMapService.getReverseGeocoding(coords)
         }
     }

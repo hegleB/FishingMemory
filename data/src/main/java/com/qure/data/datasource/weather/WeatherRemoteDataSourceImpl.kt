@@ -14,7 +14,7 @@ class WeatherRemoteDataSourceImpl
             base_time: String,
             nx: String,
             ny: String,
-        ): Result<WeatherEntity> {
+        ): WeatherEntity {
             return weatherService.getWeather(
                 baseDate = base_date,
                 baseTime = base_time,

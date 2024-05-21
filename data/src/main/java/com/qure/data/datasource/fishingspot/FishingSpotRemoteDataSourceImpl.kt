@@ -13,7 +13,7 @@ class FishingSpotRemoteDataSourceImpl
         private val fishingSpotService: FishingSpotService,
         private val buildPropertyRepository: BuildPropertyRepository,
     ) : FishingSpotRemoteDataSource {
-        override suspend fun getFishingSopt(fishingSpotQuery: FishingSpotQuery): Result<List<FishingSpotEntity>> {
+        override suspend fun getFishingSopt(fishingSpotQuery: FishingSpotQuery): List<FishingSpotEntity> {
             return fishingSpotService.getFishingSpot(
                 buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
                 fishingSpotQuery,
