@@ -50,12 +50,12 @@ constructor(
 
     override fun getSignedUpUser(email: String): Flow<SignUpUser> =
         flow {
-            authRemoteDataSource.getSignedUpUser(email)
+            emit(authRemoteDataSource.getSignedUpUser(email).toSignUpUser())
         }
 
     override fun removeEmailFromRemote(email: String): Flow<Unit> {
         return flow {
-            authRemoteDataSource.deleteUserEmail(email)
+            emit(authRemoteDataSource.deleteUserEmail(email))
         }
     }
 }
