@@ -9,6 +9,8 @@ import com.qure.core_design.compose.theme.FishingMemoryTheme
 import com.qure.create.MemoCreateActivity
 import com.qure.domain.ARG_AREA
 import com.qure.domain.ARG_AREA_COORDS
+import com.qure.domain.EXTRA_REQUEST_CODE
+import com.qure.domain.REQUEST_CODE_AREA
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,28 +20,29 @@ class LocationSettingActivity : BaseComposeActivity() {
     @Composable
     override fun Screen() {
         FishingMemoryTheme {
-            LocationSettingScreen(
             LocationSettingRoute(
                 viewModel = viewModel,
                 onClickClose = { finish() },
                 onClickNext = viewModel::onClickNext,
                 onClickPrevious = viewModel::onClickPrevious,
-                setReverseCoordsString = viewModel::getReverseGeocoding,
-                setGeoconding = viewModel::getGeocoding,
                 setReverseCoordsString = viewModel::fetchReverseGeocoding,
                 setGeoconding = viewModel::fetchGeocoding,
                 setLocation = { location, coords ->
                     val intent =
-                        Intent(this@LocationSettingActivity, MemoCreateActivity::class.java)
-                    intent.putExtra(ARG_AREA, location)
-                    intent.putExtra(ARG_AREA_COORDS, coords)
+                        Intent(this@LocationSettingActivity, MemoCreateActivity::class.java).apply {
+                            putExtra(EXTRA_REQUEST_CODE, REQUEST_CODE_AREA)
+                            putExtra(ARG_AREA, location)
+                            putExtra(ARG_AREA_COORDS, coords)
+                        }
                     setResult(Activity.RESULT_OK, intent)
                     finish()
                 },
-                setDoIndex = viewModel::setDoIndex,
-                setCityIndex = viewModel::setCityIndex,
-                setRegions = { viewModel.setRegions(it.toList()) },
-                setSelectedRegions = { viewModel.setSelectedRegions(it.toList()) }
+                setDoIndex = viewModel::setDoIndexDate,
+                setCityIndex = viewModel::setCityIndexData,
+                setRegions = { regions -> viewModel.setRegionsData(regions.toList()) },
+                setSelectedRegions = { selectedRegions ->
+                    viewModel.setSelectedRegionsData(selectedRegions.toList())
+                }
             )
         }
     }
