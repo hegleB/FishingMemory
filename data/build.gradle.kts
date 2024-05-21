@@ -25,4 +25,5 @@ dependencies {
     api(libs.hilt.core)
     kapt(libs.hilt.compiler)
     api(libs.hilt.okhttp)
+    implementation(libs.network.kotlin.serialization)
 }
