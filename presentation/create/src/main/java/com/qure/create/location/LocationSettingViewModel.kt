@@ -35,7 +35,7 @@ constructor(
         viewModelScope.launch {
             getGeocodingUseCase(query)
                 .map { geocoding -> GeoCodingUiState.Success(geocoding.toGeocodingUI()) }
-                .onStart { GeoCodingUiState.Loading }
+                .onStart { _geoCodingUiState.value = GeoCodingUiState.Loading }
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .collectLatest { geocodingUiState ->
                     _geoCodingUiState.value = geocodingUiState
@@ -47,7 +47,7 @@ constructor(
         viewModelScope.launch {
             getReverseGeocodingUseCase(coords)
                 .map { reverseGeocoding -> GeoCodingUiState.Success(reverseGeocoding = reverseGeocoding.toReverseGeocodingUI()) }
-                .onStart { GeoCodingUiState.Loading }
+                .onStart { _geoCodingUiState.value = GeoCodingUiState.Loading }
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .collectLatest { geocodingUiState ->
                     _geoCodingUiState.value = geocodingUiState
