@@ -9,7 +9,9 @@ import android.provider.MediaStore
 import androidx.compose.runtime.Composable
 import com.qure.core.BaseComposeActivity
 import com.qure.core_design.compose.theme.FishingMemoryTheme
+import com.qure.domain.EXTRA_REQUEST_CODE
 import com.qure.domain.PHOTO_FILE
+import com.qure.domain.REQUEST_IMAGE_CAPTURE
 import com.qure.navigator.MemoCreateNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.ByteArrayOutputStream
@@ -41,8 +43,10 @@ class GalleryActivity : BaseComposeActivity() {
     private fun navigateToMemoCreate(imageBitmap: Bitmap) {
         val uri = Uri.parse(getImageUri(imageBitmap).toString())
         val file = copyUriToExternalStorage(uri)
-        val intent = memoCreateNavigator.intent(this)
-        intent.putExtra(PHOTO_FILE, Uri.fromFile(file))
+        val intent = memoCreateNavigator.intent(this).apply {
+            putExtra(EXTRA_REQUEST_CODE, REQUEST_IMAGE_CAPTURE)
+            putExtra(PHOTO_FILE, Uri.fromFile(file))
+        }
         setResult(RESULT_OK, intent)
         finish()
     }
