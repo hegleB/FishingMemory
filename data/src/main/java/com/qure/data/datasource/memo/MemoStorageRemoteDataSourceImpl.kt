@@ -5,6 +5,7 @@ import com.qure.data.entity.memo.MemoStorageEntity
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
 
@@ -15,10 +16,7 @@ class MemoStorageRemoteDataSourceImpl
     ) : MemoStorageRemoteDataSource {
         override suspend fun postMemoStorage(image: File): MemoStorageEntity {
             val profileImage: RequestBody =
-                RequestBody.create(
-                    "image/jpg".toMediaTypeOrNull(),
-                    image,
-                )
+                image.asRequestBody("image/jpg".toMediaTypeOrNull())
 
             val profileImageBody: MultipartBody.Part =
                 MultipartBody.Part.createFormData(
