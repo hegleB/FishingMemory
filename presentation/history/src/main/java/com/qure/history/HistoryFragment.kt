@@ -27,7 +27,7 @@ class HistoryFragment : BaseComposeFragment() {
     @Composable
     override fun Screen() {
         FishingMemoryTheme {
-            HistoryScreen(
+            HistoryRoute(
                 viewModel = viewModel,
                 navigateToMap = { startActivity(mapNavigator.intent(requireContext())) },
                 navigateToMemoCreate = { startActivity(memoCreateNavigator.intent(requireContext())) },
