@@ -2,9 +2,16 @@ package com.qure.history
 
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
-import com.qure.core.extensions.Dash
-import com.qure.core.extensions.Slash
-import com.qure.domain.entity.memo.*
+import com.qure.domain.entity.memo.CollectionId
+import com.qure.domain.entity.memo.CompositeFilter
+import com.qure.domain.entity.memo.FieldFilter
+import com.qure.domain.entity.memo.FieldPath
+import com.qure.domain.entity.memo.Filter
+import com.qure.domain.entity.memo.MemoQuery
+import com.qure.domain.entity.memo.OrderBy
+import com.qure.domain.entity.memo.StructuredQuery
+import com.qure.domain.entity.memo.Value
+import com.qure.domain.entity.memo.Where
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
 import com.qure.memo.MemoListViewModel.Companion.AND
@@ -13,170 +20,102 @@ import com.qure.memo.MemoListViewModel.Companion.DATE
 import com.qure.memo.MemoListViewModel.Companion.DESCENDING
 import com.qure.memo.MemoListViewModel.Companion.EMAIL
 import com.qure.memo.MemoListViewModel.Companion.EQUAL
-import com.qure.memo.model.MemoUI
 import com.qure.memo.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel
-    @Inject
-    constructor(
-        private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
-        private val authRepository: AuthRepository,
-    ) : BaseViewModel() {
-        private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
-        val uiState: StateFlow<UiState>
-            get() = _uiState
+@Inject
+constructor(
+    private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
+    private val authRepository: AuthRepository,
+) : BaseViewModel() {
+    private val _filteredMemosUiState = MutableStateFlow<HistoryUiState>(HistoryUiState.Empty)
+    val filteredMemosUiState = _filteredMemosUiState.asStateFlow()
 
-        private val _selectedDayMemos: MutableStateFlow<List<MemoUI>> = MutableStateFlow(emptyList())
-        val selectedDayMemos: StateFlow<List<MemoUI>>
-            get() = _selectedDayMemos
+    private val _dateUiState = MutableStateFlow(DateUiState())
+    val dateUiState = _dateUiState.asStateFlow()
 
-        private val _selectedDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
-        val selectedDate: StateFlow<LocalDate>
-            get() = _selectedDate
+    init {
+        fetchFilteredMemos()
+    }
 
-        private val _selectedYearEvent: MutableSharedFlow<Int> = MutableSharedFlow()
-        val selectedYearEvent: SharedFlow<Int>
-            get() = _selectedYearEvent
-
-        private val _pickedYear: MutableStateFlow<Int> = MutableStateFlow(LocalDate.now().year)
-        val pickedYear: StateFlow<Int>
-            get() = _pickedYear
-
-        private val _selectedYear: MutableStateFlow<Int?> = MutableStateFlow(null)
-        val selectedYear: StateFlow<Int?>
-            get() = _selectedYear
-
-        private val _selectedMonth: MutableStateFlow<Int?> = MutableStateFlow(null)
-        val selectedMonth: StateFlow<Int?>
-            get() = _selectedMonth
-
-        fun getFilteredDayMemo(date: LocalDate) {
-            viewModelScope.launch {
-                getFilteredMemoUseCase(
-                    getDayStructuredQuery(date),
-                ).collect { response ->
-                    response.onSuccess { result ->
-                        _selectedDayMemos.value = result.map { it.toMemoUI() }
-                    }.onFailure { throwable ->
-                        sendErrorMessage(throwable)
-                    }
+    fun fetchFilteredMemos() {
+        viewModelScope.launch {
+            getFilteredMemoUseCase(getMonthStructuredQuery())
+                .map { memos -> HistoryUiState.Success(memos.map { it.toMemoUI() }) }
+                .catch { throwable -> sendErrorMessage(throwable) }
+                .onStart { _filteredMemosUiState.value = HistoryUiState.Loading }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5_000),
+                    initialValue = HistoryUiState.Empty,
+                )
+                .collectLatest { uiState ->
+                    _filteredMemosUiState.value = uiState
                 }
-            }
-        }
-
-        fun getFilteredMemo() {
-            viewModelScope.launch {
-                getFilteredMemoUseCase(
-                    getMonthStructuredQuery(),
-                ).collect { response ->
-                    response.onSuccess { result ->
-                        _uiState.update {
-                            it.copy(
-                                isFiltered = true,
-                                filteredMemos = result.map { it.toMemoUI() },
-                            )
-                        }
-                    }.onFailure { throwable ->
-                        sendErrorMessage(throwable)
-                    }
-                }
-            }
-        }
-
-        private fun getMonthStructuredQuery(): MemoQuery {
-            val emailFilter =
-                FieldFilter(
-                    field = FieldPath(EMAIL),
-                    op = EQUAL,
-                    value = Value(authRepository.getEmailFromLocal()),
-                )
-
-            val compositeFilter =
-                CompositeFilter(
-                    op = AND,
-                    filters =
-                        listOf(
-                            Filter(emailFilter),
-                        ),
-                )
-
-            return MemoQuery(
-                StructuredQuery(
-                    from = listOf(CollectionId(COLLECTION_ID)),
-                    where = Where(compositeFilter),
-                    orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING)),
-                ),
-            )
-        }
-
-        private fun getDayStructuredQuery(date: LocalDate): MemoQuery {
-            val emailFilter =
-                FieldFilter(
-                    field = FieldPath(EMAIL),
-                    op = EQUAL,
-                    value = Value(authRepository.getEmailFromLocal()),
-                )
-
-            val dateFilter =
-                FieldFilter(
-                    field = FieldPath(DATE),
-                    op = EQUAL,
-                    value = Value(date.toString().split(String.Dash).joinToString(String.Slash)),
-                )
-
-            val compositeFilter =
-                CompositeFilter(
-                    op = AND,
-                    filters =
-                        listOf(
-                            Filter(emailFilter),
-                            Filter(dateFilter),
-                        ),
-                )
-
-            return MemoQuery(
-                StructuredQuery(
-                    from = listOf(CollectionId(COLLECTION_ID)),
-                    where = Where(compositeFilter),
-                    orderBy = listOf(OrderBy(FieldPath(CREATE_TIME), DESCENDING)),
-                ),
-            )
-        }
-
-        fun selectDate(date: LocalDate) {
-            _selectedDate.value = date
-        }
-
-        fun pickYear(year: Int) {
-            _pickedYear.value = year
-        }
-
-        fun selectYear(year: Int) {
-            _selectedYear.value = year
-        }
-
-        fun selectMonth(month: Int) {
-            _selectedMonth.value = month
-        }
-
-        fun onYearSelectEvent(year: Int) {
-            viewModelScope.launch {
-                _selectedYearEvent.emit(year)
-            }
-        }
-
-        companion object {
-            const val CREATE_TIME = "createTime"
         }
     }
 
-data class UiState(
-    val isFiltered: Boolean = false,
-    val filteredMemos: List<MemoUI> = emptyList(),
-)
+    private fun getMonthStructuredQuery(): MemoQuery {
+        val emailFilter =
+            FieldFilter(
+                field = FieldPath(EMAIL),
+                op = EQUAL,
+                value = Value(authRepository.getEmailFromLocal()),
+            )
+
+        val compositeFilter =
+            CompositeFilter(
+                op = AND,
+                filters =
+                listOf(
+                    Filter(emailFilter),
+                ),
+            )
+
+        return MemoQuery(
+            StructuredQuery(
+                from = listOf(CollectionId(COLLECTION_ID)),
+                where = Where(compositeFilter),
+                orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING)),
+            ),
+        )
+    }
+
+    fun selectDate(date: LocalDate) {
+        _dateUiState.update {
+            it.copy(date = date)
+        }
+    }
+
+    fun selectYear(year: Int) {
+        _dateUiState.update {
+            it.copy(year = year)
+        }
+    }
+
+    fun selectMonth(month: Int) {
+        _dateUiState.update {
+            it.copy(month = month)
+        }
+    }
+
+    fun shouldShowYear(isShown: Boolean) {
+        _dateUiState.update {
+            it.copy(shouldShowYear = isShown)
+        }
+    }
+}
