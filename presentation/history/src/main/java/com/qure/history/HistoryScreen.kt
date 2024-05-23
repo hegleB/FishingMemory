@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,16 +29,17 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +47,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kizitonwose.calendar.core.OutDateStyle
 import com.kizitonwose.calendar.view.CalendarView
@@ -66,7 +70,7 @@ import java.util.Locale
 
 
 @Composable
-fun HistoryScreen(
+fun HistoryRoute(
     viewModel: HistoryViewModel,
     navigateToMap: () -> Unit,
     navigateToMemoDetail: (MemoUI) -> Unit,
@@ -75,44 +79,48 @@ fun HistoryScreen(
     onSelectedMonthChange: (Int) -> Unit,
     onSelectedYearChange: (Int) -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val selectedDayMemos by viewModel.selectedDayMemos.collectAsStateWithLifecycle()
-    val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
-    val selectedMonth by viewModel.selectedMonth.collectAsStateWithLifecycle()
-    val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
+    val filteredMemosUiState by viewModel.filteredMemosUiState.collectAsStateWithLifecycle()
+    val dateUiState by viewModel.dateUiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(Unit) {
-        viewModel.getFilteredMemo()
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                viewModel.fetchFilteredMemos()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
-    LaunchedEffect(selectedDate) {
-        viewModel.getFilteredDayMemo(selectedDate)
-    }
-
-    HistoryContent(
-        memos = uiState.filteredMemos,
-        selectedDayMemos = selectedDayMemos,
-        isFiltered = uiState.isFiltered,
-        year = selectedYear ?: LocalDate.now().year,
-        month = selectedMonth ?: LocalDate.now().month.value.minus(1),
+    HistoryScreen(
+        uiState = filteredMemosUiState,
+        year = dateUiState.year,
+        month = dateUiState.month,
+        date = dateUiState.date,
+        showYearDialog = dateUiState.shouldShowYear,
         navigateToMap = navigateToMap,
         navigateToMemoDetail = navigateToMemoDetail,
         navigateToMemoCreate = navigateToMemoCreate,
         onSelectedDayChange = onSelectedDayChange,
         onSelectedMonthChange = onSelectedMonthChange,
         onSelectedYearChange = onSelectedYearChange,
-        onRefresh = { viewModel.getFilteredMemo() }
+        onRefresh = viewModel::fetchFilteredMemos,
+        shouldShowYearDialog = viewModel::shouldShowYear,
     )
 }
 
 @Composable
-private fun HistoryContent(
+private fun HistoryScreen(
+    uiState: HistoryUiState = HistoryUiState.Success(),
     modifier: Modifier = Modifier,
-    memos: List<MemoUI> = emptyList(),
-    isFiltered: Boolean = false,
-    selectedDayMemos: List<MemoUI> = emptyList(),
     year: Int = LocalDate.now().year,
     month: Int = LocalDate.now().month.value.minus(1),
+    date: LocalDate = LocalDate.now(),
+    showYearDialog: Boolean = false,
     navigateToMap: () -> Unit = { },
     navigateToMemoDetail: (MemoUI) -> Unit = { },
     navigateToMemoCreate: () -> Unit = { },
@@ -120,13 +128,11 @@ private fun HistoryContent(
     onSelectedMonthChange: (Int) -> Unit = { },
     onSelectedYearChange: (Int) -> Unit = { },
     onRefresh: () -> Unit = { },
+    shouldShowYearDialog: (Boolean) -> Unit = { },
 ) {
     val state = rememberLazyListState()
 
-    var showYearDialog by remember {
-        mutableStateOf(false)
-    }
-
+    val isLoading = uiState is HistoryUiState.Loading
     if (showYearDialog) {
         FMYearPickerDialog(
             title = stringResource(id = R.string.numberpicker_title),
@@ -134,84 +140,99 @@ private fun HistoryContent(
             selection = stringResource(id = R.string.numberpicker_selection),
             cancel = stringResource(id = R.string.numberpicker_cancel),
             onSelectedYearChanged = {
-                showYearDialog = false
+                shouldShowYearDialog(false)
                 onSelectedYearChange(it)
             },
-            onDismissRequest = { showYearDialog = false }
+            onDismissRequest = { shouldShowYearDialog(false) }
         )
     }
-
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 25.dp),
     ) {
-        FMRefreshLayout(
-            onRefresh = { onRefresh() },
-        ) {
-            LazyColumn(
-                modifier = modifier
-                    .weight(3.5f),
-                state = state,
-            ) {
-                item {
-                    HistoryTopAppBar(
-                        year = year,
-                        onClickMap = navigateToMap,
-                        onClickYear = {
-                            onSelectedYearChange(it)
-                            showYearDialog = true
-                        },
-                    )
-                    HistoryMonthTabRow(
-                        onSelectedMonthChange = { onSelectedMonthChange(it) },
-                        monthIndex = month,
-                    )
-                    HistoryCalendar(
-                        onSelectedDayChange = onSelectedDayChange,
-                        year = year,
-                        month = YearMonth.of(year, month.plus(1)),
-                        memos = memos,
-                    )
-                }
-            }
 
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .weight(2f),
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 25.dp),
+        ) {
+
+            FMRefreshLayout(
+                onRefresh = { onRefresh() },
             ) {
-                if (isFiltered) {
+                LazyColumn(
+                    modifier = modifier
+                        .weight(3.5f),
+                    state = state,
+                ) {
+                    item {
+                        HistoryTopAppBar(
+                            year = year,
+                            onClickMap = navigateToMap,
+                            onClickYear = {
+                                onSelectedYearChange(it)
+                                shouldShowYearDialog(true)
+                            },
+                        )
+                        HistoryMonthTabRow(
+                            onSelectedMonthChange = { onSelectedMonthChange(it) },
+                            monthIndex = month,
+                        )
+                        HistoryCalendar(
+                            onSelectedDayChange = onSelectedDayChange,
+                            year = year,
+                            month = YearMonth.of(year, month.plus(1)),
+                            date =  date,
+                            memos = if (uiState is HistoryUiState.Success) uiState.memos.filter {
+                                it.date.startsWith(
+                                    "$year/${String.format("%02d", month.plus(1))}"
+                                )
+                            } else emptyList(),
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .weight(2f),
+                ) {
+                    if (isLoading) {
+                        FMProgressBar(
+                            modifier = modifier
+                                .align(Alignment.Center),
+                        )
+                    }
+                    val selectedDate =
+                        "$year/${String.format("%02d", month.plus(1))}/${
+                            String.format("%02d", date.dayOfMonth)
+                        }"
                     MemoList(
                         modifier = modifier
                             .align(Alignment.TopStart),
-                        isFiltered = isFiltered,
                         navigateToMemoDetail = navigateToMemoDetail,
-                        selectedDayMemos = selectedDayMemos,
+                        selectedDayMemos = if (uiState is HistoryUiState.Success) {
+                            uiState.memos.filter { it.date.startsWith(selectedDate) }
+                        } else {
+                            emptyList()
+                        },
                     )
 
-                } else {
-                    FMProgressBar(
-                        modifier = modifier
-                            .align(Alignment.Center),
-                    )
-                }
-
-                FloatingActionButton(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = 24.dp),
-                    onClick = { navigateToMemoCreate() },
-                    shape = CircleShape.copy(
-                        bottomStart = CornerSize(0.dp),
-                    ),
-                    containerColor = Blue400,
-                ) {
-                    Icon(
-                        painter = painterResource(id = com.qure.core_design.R.drawable.ic_add),
-                        contentDescription = null,
-                        tint = Color.White,
-                    )
+                    FloatingActionButton(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(bottom = 24.dp),
+                        onClick = { navigateToMemoCreate() },
+                        shape = CircleShape.copy(
+                            bottomStart = CornerSize(0.dp),
+                        ),
+                        containerColor = Blue400,
+                    ) {
+                        Icon(
+                            painter = painterResource(id = com.qure.core_design.R.drawable.ic_add),
+                            contentDescription = null,
+                            tint = Color.White,
+                        )
+                    }
                 }
             }
         }
@@ -323,6 +344,7 @@ private fun HistoryCalendar(
     onSelectedDayChange: (LocalDate) -> Unit = { },
     year: Int = LocalDate.now().year,
     month: YearMonth = YearMonth.of(year, LocalDate.now().month),
+    date: LocalDate = LocalDate.now(),
     memos: List<MemoUI> = emptyList(),
 ) {
     WeekCalendar(
@@ -335,6 +357,7 @@ private fun HistoryCalendar(
         memos = memos,
         year = year,
         month = month.monthValue,
+        date = date,
         onSelectedDayChange = onSelectedDayChange,
     )
 }
@@ -346,6 +369,7 @@ private fun MonthCalendarView(
     memos: List<MemoUI> = emptyList(),
     year: Int = LocalDate.now().year,
     month: Int = LocalDate.now().monthValue,
+    date: LocalDate = LocalDate.now(),
     onSelectedDayChange: (LocalDate) -> Unit = { },
 ) {
     val context = LocalContext.current
@@ -360,12 +384,15 @@ private fun MonthCalendarView(
         }
     }
 
-    LaunchedEffect(yearMonth, dayOfWeek) {
+    LaunchedEffect(yearMonth) {
         calendarView.setup(yearMonth, yearMonth, dayOfWeek)
     }
 
     LaunchedEffect(memos, calendarView) {
-        calendarView.dayBinder = DayBind(calendarView, memos).apply {
+        val dayBind = DayBind(calendarView, memos).apply {
+            updateCalendar(LocalDate.of(date.year, month, date.dayOfMonth))
+        }
+        calendarView.dayBinder = dayBind.apply {
             input = object : DayBind.Input() {
                 override fun onDayClick(date: LocalDate) {
                     onSelectedDayChange(date)
@@ -408,31 +435,33 @@ private fun WeekCalendar(
 
 @Composable
 private fun MemoList(
-    isFiltered: Boolean = false,
     modifier: Modifier = Modifier,
     selectedDayMemos: List<MemoUI> = emptyList(),
     navigateToMemoDetail: (MemoUI) -> Unit = { },
 ) {
     val scrollState = rememberLazyListState()
-    if (isFiltered) {
-        LazyColumn(
-            modifier = modifier
-                .fillMaxWidth(),
-            state = scrollState,
-        ) {
-            items(
-                items = selectedDayMemos,
-            ) { memo ->
-                FMMemoItem(
-                    title = memo.title,
-                    content = memo.content,
-                    location = memo.location,
-                    fishType = memo.fishType,
-                    date = memo.date,
-                    imageUrl = memo.image,
-                    onMemoClicked = { navigateToMemoDetail(memo) }
-                )
-            }
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth(),
+        state = scrollState,
+    ) {
+        items(
+            items = selectedDayMemos,
+        ) { memo ->
+            FMMemoItem(
+                title = memo.title,
+                content = memo.content,
+                location = memo.location,
+                fishType = memo.fishType,
+                date = memo.date,
+                imageUrl = memo.image,
+                onMemoClicked = { navigateToMemoDetail(memo) }
+            )
+
+            Divider(
+                modifier = Modifier
+                    .padding(vertical = 10.dp),
+            )
         }
     }
 }
@@ -451,7 +480,7 @@ enum class Week(val dayId: Int) {
 @Composable
 private fun HistoryScreenPreview() = FMPreview {
     Surface {
-        HistoryContent()
+        HistoryScreen()
     }
 }
 
