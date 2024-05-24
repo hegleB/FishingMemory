@@ -21,7 +21,7 @@ fun SplashRoute(
     navigateToLogin: () -> Unit,
 ) {
     val isFirstVisitor by viewModel.isFirstVisitor.collectAsStateWithLifecycle()
-    SplashContent(
+    SplashScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background),
@@ -37,7 +37,7 @@ fun SplashRoute(
 }
 
 @Composable
-private fun SplashContent(
+private fun SplashScreen(
     modifier: Modifier = Modifier,
 ) {
     FMLottieAnimation(
@@ -49,5 +49,5 @@ private fun SplashContent(
 @Preview
 @Composable
 private fun SplashScreenPreview() = FMPreview {
-    SplashContent()
+    SplashScreen()
 }
