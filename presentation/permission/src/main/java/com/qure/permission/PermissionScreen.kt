@@ -65,7 +65,7 @@ fun PermissionRoute(
             context.startActivity(intent)
         }
     }
-    PermissionContent(
+    PermissionScreen(
         modifier = Modifier.fillMaxSize(),
         onPermissionClick = {
             requestPermissionLauncher.launch(
@@ -90,7 +90,7 @@ private fun checkPermission(context: Context): Boolean {
 }
 
 @Composable
-fun PermissionContent(
+fun PermissionScreen(
     modifier: Modifier = Modifier,
     onPermissionClick: () -> Unit,
 ) {
@@ -206,5 +206,5 @@ private fun PermissiontTypeDescription(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 private fun PermissionScreenPreview() = FMPreview {
-    PermissionScreen({})
+    PermissionRoute({})
 }
