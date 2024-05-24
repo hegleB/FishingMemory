@@ -18,7 +18,7 @@ class LoginActivity : BaseComposeActivity() {
     @Composable
     override fun Screen() {
         FishingMemoryTheme {
-            LoginScreen(
+            LoginRoute(
                 viewModel = viewModel,
                 navigateToHome = { startActivity(homeNavigator.intent(this)); finish() },
             )

@@ -35,7 +35,7 @@ import com.qure.login.extension.loginWithKakaoOrThrow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LoginScreen(
+fun LoginRoute(
     viewModel: LoginViewModel,
     navigateToHome: () -> Unit,
 ) {
