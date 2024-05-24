@@ -49,7 +49,7 @@ fun OnboardingRoute(
     viewModel: OnboardingViewModel,
     navigateToPermission: () -> Unit,
 ) {
-    OnboardingContent(
+    OnboardingScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background),
@@ -59,7 +59,7 @@ fun OnboardingRoute(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun OnboardingContent(
+private fun OnboardingScreen(
     modifier: Modifier = Modifier,
     navigateToPermission: () -> Unit,
 ) {
@@ -172,7 +172,7 @@ private fun OnboardingContent(
 @Preview
 @Composable
 fun OnboardingScreenPreview() = FMPreview {
-    OnboardingContent(
+    OnboardingScreen(
         navigateToPermission = {},
     )
 }
