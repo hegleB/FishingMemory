@@ -97,9 +97,9 @@ fun LoginRoute(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-private fun LoginContent(
+private fun LoginScreen(
     modifier: Modifier = Modifier,
-    onKakaoLoginButtonClick: () -> Unit,
+    onClickKakaoLogin: () -> Unit = { },
 ) {
     Box(modifier = modifier) {
         GlideImage(
@@ -139,7 +139,7 @@ private fun LoginContent(
                 .align(Alignment.BottomCenter)
                 .padding(start = 20.dp, end = 20.dp, bottom = 30.dp),
             text = stringResource(id = R.string.kakao_login),
-            onClick = { onKakaoLoginButtonClick() },
+            onClick = { onClickKakaoLogin() },
             buttonColor = Yellow100,
             shape = RoundedCornerShape(15.dp),
             textStyle = MaterialTheme.typography.displayMedium,
@@ -150,5 +150,5 @@ private fun LoginContent(
 @Preview
 @Composable
 fun LoginScreenPreview() = FMPreview {
-    LoginContent(onKakaoLoginButtonClick = { })
+    LoginScreen(onClickKakaoLogin = { })
 }
