@@ -16,7 +16,7 @@ import com.qure.core_design.compose.components.FMCloseButton
 import com.qure.core_design.compose.components.FMWebView
 
 @Composable
-fun ProgramInformationScreen(
+fun ProgramInformationRoute(
     webUrl: String = "",
     onClose: () -> Unit,
 ) {

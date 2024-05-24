@@ -13,7 +13,7 @@ class ProgramInformationActivity : BaseComposeActivity() {
     override fun Screen() {
         val webUrl = intent.getStringExtra(WEB_URL) ?: String.Empty
         FishingMemoryTheme {
-            ProgramInformationScreen(
+            ProgramInformationRoute(
                 webUrl = webUrl,
                 onClose = { finish() },
             )
