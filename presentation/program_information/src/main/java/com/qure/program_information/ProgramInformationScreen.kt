@@ -20,14 +20,14 @@ fun ProgramInformationRoute(
     webUrl: String = "",
     onClose: () -> Unit,
 ) {
-    ProgramInformationContent(
+    ProgramInformationScreen(
         webUrl = webUrl,
         onClose = onClose,
     )
 }
 
 @Composable
-private fun ProgramInformationContent(
+private fun ProgramInformationScreen(
     modifier: Modifier = Modifier,
     webUrl: String = "",
     onClose: () -> Unit = { },
