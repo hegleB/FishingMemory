@@ -108,6 +108,19 @@ private fun LoginContent(
             contentDescription = null,
             contentScale = ContentScale.Crop,
         )
+        when (loginUiState) {
+            LoginUiState.Initial -> Unit
+            LoginUiState.Loading -> {
+                FMProgressBar(
+                    modifier = Modifier
+                        .align(Alignment.Center),
+                )
+            }
+
+            LoginUiState.LaunchLogin -> navigateToKakoLauncher()
+            LoginUiState.Success -> navigateToHome()
+        }
+
         Column {
             Spacer(modifier = Modifier.heightIn(200.dp))
             Text(
