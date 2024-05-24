@@ -44,7 +44,7 @@ import com.qure.core_design.compose.theme.Blue600
 import com.qure.core_design.compose.utils.FMPreview
 
 @Composable
-fun PermissionScreen(
+fun PermissionRoute(
     navigateToLogin: () -> Unit,
 ) {
     val context = LocalContext.current

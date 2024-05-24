@@ -15,7 +15,7 @@ class PermissionActivity : BaseComposeActivity() {
     @Composable
     override fun Screen() {
         FishingMemoryTheme {
-            PermissionScreen(navigateToLogin = {
+            PermissionRoute(navigateToLogin = {
                 startActivity(loginNavigator.intent(this))
                 finish()
             })
