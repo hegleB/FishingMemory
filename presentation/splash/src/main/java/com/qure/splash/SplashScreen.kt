@@ -14,7 +14,7 @@ import com.qure.core_design.compose.utils.FMPreview
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(
+fun SplashRoute(
     viewModel: SplashViewModel,
     navigateToOnBoarding: () -> Unit,
     navigateToHome: () -> Unit,

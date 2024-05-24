@@ -29,7 +29,7 @@ class SplashActivity : BaseComposeActivity() {
             darkTheme = false,
             dynamicColor = false,
         ) {
-            SplashScreen(
+            SplashRoute(
                 viewModel = viewModel,
                 navigateToOnBoarding = { startActivity(onboardingNavigator.intent(this)); finish() },
                 navigateToHome = { startActivity(homeNavigator.intent(this)); finish() },
