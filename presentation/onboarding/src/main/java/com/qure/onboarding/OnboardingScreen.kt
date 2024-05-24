@@ -45,7 +45,7 @@ data class OnboardingData(
 )
 
 @Composable
-fun OnboardingScreen(
+fun OnboardingRoute(
     viewModel: OnboardingViewModel,
     navigateToPermission: () -> Unit,
 ) {

@@ -18,7 +18,7 @@ class OnboardingActivity : BaseComposeActivity() {
     @Composable
     override fun Screen() {
         FishingMemoryTheme {
-            OnboardingScreen(
+            OnboardingRoute(
                 viewModel = viewModel,
                 navigateToPermission = {
                     viewModel.writeFirstVisitor()
