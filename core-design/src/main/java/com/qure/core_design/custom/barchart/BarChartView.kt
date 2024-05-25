@@ -10,7 +10,6 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.qure.core_design.R
 
@@ -39,7 +38,7 @@ class BarChartView(
 
         // barChart.setDrawYLabels(false);
 
-        val xAxisFormatter: ValueFormatter = IndexAxisValueFormatter(labels)
+        val xAxisFormatter: ValueFormatter = EllipsizeXAxisFormatter(labels)
         val xAxis = barChart.xAxis
 
         xAxis.apply {
@@ -123,6 +122,22 @@ class BarChartView(
             moveViewToX(-1f)
             setFitBars(true)
             invalidate()
+        }
+    }
+}
+
+class EllipsizeXAxisFormatter(private val labels: List<String>) : ValueFormatter() {
+    override fun getFormattedValue(value: Float): String {
+        val index = value.toInt()
+        return if (index >= 0 && index < labels.size) {
+            val label = labels[index]
+            if (label.length > 4) {
+                label.substring(0, 4) + "..."
+            } else {
+                label
+            }
+        } else {
+            value.toString()
         }
     }
 }
