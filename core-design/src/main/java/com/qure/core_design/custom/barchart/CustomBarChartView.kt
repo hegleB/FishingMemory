@@ -22,7 +22,7 @@ class CustomBarChartView
     @JvmOverloads
     constructor(
         context: Context,
-        attrs: AttributeSet,
+        attrs: AttributeSet? = null,
         defStyle: Int = 0,
         defStyleRes: Int = 0,
     ) : BarChart(context, attrs, defStyle) {
@@ -32,7 +32,7 @@ class CustomBarChartView
 
         private fun readRadiusAttr(
             context: Context,
-            attrs: AttributeSet,
+            attrs: AttributeSet?,
         ) {
             val a: TypedArray =
                 context.getTheme().obtainStyledAttributes(attrs, R.styleable.RoundedBarChart, 0, 0)
