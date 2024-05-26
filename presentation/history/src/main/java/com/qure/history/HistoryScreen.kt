@@ -33,6 +33,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -82,6 +83,9 @@ fun HistoryRoute(
     val filteredMemosUiState by viewModel.filteredMemosUiState.collectAsStateWithLifecycle()
     val dateUiState by viewModel.dateUiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    var isRefresh by remember {
+        mutableStateOf(false)
+    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -108,8 +112,12 @@ fun HistoryRoute(
         onSelectedDayChange = onSelectedDayChange,
         onSelectedMonthChange = onSelectedMonthChange,
         onSelectedYearChange = onSelectedYearChange,
-        onRefresh = viewModel::fetchFilteredMemos,
+        onRefresh = {
+            viewModel.fetchFilteredMemos()
+            isRefresh = true
+        },
         shouldShowYearDialog = viewModel::shouldShowYear,
+        isRefresh = isRefresh,
     )
 }
 
@@ -129,6 +137,7 @@ private fun HistoryScreen(
     onSelectedYearChange: (Int) -> Unit = { },
     onRefresh: () -> Unit = { },
     shouldShowYearDialog: (Boolean) -> Unit = { },
+    isRefresh: Boolean = false,
 ) {
     val state = rememberLazyListState()
 
@@ -158,6 +167,7 @@ private fun HistoryScreen(
 
             FMRefreshLayout(
                 onRefresh = { onRefresh() },
+                isRefresh = if (isRefresh) uiState is HistoryUiState.Loading else false,
             ) {
                 LazyColumn(
                     modifier = modifier
@@ -196,7 +206,7 @@ private fun HistoryScreen(
                         .fillMaxSize()
                         .weight(2f),
                 ) {
-                    if (isLoading) {
+                    if (isLoading && isRefresh.not()) {
                         FMProgressBar(
                             modifier = modifier
                                 .align(Alignment.Center),
