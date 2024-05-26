@@ -15,10 +15,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,29 +26,25 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.qure.core_design.R
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FMRefreshLayout(
     onRefresh: () -> Unit,
+    isRefresh: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
     val refreshScope = rememberCoroutineScope()
-    var refreshing by remember { mutableStateOf(false) }
 
     fun refresh() = refreshScope.launch {
-        refreshing = true
         onRefresh()
-        delay(500)
-        refreshing = false
     }
 
-    val state = rememberPullRefreshState(refreshing, ::refresh)
+    val state = rememberPullRefreshState(isRefresh, ::refresh)
     val animatedHeight by animateDpAsState(
-        targetValue = if (refreshing) {
+        targetValue = if (isRefresh) {
             45.dp
         } else {
             lerp(
