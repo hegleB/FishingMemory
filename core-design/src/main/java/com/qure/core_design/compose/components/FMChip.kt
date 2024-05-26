@@ -16,8 +16,12 @@ import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.qure.core_design.compose.theme.Black
 import com.qure.core_design.compose.theme.Blue600
 import com.qure.core_design.compose.theme.Gray200
 import com.qure.core_design.compose.theme.White
@@ -28,15 +32,23 @@ fun FMChipGroup(
     elements: List<String> = emptyList(),
     onClickChip: (String) -> Unit = { },
     selectedChip: String = "",
+    chipModifier: Modifier = Modifier.width(80.dp),
+    chipFontSize: TextUnit = 15.sp,
+    unSelectedFontColor: Color = Black,
+    selectedFontColor: Color = White,
 ) {
     LazyRow(
         modifier = modifier,
     ) {
         items(elements) { text ->
             FMChip(
+                modifier = chipModifier,
                 text = text,
                 onClick = { onClickChip(text) },
                 isSelected = selectedChip == text,
+                fontSize = chipFontSize,
+                unSelectedFontColor = unSelectedFontColor,
+                selectedFontColor = selectedFontColor,
             )
             Spacer(modifier = Modifier.padding(5.dp))
         }
@@ -46,13 +58,16 @@ fun FMChipGroup(
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
 fun FMChip(
-    text: String = "",
-    onClick: (String) -> Unit = { },
-    isSelected: Boolean = false,
+    text: String,
+    onClick: (String) -> Unit,
+    isSelected: Boolean,
+    modifier: Modifier,
+    fontSize: TextUnit,
+    unSelectedFontColor: Color,
+    selectedFontColor: Color,
 ) {
     Chip(
-        modifier = Modifier
-            .width(80.dp),
+        modifier = modifier,
         onClick = { onClick(text) },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(
@@ -68,7 +83,8 @@ fun FMChip(
                 .fillMaxWidth(),
             text = text,
             textAlign = TextAlign.Center,
-            color = if (isSelected) White else MaterialTheme.colorScheme.onBackground,
+            color = if (isSelected) selectedFontColor else unSelectedFontColor,
+            fontSize = fontSize,
         )
     }
 }
