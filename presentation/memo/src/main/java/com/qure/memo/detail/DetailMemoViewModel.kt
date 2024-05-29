@@ -29,11 +29,9 @@ constructor(
                 .collect {
                     _detailMemoUiState.value = DetailMemoUiState.Success
                 }
-
-        companion object {
-            const val DELETE_SUCCESS_MESSAGE = "삭제가 완료되었습니다"
         }
     }
+}
 
 data class UiState(
     val isDeleteInitialized: Boolean = false,
