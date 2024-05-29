@@ -318,7 +318,7 @@ private fun MemoCreateScreen(
                 buttonColor = Blue500,
                 fontColor = White,
                 shape = RoundedCornerShape(10.dp),
-                isEnabled = memo.isValidate,
+                isEnabled = memo.isValidMemo,
             )
         }
         val isLoading = uiState is MemoCreateUiState.Loading
