@@ -24,7 +24,16 @@ data class MemoUI(
     val content: String = String.Empty,
     val createTime: String? = System.currentTimeMillis().toString(),
     val coords: String = String.Empty,
-) : Parcelable
+) : Parcelable {
+    val isValidMemo = title.isNotEmpty() &&
+            image.isNotEmpty() &&
+            waterType.isNotEmpty() &&
+            fishSize.isNotEmpty() &&
+            location.isNotEmpty() &&
+            date.isNotEmpty() &&
+            fishType.isNotEmpty() &&
+            content.isNotEmpty()
+}
 
 fun MemoUI.toTedClusterItem(): TedClusterItem {
     val (lng, lat) = this.coords.split(String.Comma).map { it.toDouble() }
