@@ -24,6 +24,15 @@ class DetailMemoActivity : BaseComposeActivity() {
     @Composable
     override fun Screen() {
         FishingMemoryTheme {
+            var memo = if (Build.VERSION.SDK_INT >= 33) {
+                intent.getParcelableExtra(
+                    MEMO_DATA,
+                    MemoUI::class.java
+                )
+            } else {
+                intent.getParcelableExtra(MEMO_DATA)
+            } ?: MemoUI()
+
             DetailMemoScreen(
                 memo = memo,
                 viewModel = viewModel,
