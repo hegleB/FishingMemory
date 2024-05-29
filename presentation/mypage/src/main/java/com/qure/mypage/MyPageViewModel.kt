@@ -2,12 +2,23 @@ package com.qure.mypage
 
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
-import com.qure.domain.entity.memo.*
+import com.qure.domain.entity.memo.CollectionId
+import com.qure.domain.entity.memo.CompositeFilter
+import com.qure.domain.entity.memo.FieldFilter
+import com.qure.domain.entity.memo.FieldPath
+import com.qure.domain.entity.memo.Filter
+import com.qure.domain.entity.memo.MemoQuery
+import com.qure.domain.entity.memo.OrderBy
+import com.qure.domain.entity.memo.StructuredQuery
+import com.qure.domain.entity.memo.Value
+import com.qure.domain.entity.memo.Where
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.member.LogoutUserUseCase
 import com.qure.domain.usecase.member.WithdrawServiceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,34 +31,28 @@ class MyPageViewModel
         private val withdrawServiceUseCase: WithdrawServiceUseCase,
     ) : BaseViewModel() {
         private val _logoutSucceed: MutableStateFlow<Boolean> = MutableStateFlow(false)
-        val logutSucceed: MutableStateFlow<Boolean>
-            get() = _logoutSucceed
+        val logoutSucceed = _logoutSucceed.asStateFlow()
 
         private val _withdrawSucceed: MutableStateFlow<Boolean> = MutableStateFlow(false)
-        val withdrawSucceed: MutableStateFlow<Boolean>
-            get() = _withdrawSucceed
+        val withdrawSucceed = _withdrawSucceed.asStateFlow()
 
         fun logoutUser() {
             viewModelScope.launch {
-                logoutUserUseCase(authRepository.getEmailFromLocal()).collect { response ->
-                    response.onSuccess {
+                logoutUserUseCase(authRepository.getEmailFromLocal())
+                    .catch { throwable -> sendErrorMessage(throwable) }
+                    .collect {
                         _logoutSucceed.emit(true)
-                    }.onFailure { thorwable ->
-                        sendErrorMessage(thorwable.message ?: "로그아웃에 실패했습니다. 잠시 후 다시 시도해주세요.")
                     }
-                }
             }
         }
 
         fun withdrawService() {
             viewModelScope.launch {
-                withdrawServiceUseCase(getStructuredQuery()).collect { response ->
-                    response.onSuccess {
-                        _withdrawSucceed.emit(it)
-                    }.onFailure { throwable ->
-                        sendErrorMessage(throwable.message ?: "회원탈퇴를 실패했습니다. 잠시 후 다시 시도해주세요.")
+                withdrawServiceUseCase(getStructuredQuery())
+                    .catch { throwable -> sendErrorMessage(throwable) }
+                    .collect {
+                        _withdrawSucceed.emit(true)
                     }
-                }
             }
         }
 
