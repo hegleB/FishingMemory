@@ -36,7 +36,7 @@ data class MemoUI(
 }
 
 fun MemoUI.toTedClusterItem(): TedClusterItem {
-    val (lng, lat) = this.coords.split(String.Comma).map { it.toDouble() }
+    val (lat, lng) = this.coords.split(String.Comma).map { it.toDouble() }
     return object : TedClusterItem {
         override fun getTedLatLng(): TedLatLng {
             return TedLatLng(lat, lng)
