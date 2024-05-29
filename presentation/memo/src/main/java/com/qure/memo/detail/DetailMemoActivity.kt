@@ -1,14 +1,15 @@
 package com.qure.memo.detail
 
-import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import com.qure.core.BaseComposeActivity
 import com.qure.core.extensions.Empty
 import com.qure.core_design.compose.theme.FishingMemoryTheme
+import com.qure.domain.EXTRA_REQUEST_CODE
 import com.qure.domain.MEMO_DATA
-import com.qure.domain.UPDATE_MEMO
+import com.qure.domain.REQUEST_UPDATE_MEMO
 import com.qure.memo.model.MemoUI
 import com.qure.navigator.MemoCreateNavigator
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,7 +61,7 @@ class DetailMemoActivity : BaseComposeActivity() {
             content = uri.getQueryParameter(QUERY_CONTENT) ?: String.Empty,
             image =
             uri.getQueryParameter(QUERY_BASE_URL) + SLASH +
-                uri.getQueryParameter(QUERY_IMAGE_PATH),
+                    uri.getQueryParameter(QUERY_IMAGE_PATH),
         )
     }
 
