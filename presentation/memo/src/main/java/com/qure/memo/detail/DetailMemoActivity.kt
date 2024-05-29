@@ -20,11 +20,9 @@ class DetailMemoActivity : BaseComposeActivity() {
     lateinit var memoCreateNavigator: MemoCreateNavigator
 
     private val viewModel by viewModels<DetailMemoViewModel>()
-    private var memo: MemoUI = MemoUI()
 
     @Composable
     override fun Screen() {
-        initData()
         FishingMemoryTheme {
             DetailMemoScreen(
                 memo = memo,
@@ -42,23 +40,6 @@ class DetailMemoActivity : BaseComposeActivity() {
         }
     }
 
-    private fun initData() {
-        memo =
-            when {
-                intent.getParcelableExtra<MemoUI>(UPDATE_MEMO) != null ->
-                    intent.getParcelableExtra(UPDATE_MEMO) ?: MemoUI()
-
-                Intent.ACTION_VIEW == intent.action -> {
-                    val uri = intent.data
-//                    binding.imageViewActivityDetailMemoMore.gone()
-                    uri?.let { createMemoUI(it) } ?: MemoUI()
-                }
-
-                else -> intent.getParcelableExtra(MEMO_DATA) ?: MemoUI()
-            }
-    }
-
-    //
     fun createMemoUI(uri: Uri): MemoUI {
         return MemoUI(
             title = uri.getQueryParameter(QUERY_TITLE) ?: String.Empty,
