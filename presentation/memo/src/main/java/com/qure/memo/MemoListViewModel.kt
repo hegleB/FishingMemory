@@ -18,8 +18,11 @@ import com.qure.memo.model.MemoUI
 import com.qure.memo.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,37 +33,24 @@ constructor(
     private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
     private val authRepository: AuthRepository,
 ) : BaseViewModel() {
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState())
-    val uiState: StateFlow<UiState>
-        get() = _uiState
+
+    private val _memoListUiState = MutableStateFlow<MemoListUiState>(MemoListUiState.Loading)
+    val memoListUiState = _memoListUiState.asStateFlow()
 
     init {
-        getFilteredMemo()
+        fetchMemoList()
     }
-
-    fun getFilteredMemo() {
+    fun fetchMemoList() {
         viewModelScope.launch {
-            _isLoading.value = true
-            getFilteredMemoUseCase(
-                getStructuredQuery(),
-            ).collect { response ->
-                response.onSuccess { result ->
-                    val memoUI = result.map { it.toMemoUI() }
-                    _uiState.update {
-                        it.copy(
-                            isFilterInitialized = true,
-                            filteredMemo = memoUI,
-                        )
-                    }
-                    _isLoading.value = false
-                }.onFailure { throwable ->
-                    sendErrorMessage(throwable)
-                    _isLoading.value = false
+            getFilteredMemoUseCase(getStructuredQuery())
+                .map { memos -> MemoListUiState.Success(memos.map { it.toMemoUI() }) }
+                .onStart { _memoListUiState.value = MemoListUiState.Loading }
+                .catch { throwable -> sendErrorMessage(throwable) }
+                .collectLatest { memoListUiState ->
+                    _memoListUiState.value = memoListUiState
                 }
-            }
         }
     }
-
     private fun getStructuredQuery(): MemoQuery {
         val emailFilter =
             FieldFilter(
