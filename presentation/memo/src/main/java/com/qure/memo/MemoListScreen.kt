@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -25,24 +24,23 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -65,12 +63,10 @@ fun MemoListScreen(
     navigateToMemoCreate: () -> Unit,
     navigateToMemoDetail: (MemoUI) -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val memoListUiState by viewModel.memoListUiState.collectAsStateWithLifecycle()
     val error = viewModel.error
-    val memoListState = rememberLazyListState()
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    var isRefresh by remember { mutableStateOf(false) }
 
     LaunchedEffect(error) {
         error.collectLatest { message ->
@@ -81,43 +77,32 @@ fun MemoListScreen(
         }
     }
 
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) {
-                viewModel.getFilteredMemo()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
     MemoListContent(
-        memos = uiState.filteredMemo,
+        memoListUiState = memoListUiState,
         modifier = Modifier.fillMaxSize(),
-        memoListState = memoListState,
-        onRefresh = { viewModel.getFilteredMemo() },
+        onRefresh = {
+            viewModel.fetchMemoList()
+            isRefresh = true
+        },
         onBack = onBack,
         navigateToMemoCreate = navigateToMemoCreate,
         navigateToMemoDetail = navigateToMemoDetail,
-        isFilterInitialized = uiState.isFilterInitialized,
-        isLoading = isLoading,
+        isRefresh = isRefresh,
     )
 }
 
 @Composable
 private fun MemoListContent(
-    memos: List<MemoUI>,
+    memoListUiState: MemoListUiState = MemoListUiState.Loading,
     modifier: Modifier = Modifier,
-    memoListState: LazyListState,
-    onRefresh: () -> Unit,
-    onBack: () -> Unit,
-    navigateToMemoCreate: () -> Unit,
-    navigateToMemoDetail: (MemoUI) -> Unit,
-    isFilterInitialized: Boolean,
-    isLoading: Boolean,
+    onRefresh: () -> Unit = { },
+    onBack: () -> Unit = { },
+    navigateToMemoCreate: () -> Unit = { },
+    navigateToMemoDetail: (MemoUI) -> Unit = { },
+    isRefresh: Boolean = false,
 ) {
+    val memoListState = rememberLazyListState()
+    val scrollState = rememberScrollState()
     Column(
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.background),
@@ -142,38 +127,27 @@ private fun MemoListContent(
         }
         FMRefreshLayout(
             onRefresh = { onRefresh() },
+            isRefresh = if (isRefresh) memoListUiState is MemoListUiState.Loading else false,
         ) {
-            if (isLoading) {
-                val scrollState = rememberScrollState()
-                Row(
-                    modifier = modifier
-                        .verticalScroll(scrollState)
-                        .background(color = MaterialTheme.colorScheme.background),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    FMProgressBar(
-                        modifier = Modifier
-                            .size(50.dp),
-                    )
-                }
-            } else {
-                if (isFilterInitialized) {
-                    if (memos.isNotEmpty()) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
+            when (memoListUiState) {
+                MemoListUiState.Loading -> {
+                    if (isRefresh.not()) {
+                        Row(
+                            modifier = modifier
+                                .verticalScroll(scrollState)
                                 .background(color = MaterialTheme.colorScheme.background),
-                            state = memoListState,
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            items(memos) { memo ->
-                                MemoItem(
-                                    memo = memo,
-                                    navigateToMemoDetail = navigateToMemoDetail,
-                                )
-                            }
+                            FMProgressBar(
+                                modifier = Modifier
+                                    .size(50.dp),
+                            )
                         }
-                    } else {
-                        val scrollState = rememberScrollState()
+                    }
+                }
+
+                is MemoListUiState.Success -> {
+                    if (memoListUiState.memos.isEmpty()) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -204,6 +178,20 @@ private fun MemoListContent(
                                 style = MaterialTheme.typography.displayMedium,
                                 color = MaterialTheme.colorScheme.onBackground,
                             )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colorScheme.background),
+                            state = memoListState,
+                        ) {
+                            items(memoListUiState.memos) { memo ->
+                                MemoItem(
+                                    memo = memo,
+                                    navigateToMemoDetail = navigateToMemoDetail,
+                                )
+                            }
                         }
                     }
                 }
@@ -324,30 +312,29 @@ private fun MemoItem(
 @Composable
 fun MemoListScreenPreview() = FMPreview {
     MemoListContent(
-        memos = listOf(
-            MemoUI(
-                image = "https://www.pexels.com/photo/close-up-photo-of-clownfish-128756/",
-                name = "미꾸라지",
-                location = "서울특별시 강남구",
-                title = "제목1",
-                content = "내용내용내용내용 내용",
-                date = "2024/02/05",
-            ),
-            MemoUI(
-                image = "https://unsplash.com/ko/%EC%82%AC%EC%A7%84/%ED%9A%8C%EC%83%89%EA%B3%BC-%EB%85%B8%EB%9E%80%EC%83%89-%EB%AC%BC%EA%B3%A0%EA%B8%B0-iLwQIbWxv-s",
-                name = "붕어",
-                location = "서울특별시 서초구",
-                title = "제목2",
-                content = "내용내용내용내용 내용12내용내용내치hjgjhg",
-                date = "2024/02/05",
+        memoListUiState = MemoListUiState.Success(
+            listOf(
+                MemoUI(
+                    image = "https://www.pexels.com/photo/close-up-photo-of-clownfish-128756/",
+                    name = "미꾸라지",
+                    location = "서울특별시 강남구",
+                    title = "제목1",
+                    content = "내용내용내용내용 내용",
+                    date = "2024/02/05",
+                ),
+                MemoUI(
+                    image = "https://unsplash.com/ko/%EC%82%AC%EC%A7%84/%ED%9A%8C%EC%83%89%EA%B3%BC-%EB%85%B8%EB%9E%80%EC%83%89-%EB%AC%BC%EA%B3%A0%EA%B8%B0-iLwQIbWxv-s",
+                    name = "붕어",
+                    location = "서울특별시 서초구",
+                    title = "제목2",
+                    content = "내용내용내용내용 내용12내용내용내치hjgjhg",
+                    date = "2024/02/05",
+                ),
             ),
         ),
-        memoListState = LazyListState(),
         onRefresh = { },
         onBack = { },
         navigateToMemoCreate = { },
         navigateToMemoDetail = { },
-        isLoading = false,
-        isFilterInitialized = false,
     )
 }
