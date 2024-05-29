@@ -7,7 +7,7 @@ import com.qure.domain.usecase.darkmode.GetDarkModeUseCase
 import com.qure.domain.usecase.darkmode.SetDarkModeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,8 +19,7 @@ constructor(
     private val getDarkModeUseCase: GetDarkModeUseCase,
 ) : BaseViewModel() {
     private val _currentThemeMode: MutableStateFlow<String> = MutableStateFlow(String.Empty)
-    val currentThemeMode: StateFlow<String>
-        get() = _currentThemeMode
+    val currentThemeMode = _currentThemeMode.asStateFlow()
 
     init {
         getDarkMode()
