@@ -71,8 +71,8 @@ fun MyPageScreen(
         }
     }
 
-    LaunchedEffect(viewModel.logutSucceed) {
-        viewModel.logutSucceed.collectLatest { isLoginSuccess ->
+    LaunchedEffect(viewModel.logoutSucceed) {
+        viewModel.logoutSucceed.collectLatest { isLoginSuccess ->
             if (isLoginSuccess) {
                 navigateToLogin()
             }
