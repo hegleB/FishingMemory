@@ -4,7 +4,9 @@ import android.os.Parcelable
 import com.qure.core.extensions.Comma
 import com.qure.core.extensions.Empty
 import com.qure.domain.entity.memo.Document
+import com.qure.domain.entity.memo.FieldStringValue
 import com.qure.domain.entity.memo.Memo
+import com.qure.domain.entity.memo.MemoFields
 import kotlinx.android.parcel.Parcelize
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.geometry.TedLatLng
@@ -43,6 +45,23 @@ fun MemoUI.toTedClusterItem(): TedClusterItem {
         }
     }
 }
+
+fun MemoUI.toMemoFields(email: String): MemoFields {
+    return MemoFields(
+        uuid = FieldStringValue(this.uuid),
+        email = FieldStringValue(email),
+        title = FieldStringValue(this.title),
+        image = FieldStringValue(this.image),
+        waterType = FieldStringValue(this.waterType),
+        fishType = FieldStringValue(this.fishType),
+        location = FieldStringValue(this.location),
+        date = FieldStringValue(this.date),
+        fishSize = FieldStringValue(this.fishSize),
+        content = FieldStringValue(this.content),
+        coords = FieldStringValue(this.coords),
+    )
+}
+
 
 fun Memo.toMemoUI(): MemoUI {
     val data = this.fields!!.fields
