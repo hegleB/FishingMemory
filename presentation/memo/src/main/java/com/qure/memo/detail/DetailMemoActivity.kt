@@ -31,8 +31,11 @@ class DetailMemoActivity : BaseComposeActivity() {
                 viewModel = viewModel,
                 onBack = { finish() },
                 onClickEdit = {
-                    val intent = memoCreateNavigator.intent(this)
-                    intent.putExtra(UPDATE_MEMO, memo)
+                    val intent = memoCreateNavigator.intent(this).apply {
+                        putExtra(EXTRA_REQUEST_CODE, REQUEST_UPDATE_MEMO)
+                        putExtra(MEMO_DATA, memo)
+                        setResult(RESULT_OK)
+                    }
                     startActivity(intent)
                 },
             )
