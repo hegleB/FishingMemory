@@ -21,7 +21,7 @@ class BookmarkActivity : BaseComposeActivity() {
     @Composable
     override fun Screen() {
         FishingMemoryTheme {
-            BookmarkScreen(
+            BookmarkRoute(
                 viewModel = viewModel,
                 onBack = { finish() },
                 navigateToFishingSpot = { fishingSpot ->
