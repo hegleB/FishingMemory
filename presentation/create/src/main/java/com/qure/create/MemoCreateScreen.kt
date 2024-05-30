@@ -210,6 +210,8 @@ private fun MemoCreateScreen(
                     ),
                     onClickChip = setWaterType,
                     selectedChip = memo.waterType,
+                    unSelectedFontColor = MaterialTheme.colorScheme.onBackground,
+                    selectedFontColor = White,
                 )
                 MemoSizeInputItem(
                     modifier = Modifier
