@@ -1,6 +1,10 @@
 package com.qure.data.local
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.qure.data.entity.fishingspot.FishingSpotBookmarkEntity
 
 @Dao
@@ -9,10 +13,10 @@ interface FishingSpotDao {
     suspend fun insertFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
 
     @Query("select * from fishingspot_table")
-    fun getFishingSpots(): List<FishingSpotBookmarkEntity>
+    suspend fun getFishingSpots(): List<FishingSpotBookmarkEntity>
 
-    @Query("select * from fishingspot_table where fishingspot_table.number = :number")
-    fun checkFishingSpot(number: Int): Boolean
+    @Query("select EXISTS(SELECT * from fishingspot_table where number = :number)")
+    suspend fun checkFishingSpot(number: Int): Boolean
 
     @Delete
     suspend fun deleteFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
