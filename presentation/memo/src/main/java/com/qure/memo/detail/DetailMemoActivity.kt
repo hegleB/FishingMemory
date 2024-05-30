@@ -34,7 +34,7 @@ class DetailMemoActivity : BaseComposeActivity() {
                 intent.getParcelableExtra(MEMO_DATA)
             } ?: MemoUI()
 
-            DetailMemoScreen(
+            DetailMemoRoute(
                 memo = memo,
                 viewModel = viewModel,
                 onBack = { finish() },

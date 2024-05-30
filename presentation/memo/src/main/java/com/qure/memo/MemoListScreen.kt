@@ -57,7 +57,7 @@ import com.qure.memo.model.MemoUI
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MemoListScreen(
+fun MemoListRoute(
     viewModel: MemoListViewModel,
     onBack: () -> Unit,
     navigateToMemoCreate: () -> Unit,
@@ -77,7 +77,7 @@ fun MemoListScreen(
         }
     }
 
-    MemoListContent(
+    MemoListScreen(
         memoListUiState = memoListUiState,
         modifier = Modifier.fillMaxSize(),
         onRefresh = {
@@ -92,7 +92,7 @@ fun MemoListScreen(
 }
 
 @Composable
-private fun MemoListContent(
+private fun MemoListScreen(
     memoListUiState: MemoListUiState = MemoListUiState.Loading,
     modifier: Modifier = Modifier,
     onRefresh: () -> Unit = { },
@@ -311,7 +311,7 @@ private fun MemoItem(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 fun MemoListScreenPreview() = FMPreview {
-    MemoListContent(
+    MemoListScreen(
         memoListUiState = MemoListUiState.Success(
             listOf(
                 MemoUI(

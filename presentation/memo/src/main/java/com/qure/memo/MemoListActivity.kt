@@ -23,7 +23,7 @@ class MemoListActivity : BaseComposeActivity() {
     @Composable
     override fun Screen() {
         FishingMemoryTheme {
-            MemoListScreen(
+            MemoListRoute(
                 viewModel = viewModel,
                 onBack = { finish() },
                 navigateToMemoCreate = { startActivity(memoCreateNavigator.intent(this)) },

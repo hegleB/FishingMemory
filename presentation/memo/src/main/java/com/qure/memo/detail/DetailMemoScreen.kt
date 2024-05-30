@@ -49,7 +49,7 @@ import com.qure.memo.share.DeepLinkHelper
 import com.qure.memo.share.KakaoLinkSender
 
 @Composable
-fun DetailMemoScreen(
+fun DetailMemoRoute(
     memo: MemoUI,
     viewModel: DetailMemoViewModel,
     onBack: () -> Unit,
@@ -58,7 +58,7 @@ fun DetailMemoScreen(
     val detailMemoUiState by viewModel.detailMemoUiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    DetailMemoContent(
+    DetailMemoScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
@@ -78,7 +78,7 @@ fun DetailMemoScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-private fun DetailMemoContent(
+private fun DetailMemoScreen(
     modifier: Modifier = Modifier,
     memo: MemoUI = MemoUI(),
     detailMemoUiState: DetailMemoUiState = DetailMemoUiState.Loading,
@@ -249,7 +249,7 @@ private fun DetailMemoContent(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun DetailMemoScreenPreview() = FMPreview(false) {
-    DetailMemoContent(
+    DetailMemoScreen(
         memo = MemoUI(
             title = "test",
             content = "test",
