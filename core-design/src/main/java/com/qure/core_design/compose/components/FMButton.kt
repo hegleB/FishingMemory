@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import com.qure.core_design.compose.theme.Gray400
 
 @Composable
 fun FMButton(
@@ -18,6 +19,7 @@ fun FMButton(
     textStyle: TextStyle = TextStyle(),
     textModifier: Modifier = Modifier,
     buttonColor: Color = Color.White,
+    disabledButtonColor: Color = Gray400,
     fontColor: Color = Color.Black,
     shape: Shape = CircleShape,
     isEnabled: Boolean = true,
@@ -27,6 +29,7 @@ fun FMButton(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = buttonColor,
+            disabledContainerColor = disabledButtonColor,
         ),
         shape = shape,
         enabled = isEnabled,
