@@ -26,9 +26,9 @@ class FishingSpotActivity :
                 viewModel = viewModel,
                 onBack = { finish() },
                 onClickBookmark = { viewModel.toggleBookmarkButton(fishingSpot) },
-                onClickPhoneNumber = {
+                onClickPhoneNumber = { phoneNumber ->
                     val intent =
-                        Intent(Intent.ACTION_VIEW, Uri.parse("tel:${fishingSpot.phone_number}"))
+                        Intent(Intent.ACTION_VIEW, Uri.parse("tel:$phoneNumber"))
                     startActivity(intent)
                 },
             )
