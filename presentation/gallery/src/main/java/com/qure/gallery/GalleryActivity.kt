@@ -1,7 +1,6 @@
 package com.qure.gallery
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
@@ -34,8 +33,7 @@ class GalleryActivity : BaseComposeActivity() {
                     navigateToMemoCreate(imageBitmap)
                 },
                 onClickDone = { galleryImage ->
-                    val imageBitmap = BitmapFactory.decodeFile(galleryImage.path)
-                    navigateToMemoCreate(imageBitmap)
+                    navigateToMemoCreate(Uri.parse(galleryImage.path))
                 },
             )
         }
@@ -51,14 +49,22 @@ class GalleryActivity : BaseComposeActivity() {
         finish()
     }
 
+    private fun navigateToMemoCreate(uri: Uri) {
+        val intent = memoCreateNavigator.intent(this).apply {
+            putExtra(EXTRA_REQUEST_CODE, REQUEST_IMAGE_CAPTURE)
+            putExtra(PHOTO_FILE, uri)
+        }
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+
     private fun copyUriToExternalStorage(uri: Uri): File {
         val parcelFileDescriptor: ParcelFileDescriptor =
             this.contentResolver.openFileDescriptor(uri, "r")
                 ?: throw IllegalArgumentException("파일 변환 실패")
         val fileDescriptor: FileDescriptor = parcelFileDescriptor.fileDescriptor
         val inputStream = FileInputStream(fileDescriptor)
-        val directory =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         val fileName = "${System.currentTimeMillis()}.jpg"
         val file = File(directory, fileName)
         val outputStream = FileOutputStream(file)
