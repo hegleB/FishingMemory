@@ -379,6 +379,7 @@ private fun LocationPage(
             modifier = modifier,
             fontSize = 20.sp,
             style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         if (geoCodingUiState is GeoCodingUiState.Success) {
