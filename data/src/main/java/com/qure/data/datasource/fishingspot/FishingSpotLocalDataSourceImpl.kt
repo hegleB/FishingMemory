@@ -13,7 +13,7 @@ class FishingSpotLocalDataSourceImpl
             fishingSpotDao.insertFishingSpot(fishingSpotBookmarkEntity)
         }
 
-        override fun getFishingSpots(): List<FishingSpotBookmarkEntity> {
+        override suspend fun getFishingSpots(): List<FishingSpotBookmarkEntity> {
             return fishingSpotDao.getFishingSpots()
         }
 
