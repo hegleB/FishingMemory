@@ -53,7 +53,6 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.qure.core.util.FishingMemoryToast
 import com.qure.core_design.compose.components.FMCloseButton
-import com.qure.core_design.compose.theme.Black
 import com.qure.core_design.compose.theme.Blue600
 import com.qure.core_design.compose.theme.Gray200
 import com.qure.core_design.compose.utils.FMPreview
@@ -204,7 +203,7 @@ private fun GalleryContent(
                     text = stringResource(id = R.string.gallery_done),
                     fontSize = 13.sp,
                     style = MaterialTheme.typography.displaySmall,
-                    color = if (selectedImage.path.isEmpty()) Gray200 else Black,
+                    color = if (selectedImage.path.isEmpty()) Gray200 else MaterialTheme.colorScheme.onBackground,
                 )
             }
         }

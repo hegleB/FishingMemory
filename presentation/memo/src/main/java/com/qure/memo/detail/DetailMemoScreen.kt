@@ -70,7 +70,7 @@ fun DetailMemoRoute(
         onClickDelete = { viewModel.deleteMemo(memo.uuid) },
         onClickKakaoShare = { KakaoLinkSender(context, memo).send() },
         onClickMoreShare = { DeepLinkHelper(context).createDynamicLink(memo) },
-        showSnackBar = { message -> 
+        showSnackBar = { message ->
             FishingMemoryToast().show(context, message)
         }
     )
@@ -120,8 +120,9 @@ private fun DetailMemoScreen(
         when (detailMemoUiState) {
             DetailMemoUiState.Initial -> Unit
             DetailMemoUiState.Loading -> {
-                Box(modifier = Modifier
-                    .fillMaxSize(),
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
                 ) {
                     FMProgressBar(
                         modifier = Modifier
@@ -129,6 +130,7 @@ private fun DetailMemoScreen(
                     )
                 }
             }
+
             DetailMemoUiState.Success -> {
                 showSnackBar(stringResource(id = R.string.delete_success_message))
                 onBack()
@@ -205,6 +207,7 @@ private fun DetailMemoScreen(
                 text = memo.fishType,
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onBackground,
             )
 
             Text(
@@ -212,6 +215,7 @@ private fun DetailMemoScreen(
                 text = stringResource(id = R.string.fish_length, memo.fishSize),
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onBackground,
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
@@ -220,6 +224,7 @@ private fun DetailMemoScreen(
                 text = memo.date,
                 style = MaterialTheme.typography.bodyMedium,
                 fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onBackground,
             )
         }
 
@@ -228,12 +233,14 @@ private fun DetailMemoScreen(
             text = memo.title,
             style = MaterialTheme.typography.displayMedium,
             fontSize = 15.sp,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Text(
             modifier = Modifier.padding(top = 10.dp, start = 20.dp),
             text = memo.location,
             fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         Text(
@@ -242,6 +249,7 @@ private fun DetailMemoScreen(
                 .padding(top = 10.dp, start = 20.dp, bottom = 30.dp),
             text = memo.content,
             fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
 }

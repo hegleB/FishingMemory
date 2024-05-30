@@ -2,6 +2,7 @@ package com.qure.core_design.compose.components
 
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,7 +26,12 @@ fun FMDropdownMenu(
     ) {
         menuItems.forEach { (name, onClick) ->
             DropdownMenuItem(
-                text = { Text(text = name) },
+                text = {
+                    Text(
+                        text = name,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+                },
                 onClick = { onClick(); onDismiss() },
             )
         }

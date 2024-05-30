@@ -176,6 +176,7 @@ fun FMShareDialog(
                     text = title,
                     style = MaterialTheme.typography.displayLarge,
                     fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
                 FMCloseButton(
                     modifier = Modifier
@@ -236,6 +237,7 @@ private fun ShareButton(
                 .align(Alignment.CenterHorizontally),
             text = text,
             fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onBackground,
         )
     }
 }
