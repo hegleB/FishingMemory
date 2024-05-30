@@ -12,5 +12,5 @@ fun TedLatLng.toReverseLatlng(): LatLng {
 }
 
 fun TedLatLng.toReverseCoordsString(): String {
-    return "${this.longitude},${this.latitude}"
+    return "${this.latitude},${this.longitude}"
 }
