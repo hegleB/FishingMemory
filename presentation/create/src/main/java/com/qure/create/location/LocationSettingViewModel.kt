@@ -34,11 +34,14 @@ constructor(
     fun fetchGeocoding(query: String) {
         viewModelScope.launch {
             getGeocodingUseCase(query)
-                .map { geocoding -> GeoCodingUiState.Success(geocoding.toGeocodingUI()) }
+                .map { geocoding -> GeoCodingUiState.Success(geocoding = geocoding.toGeocodingUI()) }
                 .onStart { _geoCodingUiState.value = GeoCodingUiState.Loading }
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .collectLatest { geocodingUiState ->
                     _geoCodingUiState.value = geocodingUiState
+                    _locationUiState.update {
+                        it.copy(geocoding = geocodingUiState.geocoding)
+                    }
                 }
         }
     }
@@ -51,6 +54,9 @@ constructor(
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .collectLatest { geocodingUiState ->
                     _geoCodingUiState.value = geocodingUiState
+                    _locationUiState.update {
+                        it.copy(reverseGeocoding = geocodingUiState.reverseGeocoding)
+                    }
                 }
         }
     }
