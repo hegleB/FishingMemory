@@ -52,7 +52,6 @@ import com.qure.core_design.compose.components.FMButton
 import com.qure.core_design.compose.components.FMCloseButton
 import com.qure.core_design.compose.components.FMNaverMap
 import com.qure.core_design.compose.components.FMProgressBar
-import com.qure.core_design.compose.theme.Black
 import com.qure.core_design.compose.theme.Blue500
 import com.qure.core_design.compose.theme.Blue600
 import com.qure.core_design.compose.theme.Gray100
@@ -60,6 +59,8 @@ import com.qure.core_design.compose.theme.Gray300
 import com.qure.core_design.compose.theme.White
 import com.qure.core_design.compose.utils.FMPreview
 import com.qure.create.R
+import com.qure.create.model.GeocodingUI
+import com.qure.create.model.ReverseGeocodingUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -76,7 +77,7 @@ fun LocationSettingRoute(
     onClickNext: () -> Unit,
     onClickPrevious: () -> Unit,
     setReverseCoordsString: (String) -> Unit,
-    setGeoconding: (String) -> Unit,
+    setGeocoding: (String) -> Unit,
     setLocation: (String, String) -> Unit,
     setDoIndex: (Int) -> Unit,
     setCityIndex: (Int) -> Unit,
@@ -85,7 +86,6 @@ fun LocationSettingRoute(
 ) {
     val geoCodingUiState by viewModel.geoCodingUiState.collectAsStateWithLifecycle()
     val locationUiState by viewModel.locationUiState.collectAsStateWithLifecycle()
-
     val locationPages = listOf(
         LocationData(
             title = stringResource(id = R.string.selection_do),
@@ -118,13 +118,15 @@ fun LocationSettingRoute(
         setSelectedRegions = setSelectedRegions,
         regions = locationUiState.regions.toTypedArray(),
         selectedRegions = locationUiState.selectedRegions.toTypedArray(),
+        geocoding = locationUiState.geocoding,
+        reverseGeocoding = locationUiState.reverseGeocoding,
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LocationSettingScreen(
-    geoCodingUiState: GeoCodingUiState = GeoCodingUiState.Success(),
+    geoCodingUiState: GeoCodingUiState = GeoCodingUiState.Loading,
     modifier: Modifier = Modifier,
     currentPage: Int = 0,
     onClickClose: () -> Unit = { },
@@ -142,6 +144,8 @@ private fun LocationSettingScreen(
     setSelectedRegions: (Array<String>) -> Unit = { },
     regions: Array<String> = emptyArray(),
     selectedRegions: Array<String> = emptyArray(),
+    geocoding: GeocodingUI? = GeocodingUI(),
+    reverseGeocoding: ReverseGeocodingUI? = ReverseGeocodingUI(),
 ) {
     val pagerState = rememberPagerState {
         locationPages.size
@@ -195,7 +199,8 @@ private fun LocationSettingScreen(
                 regions = regions,
                 selectedCityIndex = selectedCityIndex,
                 setReverseCoordsString = setReverseCoordsString,
-                geoCodingUiState = geoCodingUiState,
+                geocoding = geocoding,
+                reverseGeocoding = reverseGeocoding,
             )
             PageChangeContent(
                 modifier = modifier,
@@ -208,7 +213,7 @@ private fun LocationSettingScreen(
                 setLocation = setLocation,
                 geoCodingUiState = geoCodingUiState,
                 selectedRegions = selectedRegions,
-                setGeocoding = setGeoconding,
+                setGeocoding = setGeocoding,
             )
         }
     }
@@ -313,7 +318,8 @@ private fun LocationContent(
     regions: Array<String>,
     selectedCityIndex: Int,
     setReverseCoordsString: (String) -> Unit,
-    geoCodingUiState: GeoCodingUiState
+    geocoding: GeocodingUI? = GeocodingUI(),
+    reverseGeocoding: ReverseGeocodingUI? = ReverseGeocodingUI(),
 ) {
     HorizontalPager(
         modifier = modifier
@@ -352,7 +358,8 @@ private fun LocationContent(
                 .joinToString(" "),
             currentPage = pagerState.currentPage,
             setReverseCoordsString = setReverseCoordsString,
-            geoCodingUiState = geoCodingUiState,
+            geocoding = geocoding,
+            reverseGeocoding = reverseGeocoding,
         )
     }
 }
@@ -368,7 +375,8 @@ private fun LocationPage(
     selectedRegionName: String = "",
     currentPage: Int = 0,
     setReverseCoordsString: (String) -> Unit = { },
-    geoCodingUiState: GeoCodingUiState = GeoCodingUiState.Success(),
+    geocoding: GeocodingUI? = GeocodingUI(),
+    reverseGeocoding: ReverseGeocodingUI? = ReverseGeocodingUI(),
 ) {
     Column(
         modifier = modifier
@@ -382,101 +390,100 @@ private fun LocationPage(
             color = MaterialTheme.colorScheme.onBackground,
         )
 
-        if (geoCodingUiState is GeoCodingUiState.Success) {
-            Box(
+
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(top = 30.dp),
+        ) {
+            Text(
+                text = locationData.subTitle,
                 modifier = modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp),
-            ) {
-                Text(
-                    text = locationData.subTitle,
-                    modifier = modifier
-                        .align(Alignment.CenterStart),
-                    color = Gray300,
-                    fontSize = 15.sp,
-                    style = MaterialTheme.typography.displaySmall,
-                )
+                    .align(Alignment.CenterStart),
+                color = Gray300,
+                fontSize = 15.sp,
+                style = MaterialTheme.typography.displaySmall,
+            )
 
-                Text(
-                    text = geoCodingUiState.reverseGeocoding?.areaName ?: selectedRegionName,
-                    modifier = modifier
-                        .align(Alignment.Center),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.displayLarge
-                )
+            Text(
+                text = reverseGeocoding?.areaName ?: selectedRegionName,
+                modifier = modifier
+                    .align(Alignment.Center),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.displayLarge,
+            )
+        }
+        if (currentPage == 2) {
+            val latitude = geocoding?.y ?: String.DefaultLatitude
+            val longitude = geocoding?.x ?: String.DefaultLongitude
+            var markerState by remember {
+                mutableStateOf(MarkerState(LatLng(latitude.toDouble(), longitude.toDouble())))
             }
-            if (currentPage == 2) {
-                val latitude = geoCodingUiState.geocoding?.y ?: String.DefaultLatitude
-                val longitude = geoCodingUiState.geocoding?.x ?: String.DefaultLongitude
-                var markerState by remember {
-                    mutableStateOf(MarkerState(LatLng(latitude.toDouble(), longitude.toDouble())))
+            val cameraPositionState = rememberCameraPositionState {
+                position =
+                    CameraPosition(LatLng(latitude.toDouble(), longitude.toDouble()), 14.0)
+            }
+            FMNaverMap(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 20.dp, bottom = 20.dp),
+                cameraPositionState = cameraPositionState,
+                markerState = markerState,
+                markerHeight = 30.dp,
+                markerWidth = 35.dp,
+                icon = OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker),
+                onMapClick = { latLng ->
+                    markerState = MarkerState(latLng)
+                    setReverseCoordsString(latLng.toReverseCoordsString())
                 }
-                val cameraPositionState = rememberCameraPositionState {
-                    position =
-                        CameraPosition(LatLng(latitude.toDouble(), longitude.toDouble()), 14.0)
-                }
-                FMNaverMap(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 20.dp, bottom = 20.dp),
-                    cameraPositionState = cameraPositionState,
-                    markerState = markerState,
-                    markerHeight = 30.dp,
-                    markerWidth = 35.dp,
-                    icon = OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker),
-                    onMapClick = {
-                        markerState = MarkerState(it)
-                        setReverseCoordsString(it.toReverseCoordsString())
-                    }
-                )
-            } else {
-                LazyVerticalGrid(
-                    modifier = modifier
-                        .padding(top = 20.dp, bottom = 20.dp),
-                    columns = GridCells.Fixed(3),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(5.dp),
-                ) {
-                    itemsIndexed(regions) { index, region ->
-                        Box(
-                            modifier = modifier
-                                .width(120.dp)
-                                .height(35.dp)
-                                .clip(
-                                    shape = RoundedCornerShape(10.dp),
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    color = Gray100,
-                                    shape = RoundedCornerShape(10.dp),
-                                )
-                                .clickable {
-                                    selectIndex(index)
-                                    selectName(region)
-                                },
-                        ) {
-
-                            Text(
-                                modifier = modifier
-                                    .padding(start = 10.dp)
-                                    .align(Alignment.CenterStart),
-                                text = region,
-                                fontSize = 10.sp,
-                                color = if (selectedIndex == index) Blue600 else Black,
-                                style = MaterialTheme.typography.displaySmall,
+            )
+        } else {
+            LazyVerticalGrid(
+                modifier = modifier
+                    .padding(top = 20.dp, bottom = 20.dp),
+                columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+                itemsIndexed(regions) { index, region ->
+                    Box(
+                        modifier = modifier
+                            .width(120.dp)
+                            .height(35.dp)
+                            .clip(
+                                shape = RoundedCornerShape(10.dp),
                             )
+                            .border(
+                                width = 1.dp,
+                                color = Gray100,
+                                shape = RoundedCornerShape(10.dp),
+                            )
+                            .clickable {
+                                selectIndex(index)
+                                selectName(region)
+                            },
+                    ) {
 
-                            if (selectedIndex == index) {
-                                Icon(
-                                    modifier = modifier
-                                        .size(20.dp)
-                                        .padding(end = 5.dp)
-                                        .align(Alignment.CenterEnd),
-                                    painter = painterResource(id = com.qure.core_design.R.drawable.ic_check),
-                                    contentDescription = null,
-                                    tint = Blue600,
-                                )
-                            }
+                        Text(
+                            modifier = modifier
+                                .padding(start = 10.dp)
+                                .align(Alignment.CenterStart),
+                            text = region,
+                            fontSize = 10.sp,
+                            color = if (selectedIndex == index) Blue600 else MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.displaySmall,
+                        )
+
+                        if (selectedIndex == index) {
+                            Icon(
+                                modifier = modifier
+                                    .size(20.dp)
+                                    .padding(end = 5.dp)
+                                    .align(Alignment.CenterEnd),
+                                painter = painterResource(id = com.qure.core_design.R.drawable.ic_check),
+                                contentDescription = null,
+                                tint = Blue600,
+                            )
                         }
                     }
                 }
