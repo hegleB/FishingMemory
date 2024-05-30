@@ -4,13 +4,14 @@ import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
 import com.qure.domain.usecase.bookmark.DeleteAllFishingSpotBookmarkUseCase
 import com.qure.domain.usecase.bookmark.GetFishingSpotBookmarksUseCase
-import com.qure.domain.util.Result
-import com.qure.model.FishingSpotUI
+import com.qure.fishingspot.FishingSpotUiState
 import com.qure.model.toFishingSpotUI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,46 +22,29 @@ constructor(
     private val getFishingSpotBookmarksUseCase: GetFishingSpotBookmarksUseCase,
     private val deleteAllFishingSpotBookmarkUseCase: DeleteAllFishingSpotBookmarkUseCase,
 ) : BaseViewModel() {
-    private val _fishingSpotBookmarks: MutableStateFlow<List<FishingSpotUI>> =
-        MutableStateFlow(emptyList())
-    val fishingSpotBookmarks: StateFlow<List<FishingSpotUI>>
-        get() = _fishingSpotBookmarks
+
+    private val _fishingSpotUiState = MutableStateFlow<FishingSpotUiState>(FishingSpotUiState.Loading)
+    val fishingSpotUiState = _fishingSpotUiState.asStateFlow()
 
     init {
-        getBookmarks()
+        fetchFishingSpotBookmark()
     }
 
-    fun getBookmarks() {
-        viewModelScope.launch(Dispatchers.IO) {
-            getFishingSpotBookmarksUseCase().collect { response ->
-                when (response) {
-                    is Result.Loading -> {
-                        startLoading()
-                    }
-
-                    is Result.Error -> {
-                        stopLoading()
-                        sendErrorMessage(response.exception)
-                    }
-
-                    is Result.Empty -> {
-                        stopLoading()
-                        _fishingSpotBookmarks.value = emptyList()
-                    }
-
-                    is Result.Success -> {
-                        _fishingSpotBookmarks.value = response.data.map { it.toFishingSpotUI() }
-                        stopLoading()
-                    }
+    fun fetchFishingSpotBookmark() {
+        viewModelScope.launch {
+            getFishingSpotBookmarksUseCase()
+                .map { fishingSpots -> FishingSpotUiState.Success(fishingSpots.map { it.toFishingSpotUI() }) }
+                .catch { throwable -> sendErrorMessage(throwable) }
+                .collectLatest { fishingSpotUiState ->
+                    _fishingSpotUiState.value = fishingSpotUiState
                 }
-            }
         }
     }
 
     fun deleteAllBookmarks() {
         viewModelScope.launch {
             deleteAllFishingSpotBookmarkUseCase()
-            _fishingSpotBookmarks.value = emptyList()
+            fetchFishingSpotBookmark()
         }
     }
 }
