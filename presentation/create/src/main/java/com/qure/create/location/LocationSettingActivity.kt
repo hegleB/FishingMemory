@@ -26,7 +26,7 @@ class LocationSettingActivity : BaseComposeActivity() {
                 onClickNext = viewModel::onClickNext,
                 onClickPrevious = viewModel::onClickPrevious,
                 setReverseCoordsString = viewModel::fetchReverseGeocoding,
-                setGeoconding = viewModel::fetchGeocoding,
+                setGeocoding = viewModel::fetchGeocoding,
                 setLocation = { location, coords ->
                     val intent =
                         Intent(this@LocationSettingActivity, MemoCreateActivity::class.java).apply {
