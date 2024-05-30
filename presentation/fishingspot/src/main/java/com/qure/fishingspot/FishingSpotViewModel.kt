@@ -12,7 +12,8 @@ import com.qure.domain.usecase.bookmark.InsertFishingSpotBookmarkUseCase
 import com.qure.model.FishingSpotUI
 import com.qure.model.toFishingSpotBookmark
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,8 +45,12 @@ class FishingSpotViewModel
         }
 
         fun checkBookmark(number: Int) {
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch {
                 checkFishingSpotBookmarkUseCase(number)
+                    .catch { throwable -> sendErrorMessage(throwable) }
+                    .collectLatest { isBookmark ->
+                        isBookmarkClicked = isBookmark
+                    }
             }
         }
 
