@@ -274,17 +274,15 @@ private fun PageChangeContent(
                         )
                     )
                 }
-                if (currentPage == 2) {
-                    if (geoCodingUiState is GeoCodingUiState.Success) {
-                        setLocation(
-                            geoCodingUiState.reverseGeocoding?.areaName
-                                ?: selectedRegions.joinToString(" "),
-                            geoCodingUiState.geocoding?.coords
-                                ?: "${String.DefaultLatitude},${String.DefaultLongitude}",
-                        )
+                when (currentPage) {
+                    1 -> setGeocoding(selectedRegions.joinToString(" "))
+                    2 -> {
+                        if (geoCodingUiState is GeoCodingUiState.Success) {
+                            val areaName = geoCodingUiState.reverseGeocoding?.areaName ?: selectedRegions.joinToString(" ")
+                            val coords = geoCodingUiState.geocoding?.coords ?: "${String.DefaultLatitude},${String.DefaultLongitude}"
+                            setLocation(areaName, coords)
+                        }
                     }
-                } else {
-                    setGeocoding(selectedRegions.joinToString(" "))
                 }
             },
             shape = RoundedCornerShape(15.dp),
