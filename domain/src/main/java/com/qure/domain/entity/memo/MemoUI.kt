@@ -1,5 +1,7 @@
 package com.qure.domain.entity.memo
 
+import kotlinx.serialization.Serializable
+
 data class Memo(
     val name: String,
     val fields: MemoFieldsEntity?,
@@ -7,6 +9,7 @@ data class Memo(
     val updateTime: String,
 )
 
+@Serializable
 data class MemoFieldsEntity(
     val fields: MemoFields,
 )
@@ -28,6 +31,7 @@ data class Document(
     }
 }
 
+@Serializable
 data class MemoFields(
     val uuid: FieldStringValue,
     val email: FieldStringValue,
@@ -61,6 +65,7 @@ data class MemoFields(
     }
 }
 
+@Serializable
 data class FieldStringValue(
     val stringValue: String,
 ) {
