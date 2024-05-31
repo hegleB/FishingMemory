@@ -12,9 +12,9 @@ class WithdrawServiceUseCase
         private val authRepository: AuthRepository,
         private val memoRepository: MemoRepository,
     ) {
-        operator fun invoke(memoQuery: MemoQuery): Flow<Boolean> {
+        operator fun invoke(): Flow<Boolean> {
             authRepository.removeTokenFromLocal()
             authRepository.removeTokenFromLocal()
-            return memoRepository.deleteAllMemos(memoQuery)
+            return memoRepository.deleteAllMemos()
         }
     }

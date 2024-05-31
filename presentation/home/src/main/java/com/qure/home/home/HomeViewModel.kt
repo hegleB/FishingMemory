@@ -5,16 +5,6 @@ import com.qure.core.BaseViewModel
 import com.qure.core.extensions.DefaultLatitude
 import com.qure.core.extensions.DefaultLongitude
 import com.qure.core.extensions.twoDigitsFormat
-import com.qure.domain.entity.memo.CollectionId
-import com.qure.domain.entity.memo.CompositeFilter
-import com.qure.domain.entity.memo.FieldFilter
-import com.qure.domain.entity.memo.FieldPath
-import com.qure.domain.entity.memo.Filter
-import com.qure.domain.entity.memo.MemoQuery
-import com.qure.domain.entity.memo.OrderBy
-import com.qure.domain.entity.memo.StructuredQuery
-import com.qure.domain.entity.memo.Value
-import com.qure.domain.entity.memo.Where
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
 import com.qure.domain.usecase.weather.GetWeatherUseCase
@@ -69,9 +59,7 @@ constructor(
                     nx = _latLng.value.nx.toInt().toString(),
                     ny = _latLng.value.ny.toInt().toString(),
                 ),
-                getFilteredMemoUseCase(
-                    getStructuredQuery(),
-                ),
+                getFilteredMemoUseCase(),
                 ::Pair
             )
                 .map { ui ->
@@ -97,28 +85,6 @@ constructor(
         _latLng.value = latXLngY
     }
 
-    private fun getStructuredQuery(): MemoQuery {
-        val emailFilter =
-            FieldFilter(
-                field = FieldPath(EMAIL),
-                op = EQUAL,
-                value = Value(authRepository.getEmailFromLocal()),
-            )
-
-        val compositeFilter =
-            CompositeFilter(
-                op = AND,
-                filters = listOf(Filter(emailFilter)),
-            )
-
-        return MemoQuery(
-            StructuredQuery(
-                from = listOf(CollectionId(COLLECTION_ID)),
-                where = Where(compositeFilter),
-                orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING)),
-            ),
-        )
-    }
     private fun getBaseTime(): String {
         val baseTime = "${(LocalTime.now().hour - 1).twoDigitsFormat()}30"
         return baseTime
@@ -131,12 +97,6 @@ constructor(
     }
 
     companion object {
-        private const val EMAIL = "email"
-        private const val DATE = "date"
-        private const val DESCENDING = "DESCENDING"
-        private const val EQUAL = "EQUAL"
-        private const val AND = "AND"
-        private const val COLLECTION_ID = "memo"
         private const val INITIAL_FISH_TYPE = "어종"
     }
 }

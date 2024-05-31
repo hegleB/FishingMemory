@@ -8,7 +8,6 @@ import com.qure.data.mapper.toMemoStorage
 import com.qure.domain.entity.memo.Document
 import com.qure.domain.entity.memo.Memo
 import com.qure.domain.entity.memo.MemoFields
-import com.qure.domain.entity.memo.MemoQuery
 import com.qure.domain.entity.memo.MemoStorage
 import com.qure.domain.repository.MemoRepository
 import kotlinx.coroutines.flow.Flow
@@ -42,15 +41,15 @@ constructor(
         }
     }
 
-    override fun getfilteredMemo(memoQuery: MemoQuery): Flow<List<Memo>> {
+    override fun getfilteredMemo(): Flow<List<Memo>> {
         return flow {
-            emit(memoRemoteDataSource.postMemoQuery(memoQuery).map { it.toMemo() })
+            emit(memoRemoteDataSource.postMemoQuery().map { it.toMemo() })
         }
     }
 
-    override fun deleteAllMemos(memoQuery: MemoQuery): Flow<Boolean> {
+    override fun deleteAllMemos(): Flow<Boolean> {
         return flow {
-            emit(memoRemoteDataSource.postMemoQuery(memoQuery).isEmpty())
+            emit(memoRemoteDataSource.postMemoQuery().isEmpty())
         }
     }
 }

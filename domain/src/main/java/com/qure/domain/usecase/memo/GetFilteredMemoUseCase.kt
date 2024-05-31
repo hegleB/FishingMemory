@@ -12,8 +12,8 @@ class GetFilteredMemoUseCase
     constructor(
         private val memoRepository: MemoRepository,
     ) {
-        operator fun invoke(memoQuery: MemoQuery): Flow<List<Memo>> {
-            return memoRepository.getfilteredMemo(memoQuery)
+        operator fun invoke(): Flow<List<Memo>> {
+            return memoRepository.getfilteredMemo()
                 .map { memos -> memos.sortedByDescending { memo -> memo.createTime } }
         }
     }

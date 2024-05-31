@@ -2,24 +2,8 @@ package com.qure.history
 
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
-import com.qure.domain.entity.memo.CollectionId
-import com.qure.domain.entity.memo.CompositeFilter
-import com.qure.domain.entity.memo.FieldFilter
-import com.qure.domain.entity.memo.FieldPath
-import com.qure.domain.entity.memo.Filter
-import com.qure.domain.entity.memo.MemoQuery
-import com.qure.domain.entity.memo.OrderBy
-import com.qure.domain.entity.memo.StructuredQuery
-import com.qure.domain.entity.memo.Value
-import com.qure.domain.entity.memo.Where
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
-import com.qure.memo.MemoListViewModel.Companion.AND
-import com.qure.memo.MemoListViewModel.Companion.COLLECTION_ID
-import com.qure.memo.MemoListViewModel.Companion.DATE
-import com.qure.memo.MemoListViewModel.Companion.DESCENDING
-import com.qure.memo.MemoListViewModel.Companion.EMAIL
-import com.qure.memo.MemoListViewModel.Companion.EQUAL
 import com.qure.memo.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +38,7 @@ constructor(
 
     fun fetchFilteredMemos() {
         viewModelScope.launch {
-            getFilteredMemoUseCase(getMonthStructuredQuery())
+            getFilteredMemoUseCase()
                 .map { memos -> HistoryUiState.Success(memos.map { it.toMemoUI() }) }
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .onStart { _filteredMemosUiState.value = HistoryUiState.Loading }
@@ -67,32 +51,6 @@ constructor(
                     _filteredMemosUiState.value = uiState
                 }
         }
-    }
-
-    private fun getMonthStructuredQuery(): MemoQuery {
-        val emailFilter =
-            FieldFilter(
-                field = FieldPath(EMAIL),
-                op = EQUAL,
-                value = Value(authRepository.getEmailFromLocal()),
-            )
-
-        val compositeFilter =
-            CompositeFilter(
-                op = AND,
-                filters =
-                listOf(
-                    Filter(emailFilter),
-                ),
-            )
-
-        return MemoQuery(
-            StructuredQuery(
-                from = listOf(CollectionId(COLLECTION_ID)),
-                where = Where(compositeFilter),
-                orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING)),
-            ),
-        )
     }
 
     fun selectDate(date: LocalDate) {

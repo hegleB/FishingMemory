@@ -2,16 +2,6 @@ package com.qure.memo
 
 import androidx.lifecycle.viewModelScope
 import com.qure.core.BaseViewModel
-import com.qure.domain.entity.memo.CollectionId
-import com.qure.domain.entity.memo.CompositeFilter
-import com.qure.domain.entity.memo.FieldFilter
-import com.qure.domain.entity.memo.FieldPath
-import com.qure.domain.entity.memo.Filter
-import com.qure.domain.entity.memo.MemoQuery
-import com.qure.domain.entity.memo.OrderBy
-import com.qure.domain.entity.memo.StructuredQuery
-import com.qure.domain.entity.memo.Value
-import com.qure.domain.entity.memo.Where
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
 import com.qure.memo.model.toMemoUI
@@ -41,7 +31,7 @@ constructor(
     }
     fun fetchMemoList() {
         viewModelScope.launch {
-            getFilteredMemoUseCase(getStructuredQuery())
+            getFilteredMemoUseCase()
                 .map { memos -> MemoListUiState.Success(memos.map { it.toMemoUI() }) }
                 .onStart { _memoListUiState.value = MemoListUiState.Loading }
                 .catch { throwable -> sendErrorMessage(throwable) }
@@ -49,36 +39,5 @@ constructor(
                     _memoListUiState.value = memoListUiState
                 }
         }
-    }
-    private fun getStructuredQuery(): MemoQuery {
-        val emailFilter =
-            FieldFilter(
-                field = FieldPath(EMAIL),
-                op = EQUAL,
-                value = Value(authRepository.getEmailFromLocal()),
-            )
-
-        val compositeFilter =
-            CompositeFilter(
-                op = AND,
-                filters = listOf(Filter(emailFilter)),
-            )
-
-        return MemoQuery(
-            StructuredQuery(
-                from = listOf(CollectionId(COLLECTION_ID)),
-                where = Where(compositeFilter),
-                orderBy = listOf(OrderBy(FieldPath(DATE), DESCENDING)),
-            ),
-        )
-    }
-
-    companion object {
-        const val EMAIL = "email"
-        const val DATE = "date"
-        const val DESCENDING = "DESCENDING"
-        const val EQUAL = "EQUAL"
-        const val AND = "AND"
-        const val COLLECTION_ID = "memo"
     }
 }

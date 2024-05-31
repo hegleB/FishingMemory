@@ -8,17 +8,12 @@ import com.qure.domain.entity.fishingspot.FishingSpotQuery
 import com.qure.domain.entity.fishingspot.StructuredQuery
 import com.qure.domain.entity.fishingspot.Where
 import com.qure.domain.entity.memo.CollectionId
-import com.qure.domain.entity.memo.CompositeFilter
 import com.qure.domain.entity.memo.FieldFilter
 import com.qure.domain.entity.memo.FieldPath
-import com.qure.domain.entity.memo.Filter
-import com.qure.domain.entity.memo.MemoQuery
-import com.qure.domain.entity.memo.OrderBy
 import com.qure.domain.entity.memo.Value
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.fishingspot.GetFishingSpotUseCase
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
-import com.qure.memo.MemoListViewModel
 import com.qure.memo.model.toMemoUI
 import com.qure.model.toFishingSpotUI
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -76,7 +71,7 @@ constructor(
 
     fun fetchFilteredMemo() {
         viewModelScope.launch {
-            getFilteredMemoUseCase(getMemoStructuredQuery())
+            getFilteredMemoUseCase()
                 .map { memos ->
                     MapUiState.Success(memos = memos.map { memo ->
                         FishingPlaceInfo.MemoInfo(memo.toMemoUI())
@@ -104,35 +99,6 @@ constructor(
 
     fun setSelectedPlaceItems(placeItems: List<FishingPlaceInfo>) {
         _selectedPlaceItems.value = placeItems
-    }
-
-    private fun getMemoStructuredQuery(): MemoQuery {
-        val emailFilter =
-            FieldFilter(
-                field = FieldPath(MemoListViewModel.EMAIL),
-                op = MemoListViewModel.EQUAL,
-                value = Value(authRepository.getEmailFromLocal()),
-            )
-
-        val compositeFilter =
-            CompositeFilter(
-                op = MemoListViewModel.AND,
-                filters = listOf(Filter(emailFilter)),
-            )
-
-        return MemoQuery(
-            com.qure.domain.entity.memo.StructuredQuery(
-                from = listOf(CollectionId(MemoListViewModel.COLLECTION_ID)),
-                where = com.qure.domain.entity.memo.Where(compositeFilter),
-                orderBy =
-                listOf(
-                    OrderBy(
-                        FieldPath(MemoListViewModel.DATE),
-                        MemoListViewModel.DESCENDING,
-                    ),
-                ),
-            ),
-        )
     }
 
     private fun getStructuredQuery(fishingGroundType: String): FishingSpotQuery {
