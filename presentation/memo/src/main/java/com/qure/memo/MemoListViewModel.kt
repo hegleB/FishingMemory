@@ -14,7 +14,6 @@ import com.qure.domain.entity.memo.Value
 import com.qure.domain.entity.memo.Where
 import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
-import com.qure.memo.model.MemoUI
 import com.qure.memo.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,8 +82,3 @@ constructor(
         const val COLLECTION_ID = "memo"
     }
 }
-
-data class UiState(
-    val isFilterInitialized: Boolean = false,
-    val filteredMemo: List<MemoUI> = emptyList(),
-)
