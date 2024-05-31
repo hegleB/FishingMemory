@@ -18,5 +18,7 @@
     <string name="fee">요금</string>
     <string name="main_point">주요 포인트</string>
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="memo_counter">%d개의 메모</string>
+    <string name="fishing_spot_counter">%d개의 낚시터</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
