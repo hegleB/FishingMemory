@@ -6,5 +6,11 @@ enum class MarkerType(val value: String) {
     SEA("바다"),
     RESERVOIR("저수지"),
     FLATLAND("평지"),
-    OTHER("기타"),
+    OTHER("기타");
+
+    companion object {
+        fun getMarkerType(type: String): MarkerType {
+            return entries.find { it.value == type } ?: throw Exception("존재 하지 않는 타입입니다.")
+        }
+    }
 }
