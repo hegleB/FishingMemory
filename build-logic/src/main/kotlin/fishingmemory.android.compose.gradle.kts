@@ -1,0 +1,3 @@
+import com.fishingmemory.app.configureComposeAndroid
+
+configureComposeAndroid()
