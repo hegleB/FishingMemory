@@ -1,4 +1,4 @@
-package com.qure.domain
+package com.qure.data.utils
 
 const val REQUEST_CODE_AREA = 0
 const val MEMO_DATA = "memoData"
