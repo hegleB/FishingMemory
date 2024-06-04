@@ -1,20 +1,17 @@
-package com.qure.history.view
+package com.qure.ui.custom
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
-import com.qure.core.extensions.Dash
-import com.qure.core.extensions.Slash
-import com.qure.core.extensions.getColorCompat
-import com.qure.core.extensions.getDrawableCompat
-import com.qure.core.util.setOnSingleClickListener
-import com.qure.history.R
-import com.qure.history.databinding.CalendarDayBinding
-import com.qure.memo.model.MemoUI
+import com.qure.core.ui.R
+import com.qure.ui.model.MemoUI
 import java.time.LocalDate
 
 class DayBind(
@@ -32,20 +29,21 @@ class DayBind(
         this.calendarView.notifyCalendarChanged()
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun bind(
         container: DayContainer,
         data: CalendarDay,
     ) {
-        val context = container.binding.root.context
-        val textView = container.binding.textViewDay
-        val roundBackgroundView = container.binding.viewRound
-        val dot = container.binding.imageViewDot
-        val todayBackground = context.getDrawableCompat(R.drawable.bg_today)
-        val selectedBackgroud = context.getDrawableCompat(R.drawable.bg_selected)
+        val context = container.view.context
+        val textView = container.textViewDay
+        val roundBackgroundView = container.viewRound
+        val dot = container.imageViewDot
+        val todayBackground = context.getDrawable(R.drawable.bg_today)
+        val selectedBackgroud = context.getDrawable(R.drawable.bg_selected)
 
         val selectedDay = this.calendar
 
-        container.binding.root.setOnSingleClickListener { _ ->
+        container.view.setOnClickListener { _ ->
             input?.onDayClick(data.date)
         }
 
@@ -54,34 +52,37 @@ class DayBind(
         if (memos.isNotEmpty()) {
             val hasMemo =
                 memos.any {
-                    it.date == data.date.toString().split(String.Dash).joinToString(String.Slash)
+                    it.date == data.date.toString().split("-").joinToString("/")
                 }
             dot.visibility = if (hasMemo) View.VISIBLE else View.INVISIBLE
         }
 
         if (data.position == DayPosition.MonthDate) {
-            textView.setTextColor(context.getColorCompat(R.color.text_day_color))
+            textView.setTextColor(context.getColor(R.color.text_day_color))
             when (data.date) {
                 today -> {
-                    roundBackgroundView.applyBackground(todayBackground)
-                    textView.setTextColor(context.getColorCompat(R.color.white))
+                    if (todayBackground != null) {
+                        roundBackgroundView.applyBackground(todayBackground)
+                    }
+                    textView.setTextColor(context.getColor(R.color.white))
                 }
                 selectedDay -> {
-                    roundBackgroundView.applyBackground(selectedBackgroud)
+                    if (selectedBackgroud != null) {
+                        roundBackgroundView.applyBackground(selectedBackgroud)
+                    }
                 }
                 else -> {
                     roundBackgroundView.background = null
-                    textView.setTextColor(context.getColorCompat(R.color.text_day_color))
+                    textView.setTextColor(context.getColor(R.color.text_day_color))
                 }
             }
         } else {
-            textView.setTextColor(context.getColorCompat(com.qure.core_design.R.color.gray_300))
+            textView.setTextColor(context.getColor(R.color.gray_300))
         }
     }
 
     override fun create(view: View): DayContainer {
-        val binding = CalendarDayBinding.bind(view)
-        return DayContainer(binding)
+        return DayContainer(view)
     }
 
     private fun View.applyBackground(drawable: Drawable) {
@@ -89,7 +90,11 @@ class DayBind(
         background = drawable
     }
 
-    class DayContainer(val binding: CalendarDayBinding) : ViewContainer(binding.root)
+    class DayContainer(view: View) : ViewContainer(view) {
+        val textViewDay: TextView = view.findViewById(R.id.textView_day)
+        val viewRound: View = view.findViewById(R.id.view_round)
+        val imageViewDot: ImageView = view.findViewById(R.id.imageView_dot)
+    }
 
     abstract class Input {
         abstract fun onDayClick(date: LocalDate)

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="TextInputLayoutAppearance" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <!-- reference our hint & error styles -->
+        <item name="android:colorControlActivated">@color/gray_500</item>
+        <item name="android:colorControlNormal">@color/gray_500</item>
+        <item name="colorControlNormal">@color/gray_500</item>
+        <item name="hintEnabled">true</item>
+        <item name="boxStrokeColor">@color/gray_500</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxStrokeErrorColor">@android:color/holo_red_light</item>
+        <item name="hintTextColor">@color/gray_500</item>
+        <item name="errorTextColor">@android:color/holo_red_light</item>
+    </style>
+
+    <style name="CustomDatePicker" parent="Theme.AppCompat.Light">
+        <!-- 상단 Title 배경색 -->
+        <item name="colorAccent">@color/blue_500</item>
+        <!-- 선택한 날짜 배경 색 -->
+        <item name="colorControlActivated">@color/blue_600</item>
+        <!-- Highlight item color-->
+        <item name="colorControlHighlight">@color/white</item>
+        <!--Calender Background color -->
+        <item name="android:colorBackground">@color/blue_400</item>
+        <!-- Week TextColor-->
+        <item name="android:textColorSecondary">@color/black</item>
+        <!-- Calender Number color arrow color (< >) -->
+        <item name="android:textColorPrimary">@color/black</item>
+        <!--day , month TextColor-->
+        <item name="android:textColorPrimaryInverse">@color/white</item>
+        <!-- year-->
+        <item name="android:textColorSecondaryInverse">@color/white</item>
+        <!-- 취소/확인버튼 색상 -->
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="android:textSize">20sp</item>
+        <item name="cornerSize">16dp</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="fontFamily">@font/sc_medium_dream</item>
+    </style>
+</resources>
