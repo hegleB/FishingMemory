@@ -1,11 +1,10 @@
+import com.fishingmemory.app.setNamespace
+
 plugins {
-    id("com.qure.library")
-    id("com.qure.hilt")
+    id("fishingmemory.android.library")
+    id("fishingmemory.android.hilt")
 }
 
 android {
-    namespace = "com.qure.build_property"
-}
-
-dependencies {
+    setNamespace("build_property")
 }
