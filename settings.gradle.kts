@@ -40,3 +40,11 @@ include(":presentation:program_information")
 include(":presentation:gallery")
 include(":presentation:permission")
 include(":testing")
+include(
+    ":core:designsystem",
+    ":core:model",
+    ":core:data",
+    ":core:domain",
+    ":core:ui",
+    ":core:testing",
+)
