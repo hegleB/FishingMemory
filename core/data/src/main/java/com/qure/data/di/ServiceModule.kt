@@ -1,34 +1,28 @@
 package com.qure.data.di
 
-import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
-import com.qure.data.api.*
-import com.qure.data.api.deserializer.LocalDateDeserializer
-import com.qure.data.api.deserializer.LocalDateTimeDeserializer
-import com.qure.data.api.deserializer.LocalTimeDeserializer
-import com.qure.data.api.exception.ResultCallAdapterFactory
+import com.qure.data.api.AuthService
+import com.qure.data.api.FishingSpotService
+import com.qure.data.api.MemoService
+import com.qure.data.api.NaverMapService
+import com.qure.data.api.StorageService
+import com.qure.data.api.WeatherService
 import com.qure.data.api.interceptor.AuthInterceptor
 import com.qure.data.api.interceptor.MapInterceptor
 import com.qure.data.api.interceptor.WeatherInterceptor
-import com.qure.data.api.serializer.LocalDateSerializer
-import com.qure.data.api.serializer.LocalDateTimeSerializer
-import com.qure.data.api.serializer.LocalTimeSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.create
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
@@ -98,23 +92,12 @@ class ServiceModule {
     fun providesAuthRetrofit(
         @Auth okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory,
+        converterFactory: Converter.Factory,
     ): Retrofit {
-        val gsonWithAdapter: Gson =
-            GsonBuilder()
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-                .create()
-
         return Retrofit.Builder()
             .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_URL))
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
-            .addCallAdapterFactory(resultCallAdapterFactory)
+            .addConverterFactory(converterFactory)
             .build()
     }
 
@@ -123,22 +106,11 @@ class ServiceModule {
     @Storage
     fun providesStorageRetrofit(
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory,
+        converterFactory: Converter.Factory,
     ): Retrofit {
-        val gsonWithAdapter: Gson =
-            GsonBuilder()
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-                .create()
-
         return Retrofit.Builder()
             .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_STORAGE_URL))
-            .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
-            .addCallAdapterFactory(resultCallAdapterFactory)
+            .addConverterFactory(converterFactory)
             .build()
     }
 
@@ -148,23 +120,12 @@ class ServiceModule {
     fun providesWeatherRetrofit(
         @Weather okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory,
+        converterFactory: Converter.Factory,
     ): Retrofit {
-        val gsonWithAdapter: Gson =
-            GsonBuilder()
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-                .create()
-
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(buildPropertyRepository.get(BuildProperty.WEATHER_DATABASE_URL))
-            .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
-            .addCallAdapterFactory(resultCallAdapterFactory)
+            .addConverterFactory(converterFactory)
             .build()
     }
 
@@ -174,23 +135,12 @@ class ServiceModule {
     fun providesMapRetrofit(
         @Map okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory,
+        converterFactory: Converter.Factory,
     ): Retrofit {
-        val gsonWithAdapter: Gson =
-            GsonBuilder()
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-                .create()
-
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(buildPropertyRepository.get(BuildProperty.NAVER_MAP_BASE_URL))
-            .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
-            .addCallAdapterFactory(resultCallAdapterFactory)
+            .addConverterFactory(converterFactory)
             .build()
     }
 
@@ -200,36 +150,19 @@ class ServiceModule {
     fun providesFishingSpotRetrofit(
         @Map okHttpClient: OkHttpClient,
         buildPropertyRepository: BuildPropertyRepository,
-        resultCallAdapterFactory: ResultCallAdapterFactory,
-    ): Retrofit {
-        val gsonWithAdapter: Gson =
-            GsonBuilder()
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeDeserializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeDeserializer())
-                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeSerializer())
-                .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-                .registerTypeAdapter(LocalTime::class.java, LocalTimeSerializer())
-                .create()
-
+        converterFactory: Converter.Factory,
+        ): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_URL))
-            .addConverterFactory(GsonConverterFactory.create(gsonWithAdapter))
-            .addCallAdapterFactory(resultCallAdapterFactory)
+            .addConverterFactory(converterFactory)
             .build()
     }
 
     @Provides
     @Singleton
-    fun providesResultCallAdapterFactory(): ResultCallAdapterFactory = ResultCallAdapterFactory()
-
-    @Provides
-    @Singleton
     @Auth
     fun providesAuthHttpClient(
-        @ApplicationContext context: Context,
-        gson: Gson,
         buildPropertyRepository: BuildPropertyRepository,
     ): OkHttpClient {
         val client =
@@ -257,8 +190,6 @@ class ServiceModule {
     @Singleton
     @Weather
     fun providesWeatherHttpClient(
-        @ApplicationContext context: Context,
-        gson: Gson,
         buildPropertyRepository: BuildPropertyRepository,
     ): OkHttpClient {
         val client =
@@ -272,7 +203,6 @@ class ServiceModule {
                     interceptor =
                         WeatherInterceptor(
                             buildPropertyRepository = buildPropertyRepository,
-                            gson = gson,
                         ),
                 )
                 .addInterceptor(
@@ -287,7 +217,6 @@ class ServiceModule {
     @Singleton
     @Map
     fun providesMapHttpClient(
-        @ApplicationContext context: Context,
         buildPropertyRepository: BuildPropertyRepository,
     ): OkHttpClient {
         val client =
@@ -313,8 +242,17 @@ class ServiceModule {
 
     @Provides
     @Singleton
-    fun providesConverterFactory(): GsonConverterFactory {
-        return GsonConverterFactory.create()
+    fun providerConverterFactory(
+        json: Json,
+    ): Converter.Factory {
+        return json.asConverterFactory("application/json".toMediaType())
+    }
+
+    @Provides
+    @Singleton
+    fun provideJson(): Json = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
     }
 
     companion object {
