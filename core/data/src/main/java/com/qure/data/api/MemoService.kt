@@ -3,8 +3,8 @@ package com.qure.data.api
 import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoQueryEntity
 import com.qure.data.entity.memo.UpdatedMemoEntity
-import com.qure.domain.entity.memo.MemoFieldsEntity
-import com.qure.domain.entity.memo.MemoQuery
+import com.qure.model.memo.MemoFieldsEntity
+import com.qure.model.memo.MemoQuery
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.PATCH

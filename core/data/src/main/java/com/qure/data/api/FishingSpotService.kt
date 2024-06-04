@@ -1,7 +1,7 @@
 package com.qure.data.api
 
 import com.qure.data.entity.fishingspot.FishingSpotEntity
-import com.qure.domain.entity.fishingspot.FishingSpotQuery
+import com.qure.model.fishingspot.FishingSpotQuery
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path

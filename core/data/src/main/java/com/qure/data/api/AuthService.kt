@@ -1,7 +1,7 @@
 package com.qure.data.api
 
 import com.qure.data.entity.auth.SignUpUserEntity
-import com.qure.domain.entity.auth.SignUpFieldsEntity
+import com.qure.model.auth.SignUpFieldsEntity
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
