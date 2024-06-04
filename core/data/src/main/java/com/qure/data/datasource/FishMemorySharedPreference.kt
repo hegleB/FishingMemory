@@ -3,8 +3,8 @@ package com.qure.data.datasource
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.qure.domain.SHARED_PREFERNCE_KEY
-import com.qure.domain.THEME_SYSTEM
+import com.qure.data.utils.SHARED_PREFERNCE_KEY
+import com.qure.data.utils.THEME_SYSTEM
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

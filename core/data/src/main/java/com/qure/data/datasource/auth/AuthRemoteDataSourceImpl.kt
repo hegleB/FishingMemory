@@ -4,10 +4,10 @@ import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.data.api.AuthService
 import com.qure.data.entity.auth.SignUpUserEntity
-import com.qure.domain.entity.auth.Email
-import com.qure.domain.entity.auth.SignUpFields
-import com.qure.domain.entity.auth.SignUpFieldsEntity
-import com.qure.domain.entity.auth.Token
+import com.qure.model.auth.Email
+import com.qure.model.auth.SignUpFields
+import com.qure.model.auth.SignUpFieldsEntity
+import com.qure.model.auth.Token
 import javax.inject.Inject
 
 class AuthRemoteDataSourceImpl

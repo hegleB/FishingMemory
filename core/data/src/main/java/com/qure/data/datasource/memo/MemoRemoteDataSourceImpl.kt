@@ -2,24 +2,24 @@ package com.qure.data.datasource.memo
 
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
+import com.qure.data.utils.SIGNED_UP_EMAIL
 import com.qure.data.api.MemoService
 import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoQueryEntity
 import com.qure.data.entity.memo.UpdatedMemoEntity
-import com.qure.domain.SIGNED_UP_EMAIL
-import com.qure.domain.entity.memo.CollectionId
-import com.qure.domain.entity.memo.CompositeFilter
-import com.qure.domain.entity.memo.FieldFilter
-import com.qure.domain.entity.memo.FieldPath
-import com.qure.domain.entity.memo.Filter
-import com.qure.domain.entity.memo.MemoFields
-import com.qure.domain.entity.memo.MemoFieldsEntity
-import com.qure.domain.entity.memo.MemoQuery
-import com.qure.domain.entity.memo.OrderBy
-import com.qure.domain.entity.memo.StructuredQuery
-import com.qure.domain.entity.memo.Value
-import com.qure.domain.entity.memo.Where
+import com.qure.model.memo.CollectionId
+import com.qure.model.memo.CompositeFilter
+import com.qure.model.memo.FieldFilter
+import com.qure.model.memo.FieldPath
+import com.qure.model.memo.Filter
+import com.qure.model.memo.MemoFields
+import com.qure.model.memo.MemoFieldsEntity
+import com.qure.model.memo.MemoQuery
+import com.qure.model.memo.OrderBy
+import com.qure.model.memo.StructuredQuery
+import com.qure.model.memo.Value
+import com.qure.model.memo.Where
 import javax.inject.Inject
 
 class MemoRemoteDataSourceImpl
