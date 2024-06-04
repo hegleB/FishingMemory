@@ -2,9 +2,7 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.com.android.application)
-    alias(libs.plugins.org.jetbrains.kotlin.android)
-    id("com.qure.hilt")
+    id("fishingmemory.android.application")
 }
 
 val keystorePropertiesFile = rootProject.file("local.properties")
@@ -13,7 +11,6 @@ properties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.qure.fishingmemory"
-    compileSdk = 34
 
     val kakaoApiKey = properties["kakao_api_key"] as? String ?: ""
     val kakaoNativeAppKey = properties["kakao_native_app_key"] as? String ?: ""
@@ -33,22 +30,20 @@ android {
 
     defaultConfig {
         applicationId = "com.qure.fishingmemory"
-        minSdk = 26
-        targetSdk = 34
         versionCode = 7
         versionName = "1.0.0"
 
-        buildConfigField("String", "KAKAO_API_KEY", "$kakaoApiKey")
-        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "$kakaoNativeAppKey")
-        buildConfigField("String", "FIREBASE_API_KEY", "$firebaseApiKey")
-        buildConfigField("String", "FIREBASE_DATABASE_URL", "$firebaseDatabaseUrl")
-        buildConfigField("String", "FIREBASE_STORAGE_URL", "$firebaseStorageUrl")
-        buildConfigField("String", "FIREBASE_DATABASE_PROJECT_ID", "$firebaseDatabaseProjectId")
-        buildConfigField("String", "WEATHER_API_KEY", "$weatherApiKey")
-        buildConfigField("String", "WEATHER_DATABASE_URL", "$weatherDatabaseUrl")
-        buildConfigField("String", "NAVER_MAP_BASE_URL", "$naverMapBaseUrl")
-        buildConfigField("String", "NAVER_MAP_API_CLIENT_ID", "$naverMapApiClientId")
-        buildConfigField("String", "NAVER_MAP_API_CLIENT_SECRET", "$naverMapApiClientSecret")
+        buildConfigField("String", "KAKAO_API_KEY", kakaoApiKey)
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", kakaoNativeAppKey)
+        buildConfigField("String", "FIREBASE_API_KEY", firebaseApiKey)
+        buildConfigField("String", "FIREBASE_DATABASE_URL", firebaseDatabaseUrl)
+        buildConfigField("String", "FIREBASE_STORAGE_URL", firebaseStorageUrl)
+        buildConfigField("String", "FIREBASE_DATABASE_PROJECT_ID", firebaseDatabaseProjectId)
+        buildConfigField("String", "WEATHER_API_KEY", weatherApiKey)
+        buildConfigField("String", "WEATHER_DATABASE_URL", weatherDatabaseUrl)
+        buildConfigField("String", "NAVER_MAP_BASE_URL", naverMapBaseUrl)
+        buildConfigField("String", "NAVER_MAP_API_CLIENT_ID", naverMapApiClientId)
+        buildConfigField("String", "NAVER_MAP_API_CLIENT_SECRET", naverMapApiClientSecret)
         manifestPlaceholders["KAKAO_API_KEY"] = removeQuotationKakaoApiKey
         manifestPlaceholders["NAVER_MAP_API_CLIENT_ID"] = removeQuotationNaverMapApiClientId
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = removeQuotationKakaoNativeAppkey
@@ -71,10 +66,9 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
     buildFeatures {
-        dataBinding = true
         buildConfig = true
-//        compose = true
     }
 
     buildTypes {
@@ -88,13 +82,15 @@ android {
         }
     }
 
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
     lint {
         checkReleaseBuilds = false
     }
-
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = "1.5.7"
-//    }
 }
 
 val ktlint by configurations.creating
@@ -109,30 +105,13 @@ dependencies {
     detekt(libs.detekt)
 
     implementation(project(":build-property"))
-    implementation(project(":domain"))
-    implementation(project(":data"))
-    implementation(project(":navigator"))
-    implementation(project(":presentation:splash"))
-    implementation(project(":presentation:onboarding"))
-    implementation(project(":presentation:login"))
-    implementation(project(":presentation:home"))
-    implementation(project(":presentation:history"))
-    implementation(project(":presentation:create"))
-    implementation(project(":presentation:memo"))
-    implementation(project(":presentation:map"))
-    implementation(project(":presentation:fishingspot"))
-    implementation(project(":presentation:program_information"))
-    implementation(project(":presentation:mypage"))
-    implementation(project(":presentation:gallery"))
-    implementation(project(":presentation:permission"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":feature:main"))
 
-    api(libs.jetpack.appCompat)
-    api(libs.timber)
-    api(libs.navermap.sdk)
-    api(libs.kakao.user)
-    api(libs.kakao.story)
-    api(libs.kakao.share)
-    api(libs.kakao.talk)
+    implementation(libs.timber)
+    implementation(libs.navermap.sdk)
+    implementation(libs.kakao.user)
 }
 
 val ktlintCheck by tasks.registering(JavaExec::class) {
