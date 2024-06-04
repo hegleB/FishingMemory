@@ -1,12 +1,11 @@
-package com.qure.data.repository
+package com.qure.data.repository.auth
 
+import com.qure.data.utils.ACCESS_TOKEN_KEY
+import com.qure.data.utils.SIGNED_UP_EMAIL
 import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.data.datasource.auth.AuthRemoteDataSource
 import com.qure.data.mapper.toSignUpUser
-import com.qure.domain.ACCESS_TOKEN_KEY
-import com.qure.domain.SIGNED_UP_EMAIL
-import com.qure.domain.entity.auth.SignUpUser
-import com.qure.domain.repository.AuthRepository
+import com.qure.model.auth.SignUpUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

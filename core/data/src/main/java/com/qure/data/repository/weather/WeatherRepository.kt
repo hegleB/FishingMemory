@@ -1,6 +1,6 @@
-package com.qure.domain.repository
+package com.qure.data.repository.weather
 
-import com.qure.domain.entity.weather.Weather
+import com.qure.model.weather.Weather
 import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {

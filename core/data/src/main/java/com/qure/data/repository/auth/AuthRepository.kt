@@ -1,6 +1,6 @@
-package com.qure.domain.repository
+package com.qure.data.repository.auth
 
-import com.qure.domain.entity.auth.SignUpUser
+import com.qure.model.auth.SignUpUser
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {

@@ -1,7 +1,7 @@
 package com.qure.data.mapper
 
 import com.qure.data.entity.map.ReverseGeocodingEntity
-import com.qure.domain.entity.map.ReverseGeocoding
+import com.qure.model.map.ReverseGeocoding
 
 fun ReverseGeocodingEntity.toReverseGeocoding(): ReverseGeocoding {
     return ReverseGeocoding(

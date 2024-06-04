@@ -1,11 +1,10 @@
-package com.qure.data.repository
+package com.qure.data.repository.map
 
 import com.qure.data.datasource.map.MapRemoteDataSource
 import com.qure.data.mapper.toGeocoding
 import com.qure.data.mapper.toReverseGeocoding
-import com.qure.domain.entity.map.Geocoding
-import com.qure.domain.entity.map.ReverseGeocoding
-import com.qure.domain.repository.MapRepository
+import com.qure.model.map.Geocoding
+import com.qure.model.map.ReverseGeocoding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

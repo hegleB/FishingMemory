@@ -1,9 +1,9 @@
-package com.qure.domain.repository
+package com.qure.data.repository.memo
 
-import com.qure.domain.entity.memo.Document
-import com.qure.domain.entity.memo.Memo
-import com.qure.domain.entity.memo.MemoFields
-import com.qure.domain.entity.memo.MemoStorage
+import com.qure.model.memo.Document
+import com.qure.model.memo.Memo
+import com.qure.model.memo.MemoFields
+import com.qure.model.memo.MemoStorage
 import kotlinx.coroutines.flow.Flow
 import java.io.File
 

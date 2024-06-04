@@ -1,10 +1,9 @@
-package com.qure.data.repository
+package com.qure.data.repository.fishingspot
 
 import com.qure.data.datasource.fishingspot.FishingSpotRemoteDataSource
 import com.qure.data.mapper.toFishingSpot
-import com.qure.domain.entity.fishingspot.FishingSpot
-import com.qure.domain.entity.fishingspot.FishingSpotQuery
-import com.qure.domain.repository.FishingSpotRepository
+import com.qure.model.fishingspot.FishingSpot
+import com.qure.model.fishingspot.FishingSpotQuery
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

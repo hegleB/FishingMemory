@@ -1,8 +1,7 @@
-package com.qure.data.repository
+package com.qure.data.repository.darkmode
 
+import com.qure.data.utils.DARK_MODE_KEY
 import com.qure.data.datasource.FishMemorySharedPreference
-import com.qure.domain.DARK_MODE_KEY
-import com.qure.domain.repository.DarkModeRepository
 import javax.inject.Inject
 
 class DarkModeRepositoryImpl

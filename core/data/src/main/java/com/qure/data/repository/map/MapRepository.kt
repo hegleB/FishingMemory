@@ -1,7 +1,7 @@
-package com.qure.domain.repository
+package com.qure.data.repository.map
 
-import com.qure.domain.entity.map.Geocoding
-import com.qure.domain.entity.map.ReverseGeocoding
+import com.qure.model.map.Geocoding
+import com.qure.model.map.ReverseGeocoding
 import kotlinx.coroutines.flow.Flow
 
 interface MapRepository {

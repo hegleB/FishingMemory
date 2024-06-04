@@ -1,6 +1,6 @@
-package com.qure.domain.repository
+package com.qure.data.repository.fishingspot
 
-import com.qure.domain.entity.fishingspot.FishingSpotBookmark
+import com.qure.model.fishingspot.FishingSpotBookmark
 import kotlinx.coroutines.flow.Flow
 
 interface FishingSpotLocalRepository {

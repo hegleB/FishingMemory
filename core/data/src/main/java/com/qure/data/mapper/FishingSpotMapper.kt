@@ -1,7 +1,7 @@
 package com.qure.data.mapper
 
 import com.qure.data.entity.fishingspot.FishingSpotEntity
-import com.qure.domain.entity.fishingspot.FishingSpot
+import com.qure.model.fishingspot.FishingSpot
 
 fun FishingSpotEntity.toFishingSpot(): FishingSpot {
     return FishingSpot(

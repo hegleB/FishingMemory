@@ -1,9 +1,8 @@
-package com.qure.data.repository
+package com.qure.data.repository.weather
 
 import com.qure.data.datasource.weather.WeatherRemoteDataSource
 import com.qure.data.mapper.toWeather
-import com.qure.domain.entity.weather.Weather
-import com.qure.domain.repository.WeatherRepository
+import com.qure.model.weather.Weather
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

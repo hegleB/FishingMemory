@@ -4,7 +4,11 @@ import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoQueryEntity
 import com.qure.data.entity.memo.MemoStorageEntity
 import com.qure.data.entity.memo.UpdatedMemoEntity
-import com.qure.domain.entity.memo.*
+import com.qure.model.memo.Document
+import com.qure.model.memo.Memo
+import com.qure.model.memo.MemoFields
+import com.qure.model.memo.MemoFieldsEntity
+import com.qure.model.memo.MemoStorage
 
 fun MemoEntity.toMemo(): Memo {
     val data = this

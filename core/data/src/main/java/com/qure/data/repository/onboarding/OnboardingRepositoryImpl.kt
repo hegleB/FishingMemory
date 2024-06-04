@@ -1,7 +1,6 @@
-package com.qure.data.repository
+package com.qure.data.repository.onboarding
 
 import com.qure.data.datasource.datastore.DataStoreDataSource
-import com.qure.domain.repository.OnboardingRepository
 import javax.inject.Inject
 
 class OnboardingRepositoryImpl

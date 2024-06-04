@@ -1,7 +1,7 @@
 package com.qure.data.mapper
 
 import com.qure.data.entity.auth.SignUpUserEntity
-import com.qure.domain.entity.auth.SignUpUser
+import com.qure.model.auth.SignUpUser
 
 fun SignUpUserEntity.toSignUpUser(): SignUpUser {
     val data = this

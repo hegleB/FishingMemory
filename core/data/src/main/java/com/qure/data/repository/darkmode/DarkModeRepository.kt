@@ -1,4 +1,4 @@
-package com.qure.domain.repository
+package com.qure.data.repository.darkmode
 
 interface DarkModeRepository {
     suspend fun setDarkMode(isDarkMode: String)
