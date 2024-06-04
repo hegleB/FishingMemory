@@ -1,9 +1,0 @@
-<resources>
-    <string name="app_name">Fishing Memory</string>
-    <string name="number_address">지번</string>
-    <string name="road_address">도로명</string>
-    <string name="phone_number">전화번호</string>
-    <string name="fish_type">주요어종</string>
-    <string name="fee">요금</string>
-    <string name="main_point">주요 포인트</string>
-</resources>
