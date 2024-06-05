@@ -44,6 +44,7 @@ fun FMTopAppBar(
         navigationIcon = {
             FMBackButton(
                 onClickBack = { onBack() },
+                iconColor = MaterialTheme.colorScheme.onBackground,
             )
         },
         actions = actions,
