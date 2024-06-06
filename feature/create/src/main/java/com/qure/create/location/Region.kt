@@ -1,8 +1,8 @@
 package com.qure.create.location
 
 import android.content.Context
-import com.qure.core.extensions.getStringArrayCompat
-import com.qure.create.R
+import com.qure.feature.create.R
+import com.qure.model.extensions.getStringArrayCompat
 
 class Region {
     companion object {

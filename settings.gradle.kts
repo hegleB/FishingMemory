@@ -48,3 +48,5 @@ include(
     ":core:ui",
     ":core:testing",
 )
+include(
+    ":feature:create",

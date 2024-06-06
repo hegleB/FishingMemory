@@ -1,11 +1,11 @@
 package com.qure.create.location
 
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
-import com.qure.create.model.toGeocodingUI
-import com.qure.create.model.toReverseGeocodingUI
 import com.qure.domain.usecase.map.GetGeocodingUseCase
 import com.qure.domain.usecase.map.GetReverseGeocodingUseCase
+import com.qure.ui.base.BaseViewModel
+import com.qure.ui.model.toGeocodingUI
+import com.qure.ui.model.toReverseGeocodingUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -62,18 +62,14 @@ constructor(
     }
 
     fun onClickNext() {
-        if (_locationUiState.value.currentPage < 2) {
-            _locationUiState.update {
-                it.copy(currentPage = _locationUiState.value.currentPage.plus(1))
-            }
+        _locationUiState.update {
+            it.copy(currentPage = _locationUiState.value.currentPage.plus(1))
         }
     }
 
     fun onClickPrevious() {
-        if (_locationUiState.value.currentPage > 0) {
-            _locationUiState.update {
-                it.copy(currentPage = _locationUiState.value.currentPage.minus(1))
-            }
+        _locationUiState.update {
+            it.copy(currentPage = _locationUiState.value.currentPage.minus(1))
         }
     }
 

@@ -1,8 +1,6 @@
 package com.qure.create.location
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,10 +19,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,29 +38,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
-import com.qure.core.extensions.DefaultLatitude
-import com.qure.core.extensions.DefaultLongitude
-import com.qure.core.extensions.toReverseCoordsString
-import com.qure.core_design.compose.components.FMButton
-import com.qure.core_design.compose.components.FMCloseButton
-import com.qure.core_design.compose.components.FMNaverMap
-import com.qure.core_design.compose.components.FMProgressBar
-import com.qure.core_design.compose.theme.Blue500
-import com.qure.core_design.compose.theme.Blue600
-import com.qure.core_design.compose.theme.Gray100
-import com.qure.core_design.compose.theme.Gray300
-import com.qure.core_design.compose.theme.White
-import com.qure.core_design.compose.utils.FMPreview
-import com.qure.create.R
-import com.qure.create.model.GeocodingUI
-import com.qure.create.model.ReverseGeocodingUI
+import com.qure.designsystem.component.FMButton
+import com.qure.designsystem.component.FMCloseButton
+import com.qure.designsystem.component.FMNaverMap
+import com.qure.designsystem.component.FMProgressBar
+import com.qure.designsystem.theme.Blue500
+import com.qure.designsystem.theme.Blue600
+import com.qure.designsystem.theme.Gray100
+import com.qure.designsystem.theme.Gray300
+import com.qure.designsystem.theme.White
+import com.qure.designsystem.utils.FMPreview
+import com.qure.feature.create.R
+import com.qure.model.extensions.DefaultLatitude
+import com.qure.model.extensions.DefaultLongitude
+import com.qure.ui.extentions.toReverseCoordsString
+import com.qure.ui.model.GeocodingUI
+import com.qure.ui.model.MemoUI
+import com.qure.ui.model.ReverseGeocodingUI
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 data class LocationData(
@@ -72,20 +74,21 @@ data class LocationData(
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun LocationSettingRoute(
-    viewModel: LocationSettingViewModel,
-    onClickClose: () -> Unit,
-    onClickNext: () -> Unit,
-    onClickPrevious: () -> Unit,
-    setReverseCoordsString: (String) -> Unit,
-    setGeocoding: (String) -> Unit,
-    setLocation: (String, String) -> Unit,
-    setDoIndex: (Int) -> Unit,
-    setCityIndex: (Int) -> Unit,
-    setRegions: (Array<String>) -> Unit,
-    setSelectedRegions: (Array<String>) -> Unit,
+    memo: MemoUI = MemoUI(),
+    viewModel: LocationSettingViewModel = hiltViewModel(),
+    onBack: () -> Unit,
+    navigateToMemoCreate: (MemoUI) -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
+
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
     val geoCodingUiState by viewModel.geoCodingUiState.collectAsStateWithLifecycle()
     val locationUiState by viewModel.locationUiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    println("LocationSettingRoute")
     val locationPages = listOf(
         LocationData(
             title = stringResource(id = R.string.selection_do),
@@ -100,22 +103,56 @@ fun LocationSettingRoute(
             subTitle = stringResource(id = R.string.map),
         )
     )
+
+//    LaunchedEffect(locationUiState.currentPage) {
+//        when (locationUiState.currentPage) {
+//            2 -> {
+//                viewModel.fetchGeocoding(locationUiState.selectedRegions.joinToString(" "))
+//
+//            }
+//
+//            3 -> {
+//                if (geoCodingUiState is GeoCodingUiState.Success) {
+//                    val areaName =
+//                        (geoCodingUiState as GeoCodingUiState.Success).reverseGeocoding?.areaName
+//                            ?: locationUiState.selectedRegions.joinToString(" ")
+//                    val coords = (geoCodingUiState as GeoCodingUiState.Success).geocoding?.coords
+//                        ?: "${String.DefaultLatitude},${String.DefaultLongitude}"
+//
+//                    navigateToMemoCreate(memo.copy(location = areaName, coords = coords))
+//                }
+//
+//            }
+//        }
+//    }
+
+    when (locationUiState.currentPage) {
+        0 -> {
+            viewModel.setRegionsData(Region.getArray(context).toList())
+        }
+
+        1 -> {
+            viewModel.setRegionsData(Region.getArray(context, locationUiState.doIndex).toList())
+        }
+    }
+
     LocationSettingScreen(
         geoCodingUiState = geoCodingUiState,
         currentPage = locationUiState.currentPage,
-        onClickClose = onClickClose,
-        onClickNext = onClickNext,
-        onClickPrevious = onClickPrevious,
+        onBack = onBack,
+        onClickNext = viewModel::onClickNext,
+        onClickPrevious = viewModel::onClickPrevious,
         locationPages = locationPages,
-        selectDoIndex = setDoIndex,
-        selectCityIndex = setCityIndex,
+        selectDoIndex = viewModel::setDoIndexDate,
+        selectCityIndex = viewModel::setCityIndexData,
         selectedDoIndex = locationUiState.doIndex,
         selectedCityIndex = locationUiState.cityIndex,
-        setReverseCoordsString = setReverseCoordsString,
-        setGeocoding = setGeocoding,
-        setLocation = setLocation,
-        setRegions = setRegions,
-        setSelectedRegions = setSelectedRegions,
+//        setReverseCoordsString = viewModel::fetchReverseGeocoding,
+//        setGeocoding = viewModel::fetchGeocoding,
+        setLocation = { location, coords ->
+            navigateToMemoCreate(memo.copy(location = location, coords = coords))
+        },
+//        setSelectedRegions = { selectedRegions -> viewModel.setSelectedRegionsData(selectedRegions.toList()) },
         regions = locationUiState.regions.toTypedArray(),
         selectedRegions = locationUiState.selectedRegions.toTypedArray(),
         geocoding = locationUiState.geocoding,
@@ -123,13 +160,12 @@ fun LocationSettingRoute(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LocationSettingScreen(
     geoCodingUiState: GeoCodingUiState = GeoCodingUiState.Loading,
     modifier: Modifier = Modifier,
     currentPage: Int = 0,
-    onClickClose: () -> Unit = { },
+    onBack: () -> Unit = { },
     onClickNext: () -> Unit = { },
     onClickPrevious: () -> Unit = { },
     locationPages: List<LocationData> = emptyList(),
@@ -140,20 +176,22 @@ private fun LocationSettingScreen(
     setReverseCoordsString: (String) -> Unit = { },
     setGeocoding: (String) -> Unit = { },
     setLocation: (String, String) -> Unit = { _, _ -> },
-    setRegions: (Array<String>) -> Unit = { },
     setSelectedRegions: (Array<String>) -> Unit = { },
     regions: Array<String> = emptyArray(),
     selectedRegions: Array<String> = emptyArray(),
     geocoding: GeocodingUI? = GeocodingUI(),
     reverseGeocoding: ReverseGeocodingUI? = ReverseGeocodingUI(),
 ) {
+    println("LocationSettingScreen")
     val pagerState = rememberPagerState {
         locationPages.size
     }
     val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val isLoading = geoCodingUiState is GeoCodingUiState.Loading
 
+    val isLoading = geoCodingUiState is GeoCodingUiState.Loading
+    println("Location CurrentPage: $currentPage")
+
+    println("Location Regions")
     Box(
         modifier = modifier
             .fillMaxSize(),
@@ -169,20 +207,10 @@ private fun LocationSettingScreen(
                 .fillMaxSize()
                 .padding(20.dp),
         ) {
-            when (currentPage) {
-                0 -> {
-                    setRegions(Region.getArray(context))
-                }
-
-                1 -> {
-                    setRegions(Region.getArray(context, selectedDoIndex))
-                }
-            }
-
             FMCloseButton(
                 modifier = modifier
                     .size(25.dp),
-                onClickClose = { onClickClose() },
+                onClickClose = { onBack() },
                 iconColor = MaterialTheme.colorScheme.onBackground,
             )
 
@@ -219,93 +247,8 @@ private fun LocationSettingScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun PageChangeContent(
-    modifier: Modifier,
-    currentPage: Int,
-    onClickPrevious: () -> Unit,
-    coroutineScope: CoroutineScope,
-    selectedDoIndex: Int,
-    pagerState: PagerState,
-    onClickNext: () -> Unit,
-    setLocation: (String, String) -> Unit,
-    geoCodingUiState: GeoCodingUiState,
-    selectedRegions: Array<String>,
-    setGeocoding: (String) -> Unit
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        if (currentPage > 0) {
-            FMButton(
-                modifier = modifier
-                    .width(100.dp)
-                    .height(50.dp)
-                    .align(Alignment.CenterStart),
-                onClick = {
-                    onClickPrevious()
-                    coroutineScope.launch {
-
-                        pagerState.animateScrollToPage(
-                            page = currentPage.minus(1),
-                            animationSpec = tween(
-                                durationMillis = 500
-                            )
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(15.dp),
-                text = stringResource(id = R.string.location_setting_previous),
-                buttonColor = Blue500,
-                textStyle = MaterialTheme.typography.displaySmall,
-                fontColor = White,
-            )
-        }
-
-        FMButton(
-            modifier = modifier
-                .width(100.dp)
-                .height(50.dp)
-                .align(Alignment.CenterEnd),
-            onClick = {
-                onClickNext()
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(
-                        page = currentPage.plus(1),
-                        animationSpec = tween(
-                            durationMillis = 500
-                        )
-                    )
-                }
-                when (currentPage) {
-                    1 -> setGeocoding(selectedRegions.joinToString(" "))
-                    2 -> {
-                        if (geoCodingUiState is GeoCodingUiState.Success) {
-                            val areaName = geoCodingUiState.reverseGeocoding?.areaName ?: selectedRegions.joinToString(" ")
-                            val coords = geoCodingUiState.geocoding?.coords ?: "${String.DefaultLatitude},${String.DefaultLongitude}"
-                            setLocation(areaName, coords)
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(15.dp),
-            text = if (currentPage == 2) {
-                stringResource(id = R.string.location_setting_setting)
-            } else stringResource(
-                id = R.string.location_setting_next
-            ),
-            buttonColor = Blue500,
-            textStyle = MaterialTheme.typography.displaySmall,
-            fontColor = White,
-            isEnabled = selectedDoIndex != -1
-        )
-    }
-}
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 private fun LocationContent(
     modifier: Modifier,
     pagerState: PagerState,
@@ -321,6 +264,8 @@ private fun LocationContent(
     geocoding: GeocodingUI? = GeocodingUI(),
     reverseGeocoding: ReverseGeocodingUI? = ReverseGeocodingUI(),
 ) {
+    println("LocationContent ${pagerState.currentPage}")
+
     HorizontalPager(
         modifier = modifier
             .fillMaxWidth()
@@ -378,6 +323,7 @@ private fun LocationPage(
     geocoding: GeocodingUI? = GeocodingUI(),
     reverseGeocoding: ReverseGeocodingUI? = ReverseGeocodingUI(),
 ) {
+    println("LocationPage")
     Column(
         modifier = modifier
             .padding(top = 10.dp),
@@ -431,7 +377,7 @@ private fun LocationPage(
                 markerState = markerState,
                 markerHeight = 30.dp,
                 markerWidth = 35.dp,
-                icon = OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker),
+                icon = OverlayImage.fromResource(com.qure.core.designsystem.R.drawable.bg_map_fill_marker),
                 onMapClick = { latLng ->
                     markerState = MarkerState(latLng)
                     setReverseCoordsString(latLng.toReverseCoordsString())
@@ -480,7 +426,7 @@ private fun LocationPage(
                                     .size(20.dp)
                                     .padding(end = 5.dp)
                                     .align(Alignment.CenterEnd),
-                                painter = painterResource(id = com.qure.core_design.R.drawable.ic_check),
+                                painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_check),
                                 contentDescription = null,
                                 tint = Blue600,
                             )
@@ -489,6 +435,86 @@ private fun LocationPage(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun PageChangeContent(
+    modifier: Modifier,
+    currentPage: Int,
+    onClickPrevious: () -> Unit,
+    coroutineScope: CoroutineScope,
+    selectedDoIndex: Int,
+    pagerState: PagerState,
+    onClickNext: () -> Unit,
+    setLocation: (String, String) -> Unit,
+    geoCodingUiState: GeoCodingUiState,
+    selectedRegions: Array<String>,
+    setGeocoding: (String) -> Unit
+) {
+    println("LocationPageChangeContent")
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        if (currentPage > 0) {
+            FMButton(
+                modifier = modifier
+                    .width(100.dp)
+                    .height(50.dp)
+                    .align(Alignment.CenterStart),
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(
+                            page = currentPage - 1,
+                        )
+                    }
+//                    onClickPrevious()
+                },
+                shape = RoundedCornerShape(15.dp),
+                text = stringResource(id = R.string.location_setting_previous),
+                buttonColor = Blue500,
+                textStyle = MaterialTheme.typography.displaySmall,
+                fontColor = White,
+            )
+        }
+
+        FMButton(
+            modifier = modifier
+                .width(100.dp)
+                .height(50.dp)
+                .align(Alignment.CenterEnd),
+            onClick = {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(
+                        page = currentPage + 1,
+                    )
+                }
+//                onClickNext()
+//                when (currentPage) {
+//                    1 -> setGeocoding(selectedRegions.joinToString(" "))
+//                    2 -> {
+//                        if (geoCodingUiState is GeoCodingUiState.Success) {
+//                            val areaName = geoCodingUiState.reverseGeocoding?.areaName
+//                                ?: selectedRegions.joinToString(" ")
+//                            val coords = geoCodingUiState.geocoding?.coords
+//                                ?: "${String.DefaultLatitude},${String.DefaultLongitude}"
+//                            setLocation(areaName, coords)
+//                        }
+//                    }
+//                }
+            },
+            shape = RoundedCornerShape(15.dp),
+            text = if (currentPage == 2) {
+                stringResource(id = R.string.location_setting_setting)
+            } else stringResource(
+                id = R.string.location_setting_next
+            ),
+            buttonColor = Blue500,
+            textStyle = MaterialTheme.typography.displaySmall,
+            fontColor = White,
+            isEnabled = selectedDoIndex != -1
+        )
     }
 }
 

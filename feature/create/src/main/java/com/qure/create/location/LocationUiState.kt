@@ -1,7 +1,7 @@
 package com.qure.create.location
 
-import com.qure.create.model.GeocodingUI
-import com.qure.create.model.ReverseGeocodingUI
+import com.qure.ui.model.GeocodingUI
+import com.qure.ui.model.ReverseGeocodingUI
 
 data class LocationUiState(
     val geocoding: GeocodingUI? = null,

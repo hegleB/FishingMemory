@@ -3,19 +3,19 @@ package com.qure.create
 import androidx.lifecycle.viewModelScope
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
-import com.qure.core.BaseViewModel
-import com.qure.core.extensions.Slash
-import com.qure.core.extensions.URLSplash
-import com.qure.core.extensions.UUID
-import com.qure.domain.entity.memo.Document
-import com.qure.domain.entity.memo.MemoStorage
-import com.qure.domain.repository.AuthRepository
+import com.qure.data.repository.auth.AuthRepository
 import com.qure.domain.usecase.memo.CreateMemoUseCase
 import com.qure.domain.usecase.memo.UpdateMemoUseCase
 import com.qure.domain.usecase.memo.UploadMemoImageUseCase
-import com.qure.memo.model.MemoUI
-import com.qure.memo.model.toMemoFields
-import com.qure.memo.model.toMemoUI
+import com.qure.model.extensions.Slash
+import com.qure.model.extensions.URLSplash
+import com.qure.model.extensions.UUID
+import com.qure.model.memo.Document
+import com.qure.model.memo.MemoStorage
+import com.qure.ui.base.BaseViewModel
+import com.qure.ui.model.MemoUI
+import com.qure.ui.model.toMemoFields
+import com.qure.ui.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,6 +57,9 @@ constructor(
     )
     val memo = _memo.asStateFlow()
 
+    private val _editMode = MutableStateFlow(false)
+    val editMode = _editMode.asStateFlow()
+
     @OptIn(ExperimentalCoroutinesApi::class)
     fun createMemo() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -84,6 +87,7 @@ constructor(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun uploadImageIfNeeded(): Flow<String> {
         return if (_memo.value.image.startsWith("https://firebasestorage").not()) {
             uploadMemoImageUseCase(File(_memo.value.image))
@@ -102,6 +106,7 @@ constructor(
         return updateMemoUseCase(_memo.value.toMemoFields(authRepository.getEmailFromLocal()))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun updateMemo() {
         viewModelScope.launch {
             uploadImageIfNeeded()
@@ -120,6 +125,10 @@ constructor(
 
     fun setMemoUi(memoUI: MemoUI) {
         _memo.update { memoUI }
+    }
+
+    fun setEditMode(isEdit: Boolean) {
+        _editMode.value = isEdit
     }
 
     private fun getImageUrl(storage: MemoStorage): String {

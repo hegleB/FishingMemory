@@ -1,6 +1,6 @@
 package com.qure.create
 
-import com.qure.memo.model.MemoUI
+import com.qure.ui.model.MemoUI
 
 sealed interface MemoCreateUiState {
     data object Loading : MemoCreateUiState

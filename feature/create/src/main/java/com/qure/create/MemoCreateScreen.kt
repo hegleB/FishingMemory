@@ -3,78 +3,108 @@ package com.qure.create
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.qure.core.util.FishingMemoryToast
-import com.qure.core_design.compose.components.FMButton
-import com.qure.core_design.compose.components.FMCalendarDialog
-import com.qure.core_design.compose.components.FMChipGroup
-import com.qure.core_design.compose.components.FMProgressBar
-import com.qure.core_design.compose.components.FMTopAppBar
-import com.qure.core_design.compose.theme.Blue500
-import com.qure.core_design.compose.theme.Gray200
-import com.qure.core_design.compose.theme.White
-import com.qure.core_design.compose.utils.FMPreview
-import com.qure.memo.model.MemoUI
+import com.qure.designsystem.component.FMButton
+import com.qure.designsystem.component.FMChipGroup
+import com.qure.designsystem.component.FMGlideImage
+import com.qure.designsystem.component.FMProgressBar
+import com.qure.designsystem.component.FMTopAppBar
+import com.qure.designsystem.theme.Blue500
+import com.qure.designsystem.theme.Gray100
+import com.qure.designsystem.theme.White
+import com.qure.designsystem.utils.FMPreview
+import com.qure.feature.create.R
+import com.qure.ui.component.FMCalendarDialog
+import com.qure.ui.model.MemoUI
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun MemoCreateRoute(
-    viewModel: MemoViewModel,
+    memo: MemoUI,
+    isEdit: Boolean = false,
     onBack: () -> Unit,
-    navigateToLocationSetting: () -> Unit,
-    navigateToGallery: () -> Unit,
+    navigateToLocationSetting: (MemoUI) -> Unit,
+    navigateToGallery: (MemoUI) -> Unit,
     navigateToMemoDetail: (MemoUI) -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    viewModel: MemoViewModel = hiltViewModel(),
 ) {
+
+    val editMode by viewModel.editMode.collectAsStateWithLifecycle()
+    LaunchedEffect(isEdit) {
+        if (isEdit && editMode.not()) {
+            viewModel.setMemoUi(memo)
+            viewModel.setEditMode(true)
+        }
+    }
+
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
     val uiState by viewModel.memoCreateUiState.collectAsStateWithLifecycle()
     val memo by viewModel.memo.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -82,24 +112,27 @@ fun MemoCreateRoute(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
     )
+    val resources = LocalContext.current.resources
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissionsMap ->
         val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
         if (areGranted.not()) {
-            FishingMemoryToast().error(context, "권한이 거부되었습니다.")
+            viewModel.sendErrorMessage(Throwable(resources.getString(androidx.compose.ui.R.string.default_error_message)))
         }
     }
     LaunchedEffect(requestPermissionLauncher) {
         checkAndRequestPermissions(context, permissions, requestPermissionLauncher)
     }
 
+    BackHandler(onBack = onBack)
+
     MemoCreateScreen(
         uiState = uiState,
         onBack = onBack,
         memo = memo,
-        navigateToLocationSetting = navigateToLocationSetting,
-        navigateToGallery = navigateToGallery,
+        navigateToLocationSetting = { navigateToLocationSetting(memo) },
+        navigateToGallery = { navigateToGallery(memo) },
         navigateToMemoDetail = navigateToMemoDetail,
         setDate = viewModel::setDate,
         setTitle = viewModel::setTitle,
@@ -145,15 +178,30 @@ private fun MemoCreateScreen(
     var isShowCalendar by remember {
         mutableStateOf(false)
     }
+
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
+    val keyboardHeight = WindowInsets.ime.getBottom(LocalDensity.current)
+
+    LaunchedEffect(key1 = keyboardHeight) {
+        coroutineScope.launch {
+            scrollState.scrollBy(keyboardHeight.toFloat())
+        }
+    }
+
     Box(
-        modifier
-            .fillMaxSize()
+        modifier = modifier
+            .imePadding()
     ) {
 
         Column(
             modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState)
+                .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Bottom + WindowInsetsSides.Top)),
+            horizontalAlignment = CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
             if (uiState is MemoCreateUiState.Success) {
                 navigateToMemoDetail(uiState.memo)
@@ -162,7 +210,7 @@ private fun MemoCreateScreen(
             if (isShowCalendar) {
                 FMCalendarDialog(
                     selection = stringResource(id = R.string.selection),
-                    cancel = stringResource(id = com.qure.memo.R.string.cancel),
+                    cancel = stringResource(id = com.qure.feature.memo.R.string.cancel),
                     onDismissRequest = { isShowCalendar = false },
                     onDateSelected = setDate,
                     date = memo.date,
@@ -238,7 +286,7 @@ private fun MemoCreateScreen(
                     title = stringResource(id = R.string.location),
                     icon = {
                         Icon(
-                            painter = painterResource(id = com.qure.core_design.R.drawable.ic_marker),
+                            painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_marker),
                             contentDescription = null,
                             tint = Color(0xFF056AEE)
                         )
@@ -259,7 +307,7 @@ private fun MemoCreateScreen(
                     title = stringResource(id = R.string.date),
                     icon = {
                         Icon(
-                            painter = painterResource(id = com.qure.core_design.R.drawable.ic_date),
+                            painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_date),
                             contentDescription = null,
                             tint = Color(0xFFF38315)
                         )
@@ -353,7 +401,8 @@ private fun MemoSizeInputItem(
                 value = size,
                 onValueChange = onValueChange,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
                 ),
                 textStyle = MaterialTheme.typography.displaySmall.copy(
                     fontSize = 18.sp,
@@ -362,7 +411,7 @@ private fun MemoSizeInputItem(
                 ),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground)
             )
-            Divider(
+            HorizontalDivider(
                 color = MaterialTheme.colorScheme.onBackground,
                 thickness = 1.dp,
                 modifier = Modifier
@@ -383,7 +432,6 @@ private fun MemoSizeInputItem(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun MemoItem(
     modifier: Modifier = Modifier,
@@ -420,7 +468,7 @@ private fun MemoItem(
                         .clip(RoundedCornerShape(10.dp))
                         .border(
                             width = 2.dp,
-                            color = if (isSystemInDarkTheme()) White else Gray200,
+                            color = MaterialTheme.colorScheme.surface,
                             shape = RoundedCornerShape(10.dp),
                         ),
                 ) {
@@ -437,13 +485,14 @@ private fun MemoItem(
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
                         ),
                         decorationBox = { innerTextField ->
                             if (value.isEmpty()) {
                                 Text(
                                     text = hint,
                                     style = TextStyle(
-                                        color = colorResource(id = R.color.text_hint_color),
+                                        color = Gray100,
                                     ),
                                     fontSize = 18.sp,
                                 )
@@ -461,7 +510,7 @@ private fun MemoItem(
                         .clip(RoundedCornerShape(10.dp))
                         .border(
                             width = 2.dp,
-                            color = if (isSystemInDarkTheme()) White else Gray200,
+                            color = MaterialTheme.colorScheme.surface,
                             shape = RoundedCornerShape(10.dp),
                         )
                         .clickable { onClick() },
@@ -473,9 +522,9 @@ private fun MemoItem(
                     } else {
                         Modifier.fillMaxSize()
                     }
-                    GlideImage(
+                    FMGlideImage(
                         modifier = imageModifier,
-                        model = if (value.isEmpty()) com.qure.core_design.R.drawable.ic_image else value,
+                        model = if (value.isEmpty()) com.qure.core.designsystem.R.drawable.ic_image else value,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                     )
@@ -488,7 +537,7 @@ private fun MemoItem(
                         .clip(RoundedCornerShape(10.dp))
                         .border(
                             width = 2.dp,
-                            color = if (isSystemInDarkTheme()) White else Gray200,
+                            color = MaterialTheme.colorScheme.surface,
                             shape = RoundedCornerShape(10.dp),
                         )
                         .clickable { onClick() },
