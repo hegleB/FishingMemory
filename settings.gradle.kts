@@ -59,3 +59,4 @@ include(
     ":feature:fishingspot",
     ":feature:gallery",
     ":feature:memo",
+    ":feature:program-information",

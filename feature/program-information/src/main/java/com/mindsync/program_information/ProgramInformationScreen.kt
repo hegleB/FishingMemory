@@ -12,17 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.qure.core_design.compose.components.FMCloseButton
-import com.qure.core_design.compose.components.FMWebView
+import com.qure.designsystem.component.FMCloseButton
+import com.qure.designsystem.component.FMWebView
 
 @Composable
 fun ProgramInformationRoute(
     webUrl: String = "",
-    onClose: () -> Unit,
+    onBack: () -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     ProgramInformationScreen(
         webUrl = webUrl,
-        onClose = onClose,
+        onBack = onBack,
     )
 }
 
@@ -30,7 +31,7 @@ fun ProgramInformationRoute(
 private fun ProgramInformationScreen(
     modifier: Modifier = Modifier,
     webUrl: String = "",
-    onClose: () -> Unit = { },
+    onBack: () -> Unit = { },
 ) {
     Column(
         modifier = modifier
@@ -46,7 +47,7 @@ private fun ProgramInformationScreen(
                     .size(25.dp)
                     .align(Alignment.CenterStart)
                     .offset(x = 20.dp),
-                onClickClose = { onClose() },
+                onClickClose = { onBack() },
                 iconColor = MaterialTheme.colorScheme.onBackground,
             )
         }
