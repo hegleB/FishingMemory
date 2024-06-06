@@ -51,3 +51,4 @@ include(
 include(
     ":feature:create",
     ":feature:fishingspot",
+    ":feature:gallery",

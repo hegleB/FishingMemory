@@ -24,11 +24,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,24 +46,36 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.qure.core.util.FishingMemoryToast
-import com.qure.core_design.compose.components.FMCloseButton
-import com.qure.core_design.compose.theme.Blue600
-import com.qure.core_design.compose.theme.Gray200
-import com.qure.core_design.compose.utils.FMPreview
+import com.qure.designsystem.component.FMCloseButton
+import com.qure.designsystem.component.FMGlideImage
+import com.qure.designsystem.theme.Blue600
+import com.qure.designsystem.theme.Gray200
+import com.qure.designsystem.utils.FMPreview
+import com.qure.feature.gallery.R
+import com.qure.model.gallery.GalleryImage
+import com.qure.model.gallery.toImageUri
+import com.qure.ui.model.MemoUI
+import kotlinx.coroutines.flow.collectLatest
+
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun GalleryScreen(
-    onClickClose: () -> Unit,
-    onClickCamera: (Bitmap) -> Unit,
-    onClickDone: (GalleryImage) -> Unit,
+fun GalleryRoute(
+    memoUI: MemoUI = MemoUI(),
+    onBack: () -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onClickCamera: (MemoUI) -> Unit,
+    onClickDone: (MemoUI) -> Unit,
+    viewModel: GalleryViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
     val context = LocalContext.current
     val images by remember {
         mutableStateOf(mutableListOf(GalleryImage(0, "")))
@@ -85,11 +97,11 @@ fun GalleryScreen(
         if (result.resultCode == AppCompatActivity.RESULT_OK) {
             if (Build.VERSION.SDK_INT >= 33) {
                 result.data?.extras?.getParcelable("data", Bitmap::class.java)?.let { bitmap ->
-                    onClickCamera(bitmap)
+                    onClickCamera(memoUI.copy(image = bitmap.toImageUri(context).path ?: ""))
                 }
             } else {
                 result.data?.extras?.getParcelable<Bitmap>("data")?.let { bitmap ->
-                    onClickCamera(bitmap)
+                    onClickCamera(memoUI.copy(image = bitmap.toImageUri(context).path ?: ""))
                 }
             }
         }
@@ -98,7 +110,7 @@ fun GalleryScreen(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted.not()) {
-            FishingMemoryToast().error(context, "권한이 거부되었습니다.")
+            viewModel.sendErrorMessage(Throwable(message = "권한이 거부되었습니다."))
         }
     }
 
@@ -120,10 +132,10 @@ fun GalleryScreen(
         }
     }
 
-    GalleryContent(
-        onClickClose = onClickClose,
+    GalleryScreen(
+        onClickClose = onBack,
         images = images,
-        onClickDone = onClickDone,
+        onClickDone = { onClickDone(memoUI.copy(image = it.path)) },
         onClickTakingPicture = {
             startCamera(takePictureLauncher)
         }
@@ -166,7 +178,7 @@ private fun loadGalleryImages(
 }
 
 @Composable
-private fun GalleryContent(
+private fun GalleryScreen(
     modifier: Modifier = Modifier,
     onClickClose: () -> Unit = { },
     onClickTakingPicture: () -> Unit = { },
@@ -207,7 +219,7 @@ private fun GalleryContent(
                 )
             }
         }
-        Divider()
+        HorizontalDivider()
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
@@ -234,7 +246,6 @@ private fun GalleryContent(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun GalleryImageItem(
     modifier: Modifier = Modifier,
@@ -251,7 +262,7 @@ private fun GalleryImageItem(
                 color = if (isChecked) Blue600 else Color.Transparent,
             ),
     ) {
-        GlideImage(
+        FMGlideImage(
             model = galleryImage.path,
             contentDescription = null,
             contentScale = ContentScale.Crop,
@@ -261,8 +272,8 @@ private fun GalleryImageItem(
                 .size(24.dp)
                 .padding(top = 5.dp, end = 5.dp)
                 .align(Alignment.TopEnd),
-            painter = if (isChecked) painterResource(id = com.qure.core_design.R.drawable.ic_check_circle) else painterResource(
-                id = com.qure.core_design.R.drawable.ic_outline_circle
+            painter = if (isChecked) painterResource(id = com.qure.core.designsystem.R.drawable.ic_check_circle) else painterResource(
+                id = com.qure.core.designsystem.R.drawable.ic_outline_circle
             ),
             contentDescription = null,
             tint = if (isChecked) Blue600 else Color(0xFF606060),
@@ -288,7 +299,7 @@ private fun GalleryCameraItem(
             Image(
                 modifier = modifier
                     .align(Alignment.CenterHorizontally),
-                painter = painterResource(id = com.qure.core_design.R.drawable.ic_photo_camera),
+                painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_photo_camera),
                 contentDescription = null,
             )
             Text(
@@ -303,7 +314,7 @@ private fun GalleryCameraItem(
 @Preview(showBackground = true)
 @Composable
 private fun GalleryContentPreview() = FMPreview {
-    GalleryContent(
+    GalleryScreen(
         images = listOf(
             GalleryImage(
                 id = 0,
