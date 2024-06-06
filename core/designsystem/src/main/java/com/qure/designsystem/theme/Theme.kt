@@ -27,7 +27,7 @@ private val DarkColorScheme = darkColorScheme(
     onTertiary = White,
     background = Black,
     onBackground = White,
-    surface = Gray300,
+    surface = White,
     onSurface = Black,
     error = Color(0xFFB00020),
     onError = White,
@@ -38,7 +38,7 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = Blue600,
     onPrimary = Black,
-    secondary = Blue500,
+    secondary = White,
     onSecondary = Black,
     tertiary = Blue400,
     onTertiary = Black,
@@ -77,8 +77,9 @@ fun FishingMemoryTheme(
     val view = LocalView.current
     SideEffect {
         val window = view.findActivity()?.window ?: return@SideEffect
-        window.statusBarColor = Color.White.toArgb()
-        WindowCompat.getInsetsController(window, view)?.isAppearanceLightStatusBars = true
+        val statusBarColor = if (colorScheme == DarkColorScheme) Black else White
+        window.statusBarColor = statusBarColor.toArgb()
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = colorScheme != DarkColorScheme
     }
 }
 
