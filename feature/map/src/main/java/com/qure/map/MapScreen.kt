@@ -80,6 +80,9 @@ import com.qure.model.map.MarkerType
 import com.qure.model.toTedClusterItem
 import com.qure.ui.model.FishingPlaceInfo
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.MovingCameraType
+import com.qure.ui.model.MovingCameraWrapper
+import com.qure.ui.model.SheetHeight
 import com.qure.ui.model.toTedClusterItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
@@ -102,14 +105,14 @@ fun MapRoute(
         viewModel.error.collectLatest(onShowErrorSnackBar)
     }
 
-    val context = LocalContext.current
+
     val mapUiState by viewModel.mapUiState.collectAsStateWithLifecycle()
     val mapType by viewModel.mapType.collectAsStateWithLifecycle()
     val markerType by viewModel.markerType.collectAsStateWithLifecycle()
     val placeItems by viewModel.placeItems.collectAsStateWithLifecycle()
     val selectedPlaceItems by viewModel.selectedPlaceItems.collectAsStateWithLifecycle()
-    val coroutineScope = rememberCoroutineScope()
-    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+    val movingCameraWrapper by viewModel.movingCameraWrapper.collectAsStateWithLifecycle()
+    val sheetHeight by viewModel.sheetHeight.collectAsStateWithLifecycle()
     var hasLocationPermission by remember { mutableStateOf(false) }
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -147,20 +150,6 @@ fun MapRoute(
         }
     }
 
-    if (hasLocationPermission) {
-        LaunchedEffect(Unit) {
-            val location = getCurrentLocation(fusedLocationClient) { errorMessage ->
-                viewModel.sendErrorMessage(Throwable(errorMessage))
-            }
-            val latitude = location?.latitude ?: String.DefaultLatitude.toDouble()
-            val longitude = location?.longitude ?: String.DefaultLongitude.toDouble()
-            cameraPositionState.move(
-                CameraUpdate.toCameraPosition(
-                    CameraPosition(LatLng(latitude, longitude), 15.0)
-                )
-            )
-        }
-    }
     MapScreen(
         uiState = mapUiState,
         placeItems = placeItems,
@@ -171,19 +160,20 @@ fun MapRoute(
             viewModel.setMarkerType(MarkerType.getMarkerType(it))
         },
         onClickMapType = { viewModel.setMapType(MapType.getMapType(it)) },
-        onClickLocation = {
-            coroutineScope.launch {
-                val location = getCurrentLocation(fusedLocationClient) { errorMessage ->
-                    viewModel.sendErrorMessage(Throwable(errorMessage))
+        onClickLocation = { location ->
+            val lat = location.latitude
+            val lng = location.longitude
+            viewModel.updateMovingCamera(MovingCameraWrapper.Moving(
+                Location(MovingCameraType.MY_LOCATION.name).apply {
+                    latitude = location.latitude
+                    longitude = location.longitude
                 }
-                val latitude = location?.latitude ?: String.DefaultLatitude.toDouble()
-                val longitude = location?.longitude ?: String.DefaultLongitude.toDouble()
-                cameraPositionState.move(
-                    CameraUpdate.toCameraPosition(
-                        CameraPosition(LatLng(latitude, longitude), 15.0)
-                    )
+            ))
+            cameraPositionState.move(
+                CameraUpdate.toCameraPosition(
+                    CameraPosition(LatLng(lat, lng), 15.0)
                 )
-            }
+            )
         },
         cameraPositionState = cameraPositionState,
         setPlaceItems = viewModel::setPlaceItems,
@@ -222,6 +212,10 @@ fun MapRoute(
             }?.let { viewModel.setSelectedPlaceItems(listOf(it)) }
         },
         onClickPhoneNumber = onClickPhoneNumber,
+        updateMovingCamera = viewModel::updateMovingCamera,
+        movingCameraWrapper = movingCameraWrapper,
+        updateSheetHeight = viewModel::updateSheetHeight,
+        sheetHeight = sheetHeight,
     )
 }
 
@@ -253,7 +247,7 @@ private fun MapScreen(
     mapType: MapType = MapType.BASIC_MAP,
     onClickMarkerType: (String) -> Unit = { },
     onClickMapType: (String) -> Unit = { },
-    onClickLocation: () -> Unit = { },
+    onClickLocation: (Location) -> Unit = { },
     cameraPositionState: CameraPositionState = CameraPositionState(),
     setPlaceItems: (List<FishingPlaceInfo>) -> Unit = { },
     onClickFishingSpot: (FishingSpotUI) -> Unit = { },
@@ -262,11 +256,15 @@ private fun MapScreen(
     selectedPlaceItems: List<FishingPlaceInfo> = emptyList(),
     onClickMarker: (TedClusterItem) -> Unit = { },
     onClickPhoneNumber: (String) -> Unit = { },
+    updateMovingCamera: (MovingCameraWrapper) -> Unit = { },
+    movingCameraWrapper: MovingCameraWrapper = MovingCameraWrapper.Default,
+    updateSheetHeight: (SheetHeight) -> Unit = { },
+    sheetHeight: SheetHeight = SheetHeight.DEFAULT,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState()
     )
-    var sheetHeight by remember { mutableStateOf(50.dp) }
+
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -348,32 +346,35 @@ private fun MapScreen(
         },
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         sheetContainerColor = MaterialTheme.colorScheme.background,
-        sheetPeekHeight = sheetHeight,
+        sheetPeekHeight = sheetHeight.height,
     ) {
 
         MapContent(
             uiState = uiState,
             placeItems = placeItems,
             onBack = onBack,
-            onClickMap = { sheetHeight = 80.dp },
+            onClickMap = { updateSheetHeight(SheetHeight.SMALL) },
             markerType = markerType,
             mapType = mapType,
             onClickMarkerType = { type ->
                 onClickMarkerType(type)
-                sheetHeight = 100.dp
+                updateSheetHeight(SheetHeight.SMALL)
             },
             onClickMapType = onClickMapType,
-            onCluckLocation = onClickLocation,
+            onClickLocation = onClickLocation,
             cameraPositionState = cameraPositionState,
             onClickCluster = { items ->
                 onClickClusterMarkers(items)
-                sheetHeight = 300.dp
+                updateSheetHeight(SheetHeight.MEDIUM)
             },
             onClickMarker = { item ->
                 onClickMarker(item)
-                sheetHeight = 300.dp
+                updateSheetHeight(SheetHeight.MEDIUM)
             },
             setPlaceItems = setPlaceItems,
+            updateMovingCamera = updateMovingCamera,
+            movingCameraWrapper = movingCameraWrapper,
+            sheetHeight = sheetHeight,
         )
 
     }
@@ -391,21 +392,45 @@ private fun MapContent(
     onClickMap: () -> Unit = { },
     onClickMarkerType: (String) -> Unit = { },
     onClickMapType: (String) -> Unit = { },
-    onCluckLocation: () -> Unit = { },
+    onClickLocation: (Location) -> Unit = { },
     cameraPositionState: CameraPositionState = CameraPositionState(),
     onClickCluster: (List<TedClusterItem>) -> Unit = { },
     onClickMarker: (TedClusterItem) -> Unit = { },
     setPlaceItems: (List<FishingPlaceInfo>) -> Unit = { },
+    updateMovingCamera: (MovingCameraWrapper) -> Unit = { },
+    movingCameraWrapper: MovingCameraWrapper = MovingCameraWrapper.Default,
+    sheetHeight: SheetHeight = SheetHeight.DEFAULT,
 ) {
-    var mapSettingsPaddingValue by remember {
-        mutableStateOf(80.dp)
-    }
+
+    val context = LocalContext.current
+    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+    val coroutineScope = rememberCoroutineScope()
 
     if (uiState is MapUiState.Success) {
         if (markerType == MarkerType.MEMO) {
             setPlaceItems(uiState.memos)
         } else {
             setPlaceItems(uiState.fishingSpots)
+        }
+    }
+
+
+    LaunchedEffect(movingCameraWrapper) {
+        when (movingCameraWrapper) {
+            MovingCameraWrapper.Default -> {}
+            is MovingCameraWrapper.MyLocation -> {
+                cameraPositionState.animate(
+                    update = CameraUpdate.scrollTo(LatLng(movingCameraWrapper.location))
+                )
+                updateMovingCamera(MovingCameraWrapper.Default)
+            }
+
+            is MovingCameraWrapper.Moving -> {
+                cameraPositionState.animate(
+                    update = CameraUpdate.scrollTo(LatLng(movingCameraWrapper.location))
+                )
+                updateMovingCamera(MovingCameraWrapper.Default)
+            }
         }
     }
 
@@ -420,7 +445,6 @@ private fun MapContent(
                 .fillMaxSize(),
             onMapClick = {
                 onClickMap()
-                mapSettingsPaddingValue = 100.dp
             },
             markers = placeItems.map { placeItem ->
                 when (placeItem) {
@@ -432,14 +456,42 @@ private fun MapContent(
             mapType = getMapType(type = mapType),
             onClickClusterItems = { clusterItems ->
                 onClickCluster(clusterItems)
-                mapSettingsPaddingValue = 320.dp
+                updateMovingCamera(MovingCameraWrapper.Moving(
+                    Location(MovingCameraType.MARKER.name).apply {
+                        latitude = clusterItems.first().getTedLatLng().latitude
+                        longitude = clusterItems.first().getTedLatLng().longitude
+                    }
+                ))
             },
             onClickMarker = { item ->
                 onClickMarker(item)
-                mapSettingsPaddingValue = 320.dp
+                updateMovingCamera(MovingCameraWrapper.Moving(
+                    Location(MovingCameraType.MARKER.name).apply {
+                        latitude = item.getTedLatLng().latitude
+                        longitude = item.getTedLatLng().longitude
+                    }
+                ))
             },
-            mapHeight = mapSettingsPaddingValue - 10.dp,
+            mapHeight = sheetHeight.height + 20.dp,
             locationTrackingMode = LocationTrackingMode.NoFollow,
+            onMapLoaded = {
+                if (MapViewModel.initialMarkerLoadFlag) {
+                    MapViewModel.initialMarkerLoadFlag = false
+                    coroutineScope.launch {
+                        val location = getCurrentLocation(fusedLocationClient) { _ ->
+
+                        }
+                        val lat = location?.latitude ?: String.DefaultLatitude.toDouble()
+                        val lng = location?.longitude ?: String.DefaultLongitude.toDouble()
+                        updateMovingCamera(MovingCameraWrapper.MyLocation(
+                            Location(MovingCameraType.MY_LOCATION.name).apply {
+                                latitude = lat
+                                longitude = lng
+                            }
+                        ))
+                    }
+                }
+            }
         )
 
         FMBackButton(
@@ -479,7 +531,6 @@ private fun MapContent(
             chipTextStyle = MaterialTheme.typography.displayLarge,
             onClickChip = { type ->
                 onClickMarkerType(type)
-                mapSettingsPaddingValue = 120.dp
             },
             interval = 2.dp,
         )
@@ -488,7 +539,7 @@ private fun MapContent(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(
-                    bottom = mapSettingsPaddingValue,
+                    bottom = sheetHeight.height + 30.dp,
                     start = 5.dp,
                 ),
             elements = listOf(
@@ -514,14 +565,24 @@ private fun MapContent(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 20.dp, bottom = mapSettingsPaddingValue)
+                .padding(end = 20.dp, bottom = sheetHeight.height + 20.dp)
                 .background(
                     color = Blue600,
                     shape = CircleShape,
                 ),
         ) {
             IconButton(
-                onClick = { onCluckLocation() },
+                onClick = {
+                    coroutineScope.launch {
+                        val location = getCurrentLocation(fusedLocationClient, {})
+                        val lat = location?.latitude ?: String.DefaultLatitude.toDouble()
+                        val lng = location?.longitude ?: String.DefaultLongitude.toDouble()
+                        onClickLocation(Location(MovingCameraType.MY_LOCATION.name).apply {
+                            latitude = lat
+                            longitude = lng
+                        })
+                    }
+                },
                 modifier = Modifier
                     .size(35.dp),
             ) {

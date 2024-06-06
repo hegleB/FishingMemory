@@ -15,6 +15,8 @@ import com.qure.model.memo.Value
 import com.qure.model.toFishingSpotUI
 import com.qure.ui.base.BaseViewModel
 import com.qure.ui.model.FishingPlaceInfo
+import com.qure.ui.model.MovingCameraWrapper
+import com.qure.ui.model.SheetHeight
 import com.qure.ui.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,8 +48,16 @@ constructor(
     private val _selectedPlaceItems = MutableStateFlow<List<FishingPlaceInfo>>(emptyList())
     val selectedPlaceItems = _selectedPlaceItems.asStateFlow()
 
+    private val _movingCameraState =
+        MutableStateFlow<MovingCameraWrapper>(MovingCameraWrapper.Default)
+    val movingCameraWrapper = _movingCameraState.asStateFlow()
+
+    private val _sheetHeight = MutableStateFlow(SheetHeight.DEFAULT)
+    val sheetHeight = _sheetHeight.asStateFlow()
+
     private val _mapUiState = MutableStateFlow<MapUiState>(MapUiState.Loading)
     val mapUiState = _mapUiState.asStateFlow()
+
     init {
         fetchFilteredMemo()
     }
@@ -100,6 +110,14 @@ constructor(
         _selectedPlaceItems.value = placeItems
     }
 
+    fun updateMovingCamera(movingCameraWrapper: MovingCameraWrapper) {
+        _movingCameraState.value = movingCameraWrapper
+    }
+
+    fun updateSheetHeight(height: SheetHeight) {
+        _sheetHeight.value = height
+    }
+
     private fun getStructuredQuery(fishingGroundType: String): FishingSpotQuery {
         val fieldFilter =
             FieldFilter(
@@ -118,5 +136,6 @@ constructor(
 
     companion object {
         const val FISHING_SPOT_COLLECTION_ID = "fishingspot"
+        var initialMarkerLoadFlag = true
     }
 }
