@@ -14,6 +14,8 @@ import com.qure.data.repository.memo.MemoRepository
 import com.qure.data.repository.memo.MemoRepositoryImpl
 import com.qure.data.repository.onboarding.OnboardingRepository
 import com.qure.data.repository.onboarding.OnboardingRepositoryImpl
+import com.qure.data.repository.user.UserDataRepository
+import com.qure.data.repository.user.UserDataRepositoryIml
 import com.qure.data.repository.weather.WeatherRepository
 import com.qure.data.repository.weather.WeatherRepositoryImpl
 import dagger.Binds
@@ -56,4 +58,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindDarkModeRepository(repository: DarkModeRepositoryImpl): DarkModeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserDataRepository(repository: UserDataRepositoryIml): UserDataRepository
 }
