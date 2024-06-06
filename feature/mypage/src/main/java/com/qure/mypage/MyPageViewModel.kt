@@ -1,10 +1,10 @@
 package com.qure.mypage
 
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
-import com.qure.domain.repository.AuthRepository
+import com.qure.data.repository.auth.AuthRepository
 import com.qure.domain.usecase.member.LogoutUserUseCase
 import com.qure.domain.usecase.member.WithdrawServiceUseCase
+import com.qure.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +26,7 @@ class MyPageViewModel
         private val _withdrawSucceed: MutableStateFlow<Boolean> = MutableStateFlow(false)
         val withdrawSucceed = _withdrawSucceed.asStateFlow()
 
+        val email = authRepository.getEmailFromLocal()
         fun logoutUser() {
             viewModelScope.launch {
                 logoutUserUseCase(authRepository.getEmailFromLocal())

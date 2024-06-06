@@ -3,15 +3,16 @@ package com.qure.mypage
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -23,11 +24,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.qure.core.extensions.Empty
-import com.qure.core.util.FishingMemoryToast
-import com.qure.core_design.compose.theme.Gray500
-import com.qure.core_design.compose.utils.FMPreview
-import com.qure.core_design.compose.utils.clickableWithoutRipple
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.qure.designsystem.theme.Gray500
+import com.qure.designsystem.utils.FMPreview
+import com.qure.designsystem.utils.clickableWithoutRipple
+import com.qure.feature.mypage.R
 import kotlinx.coroutines.flow.collectLatest
 
 data class MyPageItemData(
@@ -40,27 +41,23 @@ data class MyPageItemData(
 )
 
 @Composable
-fun MyPageScreen(
-    viewModel: MyPageViewModel,
-    email: String,
+fun MyPageRoute(
+    padding: PaddingValues,
     navigateToBookmark: () -> Unit,
     navigateToLogin: () -> Unit,
-    onClickLogout: () -> Unit,
-    onClickWithdrawService: () -> Unit,
     navigateToPolicyPrivacy: () -> Unit,
     navigateToPolicyService: () -> Unit,
     navigateToOpenSourceLicense: () -> Unit,
     navigateToDarkMode: () -> Unit,
+    viewModel: MyPageViewModel = hiltViewModel(),
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val context = LocalContext.current
-    val pInfo = context.packageManager.getPackageInfo(context.packageName ?: String.Empty, 0)
+    val pInfo = context.packageManager.getPackageInfo(context.packageName ?: "", 0)
     val versionName = pInfo?.versionName ?: ""
-    val error = viewModel.error
 
-    LaunchedEffect(error) {
-        error.collectLatest { message ->
-            FishingMemoryToast().error(context, message)
-        }
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
     }
 
     LaunchedEffect(viewModel.withdrawSucceed) {
@@ -79,24 +76,25 @@ fun MyPageScreen(
         }
     }
 
-    MyPageContent(
+    MyPageScreen(
         modifier = Modifier
+            .padding(padding)
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.surfaceTint),
-        email = email,
+        email = viewModel.email,
         navigateToBookmark = navigateToBookmark,
         versionName = versionName,
-        onClickWithdrawService = onClickWithdrawService,
+        onClickWithdrawService = viewModel::withdrawService,
         navigateToPolicyPrivacy = navigateToPolicyPrivacy,
         navigateToPolicyService = navigateToPolicyService,
         navigateToOpenSourceLicense = navigateToOpenSourceLicense,
         navigateToDarkMode = navigateToDarkMode,
-        onClickLogout = onClickLogout,
+        onClickLogout = viewModel::logoutUser,
     )
 }
 
 @Composable
-private fun MyPageContent(
+private fun MyPageScreen(
     modifier: Modifier = Modifier,
     email: String,
     navigateToBookmark: () -> Unit,
@@ -221,7 +219,7 @@ private fun MyPageItem(
             when {
                 hasIcon -> {
                     Icon(
-                        painter = painterResource(id = com.qure.core_design.R.drawable.ic_arrow_forward),
+                        painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_arrow_forward),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onBackground,
                     )
@@ -249,7 +247,7 @@ private fun MyPageItem(
 @Preview
 @Composable
 private fun MyPageScreenPreview() = FMPreview {
-    MyPageContent(
+    MyPageScreen(
         email = "test@test.com",
         navigateToBookmark = { },
         onClickWithdrawService = { },
