@@ -324,6 +324,7 @@ fun MainScreen(
                         onBack = navigator::popBackStack,
                         navigateToDetailFishingSpot = navigator::navigateToFishingSpot,
                         navigateToDetailMemo = { memo ->
+                            currentDestination = Route.Map
                             navigator.navigateToMemoDetail(
                                 memoUI = memo,
                             )
