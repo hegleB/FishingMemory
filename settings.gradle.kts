@@ -54,6 +54,7 @@ include(
     ":feature:mypage",
     ":feature:onboarding",
     ":feature:login",
+    ":feature:permission",
     ":feature:create",
     ":feature:fishingspot",
     ":feature:gallery",

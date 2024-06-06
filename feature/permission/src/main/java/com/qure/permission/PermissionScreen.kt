@@ -38,15 +38,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import com.qure.core_design.compose.components.FMButton
-import com.qure.core_design.compose.theme.Blue400
-import com.qure.core_design.compose.theme.Blue600
-import com.qure.core_design.compose.utils.FMPreview
+import com.qure.designsystem.component.FMButton
+import com.qure.designsystem.theme.Blue400
+import com.qure.designsystem.theme.Blue600
+import com.qure.designsystem.utils.FMPreview
+import com.qure.feature.permission.R
 
 @Composable
 fun PermissionRoute(
     navigateToLogin: () -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
+
     val context = LocalContext.current
     var hasLocationPermission by remember { mutableStateOf(checkPermission(context)) }
     val requestPermissionLauncher = rememberLauncherForActivityResult(
@@ -92,7 +95,7 @@ private fun checkPermission(context: Context): Boolean {
 @Composable
 fun PermissionScreen(
     modifier: Modifier = Modifier,
-    onPermissionClick: () -> Unit,
+    onPermissionClick: () -> Unit = { },
 ) {
     Column(
         modifier = modifier,
@@ -206,5 +209,5 @@ private fun PermissiontTypeDescription(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 private fun PermissionScreenPreview() = FMPreview {
-    PermissionRoute({})
+    PermissionScreen()
 }
