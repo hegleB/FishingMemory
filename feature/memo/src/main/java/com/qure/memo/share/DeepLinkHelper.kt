@@ -6,17 +6,19 @@ import android.content.Intent
 import android.net.Uri
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
-import com.qure.memo.model.MemoUI
-import timber.log.Timber
+import com.qure.ui.model.MemoUI
 
-class DeepLinkHelper(private val context: Context) {
+class DeepLinkHelper(
+    private val context: Context,
+    private val errorMessage: (String) -> Unit,
+) {
     fun createDynamicLink(memo: MemoUI) {
         val baseUrl = memo.image.split("%2F")[0]
         val imagePath = memo.image.split("%2F")[1]
         val uri = generateUri(memo, baseUrl, imagePath)
         FirebaseDynamicLinks.getInstance().createDynamicLink()
             .setLink(Uri.parse(uri))
-            .setDynamicLinkDomain("fishmemo.page.link")
+            .setDomainUriPrefix("fishmemo.page.link")
             .setAndroidParameters(
                 DynamicLink.AndroidParameters.Builder(context.packageName)
                     .setMinimumVersion(1)
@@ -28,7 +30,7 @@ class DeepLinkHelper(private val context: Context) {
                     val deepLink = task.result.shortLink ?: Uri.EMPTY
                     shareDeepLink(deepLink)
                 } else {
-                    Timber.i(task.toString())
+                    errorMessage(task.toString())
                 }
             }
     }
@@ -64,7 +66,7 @@ class DeepLinkHelper(private val context: Context) {
         try {
             context.startActivity(Intent.createChooser(sendIntent, "Share"))
         } catch (ignored: ActivityNotFoundException) {
-            Timber.d("$ignored")
+//            Timber.d("$ignored")
         }
     }
 }

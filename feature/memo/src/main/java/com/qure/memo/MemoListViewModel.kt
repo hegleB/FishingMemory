@@ -1,10 +1,9 @@
 package com.qure.memo
 
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
-import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
-import com.qure.memo.model.toMemoUI
+import com.qure.ui.base.BaseViewModel
+import com.qure.ui.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +19,6 @@ class MemoListViewModel
 @Inject
 constructor(
     private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
-    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
 
     private val _memoListUiState = MutableStateFlow<MemoListUiState>(MemoListUiState.Loading)

@@ -1,5 +1,6 @@
 package com.qure.memo
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,47 +35,43 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.qure.core.util.FishingMemoryToast
-import com.qure.core_design.compose.components.FMBackButton
-import com.qure.core_design.compose.components.FMCircleAddButton
-import com.qure.core_design.compose.components.FMLottieAnimation
-import com.qure.core_design.compose.components.FMProgressBar
-import com.qure.core_design.compose.components.FMRefreshLayout
-import com.qure.core_design.compose.theme.Gray200
-import com.qure.core_design.compose.theme.Gray700
-import com.qure.core_design.compose.utils.FMPreview
-import com.qure.memo.model.MemoUI
+import com.qure.designsystem.component.FMBackButton
+import com.qure.designsystem.component.FMCircleAddButton
+import com.qure.designsystem.component.FMGlideImage
+import com.qure.designsystem.component.FMLottieAnimation
+import com.qure.designsystem.component.FMProgressBar
+import com.qure.designsystem.component.FMRefreshLayout
+import com.qure.designsystem.theme.Gray200
+import com.qure.designsystem.theme.Gray700
+import com.qure.designsystem.utils.FMPreview
+import com.qure.feature.memo.R
+import com.qure.ui.model.MemoUI
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MemoListRoute(
-    viewModel: MemoListViewModel,
     onBack: () -> Unit,
     navigateToMemoCreate: () -> Unit,
     navigateToMemoDetail: (MemoUI) -> Unit,
-) {
+    viewModel: MemoListViewModel = hiltViewModel(),
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+
+    ) {
     val memoListUiState by viewModel.memoListUiState.collectAsStateWithLifecycle()
-    val error = viewModel.error
-    val context = LocalContext.current
     var isRefresh by remember { mutableStateOf(false) }
 
-    LaunchedEffect(error) {
-        error.collectLatest { message ->
-            FishingMemoryToast().error(
-                context,
-                message,
-            )
-        }
+    BackHandler(onBack = onBack)
+
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
     }
 
     MemoListScreen(
@@ -159,7 +156,7 @@ private fun MemoListScreen(
                                     .height(350.dp)
                                     .fillMaxWidth()
                                     .background(color = MaterialTheme.colorScheme.background),
-                                lottieId = R.raw.fishing,
+                                lottieId = com.qure.core.designsystem.R.raw.fishing,
                             )
 
                             Text(
@@ -200,7 +197,7 @@ private fun MemoListScreen(
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
+
 @Composable
 private fun MemoItem(
     memo: MemoUI,
@@ -213,7 +210,7 @@ private fun MemoItem(
                 .height(150.dp)
                 .padding(top = 10.dp, start = 10.dp),
         ) {
-            GlideImage(
+            FMGlideImage(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(150.dp)

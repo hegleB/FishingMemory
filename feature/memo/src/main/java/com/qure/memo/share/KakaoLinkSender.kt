@@ -9,22 +9,14 @@ import com.kakao.sdk.template.model.Button
 import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
-import com.qure.core.extensions.HashTag
-import com.qure.core.util.FishingMemoryToast
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_BASE_URL
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_CONTENT
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_CREATE_TIME
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_FISH_SIZE
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_FISH_TYPE
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_IMAGE_PATH
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_LOCATION
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_TITLE
-import com.qure.memo.detail.DetailMemoActivity.Companion.QUERY_WATER_TYPE
-import com.qure.memo.detail.DetailMemoActivity.Companion.SIZE_UNIT
-import com.qure.memo.detail.DetailMemoActivity.Companion.SLASH
-import com.qure.memo.model.MemoUI
+import com.qure.model.extensions.HashTag
+import com.qure.ui.model.MemoUI
 
-class KakaoLinkSender(private val context: Context, private val memo: MemoUI) {
+class KakaoLinkSender(
+    private val context: Context,
+    private val memo: MemoUI,
+    private val errorMessage: (String) -> Unit,
+) {
     private val imageBaseUrl: String by lazy { memo.image.split(SLASH)[0] }
     private val imagePath: String by lazy { memo.image.split(SLASH)[1] }
 
@@ -46,16 +38,16 @@ class KakaoLinkSender(private val context: Context, private val memo: MemoUI) {
             ).joinToString(String.HashTag)
         return FeedTemplate(
             content =
-                Content(
-                    title = memo.title,
-                    description = "#$tags",
-                    imageUrl = memo.image,
-                    link =
-                        Link(
-                            mobileWebUrl = MOBILE_WEB_URL,
-                            androidExecutionParams = createLinkParams(),
-                        ),
+            Content(
+                title = memo.title,
+                description = "#$tags",
+                imageUrl = memo.image,
+                link =
+                Link(
+                    mobileWebUrl = MOBILE_WEB_URL,
+                    androidExecutionParams = createLinkParams(),
                 ),
+            ),
             buttons = listOf(createFeedButton()),
         )
     }
@@ -84,7 +76,7 @@ class KakaoLinkSender(private val context: Context, private val memo: MemoUI) {
     private fun shareToKakaoTalk(feedTemplate: FeedTemplate) {
         ShareClient.instance.shareDefault(context, feedTemplate) { sharingResult, error ->
             if (error != null) {
-                FishingMemoryToast().error(context, TOAST_ERROR_SHARE)
+                errorMessage(TOAST_ERROR_SHARE)
             } else if (sharingResult != null) {
                 context.startActivity(sharingResult.intent)
             }
@@ -96,12 +88,12 @@ class KakaoLinkSender(private val context: Context, private val memo: MemoUI) {
         try {
             KakaoCustomTabsClient.openWithDefault(context, sharerUrl)
         } catch (e: UnsupportedOperationException) {
-            FishingMemoryToast().error(context, TOAST_ERROR_BROWSER)
+            errorMessage(TOAST_ERROR_BROWSER)
         }
         try {
             KakaoCustomTabsClient.open(context, sharerUrl)
         } catch (e: ActivityNotFoundException) {
-            FishingMemoryToast().error(context, TOAST_ERROR_BROWSER)
+            errorMessage(TOAST_ERROR_BROWSER)
         }
     }
 
@@ -109,6 +101,20 @@ class KakaoLinkSender(private val context: Context, private val memo: MemoUI) {
         private const val TOAST_ERROR_BROWSER = "chrome 또는 인터넷 브라우저를 설치해주세요"
         private const val TOAST_ERROR_SHARE = "카카오 공유 실패"
         private const val FEED_BUTTON_DETAIL = "자세히 보기"
-        private const val MOBILE_WEB_URL = "https://play.google.com/store/apps/details?id=com.qure.fishingmemory"
+        private const val MOBILE_WEB_URL =
+            "https://play.google.com/store/apps/details?id=com.qure.fishingmemory"
+        private const val SIZE_UNIT = "CM"
+
+        const val QUERY_TITLE = "title"
+        const val QUERY_WATER_TYPE = "waterType"
+        const val QUERY_FISH_SIZE = "fishSize"
+        const val QUERY_FISH_TYPE = "fishType"
+        const val QUERY_CREATE_TIME = "createTime"
+        const val QUERY_LOCATION = "location"
+        const val QUERY_CONTENT = "content"
+        const val QUERY_BASE_URL = "baseUrl"
+        const val QUERY_IMAGE_PATH = "imagePath"
+
+        const val SLASH = "%2F"
     }
 }

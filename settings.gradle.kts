@@ -55,3 +55,4 @@ include(
     ":feature:create",
     ":feature:fishingspot",
     ":feature:gallery",
+    ":feature:memo",

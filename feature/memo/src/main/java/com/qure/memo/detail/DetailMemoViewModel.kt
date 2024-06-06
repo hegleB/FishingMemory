@@ -1,9 +1,8 @@
 package com.qure.memo.detail
 
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
-import com.qure.core.extensions.Empty
 import com.qure.domain.usecase.memo.DeleteMemoUseCase
+import com.qure.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,8 +31,3 @@ constructor(
         }
     }
 }
-
-data class UiState(
-    val isDeleteInitialized: Boolean = false,
-    val deleteSuccessMessage: String = String.Empty,
-)

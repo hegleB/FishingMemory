@@ -1,5 +1,6 @@
 package com.qure.memo.detail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,34 +31,41 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.qure.core.util.FishingMemoryToast
-import com.qure.core_design.compose.components.DropDownItem
-import com.qure.core_design.compose.components.FMDeleteDialog
-import com.qure.core_design.compose.components.FMDropdownMenu
-import com.qure.core_design.compose.components.FMMoreButton
-import com.qure.core_design.compose.components.FMProgressBar
-import com.qure.core_design.compose.components.FMShareDialog
-import com.qure.core_design.compose.components.FMTopAppBar
-import com.qure.core_design.compose.theme.Gray700
-import com.qure.core_design.compose.theme.White
-import com.qure.core_design.compose.utils.FMPreview
-import com.qure.memo.R
-import com.qure.memo.model.MemoUI
+import com.qure.designsystem.component.DropDownItem
+import com.qure.designsystem.component.FMDeleteDialog
+import com.qure.designsystem.component.FMDropdownMenu
+import com.qure.designsystem.component.FMGlideImage
+import com.qure.designsystem.component.FMMoreButton
+import com.qure.designsystem.component.FMProgressBar
+import com.qure.designsystem.component.FMShareDialog
+import com.qure.designsystem.component.FMTopAppBar
+import com.qure.designsystem.theme.Gray700
+import com.qure.designsystem.theme.White
+import com.qure.designsystem.utils.FMPreview
+import com.qure.feature.memo.R
 import com.qure.memo.share.DeepLinkHelper
 import com.qure.memo.share.KakaoLinkSender
+import com.qure.ui.model.MemoUI
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DetailMemoRoute(
     memo: MemoUI,
-    viewModel: DetailMemoViewModel,
     onBack: () -> Unit,
-    onClickEdit: () -> Unit,
+    onClickEdit: (MemoUI) -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    viewModel: DetailMemoViewModel = hiltViewModel(),
 ) {
     val detailMemoUiState by viewModel.detailMemoUiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
+    BackHandler(onBack = onBack)
 
     DetailMemoScreen(
         modifier = Modifier
@@ -66,17 +75,24 @@ fun DetailMemoRoute(
         memo = memo,
         detailMemoUiState = detailMemoUiState,
         onBack = onBack,
-        onClickEdit = onClickEdit,
+        onClickEdit = { onClickEdit(memo) },
         onClickDelete = { viewModel.deleteMemo(memo.uuid) },
-        onClickKakaoShare = { KakaoLinkSender(context, memo).send() },
-        onClickMoreShare = { DeepLinkHelper(context).createDynamicLink(memo) },
-        showSnackBar = { message ->
-            FishingMemoryToast().show(context, message)
-        }
+        onClickKakaoShare = {
+            KakaoLinkSender(
+                context,
+                memo
+            ) { errorMessage ->
+                onShowErrorSnackBar(Throwable(message = errorMessage))
+            }.send()
+        },
+        onClickMoreShare = {
+            DeepLinkHelper(context) { error ->
+                viewModel.sendErrorMessage(Throwable(error))
+            }.createDynamicLink(memo)
+        },
     )
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun DetailMemoScreen(
     modifier: Modifier = Modifier,
@@ -170,7 +186,7 @@ private fun DetailMemoScreen(
             )
         }
 
-        GlideImage(
+        FMGlideImage(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(350.dp),
