@@ -52,6 +52,7 @@ include(
     ":feature:home",
     ":feature:history",
     ":feature:mypage",
+    ":feature:onboarding",
     ":feature:login",
     ":feature:create",
     ":feature:fishingspot",

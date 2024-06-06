@@ -1,7 +1,6 @@
 package com.qure.onboarding
 
 import androidx.annotation.RawRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,14 +29,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.qure.core_design.compose.components.FMButton
-import com.qure.core_design.compose.components.FMLottieAnimation
-import com.qure.core_design.compose.theme.Blue500
-import com.qure.core_design.compose.theme.Gray200
-import com.qure.core_design.compose.theme.Gray450
-import com.qure.core_design.compose.theme.White
-import com.qure.core_design.compose.utils.FMPreview
-import com.qure.core_design.compose.utils.clickableWithoutRipple
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.qure.designsystem.component.FMButton
+import com.qure.designsystem.component.FMLottieAnimation
+import com.qure.designsystem.theme.Blue500
+import com.qure.designsystem.theme.Gray200
+import com.qure.designsystem.theme.Gray450
+import com.qure.designsystem.theme.White
+import com.qure.designsystem.utils.FMPreview
+import com.qure.designsystem.utils.clickableWithoutRipple
+import com.qure.feature.onboarding.R
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 data class OnboardingData(
@@ -46,18 +49,26 @@ data class OnboardingData(
 
 @Composable
 fun OnboardingRoute(
-    viewModel: OnboardingViewModel,
+    viewModel: OnboardingViewModel = hiltViewModel(),
     navigateToPermission: () -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
+
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
     OnboardingScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background),
-        navigateToPermission = navigateToPermission,
+        navigateToPermission = {
+            viewModel.writeFirstVisitor()
+            navigateToPermission()
+        },
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun OnboardingScreen(
     modifier: Modifier = Modifier,
