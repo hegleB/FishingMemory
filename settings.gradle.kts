@@ -59,5 +59,7 @@ include(
     ":feature:create",
     ":feature:fishingspot",
     ":feature:gallery",
+    ":feature:map",
     ":feature:memo",
     ":feature:program-information",
+)

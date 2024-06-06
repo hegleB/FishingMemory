@@ -17,16 +17,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.rememberBottomSheetScaffoldState
-import androidx.compose.material.rememberBottomSheetState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -40,12 +39,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,27 +59,30 @@ import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.compose.rememberFusedLocationSource
-import com.qure.core.extensions.DefaultLatitude
-import com.qure.core.extensions.DefaultLongitude
-import com.qure.core_design.compose.components.FMBackButton
-import com.qure.core_design.compose.components.FMChipGroup
-import com.qure.core_design.compose.components.FMFishingSpotItem
-import com.qure.core_design.compose.components.FMMemoItem
-import com.qure.core_design.compose.components.FMNaverMap
-import com.qure.core_design.compose.components.FMProgressBar
-import com.qure.core_design.compose.components.Orientation
-import com.qure.core_design.compose.theme.Blue400
-import com.qure.core_design.compose.theme.Blue600
-import com.qure.core_design.compose.theme.Gray300
-import com.qure.core_design.compose.theme.White
-import com.qure.core_design.compose.utils.FMPreview
-import com.qure.domain.entity.MapType
-import com.qure.domain.entity.MarkerType
-import com.qure.memo.model.MemoUI
-import com.qure.memo.model.toTedClusterItem
+import com.qure.designsystem.component.FMBackButton
+import com.qure.designsystem.component.FMChipGroup
+import com.qure.designsystem.component.FMFishingSpotItem
+import com.qure.designsystem.component.FMMemoItem
+import com.qure.designsystem.component.FMNaverMap
+import com.qure.designsystem.component.FMProgressBar
+import com.qure.designsystem.component.Orientation
+import com.qure.designsystem.theme.Blue400
+import com.qure.designsystem.theme.Blue600
+import com.qure.designsystem.theme.Gray300
+import com.qure.designsystem.theme.White
+import com.qure.designsystem.utils.FMPreview
+import com.qure.feature.map.R
 import com.qure.model.FishingSpotUI
+import com.qure.model.extensions.DefaultLatitude
+import com.qure.model.extensions.DefaultLongitude
+import com.qure.model.map.MapType
+import com.qure.model.map.MarkerType
 import com.qure.model.toTedClusterItem
+import com.qure.ui.model.FishingPlaceInfo
+import com.qure.ui.model.MemoUI
+import com.qure.ui.model.toTedClusterItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import ted.gun0912.clustering.clustering.TedClusterItem
@@ -88,12 +90,18 @@ import ted.gun0912.clustering.clustering.TedClusterItem
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun MapRoute(
-    viewModel: MapViewModel,
     onBack: () -> Unit,
     navigateToDetailFishingSpot: (FishingSpotUI) -> Unit,
     navigateToDetailMemo: (MemoUI) -> Unit,
     onClickPhoneNumber: (String) -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    viewModel: MapViewModel = hiltViewModel(),
 ) {
+
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
     val context = LocalContext.current
     val mapUiState by viewModel.mapUiState.collectAsStateWithLifecycle()
     val mapType by viewModel.mapType.collectAsStateWithLifecycle()
@@ -121,7 +129,7 @@ fun MapRoute(
         }
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_START) {
@@ -141,7 +149,9 @@ fun MapRoute(
 
     if (hasLocationPermission) {
         LaunchedEffect(Unit) {
-            val location = getCurrentLocation(fusedLocationClient)
+            val location = getCurrentLocation(fusedLocationClient) { errorMessage ->
+                viewModel.sendErrorMessage(Throwable(errorMessage))
+            }
             val latitude = location?.latitude ?: String.DefaultLatitude.toDouble()
             val longitude = location?.longitude ?: String.DefaultLongitude.toDouble()
             cameraPositionState.move(
@@ -163,7 +173,9 @@ fun MapRoute(
         onClickMapType = { viewModel.setMapType(MapType.getMapType(it)) },
         onClickLocation = {
             coroutineScope.launch {
-                val location = getCurrentLocation(fusedLocationClient)
+                val location = getCurrentLocation(fusedLocationClient) { errorMessage ->
+                    viewModel.sendErrorMessage(Throwable(errorMessage))
+                }
                 val latitude = location?.latitude ?: String.DefaultLatitude.toDouble()
                 val longitude = location?.longitude ?: String.DefaultLongitude.toDouble()
                 cameraPositionState.move(
@@ -178,7 +190,7 @@ fun MapRoute(
         onClickFishingSpot = navigateToDetailFishingSpot,
         onClickMemo = navigateToDetailMemo,
         onClickClusterMarkers = { items ->
-            val placeItems = placeItems.filter { placeItem ->
+            val placeInfoItems = placeItems.filter { placeItem ->
                 when (placeItem) {
                     is FishingPlaceInfo.FishingSpotInfo -> {
                         items.any { item ->
@@ -195,7 +207,7 @@ fun MapRoute(
                     }
                 }
             }
-            viewModel.setSelectedPlaceItems(placeItems)
+            viewModel.setSelectedPlaceItems(placeInfoItems)
         },
         selectedPlaceItems = selectedPlaceItems,
         onClickMarker = { item ->
@@ -215,19 +227,22 @@ fun MapRoute(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @SuppressLint("MissingPermission")
-suspend fun getCurrentLocation(fusedLocationClient: FusedLocationProviderClient): Location? {
+suspend fun getCurrentLocation(
+    fusedLocationClient: FusedLocationProviderClient,
+    sendErrorMessage: (String) -> Unit,
+): Location? {
     return suspendCancellableCoroutine { continuation ->
         val locationTask: Task<Location> = fusedLocationClient.lastLocation
         locationTask.addOnSuccessListener { location ->
             continuation.resume(location) { }
         }
-        locationTask.addOnFailureListener { exception ->
-            continuation.resume(null) { }
+        locationTask.addOnFailureListener { exceptions ->
+            continuation.resume(null) { sendErrorMessage(exceptions.message ?: "") }
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MapScreen(
     modifier: Modifier = Modifier,
@@ -249,15 +264,9 @@ private fun MapScreen(
     onClickPhoneNumber: (String) -> Unit = { },
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed)
+        bottomSheetState = rememberStandardBottomSheetState()
     )
-    val coroutineScope = rememberCoroutineScope()
     var sheetHeight by remember { mutableStateOf(50.dp) }
-    LaunchedEffect(scaffoldState.bottomSheetState) {
-        coroutineScope.launch {
-            scaffoldState.bottomSheetState.collapse()
-        }
-    }
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -273,22 +282,14 @@ private fun MapScreen(
                 if (uiState is MapUiState.Loading) {
                     FMProgressBar(
                         modifier = Modifier
-                            .align(Alignment.Center),
+                            .size(24.dp)
+                            .align(Alignment.TopCenter),
                     )
                 }
-
                 Column(
                     modifier = Modifier
                         .fillMaxSize(),
                 ) {
-                    Divider(
-                        modifier = Modifier
-                            .width(30.dp)
-                            .padding(top = 12.dp)
-                            .align(Alignment.CenterHorizontally),
-                        thickness = 3.dp,
-                        color = Color(0xFFCCCCCC),
-                    )
                     Text(
                         modifier = Modifier
                             .padding(top = 8.dp)
@@ -339,13 +340,14 @@ private fun MapScreen(
                                     )
                                 }
                             }
-                            Divider(modifier = Modifier.padding(top = 10.dp))
+                            HorizontalDivider(modifier = Modifier.padding(top = 10.dp))
                         }
                     }
                 }
             }
         },
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        sheetContainerColor = MaterialTheme.colorScheme.background,
         sheetPeekHeight = sheetHeight,
     ) {
 
@@ -353,12 +355,12 @@ private fun MapScreen(
             uiState = uiState,
             placeItems = placeItems,
             onBack = onBack,
-            onClickMap = { sheetHeight = 50.dp },
+            onClickMap = { sheetHeight = 80.dp },
             markerType = markerType,
             mapType = mapType,
             onClickMarkerType = { type ->
                 onClickMarkerType(type)
-                sheetHeight = 80.dp
+                sheetHeight = 100.dp
             },
             onClickMapType = onClickMapType,
             onCluckLocation = onClickLocation,
@@ -524,7 +526,7 @@ private fun MapContent(
                     .size(35.dp),
             ) {
                 Icon(
-                    painter = painterResource(id = com.qure.core_design.R.drawable.ic_location),
+                    painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_location),
                     contentDescription = null,
                     tint = White,
                 )

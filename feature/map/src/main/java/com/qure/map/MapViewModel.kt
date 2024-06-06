@@ -1,21 +1,21 @@
 package com.qure.map
 
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
-import com.qure.domain.entity.MapType
-import com.qure.domain.entity.MarkerType
-import com.qure.domain.entity.fishingspot.FishingSpotQuery
-import com.qure.domain.entity.fishingspot.StructuredQuery
-import com.qure.domain.entity.fishingspot.Where
-import com.qure.domain.entity.memo.CollectionId
-import com.qure.domain.entity.memo.FieldFilter
-import com.qure.domain.entity.memo.FieldPath
-import com.qure.domain.entity.memo.Value
-import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.fishingspot.GetFishingSpotUseCase
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
-import com.qure.memo.model.toMemoUI
+import com.qure.model.fishingspot.CollectionId
+import com.qure.model.fishingspot.FishingSpotQuery
+import com.qure.model.fishingspot.StructuredQuery
+import com.qure.model.fishingspot.Where
+import com.qure.model.map.MapType
+import com.qure.model.map.MarkerType
+import com.qure.model.memo.FieldFilter
+import com.qure.model.memo.FieldPath
+import com.qure.model.memo.Value
 import com.qure.model.toFishingSpotUI
+import com.qure.ui.base.BaseViewModel
+import com.qure.ui.model.FishingPlaceInfo
+import com.qure.ui.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +32,6 @@ class MapViewModel
 constructor(
     private val getFishingSpotUseCase: GetFishingSpotUseCase,
     private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
-    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
 
     private val _mapType = MutableStateFlow(MapType.BASIC_MAP)
