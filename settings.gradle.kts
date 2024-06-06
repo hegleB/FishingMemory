@@ -49,6 +49,7 @@ include(
     ":core:testing",
 )
 include(
+    ":feature:history",
     ":feature:create",
     ":feature:fishingspot",
     ":feature:gallery",

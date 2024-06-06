@@ -1,10 +1,9 @@
 package com.qure.history
 
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
-import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
-import com.qure.memo.model.toMemoUI
+import com.qure.ui.base.BaseViewModel
+import com.qure.ui.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +23,6 @@ class HistoryViewModel
 @Inject
 constructor(
     private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
-    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
     private val _filteredMemosUiState = MutableStateFlow<HistoryUiState>(HistoryUiState.Empty)
     val filteredMemosUiState = _filteredMemosUiState.asStateFlow()
