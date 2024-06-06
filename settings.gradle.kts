@@ -49,6 +49,7 @@ include(
     ":core:testing",
 )
 include(
+    ":feature:splash",
     ":feature:home",
     ":feature:history",
     ":feature:mypage",
