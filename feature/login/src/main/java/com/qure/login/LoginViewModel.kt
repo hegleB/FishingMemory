@@ -1,10 +1,11 @@
 package com.qure.login
 
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
-import com.qure.domain.repository.AuthRepository
+import com.qure.data.repository.auth.AuthRepository
+import com.qure.data.repository.user.UserDataRepository
 import com.qure.domain.usecase.auth.CreateUserUseCase
 import com.qure.domain.usecase.auth.GetUserTokenUseCase
+import com.qure.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +22,8 @@ constructor(
     private val createUserUseCase: CreateUserUseCase,
     private val getUserTokenUseCase: GetUserTokenUseCase,
     private val authRepository: AuthRepository,
-) : BaseViewModel() {
+    private val userDataRepository: UserDataRepository,
+    ) : BaseViewModel() {
 
     private val _loginUiState = MutableStateFlow<LoginUiState>(LoginUiState.Initial)
     val loginUiState = _loginUiState.asStateFlow()
@@ -41,6 +43,7 @@ constructor(
             }.collectLatest {
                 authRepository.saveEmailToLocal(email)
                 authRepository.saveTokenToLocal(accessToken)
+                userDataRepository.setNewEmail(email)
                 _loginUiState.value = LoginUiState.Success
             }
     }

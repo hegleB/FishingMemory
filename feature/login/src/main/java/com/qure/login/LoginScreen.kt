@@ -1,5 +1,6 @@
 package com.qure.login
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,17 +26,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
-import com.qure.core.util.FishingMemoryToast
-import com.qure.core_design.compose.components.FMLoginButton
-import com.qure.core_design.compose.components.FMProgressBar
-import com.qure.core_design.compose.theme.Yellow100
-import com.qure.core_design.compose.utils.FMPreview
+import com.qure.designsystem.component.FMGlideImage
+import com.qure.designsystem.component.FMLoginButton
+import com.qure.designsystem.component.FMProgressBar
+import com.qure.designsystem.theme.Yellow100
+import com.qure.designsystem.utils.FMPreview
+import com.qure.feature.login.R
 import com.qure.login.extension.loginWithKakaoOrThrow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -43,8 +42,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginRoute(
-    viewModel: LoginViewModel,
+    viewModel: LoginViewModel = hiltViewModel(),
     navigateToHome: () -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val loginUiState by viewModel.loginUiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -52,12 +52,7 @@ fun LoginRoute(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(error) {
-        error.collectLatest { errorMessage ->
-            FishingMemoryToast().error(
-                context,
-                errorMessage,
-            )
-        }
+        error.collectLatest(onShowErrorSnackBar)
     }
 
     LoginScreen(
@@ -68,20 +63,19 @@ fun LoginRoute(
     )
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun LoginScreen(
     loginUiState: LoginUiState = LoginUiState.Initial,
     modifier: Modifier = Modifier,
     onClickKakaoLogin: () -> Unit = { },
     navigateToHome: () -> Unit = { },
-    navigateToKakoLauncher: () -> Unit = { },
+    navigateToKakoLauncher: @Composable () -> Unit = { },
 ) {
     Box(
         modifier = modifier
             .fillMaxSize()
     ) {
-        GlideImage(
+        FMGlideImage(
             modifier = Modifier.fillMaxSize(),
             model = R.drawable.img_bg_login,
             contentDescription = null,
@@ -104,7 +98,7 @@ private fun LoginScreen(
             Spacer(modifier = Modifier.heightIn(200.dp))
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = com.qure.core_design.R.string.app_name),
+                text = stringResource(id = R.string.app_name),
                 style = MaterialTheme.typography.headlineLarge,
                 fontSize = 40.sp,
                 color = Color.White,
@@ -126,6 +120,8 @@ private fun LoginScreen(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
+@Composable
 private fun launchKakaLogin(
     coroutineScope: CoroutineScope,
     context: Context,
@@ -146,17 +142,7 @@ private fun launchKakaLogin(
                 }
             }
         }.onFailure { throwable ->
-            if (throwable is ClientError && throwable.reason == ClientErrorCause.Cancelled) {
-                FishingMemoryToast().error(
-                    context = context,
-                    title = context.getString(R.string.message_kakao_cancellation_requested_User),
-                )
-            } else {
-                FishingMemoryToast().error(
-                    context = context,
-                    title = context.getString(R.string.message_kakao_login_failure),
-                )
-            }
+            viewModel.sendErrorMessage(throwable)
         }
     }
 }
