@@ -1,4 +1,4 @@
-package com.qure.home.home
+package com.qure.home.location
 
 class GpsTransfer {
     var TO_GRID = 0

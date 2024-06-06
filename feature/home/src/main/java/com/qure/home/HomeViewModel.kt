@@ -1,15 +1,15 @@
-package com.qure.home.home
+package com.qure.home
 
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
-import com.qure.core.extensions.DefaultLatitude
-import com.qure.core.extensions.DefaultLongitude
-import com.qure.core.extensions.twoDigitsFormat
-import com.qure.domain.repository.AuthRepository
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
 import com.qure.domain.usecase.weather.GetWeatherUseCase
-import com.qure.home.home.model.toWeatherUI
-import com.qure.memo.model.toMemoUI
+import com.qure.home.location.LatXLngY
+import com.qure.model.extensions.DefaultLatitude
+import com.qure.model.extensions.DefaultLongitude
+import com.qure.model.extensions.twoDigitsFormat
+import com.qure.ui.base.BaseViewModel
+import com.qure.ui.model.toMemoUI
+import com.qure.ui.model.toWeatherUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +30,6 @@ class HomeViewModel
 constructor(
     private val getWeatherUseCase: GetWeatherUseCase,
     private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
-    private val authRepository: AuthRepository,
 ) : BaseViewModel() {
 
     private val _selectedChip = MutableStateFlow(INITIAL_FISH_TYPE)
@@ -64,7 +63,7 @@ constructor(
             )
                 .map { ui ->
                     HomeUiState.Success(
-                        weather = ui.first.response.body.items.item.map { it.toWeatherUI() },
+                        weather = ui.first.response.body?.items?.item?.map { it.toWeatherUI() } ?: emptyList(),
                         memos = ui.second.map { it.toMemoUI() }
                     )
                 }

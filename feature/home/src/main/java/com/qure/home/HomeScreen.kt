@@ -1,19 +1,22 @@
-package com.qure.home.home
+package com.qure.home
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
+import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RawRes
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,9 +29,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -42,58 +45,67 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
-import com.qure.core.extensions.DefaultLatitude
-import com.qure.core.extensions.DefaultLongitude
-import com.qure.core.extensions.Spacing
-import com.qure.core_design.compose.components.FMChipGroup
-import com.qure.core_design.compose.components.FMLottieAnimation
-import com.qure.core_design.compose.components.FMMemoItem
-import com.qure.core_design.compose.components.FMProgressBar
-import com.qure.core_design.compose.components.FMRefreshLayout
-import com.qure.core_design.compose.theme.Blue300
-import com.qure.core_design.compose.theme.Blue500
-import com.qure.core_design.compose.theme.Gray300
-import com.qure.core_design.compose.theme.Gray600
-import com.qure.core_design.compose.theme.Gray700
-import com.qure.core_design.compose.theme.Purple700
-import com.qure.core_design.compose.theme.White
-import com.qure.core_design.compose.utils.FMPreview
-import com.qure.core_design.custom.barchart.BarChartView
-import com.qure.core_design.custom.barchart.CustomBarChartView
-import com.qure.domain.entity.weather.SkyState
-import com.qure.home.R
-import com.qure.memo.model.MemoUI
+import com.qure.designsystem.component.FMChipGroup
+import com.qure.designsystem.component.FMLottieAnimation
+import com.qure.designsystem.component.FMMemoItem
+import com.qure.designsystem.component.FMProgressBar
+import com.qure.designsystem.component.FMRefreshLayout
+import com.qure.designsystem.theme.Blue300
+import com.qure.designsystem.theme.Blue500
+import com.qure.designsystem.theme.Gray300
+import com.qure.designsystem.theme.Purple700
+import com.qure.designsystem.theme.White
+import com.qure.designsystem.utils.FMPreview
+import com.qure.feature.home.R
+import com.qure.home.location.GpsTransfer
+import com.qure.home.location.LatXLngY
+import com.qure.model.extensions.DefaultLatitude
+import com.qure.model.extensions.DefaultLongitude
+import com.qure.model.extensions.Spacing
+import com.qure.model.weather.SkyState
+import com.qure.ui.custom.barchart.BarChartView
+import com.qure.ui.custom.barchart.CustomBarChartView
+import com.qure.ui.model.MemoUI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Locale
 
+
 @Composable
 fun HomeRoute(
-    viewModel: HomeViewModel,
+    padding: PaddingValues,
     navigateToMemoList: () -> Unit,
-    navigateToDetailMemo: (MemoUI) -> Unit,
+    navigateToDetailMemo: (com.qure.ui.model.MemoUI) -> Unit,
     navigateToMap: () -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
+
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val selectedChip by viewModel.selectedChip.collectAsStateWithLifecycle()
     val latXLngY by viewModel.latLng.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     var hasLocationPermission by remember { mutableStateOf(false) }
-    val lifecycleOwner = LocalLifecycleOwner.current
-    println(homeUiState)
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -114,8 +126,8 @@ fun HomeRoute(
             val location = getCurrentLocation(fusedLocationClient)
             val latitude = location?.latitude ?: String.DefaultLatitude.toDouble()
             val longitude = location?.longitude ?: String.DefaultLongitude.toDouble()
-            val latXLngY = GpsTransfer().convertGRID_GPS(0, latitude, longitude)
-            viewModel.setLatLng(latXLngY)
+            val latLng = GpsTransfer().convertGRID_GPS(0, latitude, longitude)
+            viewModel.setLatLng(latLng)
         }
     }
 
@@ -130,10 +142,10 @@ fun HomeRoute(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-    if (homeUiState is HomeUiState.Success) {
-        println((homeUiState as HomeUiState.Success).weather.map { it.fcstTime })
-    }
+
     HomeScreen(
+        modifier = Modifier
+            .padding(padding),
         homeUiState = homeUiState,
         onClickFishType = viewModel::setSelectedChip,
         onClickMemoMore = navigateToMemoList,
@@ -157,7 +169,7 @@ suspend fun getCurrentLocation(fusedLocationClient: FusedLocationProviderClient)
         locationTask.addOnSuccessListener { location ->
             continuation.resume(location) { }
         }
-        locationTask.addOnFailureListener { exception ->
+        locationTask.addOnFailureListener { _ ->
             continuation.resume(null) { }
         }
     }
@@ -175,7 +187,7 @@ private fun HomeScreen(
     modifier: Modifier = Modifier,
     onClickFishType: (String) -> Unit = { },
     onClickMemoMore: () -> Unit = { },
-    onClickMemo: (MemoUI) -> Unit = { },
+    onClickMemo: (com.qure.ui.model.MemoUI) -> Unit = { },
     selectedChip: String = stringResource(id = R.string.fish_type),
     latXLngY: LatXLngY = LatXLngY(),
     navigateToMap: () -> Unit = { },
@@ -227,7 +239,7 @@ private fun HomeItemList(
     latXLngY: LatXLngY,
     selectedChip: String,
     onClickFishType: (String) -> Unit,
-    onClickMemo: (MemoUI) -> Unit,
+    onClickMemo: (com.qure.ui.model.MemoUI) -> Unit,
     onClickMemoMore: () -> Unit,
 ) {
     val items = listOf(
@@ -272,24 +284,25 @@ private fun MapCard(
         modifier = Modifier
             .clip(RoundedCornerShape(15.dp))
             .fillMaxWidth()
+            .height(80.dp)
             .clickable { navigateToMap() }
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(if (isSystemInDarkTheme()) Gray600 else White)
+                .background(color = MaterialTheme.colorScheme.secondary)
         ) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
                 text = stringResource(id = R.string.map_home),
-                color = if (isSystemInDarkTheme()) White else Gray700,
+                color = MaterialTheme.colorScheme.outline,
                 style = MaterialTheme.typography.displayLarge
             )
             FMLottieAnimation(
                 modifier = Modifier
                     .width(100.dp)
                     .align(Alignment.CenterEnd),
-                lottieId = R.raw.map
+                lottieId = com.qure.core.designsystem.R.raw.map,
             )
         }
     }
@@ -323,12 +336,30 @@ fun HomeContent(
 
                 1 -> {
                     if (homeUiState.weather.isNotEmpty()) {
+                        var city = ""
+                        fetchCurrentAddress(context, latXLngY) { address ->
+                            city = address
+                        }
                         WeatherItem(
                             temperature = homeUiState.toTemperatureString(),
                             skyState = SkyState.from(homeUiState.getSkyState().fcstValue.toInt()),
-                            location = getCurrentAddress(context, latXLngY),
+                            location = city,
                             weatherRes = homeUiState.toWeatherAnimation()
                         )
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .align(Alignment.Center),
+                                text = stringResource(id = R.string.no_seacrh_weather),
+                                style = MaterialTheme.typography.displayLarge,
+                                color = White,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
                     }
                 }
 
@@ -344,8 +375,8 @@ fun HomeContent(
 
 @Composable
 private fun MemoItem(
-    memos: List<MemoUI> = emptyList(),
-    clickMemo: (MemoUI) -> Unit = { },
+    memos: List<com.qure.ui.model.MemoUI> = emptyList(),
+    clickMemo: (com.qure.ui.model.MemoUI) -> Unit = { },
     clickMemoMore: () -> Unit = { },
 ) {
     Box(
@@ -362,23 +393,38 @@ private fun MemoItem(
             color = MaterialTheme.colorScheme.onBackground,
         )
     }
-    LazyRow(
-        modifier = Modifier.padding(top = 20.dp, start = 10.dp),
-        state = rememberLazyListState(),
-    ) {
-        items(items = memos) { memo ->
-            FMMemoItem(
+    if (memos.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Text(
                 modifier = Modifier
-                    .width(300.dp)
-                    .height(100.dp),
-                imageUrl = memo.image,
-                title = memo.title,
-                location = memo.location,
-                fishType = memo.fishType,
-                content = memo.content,
-                date = memo.date,
-                onMemoClicked = { clickMemo(memo) }
+                    .align(Alignment.Center),
+                text = stringResource(R.string.empty_memo),
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.onBackground,
             )
+        }
+    } else {
+        LazyRow(
+            modifier = Modifier.padding(top = 20.dp, start = 10.dp),
+            state = rememberLazyListState(),
+        ) {
+            items(items = memos) { memo ->
+                FMMemoItem(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(100.dp),
+                    imageUrl = memo.image,
+                    title = memo.title,
+                    location = memo.location,
+                    fishType = memo.fishType,
+                    content = memo.content,
+                    date = memo.date,
+                    onMemoClicked = { clickMemo(memo) }
+                )
+            }
         }
     }
 }
@@ -388,7 +434,7 @@ private fun FishItem(
     elements: List<String> = emptyList(),
     context: Context,
     onClickChip: (String) -> Unit,
-    memos: List<MemoUI> = emptyList(),
+    memos: List<com.qure.ui.model.MemoUI> = emptyList(),
     selectedChip: String = stringResource(id = R.string.fish_type),
 ) {
     val filteredFishes = when (selectedChip) {
@@ -396,10 +442,8 @@ private fun FishItem(
         stringResource(id = R.string.fish_size) -> memos.map { it.fishSize }
         else -> memos.map {
             val location = it.location.split(String.Spacing)
-            if (location[1].isEmpty()) {
+            location[1].ifEmpty {
                 location[0]
-            } else {
-                location[1]
             }
         }
     }
@@ -416,21 +460,35 @@ private fun FishItem(
             unSelectedFontColor = Blue500,
         )
     }
-
-    AndroidView(
-        modifier = Modifier.fillMaxSize(),
-        factory = { ctx ->
-            CustomBarChartView(ctx).apply {
-                setRadius((15 * Resources.getSystem().displayMetrics.density + 0.5f).toInt())
-            }
+    if (memos.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.Center),
+                text = stringResource(R.string.no_fish_caught),
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
         }
-    ) { barChart ->
-        BarChartView(
-            context = context,
-            resources = context.resources,
-            values = countElements(filteredFishes).values.toList(),
-            labels = filteredFishes.distinct()
-        ).initBarChart(barChart)
+    } else {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { ctx ->
+                CustomBarChartView(ctx).apply {
+                    setRadius((15 * Resources.getSystem().displayMetrics.density + 0.5f).toInt())
+                }
+            }
+        ) { barChart ->
+            BarChartView(
+                context = context,
+                resources = context.resources,
+                values = countElements(filteredFishes).values.toList(),
+                labels = filteredFishes.distinct()
+            ).initBarChart(barChart)
+        }
     }
 }
 
@@ -447,7 +505,7 @@ private fun WeatherItem(
     temperature: String = "",
     skyState: String = "",
     location: String = "",
-    @RawRes weatherRes: Int = R.raw.weather_sunny_day,
+    @RawRes weatherRes: Int = com.qure.core.designsystem.R.raw.weather_sunny_day,
 ) {
     Box(
         modifier = Modifier
@@ -486,14 +544,27 @@ private fun WeatherItem(
     }
 }
 
-private fun getCurrentAddress(
+
+private fun fetchCurrentAddress(
     context: Context,
-    latXLngY: LatXLngY
-): String {
+    latXLngY: LatXLngY,
+    sendAddressCityName: (String) -> Unit,
+) {
     val geoCoder = Geocoder(context, Locale.getDefault())
-    val address = geoCoder.getFromLocation(latXLngY.lat, latXLngY.lng, 7)?.get(0)?.getAddressLine(0)
-    val city = address?.split(String.Spacing)?.get(1).toString()
-    return city
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        geoCoder.getFromLocation(
+            latXLngY.lat,
+            latXLngY.lng,
+            1
+        ) { address: List<Address> ->
+            sendAddressCityName(address[1].toString())
+        }
+    } else {
+        val address: Address? = geoCoder.getFromLocation(latXLngY.lat, latXLngY.lng, 1)?.get(0)
+        if (address != null) {
+            sendAddressCityName(address.getAddressLine(0).split(" ")[1])
+        }
+    }
 }
 
 @Composable
@@ -509,11 +580,9 @@ private fun HomeItem(
             )
         )
     } else {
-        if (isSystemInDarkTheme()) {
-            Modifier.background(Gray600)
-        } else {
-            Modifier.background(White)
-        }
+        Modifier.background(
+            color = MaterialTheme.colorScheme.secondary
+        )
     }
     Card(
         modifier = modifier
@@ -536,6 +605,7 @@ private fun HomeItem(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFFF6F7F9)
 private fun HomeScreenPreview() = FMPreview {

@@ -15,6 +15,8 @@
     <string name="no_fish_caught">잡은 물고기 없습니다</string>
     <string name="empty_memo">작성된 메모가 없습니다</string>
 
+    <string name="no_seacrh_weather">현재 날씨 정보를 가져오지 못하였습니다.\n새로고침 해주세요</string>
+
     <string name="message_location_permission_required">위치 권한을 설정해주세요</string>
     
 </resources>
