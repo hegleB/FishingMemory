@@ -4,13 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
-import com.qure.domain.entity.fishingspot.FishingSpotBookmark
 import com.qure.domain.usecase.bookmark.CheckFishingSpotBookmarkUseCase
 import com.qure.domain.usecase.bookmark.DeleteFishingSpotBookmarkUseCase
 import com.qure.domain.usecase.bookmark.InsertFishingSpotBookmarkUseCase
 import com.qure.model.FishingSpotUI
+import com.qure.model.fishingspot.FishingSpotBookmark
 import com.qure.model.toFishingSpotBookmark
+import com.qure.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -25,6 +25,7 @@ class FishingSpotViewModel
         private val insertFishingSpotBookmarkUseCase: InsertFishingSpotBookmarkUseCase,
         private val checkFishingSpotBookmarkUseCase: CheckFishingSpotBookmarkUseCase,
     ) : BaseViewModel() {
+
         var isBookmarkClicked by mutableStateOf(false)
 
         fun deleteBookmark(fishingSpotBookmark: FishingSpotBookmark) {

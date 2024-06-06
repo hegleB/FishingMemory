@@ -50,3 +50,4 @@ include(
 )
 include(
     ":feature:create",
+    ":feature:fishingspot",

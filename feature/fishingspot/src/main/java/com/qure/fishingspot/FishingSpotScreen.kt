@@ -12,49 +12,60 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.CameraPositionState
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.rememberCameraPositionState
 import com.naver.maps.map.overlay.OverlayImage
-import com.qure.core_design.compose.components.FMBackButton
-import com.qure.core_design.compose.components.FMBookmarkButton
-import com.qure.core_design.compose.components.FMFishingSpotItem
-import com.qure.core_design.compose.components.FMNaverMap
-import com.qure.core_design.compose.utils.FMPreview
+import com.qure.designsystem.component.FMBackButton
+import com.qure.designsystem.component.FMBookmarkButton
+import com.qure.designsystem.component.FMFishingSpotItem
+import com.qure.designsystem.component.FMNaverMap
+import com.qure.designsystem.utils.FMPreview
 import com.qure.model.FishingSpotUI
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun FishingSpotScreen(
+fun FishingSpotRoute(
+    viewModel: FishingSpotViewModel = hiltViewModel(),
     fishingSpot: FishingSpotUI,
-    viewModel: FishingSpotViewModel,
     onBack: () -> Unit,
-    onClickBookmark: () -> Unit,
     onClickPhoneNumber: (String) -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
 
-    FishingSpotContent(
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.checkBookmark(fishingSpot.number)
+    }
+
+    FishingSpotScreen(
         fishingSpot = fishingSpot,
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp, start = 20.dp, end = 20.dp)
             .background(color = MaterialTheme.colorScheme.background),
         onBack = onBack,
-        onClickBookmark = onClickBookmark,
+        onClickBookmark = { viewModel.toggleBookmarkButton(fishingSpot) },
         isBookmarkClicked = viewModel.isBookmarkClicked,
         onClickPhoneNumber = onClickPhoneNumber,
     )
 }
 
 @Composable
-private fun FishingSpotContent(
+private fun FishingSpotScreen(
     fishingSpot: FishingSpotUI,
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
@@ -104,7 +115,7 @@ private fun FishingSpotContent(
             markerState = MarkerState(position = fishingSpotPosition),
             markerHeight = 30.dp,
             markerWidth = 35.dp,
-            icon = OverlayImage.fromResource(com.qure.core_design.R.drawable.bg_map_fill_marker),
+            icon = OverlayImage.fromResource(com.qure.core.designsystem.R.drawable.bg_map_fill_marker),
         )
 
         FMFishingSpotItem(
@@ -124,7 +135,7 @@ private fun FishingSpotContent(
 @Preview
 @Composable
 private fun FishingSpotScreenPreview() = FMPreview {
-    FishingSpotContent(
+    FishingSpotScreen(
         fishingSpot = FishingSpotUI(),
         onBack = { },
         onClickBookmark = { },

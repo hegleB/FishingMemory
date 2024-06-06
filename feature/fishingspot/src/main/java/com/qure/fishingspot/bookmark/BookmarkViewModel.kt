@@ -1,11 +1,11 @@
 package com.qure.fishingspot.bookmark
 
 import androidx.lifecycle.viewModelScope
-import com.qure.core.BaseViewModel
 import com.qure.domain.usecase.bookmark.DeleteAllFishingSpotBookmarkUseCase
 import com.qure.domain.usecase.bookmark.GetFishingSpotBookmarksUseCase
 import com.qure.fishingspot.FishingSpotUiState
 import com.qure.model.toFishingSpotUI
+import com.qure.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
