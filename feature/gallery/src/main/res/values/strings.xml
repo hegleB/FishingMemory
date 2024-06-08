@@ -1,4 +1,5 @@
 <resources>
     <string name="gallery_done">완료</string>
     <string name="gallery_take_a_picture">사진 찍기</string>
+    <string name="image_path">/data/data/com.qure.fishingmemory/cache/images/%s</string>
 </resources>

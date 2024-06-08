@@ -2,15 +2,11 @@ package com.qure.gallery
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.os.Build
+import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,7 +54,6 @@ import com.qure.designsystem.theme.Gray200
 import com.qure.designsystem.utils.FMPreview
 import com.qure.feature.gallery.R
 import com.qure.model.gallery.GalleryImage
-import com.qure.model.gallery.toImageUri
 import com.qure.ui.model.MemoUI
 import kotlinx.coroutines.flow.collectLatest
 
@@ -72,15 +68,17 @@ fun GalleryRoute(
     onClickDone: (MemoUI) -> Unit,
     viewModel: GalleryViewModel = hiltViewModel(),
 ) {
+
     LaunchedEffect(viewModel.error) {
         viewModel.error.collectLatest(onShowErrorSnackBar)
     }
 
     val context = LocalContext.current
-    val images by remember {
-        mutableStateOf(mutableListOf(GalleryImage(0, "")))
-    }
+    val images = remember { mutableStateListOf(GalleryImage(0, "")) }
     loadGalleryImages(context = context, images = images)
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
     val cameraPermissionState = rememberPermissionState(
         permission = Manifest.permission.CAMERA
     )
@@ -91,26 +89,29 @@ fun GalleryRoute(
         permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
-    val takePictureLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == AppCompatActivity.RESULT_OK) {
-            if (Build.VERSION.SDK_INT >= 33) {
-                result.data?.extras?.getParcelable("data", Bitmap::class.java)?.let { bitmap ->
-                    onClickCamera(memoUI.copy(image = bitmap.toImageUri(context).path ?: ""))
-                }
-            } else {
-                result.data?.extras?.getParcelable<Bitmap>("data")?.let { bitmap ->
-                    onClickCamera(memoUI.copy(image = bitmap.toImageUri(context).path ?: ""))
-                }
-            }
+
+    var hasImage by remember { mutableStateOf(false) }
+    val resource = LocalContext.current.resources
+    LaunchedEffect(key1 = hasImage) {
+        if (hasImage) {
+            val path = imageUri?.path?.replace("/my_images/", "")
+            onClickCamera(memoUI.copy(image = resource.getString(R.string.image_path, path)))
         }
     }
+
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) {
+        hasImage = it
+    }
+
+    val stringResource = LocalContext.current.resources
+
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted.not()) {
-            viewModel.sendErrorMessage(Throwable(message = "권한이 거부되었습니다."))
+            viewModel.sendErrorMessage(Throwable(message = stringResource.getString(com.qure.core.ui.R.string.permission_denied)))
         }
     }
 
@@ -137,14 +138,25 @@ fun GalleryRoute(
         images = images,
         onClickDone = { onClickDone(memoUI.copy(image = it.path)) },
         onClickTakingPicture = {
-            startCamera(takePictureLauncher)
+            startCamera(
+                context = context,
+                takePictureLauncher = takePictureLauncher,
+                updateImageUri = { uri ->
+                    imageUri = uri
+                }
+            )
         }
     )
 }
 
-private fun startCamera(takePictureLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>) {
-    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-    takePictureLauncher.launch(intent)
+private fun startCamera(
+    context: Context,
+    takePictureLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
+    updateImageUri: (Uri) -> Unit,
+) {
+    val uri = ComposeFileProvider.getImageUri(context)
+    updateImageUri(uri)
+    takePictureLauncher.launch(uri)
 }
 
 private fun loadGalleryImages(
