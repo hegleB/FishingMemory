@@ -50,6 +50,7 @@ fun FMNaverMap(
     mapHeight: Dp = 0.dp,
     mapType: MapType = MapType.Basic,
     locationTrackingMode: LocationTrackingMode = LocationTrackingMode.None,
+    onMapLoaded: () -> Unit = { },
 ) {
     NaverMap(
         modifier = modifier,
@@ -72,6 +73,7 @@ fun FMNaverMap(
             mapType = mapType,
             locationTrackingMode = locationTrackingMode,
         ),
+        onMapLoaded = onMapLoaded,
     ) {
         if (isClusteringMarkers) {
             val context = LocalContext.current
@@ -99,15 +101,10 @@ fun FMNaverMap(
                         .minClusterSize(1)
                         .make()
                 }
-                if (preTedLatLng != markers.toTedLatLng()) {
-                    clusterManager?.addItems(markers)
-                    preTedLatLng = markers.toTedLatLng()
-                }
+                clusterManager?.addItems(markers)
 
                 onDispose {
-                    if (preTedLatLng != markers.toTedLatLng()) {
-                        clusterManager?.clearItems()
-                    }
+                    clusterManager?.clearItems()
                 }
             }
         } else {
@@ -122,7 +119,7 @@ fun FMNaverMap(
 }
 
 private fun List<TedClusterItem>.toTedLatLng() =
-    this.map { tedClusterItem -> tedClusterItem.getTedLatLng() }
+    this.map { tedClusterItem -> tedClusterItem.getTedLatLng() }.sortedByDescending { it.latitude }
 
 private fun TedClusterItem.createMarker(): Marker {
     val tedLatLng = getTedLatLng()
