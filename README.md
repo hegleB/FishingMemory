@@ -3,13 +3,13 @@
   </p>
   
 <p align="center">
-<img src="https://img.shields.io/badge/Kotlin-1.7.21-005AF0&style= flat?color=blue">
-<img src="https://img.shields.io/badge/AGP-7.4.0-005AF0&style= flat?color=blue">
-<img src="https://img.shields.io/badge/Gradle-7.4.0-005AF0&style= flat&?color=blue">
+<img src="https://img.shields.io/badge/Kotlin-2.0.0-005AF0&style= flat?color=blue">
+<img src="https://img.shields.io/badge/AGP-8.3.2-005AF0&style= flat?color=blue">
+
 </p>
 <p align="center">
-<img src="https://img.shields.io/badge/minSdkVersion-27-005AF0&style= flat&?color=DDE072">
-<img src="https://img.shields.io/badge/compileSdkVersion-33-005AF0&style= flat&?color=FF7328">
+<img src="https://img.shields.io/badge/minSdkVersion-28-005AF0&style= flat&?color=DDE072">
+<img src="https://img.shields.io/badge/compileSdkVersion-34-005AF0&style= flat&?color=FF7328">
 <p>
 
 ## Fishing Memory
@@ -28,23 +28,40 @@
 |<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/6698a1bd-deb5-462a-8a34-956fca4462f3">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/ddc255be-b19c-460f-9df6-02d0dd7b31aa">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/5ae8db38-f61e-4bfe-b4de-429aea6a7ce5">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/1f0c6004-0ab4-4817-b44b-520440985189">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/cdaa9d74-fcb0-48f1-affe-30753f80a7be">|
 
 ## Project Architecture
+
 <p align="center">
-<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/44db0b32-3797-4ff2-ba8c-a95f485df29b" height="350" style="width:100%;">
+<img src="https://github.com/hegleB/FishingMemory/assets/39490416/a32851c9-c1f6-4315-810f-abbe697213b8" height="500" style="width:100%;">
 </p>
+
+## UI Layer
+
+<p align="center">
+<img src="https://github.com/hegleB/FishingMemory/assets/39490416/6ae9cc45-eede-4757-a5a0-fd8a1c8e8e57" height="450" style="width:100%;">
+</p>
+
 
 ## Specifications used
 
-|||
-|---|---|
-|아키텍쳐(Architecture), 디자인 패턴(Design Pattern)| Muti Module, Clean Architecture, MVVM, Repository Pattern|
-|네트워크(Network)|Retrofit2|
-|비동기처리(Async)|Coroutine, Flow|
-|의존성 주입(Dependency Injection)|Dagger Hilt|
-|내부 DB(Internal DB)|Room|
-|이미지 처리(Image Load & Download)|Glide|
-|JetPack|ViewModel, Data Binding, Lifecycles|
-| 지도(map) | NaverMap API
-|Other|ViewPager2, CardView, RecyclerView|
+### Language
+
+- Kotlin
+
+### Libraries
+
+- AndroidX
+  - Activity & Activity Compose
+  - AppCompat
+  - Core
+  - Lifecycle & ViewModel Compose
+  - Navigation
+
+- Kotlin Libraries (Coroutine, Serialization)
+- Compose
+  - Material3
+  - Navigation
+- Glide
+- Dagger & Hilt
+- Square (Retrofit, OkHttp)
 
 ## License
 MIT License
