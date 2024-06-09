@@ -141,7 +141,12 @@ fun MemoCreateRoute(
         setFishType = viewModel::setFishType,
         setWaterType = viewModel::setWaterType,
         onClickSave = viewModel::createMemo,
-        onClickEdit = viewModel::updateMemo
+        onClickEdit = viewModel::updateMemo,
+        setLocation = {
+            viewModel.setLocation(it)
+            viewModel.setCoords(memo.coords)
+        },
+        setImage = viewModel::setImage,
     )
 }
 
@@ -174,6 +179,8 @@ private fun MemoCreateScreen(
     setWaterType: (String) -> Unit = { },
     onClickSave: () -> Unit = { },
     onClickEdit: () -> Unit = { },
+    setLocation: (String) -> Unit = { },
+    setImage: (String) -> Unit = { },
 ) {
     var isShowCalendar by remember {
         mutableStateOf(false)
@@ -243,7 +250,8 @@ private fun MemoCreateScreen(
                 title = stringResource(id = R.string.image),
                 contentMode = MemoMode.IMAGE,
                 onClick = { navigateToGallery() },
-                value = memo.image
+                value = memo.image,
+                onValueChange = setImage
             )
             Row(
                 modifier = Modifier
@@ -294,6 +302,7 @@ private fun MemoCreateScreen(
                     contentMode = MemoMode.TEXT,
                     onClick = { navigateToLocationSetting() },
                     value = memo.location,
+                    onValueChange = setLocation,
                 )
                 MemoItem(
                     modifier = Modifier
@@ -314,7 +323,8 @@ private fun MemoCreateScreen(
                     },
                     value = memo.date,
                     contentMode = MemoMode.TEXT,
-                    onClick = { isShowCalendar = true }
+                    onClick = { isShowCalendar = true },
+                    onValueChange = setDate,
                 )
             }
             MemoItem(
