@@ -6,9 +6,8 @@ import com.qure.ui.model.ReverseGeocodingUI
 data class LocationUiState(
     val geocoding: GeocodingUI? = null,
     val reverseGeocoding: ReverseGeocodingUI? = null,
+    val region: Regions = Regions.REGION,
     val currentPage: Int = 0,
-    val doIndex: Int = -1,
-    val cityIndex: Int = -1,
     val regions: List<String> = emptyList(),
     val selectedRegions: List<String> = List(3) { "" },
 )

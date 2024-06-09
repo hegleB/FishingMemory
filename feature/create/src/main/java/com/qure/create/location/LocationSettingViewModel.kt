@@ -1,5 +1,7 @@
 package com.qure.create.location
 
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.viewModelScope
 import com.qure.domain.usecase.map.GetGeocodingUseCase
 import com.qure.domain.usecase.map.GetReverseGeocodingUseCase
@@ -25,11 +27,29 @@ constructor(
     private val getReverseGeocodingUseCase: GetReverseGeocodingUseCase,
 ) : BaseViewModel() {
     private val _geoCodingUiState =
-        MutableStateFlow<GeoCodingUiState>(GeoCodingUiState.Success())
+        MutableStateFlow<GeoCodingUiState>(GeoCodingUiState.Idle)
     val geoCodingUiState = _geoCodingUiState.asStateFlow()
+
+    private val _reverseGeoCodingUiState =
+        MutableStateFlow<ReverseGeoCodingUiState>(ReverseGeoCodingUiState.Idle)
+    val reverseGeoCodingUiState = _reverseGeoCodingUiState.asStateFlow()
 
     private val _locationUiState = MutableStateFlow(LocationUiState())
     val locationUiState = _locationUiState.asStateFlow()
+
+    private val _selectedRegionName = mutableStateListOf<String>()
+    val selectedRegionName: List<String>
+        get() = _selectedRegionName
+
+    private var currentPage = 0
+
+    private val _doIndex = mutableIntStateOf(-1)
+    val doIndex: Int
+        get() = _doIndex.intValue
+
+    private val _cityIndex = mutableIntStateOf(-1)
+    val cityIndex: Int
+        get() = _cityIndex.intValue
 
     fun fetchGeocoding(query: String) {
         viewModelScope.launch {
@@ -39,9 +59,6 @@ constructor(
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .collectLatest { geocodingUiState ->
                     _geoCodingUiState.value = geocodingUiState
-                    _locationUiState.update {
-                        it.copy(geocoding = geocodingUiState.geocoding)
-                    }
                 }
         }
     }
@@ -49,51 +66,103 @@ constructor(
     fun fetchReverseGeocoding(coords: String) {
         viewModelScope.launch {
             getReverseGeocodingUseCase(coords)
-                .map { reverseGeocoding -> GeoCodingUiState.Success(reverseGeocoding = reverseGeocoding.toReverseGeocodingUI()) }
-                .onStart { _geoCodingUiState.value = GeoCodingUiState.Loading }
+                .map { reverseGeocoding -> ReverseGeoCodingUiState.Success(reverseGeocoding = reverseGeocoding.toReverseGeocodingUI()) }
+                .onStart { _reverseGeoCodingUiState.value = ReverseGeoCodingUiState.Loading }
                 .catch { throwable -> sendErrorMessage(throwable) }
-                .collectLatest { geocodingUiState ->
-                    _geoCodingUiState.value = geocodingUiState
-                    _locationUiState.update {
-                        it.copy(reverseGeocoding = geocodingUiState.reverseGeocoding)
-                    }
+                .collectLatest { reverseGeocodingUiState ->
+                    _reverseGeoCodingUiState.value = reverseGeocodingUiState
                 }
         }
     }
 
     fun onClickNext() {
+        if (currentPage < 3) {
+            currentPage += 1
+        }
+        if (_cityIndex.intValue != -1 && currentPage == 1) {
+            val region = RegionData.regions[_doIndex.intValue].subRegions[_cityIndex.intValue]
+            _selectedRegionName.add(if (region == NO_REGION_NAME) "" else region)
+        }
         _locationUiState.update {
-            it.copy(currentPage = _locationUiState.value.currentPage.plus(1))
+            it.copy(
+                currentPage = currentPage,
+                region = Regions.entries[_doIndex.intValue]
+            )
         }
     }
 
     fun onClickPrevious() {
+        if (currentPage > 0) {
+            currentPage -= 1
+        }
+        when (currentPage) {
+            0 -> if (_selectedRegionName.size == 2) {
+                _selectedRegionName.removeLast()
+            }
+
+
+            1 -> if (_selectedRegionName.size == 3) {
+                _selectedRegionName.removeLast()
+            }
+        }
+        val region = when {
+            currentPage > 0 -> Regions.entries[_doIndex.intValue]
+            else -> Regions.REGION
+        }
         _locationUiState.update {
-            it.copy(currentPage = _locationUiState.value.currentPage.minus(1))
+            it.copy(
+                currentPage = currentPage,
+                region = region,
+            )
         }
     }
 
-    fun setDoIndexDate(doIndex: Int) {
-        _locationUiState.update {
-            it.copy(doIndex = doIndex)
+    fun setDoIndexData(doIndex: Int) {
+        if (doIndex != _doIndex.value) {
+            _doIndex.intValue = doIndex
+            _cityIndex.intValue = -1
+            _selectedRegionName.clear()
         }
     }
 
     fun setCityIndexData(cityIndex: Int) {
-        _locationUiState.update {
-            it.copy(cityIndex = cityIndex)
+        if (_cityIndex.intValue != -1) {
+            _selectedRegionName.removeLast()
+        }
+        _cityIndex.intValue = cityIndex
+    }
+
+    fun setRegionName(regionName: String) {
+        if (_selectedRegionName.size == 3) {
+            _selectedRegionName.removeLast()
+        }
+        if (regionName != NO_REGION_NAME) {
+            _selectedRegionName.add(regionName)
         }
     }
 
-    fun setRegionsData(regions: List<String>) {
-        _locationUiState.update {
-            it.copy(regions = regions)
-        }
+    companion object {
+        private const val NO_REGION_NAME = "없음"
     }
+}
 
-    fun setSelectedRegionsData(selectedRegions: List<String>) {
-        _locationUiState.update {
-            it.copy(selectedRegions = selectedRegions)
-        }
-    }
+enum class Regions {
+    SEOUL,
+    BUSAN,
+    DAEGU,
+    INCHEON,
+    GWANGJU,
+    DAEJEON,
+    ULSAN,
+    SEJONG,
+    GYEONGGI,
+    GANGWON,
+    CHUNGBUK,
+    CHUNGNAM,
+    GYEONGBUK,
+    GYEONGNAM,
+    JEONBUK,
+    JEONNAM,
+    JEJU,
+    REGION,
 }
