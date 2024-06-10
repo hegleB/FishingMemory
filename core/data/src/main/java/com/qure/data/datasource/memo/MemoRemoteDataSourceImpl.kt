@@ -2,12 +2,12 @@ package com.qure.data.datasource.memo
 
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
-import com.qure.data.utils.SIGNED_UP_EMAIL
 import com.qure.data.api.MemoService
 import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoQueryEntity
 import com.qure.data.entity.memo.UpdatedMemoEntity
+import com.qure.data.utils.SIGNED_UP_EMAIL
 import com.qure.model.memo.CollectionId
 import com.qure.model.memo.CompositeFilter
 import com.qure.model.memo.FieldFilter
@@ -22,7 +22,7 @@ import com.qure.model.memo.Value
 import com.qure.model.memo.Where
 import javax.inject.Inject
 
-class MemoRemoteDataSourceImpl
+internal class MemoRemoteDataSourceImpl
 @Inject
 constructor(
     private val memoService: MemoService,

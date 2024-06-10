@@ -7,7 +7,7 @@ import com.qure.data.entity.fishingspot.FishingSpotEntity
 import com.qure.model.fishingspot.FishingSpotQuery
 import javax.inject.Inject
 
-class FishingSpotRemoteDataSourceImpl
+internal class FishingSpotRemoteDataSourceImpl
     @Inject
     constructor(
         private val fishingSpotService: FishingSpotService,

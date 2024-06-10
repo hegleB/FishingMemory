@@ -4,7 +4,7 @@ import com.qure.data.entity.weather.WeatherEntity
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface WeatherService {
+internal interface WeatherService {
     @GET("getUltraSrtFcst")
     suspend fun getWeather(
         @Query("base_date") baseDate: Int,

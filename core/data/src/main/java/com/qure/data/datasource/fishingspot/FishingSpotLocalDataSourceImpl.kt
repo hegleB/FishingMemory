@@ -4,7 +4,7 @@ import com.qure.data.entity.fishingspot.FishingSpotBookmarkEntity
 import com.qure.data.local.FishingSpotDao
 import javax.inject.Inject
 
-class FishingSpotLocalDataSourceImpl
+internal class FishingSpotLocalDataSourceImpl
     @Inject
     constructor(
         private val fishingSpotDao: FishingSpotDao,

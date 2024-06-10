@@ -9,7 +9,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
 
-class MemoStorageRemoteDataSourceImpl
+internal class MemoStorageRemoteDataSourceImpl
     @Inject
     constructor(
         private val storageService: StorageService,

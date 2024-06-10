@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object LocalDataBaseModule {
+internal object LocalDataBaseModule {
     @Provides
     @Singleton
     fun providesFishingSpotDatabase(

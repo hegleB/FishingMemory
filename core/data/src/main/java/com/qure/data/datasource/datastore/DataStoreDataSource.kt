@@ -1,6 +1,6 @@
 package com.qure.data.datasource.datastore
 
-interface DataStoreDataSource {
+internal interface DataStoreDataSource {
     suspend fun readDataSource(key: String): String?
 
     suspend fun writeDataSource(

@@ -5,7 +5,7 @@ import com.qure.data.entity.memo.MemoQueryEntity
 import com.qure.data.entity.memo.UpdatedMemoEntity
 import com.qure.model.memo.MemoFields
 
-interface MemoRemoteDataSource {
+internal interface MemoRemoteDataSource {
     suspend fun postMemo(memoFields: MemoFields): MemoEntity
 
     suspend fun postMemoQuery(): List<MemoQueryEntity>

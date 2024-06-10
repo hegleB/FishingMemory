@@ -43,7 +43,7 @@ class FishMemorySharedPreferenceImpl
         }
     }
 
-interface FishMemorySharedPreference {
+internal interface FishMemorySharedPreference {
     fun putString(
         key: String,
         value: String,

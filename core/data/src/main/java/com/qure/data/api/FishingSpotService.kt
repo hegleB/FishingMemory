@@ -6,7 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface FishingSpotService {
+internal interface FishingSpotService {
     @POST("/v1beta1/projects/{projectId}/databases/(default)/documents:runQuery")
     suspend fun getFishingSpot(
         @Path("projectId") projectId: String,

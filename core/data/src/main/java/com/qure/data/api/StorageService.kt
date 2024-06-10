@@ -7,7 +7,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
 
-interface StorageService {
+internal interface StorageService {
     @Multipart
     @POST("o/memo_image%2F{imageName}")
     suspend fun postMemoImage(

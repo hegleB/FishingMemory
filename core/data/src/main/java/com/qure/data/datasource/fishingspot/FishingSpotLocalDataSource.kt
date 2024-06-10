@@ -2,7 +2,7 @@ package com.qure.data.datasource.fishingspot
 
 import com.qure.data.entity.fishingspot.FishingSpotBookmarkEntity
 
-interface FishingSpotLocalDataSource {
+internal interface FishingSpotLocalDataSource {
     suspend fun insertFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
 
     suspend fun getFishingSpots(): List<FishingSpotBookmarkEntity>

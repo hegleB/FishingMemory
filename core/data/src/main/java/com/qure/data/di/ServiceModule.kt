@@ -29,7 +29,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class ServiceModule {
+internal class ServiceModule {
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class Auth

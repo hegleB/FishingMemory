@@ -4,7 +4,7 @@ import com.qure.data.api.WeatherService
 import com.qure.data.entity.weather.WeatherEntity
 import javax.inject.Inject
 
-class WeatherRemoteDataSourceImpl @Inject constructor(
+internal class WeatherRemoteDataSourceImpl @Inject constructor(
     private val weatherService: WeatherService,
 ) : WeatherRemoteDataSource {
     override suspend fun getWeather(

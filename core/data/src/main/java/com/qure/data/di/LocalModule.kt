@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class LocalModule {
+internal abstract class LocalModule {
     @Binds
     @Singleton
     abstract fun bindSharedPrefernce(fishMemorySharedPreferenceImpl: FishMemorySharedPreferenceImpl): FishMemorySharedPreference

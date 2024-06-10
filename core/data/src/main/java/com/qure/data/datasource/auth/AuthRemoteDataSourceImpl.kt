@@ -10,7 +10,7 @@ import com.qure.model.auth.SignUpFieldsEntity
 import com.qure.model.auth.Token
 import javax.inject.Inject
 
-class AuthRemoteDataSourceImpl
+internal  class AuthRemoteDataSourceImpl
     @Inject
     constructor(
         private val authService: AuthService,

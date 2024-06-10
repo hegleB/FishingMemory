@@ -10,7 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
-class DataStoreDataSourceImpl
+internal class DataStoreDataSourceImpl
     @Inject
     constructor(
         @ApplicationContext private val context: Context,

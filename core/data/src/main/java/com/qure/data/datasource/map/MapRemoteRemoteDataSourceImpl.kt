@@ -5,7 +5,7 @@ import com.qure.data.entity.map.GeocodingEntity
 import com.qure.data.entity.map.ReverseGeocodingEntity
 import javax.inject.Inject
 
-class MapRemoteRemoteDataSourceImpl
+internal class MapRemoteRemoteDataSourceImpl
     @Inject
     constructor(
         private val naverMapService: NaverMapService,

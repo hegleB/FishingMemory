@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class FishingSpotRepositoryImpl
+internal class FishingSpotRepositoryImpl
 @Inject
 constructor(
     private val fishingSpotRemoteDataSource: FishingSpotRemoteDataSource,

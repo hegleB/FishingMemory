@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flow
 import java.io.File
 import javax.inject.Inject
 
-class MemoRepositoryImpl
+internal class MemoRepositoryImpl
 @Inject
 constructor(
     private val memoRemoteDataSource: MemoRemoteDataSource,

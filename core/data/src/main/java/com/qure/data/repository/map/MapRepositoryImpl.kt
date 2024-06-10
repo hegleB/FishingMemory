@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class MapRepositoryImpl
+internal class MapRepositoryImpl
     @Inject
     constructor(
         private val mapRemoteDataSource: MapRemoteDataSource,

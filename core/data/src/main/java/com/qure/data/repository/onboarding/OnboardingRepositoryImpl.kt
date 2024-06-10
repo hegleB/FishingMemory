@@ -3,7 +3,7 @@ package com.qure.data.repository.onboarding
 import com.qure.data.datasource.datastore.DataStoreDataSource
 import javax.inject.Inject
 
-class OnboardingRepositoryImpl
+internal class OnboardingRepositoryImpl
     @Inject
     constructor(
         private val dataStoreDataSource: DataStoreDataSource,

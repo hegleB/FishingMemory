@@ -5,7 +5,7 @@ import com.qure.data.entity.map.ReverseGeocodingEntity
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface NaverMapService {
+internal interface NaverMapService {
     @GET("/map-geocode/v2/geocode")
     suspend fun getGeocoding(
         @Query("query") query: String,
