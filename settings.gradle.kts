@@ -46,4 +46,5 @@ include(
     ":feature:map",
     ":feature:memo",
     ":feature:program-information",
+    ":feature:camera",
 )

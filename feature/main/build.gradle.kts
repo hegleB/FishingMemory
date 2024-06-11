@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":feature:permission"))
     implementation(project(":feature:program-information"))
     implementation(project(":feature:splash"))
+    implementation(project(":feature:camera"))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.accompanist.permissions)
