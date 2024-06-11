@@ -96,6 +96,12 @@ junitVersion = "1.1.5"
 constraintlayout = "2.1.4"
 navigationRuntimeKtx = "2.7.7"
 
+# CameraX
+camerax = "1.3.1"
+
+# ML kit
+mlkit = "17.0.1"
+
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
@@ -119,7 +125,7 @@ androidx-compose-navigation = { group = "androidx.navigation", name = "navigatio
 androidx-compose-navigation-test = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxComposeNavigation" }
 compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
-compose-navermap = { module = "io.github.fornewid:naver-map-compose", version.ref = "navermapCompose"}
+compose-navermap = { module = "io.github.fornewid:naver-map-compose", version.ref = "navermapCompose" }
 
 naver-map-location = { module = "'io.github.fornewid:naver-map-location", version.ref = "naverMapLocation" }
 
@@ -181,7 +187,7 @@ navermap-clustering = { module = "io.github.ParkSangGwon:tedclustering-naver", v
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room"}
+room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 
 ktlint = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-cli", version.ref = "detekt" }
@@ -191,6 +197,14 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+
+mlkit-object-detection = { group = "com.google.mlkit", name = "object-detection", version.ref = "mlkit" }
+
 [bundles]
 
 [plugins]
