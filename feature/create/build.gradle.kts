@@ -11,5 +11,4 @@ android {
 dependencies {
     implementation(project(":build-property"))
     implementation(project(":feature:memo"))
-    implementation(project(":build-property"))
 }
