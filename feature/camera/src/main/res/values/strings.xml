@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_camera_capture">카메라 캡쳐 할 수 없습니다</string>
+    <string name="success_camera_capture">카메라 캡쳐 성공하였습니다</string>
+    <string name="error_detect_camera_capture">카메라 인식 할 수 없습니다</string>
+    <string name="image_path">/data/data/com.qure.fishingmemory/cache/images/%s</string>
+</resources>
