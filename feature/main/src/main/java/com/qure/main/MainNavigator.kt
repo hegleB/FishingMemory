@@ -10,6 +10,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.mindsync.program_information.navigateProgramInformation
+import com.qure.camera.navigateCamera
 import com.qure.create.location.navigateBookmark
 import com.qure.create.location.navigateLocationSetting
 import com.qure.create.navigateMemoCreate
@@ -136,6 +137,10 @@ class MainNavigator(
 
     fun navigateToDarkMode() {
         navController.navigateDarkMode()
+    }
+
+    fun navigateToCamera(memo: MemoUI, isEdit: Boolean) {
+        navController.navigateCamera(memo, isEdit)
     }
 
 

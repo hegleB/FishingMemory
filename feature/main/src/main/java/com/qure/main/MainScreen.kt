@@ -306,8 +306,8 @@ fun MainScreen(
                     galleryNavGraph(
                         onBack = navigator::popBackStack,
                         onClickCamera = { memo ->
-                            navigator.navigateToMemoCreate(
-                                memoUI = memo,
+                            navigator.navigateToCamera(
+                                memo = memo,
                                 isEdit = true,
                             )
                         },
@@ -419,6 +419,16 @@ fun MainScreen(
                     programInformationNavGraph(
                         onBack = navigator::popBackStack,
                         onShowErrorSnackBar = onShowErrorSnackBar,
+                    )
+
+                    cameraNavHost(
+                        onShowErrorSnackBar = onShowErrorSnackBar,
+                        navigateToMemoCreate = { memo ->
+                            navigator.navigateToMemoCreate(
+                                memoUI = memo,
+                                isEdit = true,
+                            )
+                        },
                     )
                 }
             }

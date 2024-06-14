@@ -56,6 +56,12 @@ sealed interface Route {
 
     @Serializable
     data object DarkMode : Route
+
+    @Serializable
+    data class Camera(
+        val memo: String = MemoUI().toMemoString(),
+        val isEdit: Boolean = false,
+    ) : Route
 }
 
 sealed interface MainTabRoute : Route {

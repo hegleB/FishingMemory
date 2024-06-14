@@ -2,9 +2,7 @@ package com.qure.gallery
 
 import android.Manifest
 import android.content.Context
-import android.net.Uri
 import android.provider.MediaStore
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -77,8 +75,6 @@ fun GalleryRoute(
     val images = remember { mutableStateListOf(GalleryImage(0, "")) }
     loadGalleryImages(context = context, images = images)
 
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-
     val cameraPermissionState = rememberPermissionState(
         permission = Manifest.permission.CAMERA
     )
@@ -88,22 +84,6 @@ fun GalleryRoute(
     val writePermissionState = rememberPermissionState(
         permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
-
-
-    var hasImage by remember { mutableStateOf(false) }
-    val resource = LocalContext.current.resources
-    LaunchedEffect(key1 = hasImage) {
-        if (hasImage) {
-            val path = imageUri?.path?.replace("/my_images/", "")
-            onClickCamera(memoUI.copy(image = resource.getString(R.string.image_path, path)))
-        }
-    }
-
-    val takePictureLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
-    ) {
-        hasImage = it
-    }
 
     val stringResource = LocalContext.current.resources
 
@@ -137,26 +117,8 @@ fun GalleryRoute(
         onClickClose = onBack,
         images = images,
         onClickDone = { onClickDone(memoUI.copy(image = it.path)) },
-        onClickTakingPicture = {
-            startCamera(
-                context = context,
-                takePictureLauncher = takePictureLauncher,
-                updateImageUri = { uri ->
-                    imageUri = uri
-                }
-            )
-        }
+        onClickTakingPicture = { onClickCamera(memoUI) },
     )
-}
-
-private fun startCamera(
-    context: Context,
-    takePictureLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
-    updateImageUri: (Uri) -> Unit,
-) {
-    val uri = ComposeFileProvider.getImageUri(context)
-    updateImageUri(uri)
-    takePictureLauncher.launch(uri)
 }
 
 private fun loadGalleryImages(
