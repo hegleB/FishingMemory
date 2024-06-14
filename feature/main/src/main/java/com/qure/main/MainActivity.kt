@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.qure.designsystem.theme.FishingMemoryTheme
@@ -58,6 +59,7 @@ class MainActivity : AppCompatActivity() {
                     DarkModeConfig.SYSTEM -> isSystemInDarkTheme()
                 }
             }
+            val route by viewModel.currentRoute.collectAsStateWithLifecycle()
 
             val navigator: MainNavigator = rememberMainNavigator()
             FishingMemoryTheme(isDarkTheme) {
@@ -70,13 +72,16 @@ class MainActivity : AppCompatActivity() {
                             navigator = navigator,
                             memo = memo,
                             isKakaoOpenDeepLink = true,
+                            route = MainTab.HOME.route,
                         )
                         return@FishingMemoryTheme
                     }
                 }
 
                 MainScreen(
-                    navigator = navigator
+                    navigator = navigator,
+                    setRoute = viewModel::setRoute,
+                    route = route,
                 )
 
             }

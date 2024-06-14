@@ -30,11 +30,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.mindsync.program_information.programInformationNavGraph
+import com.qure.camera.cameraNavHost
 import com.qure.create.location.bookmarkNavGraph
 import com.qure.create.location.locationSettingNavGraph
 import com.qure.create.memoCreateNavGraph
@@ -74,6 +72,8 @@ fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
     isKakaoOpenDeepLink: Boolean = false,
     memo: MemoUI = MemoUI(),
+    setRoute: (Route) -> Unit = { },
+    route: Route = Route.Splash,
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -91,10 +91,6 @@ fun MainScreen(
                 )
             }
         }
-    }
-
-    var currentDestination by remember {
-        mutableStateOf(if (isKakaoOpenDeepLink) MainTab.HOME.route else Route.Splash)
     }
 
     Scaffold(
@@ -135,7 +131,7 @@ fun MainScreen(
                             )
                         },
                         navigateToMemoCreate = {
-                            currentDestination = MainTabRoute.History
+                            setRoute(MainTabRoute.History)
                             navigator.navigateToMemoCreate()
                         },
                         onShowErrorSnackBar = onShowErrorSnackBar,
@@ -235,7 +231,7 @@ fun MainScreen(
 
                     memoCreateNavGraph(
                         onBack = {
-                            when (currentDestination) {
+                            when (route) {
                                 MainTabRoute.History -> {
                                     navigator.navController.navigationHistory(
                                         navOptions {
@@ -324,7 +320,7 @@ fun MainScreen(
                         onBack = navigator::popBackStack,
                         navigateToDetailFishingSpot = navigator::navigateToFishingSpot,
                         navigateToDetailMemo = { memo ->
-                            currentDestination = Route.Map
+                            setRoute(Route.Map)
                             navigator.navigateToMemoDetail(
                                 memoUI = memo,
                             )
@@ -335,7 +331,7 @@ fun MainScreen(
 
                     memoDetailNavGraph(
                         onBack = {
-                            when (currentDestination) {
+                            when (route) {
                                 MainTabRoute.History -> {
                                     navigator.navController.navigationHistory(
                                         navOptions {
@@ -393,7 +389,7 @@ fun MainScreen(
                             )
                         },
                         navigateToMemoCreate = {
-                            currentDestination = Route.MemoList
+                            setRoute(Route.MemoList)
                             navigator.navigateToMemoCreate()
                         },
                         navigateToMemoDetail = { memo ->
