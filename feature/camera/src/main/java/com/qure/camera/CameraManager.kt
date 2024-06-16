@@ -107,21 +107,23 @@ class CameraManager : CameraOperations {
                         val data = buffer.toByteArray()
                         val origin = BitmapFactory.decodeByteArray(data, 0, data.size)
                         objectRect?.let { rect ->
-                            val top = heightConvert(rect.top, screenSize.height, image.height)
-                            val bottom = heightConvert(
-                                rect.bottom,
-                                screenSize.height,
-                                image.height
-                            )
-                            val left = widthConvert(rect.left, screenSize.width, image.width)
-                            val right = widthConvert(rect.right, screenSize.width, image.width)
+                            val widthRatio = image.width.toFloat() / screenSize.width
+                            val heightRatio = image.height.toFloat() / screenSize.height
+
+                            val margin = 100
+
+                            val top = maxOf((rect.top * heightRatio).toInt() - margin, 0)
+                            val bottom = (rect.bottom * heightRatio).toInt()
+                            val left = maxOf((rect.left * widthRatio).toInt() - margin, 0)
+                            val right = (rect.right * widthRatio).toInt() + margin
+
                             try {
                                 val crop = Bitmap.createBitmap(
                                     origin,
                                     left,
                                     top,
                                     abs(right - left),
-                                    abs(bottom - top)
+                                    abs(bottom - top),
                                 )
 
                                 setCropImage(crop)
