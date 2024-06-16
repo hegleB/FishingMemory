@@ -152,7 +152,7 @@ class CameraManager : CameraOperations {
         successCallback: (List<Rect>) -> Unit
     ) {
         val option = ObjectDetectorOptions.Builder()
-            .setDetectorMode(ObjectDetectorOptions.STREAM_MODE)
+            .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
             .enableMultipleObjects()
             .enableClassification()
             .build()
