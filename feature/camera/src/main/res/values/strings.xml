@@ -4,4 +4,8 @@
     <string name="success_camera_capture">카메라 캡쳐 성공하였습니다</string>
     <string name="error_detect_camera_capture">카메라 인식 할 수 없습니다</string>
     <string name="image_path">/data/data/com.qure.fishingmemory/cache/images/%s</string>
+    <string name="single_object_detected">하나의 물체만 인식 중입니다</string>
+    <string name="no_object_detected">현재 인식 중인 물체가 없습니다</string>
+    <string name="message_level">수평을 맞춰주세요</string>
+    <string name="measuring_fish_size">현재 물고기 사이즈 측정 중...</string>
 </resources>

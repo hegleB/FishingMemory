@@ -8,13 +8,19 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -38,6 +47,7 @@ import com.qure.camera.utils.ComposeFileProvider
 import com.qure.designsystem.theme.Blue500
 import com.qure.designsystem.theme.Blue600
 import com.qure.designsystem.theme.Gray500
+import com.qure.designsystem.theme.White
 import com.qure.feature.camera.R
 import com.qure.model.camera.ObjectRect
 import com.qure.ui.component.CameraFrameCorners
@@ -141,6 +151,54 @@ fun CameraScreen(
                     .fillMaxSize(),
             )
         }
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(horizontal = 100.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+
+            Image(
+                modifier = Modifier
+                    .size(120.dp),
+                painter = painterResource(com.qure.core.designsystem.R.drawable.ic_fish),
+                contentDescription = null,
+            )
+
+            Spacer(modifier = Modifier.height(100.dp))
+            Image(
+                modifier = Modifier
+                    .size(120.dp),
+                painter = painterResource(com.qure.core.designsystem.R.drawable.ic_credit_card),
+                contentDescription = null,
+            )
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 20.dp, top = 10.dp)
+                .background(
+                    color = when {
+                        cameraUiState.isLevelCorrect.not() -> Color.Red
+                        else -> Color(0x800000FF)
+                    }
+                ),
+        ) {
+            Text(
+                text = stringResource(
+                    id =
+                    when {
+                        cameraUiState.isLevelCorrect.not() -> R.string.message_level
+                        cameraUiState.fishSize == null -> R.string.no_object_detected
+                        cameraUiState.cardSize == null -> R.string.single_object_detected
+                        else -> R.string.measuring_fish_size
+                    }
+                ),
+                fontSize = 20.sp,
+                color = White
+            )
+        }
 
         if (cameraUiState.isLevelCorrect) {
             cameraUiState.fishSize?.let { fishRect ->
@@ -171,7 +229,7 @@ fun CameraScreen(
             modifier = Modifier
                 .size(200.dp)
                 .align(Alignment.BottomStart)
-                .padding(bottom = 10.dp, start = 10.dp),
+                .padding(bottom = 10.dp, end = 10.dp),
             changeLevel = changeLevel,
         )
 
@@ -182,12 +240,7 @@ fun CameraScreen(
             onClick = {
                 cameraUiState.fishSize?.let { fishSize ->
                     cameraManager.takePicture(
-                        objectRect = ObjectRect(
-                            top = fishSize.top,
-                            bottom = fishSize.bottom,
-                            left = fishSize.left,
-                            right = fishSize.right,
-                        ),
+                        objectRect = fishSize,
                         setCropImage = setCropImage,
                         sendMessage = sendMessage,
                     )
