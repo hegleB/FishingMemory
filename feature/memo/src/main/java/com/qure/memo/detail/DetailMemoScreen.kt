@@ -192,7 +192,7 @@ private fun DetailMemoScreen(
                 .height(350.dp),
             model = memo.image,
             contentDescription = null,
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Fit,
         )
 
         Row(

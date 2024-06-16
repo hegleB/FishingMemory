@@ -536,7 +536,7 @@ private fun MemoItem(
                         modifier = imageModifier,
                         model = if (value.isEmpty()) com.qure.core.designsystem.R.drawable.ic_image else value,
                         contentDescription = null,
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.Fit,
                     )
                 }
             }
