@@ -23,9 +23,14 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -34,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
@@ -64,6 +70,9 @@ import com.qure.onboarding.onboardingNavGraph
 import com.qure.permission.permissionNavGraph
 import com.qure.splash.splashNavGraph
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.SnackBarMessageType
+import com.qure.ui.model.SnackBarMessageType.Companion.isFailureMessageType
+import com.qure.ui.model.SnackBarType
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
@@ -84,12 +93,34 @@ fun MainScreen(
             throwable?.message?.let {
                 println("SnackBarMessage :  $it$")
                 snackBarHostState.showSnackbar(
-                    when (throwable) {
+                    message = when (throwable) {
                         is UnknownHostException -> localContextResource.getString(R.string.error_message_network)
                         else -> localContextResource.getString(R.string.error_message_unknown)
-                    }
+                    },
+                    actionLabel = SnackBarType.NETWORK_ERROR.name,
+                    duration = SnackbarDuration.Short,
                 )
             }
+        }
+    }
+
+    val onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit = { messageType ->
+        coroutineScope.launch {
+            val message = when (messageType) {
+                SnackBarMessageType.SAVE_MEMO -> localContextResource.getString(R.string.save_memo_message)
+                SnackBarMessageType.DELETE_MEMO -> localContextResource.getString(R.string.delete_success_message)
+                SnackBarMessageType.UPDATE_MEMO -> localContextResource.getString(R.string.update_memo_message)
+                SnackBarMessageType.DELETE_ALL_BOOKMARK -> localContextResource.getString(R.string.delete_bookmark_all_delete_message)
+                SnackBarMessageType.CAMERA_CAPTURE_SUCCESS -> localContextResource.getString(R.string.camera_capture_success_message)
+                SnackBarMessageType.CAMERA_CAPTURE_DETECT_FAILURE -> localContextResource.getString(R.string.detect_camera_capture_error__message)
+                SnackBarMessageType.CAMERA_CAPTURE_FAILURE -> localContextResource.getString(R.string.camera_capture_error_message)
+                SnackBarMessageType.PERMISSION_FAILURE -> localContextResource.getString(R.string.permission_denied_message)
+            }
+            snackBarHostState.showSnackbar(
+                message = message,
+                actionLabel = if (messageType.isFailureMessageType()) SnackBarType.ERROR.name else SnackBarType.SUCCESS.name,
+                duration = SnackbarDuration.Short,
+            )
         }
     }
 
@@ -213,7 +244,7 @@ fun MainScreen(
                                 }
                             )
                         },
-                        onShowErrorSnackBar = onShowErrorSnackBar
+                        onShowErrorSnackBar = onShowErrorSnackBar,
                     )
 
                     loginNavGraph(
@@ -226,7 +257,7 @@ fun MainScreen(
                                 }
                             )
                         },
-                        onShowErrorSnackBar = onShowErrorSnackBar
+                        onShowErrorSnackBar = onShowErrorSnackBar,
                     )
 
                     memoCreateNavGraph(
@@ -273,6 +304,7 @@ fun MainScreen(
                             )
                         },
                         onShowErrorSnackBar = onShowErrorSnackBar,
+                        onShowMessageSnackBar = onShowMessageSnackBar,
                     )
 
                     locationSettingNavGraph(
@@ -297,6 +329,7 @@ fun MainScreen(
                         navigateToFishingSpot = navigator::navigateToFishingSpot,
                         onClickPhoneNumber = { phoneNumber -> showPhoneCall(context, phoneNumber) },
                         onShowErrorSnackBar = onShowErrorSnackBar,
+                        onShowMessageSnackBar = onShowMessageSnackBar,
                     )
 
                     galleryNavGraph(
@@ -314,6 +347,7 @@ fun MainScreen(
                             )
                         },
                         onShowErrorSnackBar = onShowErrorSnackBar,
+                        onShowMessageSnackBar = onShowMessageSnackBar,
                     )
 
                     mapNavGraph(
@@ -375,6 +409,7 @@ fun MainScreen(
                             )
                         },
                         onShowErrorSnackBar = onShowErrorSnackBar,
+                        onShowMessageSnackBar = onShowMessageSnackBar,
                     )
 
                     memoListNavGraph(
@@ -409,22 +444,20 @@ fun MainScreen(
 
                     darkModeNavGraph(
                         onBack = navigator::popBackStack,
-                        onShowErrorSnackBar = onShowErrorSnackBar,
                     )
 
                     programInformationNavGraph(
                         onBack = navigator::popBackStack,
-                        onShowErrorSnackBar = onShowErrorSnackBar,
                     )
 
                     cameraNavHost(
-                        onShowErrorSnackBar = onShowErrorSnackBar,
                         navigateToMemoCreate = { memo ->
                             navigator.navigateToMemoCreate(
                                 memoUI = memo,
                                 isEdit = true,
                             )
                         },
+                        onShowMessageSnackBar = onShowMessageSnackBar,
                     )
                 }
             }
@@ -439,7 +472,43 @@ fun MainScreen(
                 }
             )
         },
-        snackbarHost = { SnackbarHost(snackBarHostState) }
+        snackbarHost = {
+            SnackbarHost(snackBarHostState) { snackBarData ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .padding(bottom = 10.dp)
+                        .padding(horizontal = 10.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.onBackground,
+                            shape = RoundedCornerShape(5.dp),
+                        ),
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .padding(start = 20.dp)
+                            .align(Alignment.CenterVertically),
+                        imageVector = when (snackBarData.visuals.actionLabel) {
+                            SnackBarType.SUCCESS.name -> Icons.Default.CheckCircle
+                            else -> Icons.Default.Warning
+                        },
+                        contentDescription = null,
+                        tint = when (snackBarData.visuals.actionLabel) {
+                            SnackBarType.SUCCESS.name -> Color.Green
+                            else -> Color.Red
+                        },
+                    )
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 10.dp),
+                        text = snackBarData.visuals.message,
+                        color = MaterialTheme.colorScheme.background,
+                    )
+                }
+            }
+        }
     )
 }
 

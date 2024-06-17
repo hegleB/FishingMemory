@@ -42,8 +42,6 @@ import com.qure.feature.mypage.R
 fun DarkModeRoute(
     onBack: () -> Unit,
     viewModel: DarkModeViewModel = hiltViewModel(),
-    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-
 ) {
     val currentThemeMode by viewModel.currentThemeMode.collectAsStateWithLifecycle()
 

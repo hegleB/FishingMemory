@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity() {
                         MainScreen(
                             navigator = navigator,
                             memo = memo,
-                            isKakaoOpenDeepLink = true,
                             route = MainTab.HOME.route,
                         )
                         return@FishingMemoryTheme

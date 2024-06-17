@@ -6,11 +6,13 @@ import com.qure.domain.usecase.bookmark.GetFishingSpotBookmarksUseCase
 import com.qure.fishingspot.FishingSpotUiState
 import com.qure.model.toFishingSpotUI
 import com.qure.ui.base.BaseViewModel
+import com.qure.ui.model.SnackBarMessageType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,7 +45,11 @@ constructor(
 
     fun deleteAllBookmarks() {
         viewModelScope.launch {
-            deleteAllFishingSpotBookmarkUseCase()
+            flow {  emit(deleteAllFishingSpotBookmarkUseCase()) }
+                .catch { throwable -> sendErrorMessage(throwable) }
+                .collectLatest {
+                    sendMessage(SnackBarMessageType.DELETE_ALL_BOOKMARK)
+                }
             fetchFishingSpotBookmark()
         }
     }

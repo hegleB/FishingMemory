@@ -14,6 +14,7 @@ import com.qure.model.memo.Document
 import com.qure.model.memo.MemoStorage
 import com.qure.ui.base.BaseViewModel
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.SnackBarMessageType
 import com.qure.ui.model.toMemoFields
 import com.qure.ui.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,6 +84,7 @@ constructor(
                 }
                 .collectLatest {
                     _memoCreateUiState.value = MemoCreateUiState.Success(memo.value)
+                    sendMessage(SnackBarMessageType.SAVE_MEMO)
                 }
         }
     }
@@ -119,6 +121,7 @@ constructor(
                 }
                 .collectLatest { document ->
                     _memoCreateUiState.value = MemoCreateUiState.Success(document.toMemoUI())
+                    sendMessage(SnackBarMessageType.UPDATE_MEMO)
                 }
         }
     }

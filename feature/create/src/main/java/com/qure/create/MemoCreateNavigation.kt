@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.qure.navigation.Route
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.SnackBarMessageType
 import com.qure.ui.model.toMemoUI
 
 fun NavController.navigateMemoCreate(
@@ -23,6 +24,7 @@ fun NavGraphBuilder.memoCreateNavGraph(
     navigateToLocationSetting: (MemoUI) -> Unit,
     navigateToGallery: (MemoUI) -> Unit,
     navigateToMemoDetail: (MemoUI) -> Unit,
+    onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
 ) {
     composable<Route.MemoCreate> { navBackStackEntry ->
         val memo = navBackStackEntry.toRoute<Route.MemoDetail>().memo.toMemoUI()
@@ -35,6 +37,7 @@ fun NavGraphBuilder.memoCreateNavGraph(
             navigateToGallery = navigateToGallery,
             navigateToMemoDetail = navigateToMemoDetail,
             onShowErrorSnackBar = onShowErrorSnackBar,
+            onShowMessageSnackBar = onShowMessageSnackBar,
         )
     }
 }

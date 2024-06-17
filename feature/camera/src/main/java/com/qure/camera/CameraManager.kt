@@ -27,8 +27,8 @@ import com.qure.camera.utils.getCameraProvider
 import com.qure.camera.utils.heightConvert
 import com.qure.camera.utils.toByteArray
 import com.qure.camera.utils.widthConvert
-import com.qure.feature.camera.R
 import com.qure.model.camera.ObjectRect
+import com.qure.ui.model.SnackBarMessageType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -92,14 +92,14 @@ class CameraManager : CameraOperations {
     override fun takePicture(
         objectRect: ObjectRect<Int>?,
         setCropImage: (Bitmap) -> Unit,
-        sendMessage: (String) -> Unit,
+        sendMessage: (SnackBarMessageType) -> Unit,
     ) {
         CoroutineScope(Dispatchers.Default + SupervisorJob()).launch {
             imageCapture.takePicture(
                 ContextCompat.getMainExecutor(context),
                 object : ImageCapture.OnImageCapturedCallback() {
                     override fun onError(exc: ImageCaptureException) {
-                        sendMessage(resources.getString(R.string.error_camera_capture))
+                        sendMessage(SnackBarMessageType.CAMERA_CAPTURE_FAILURE)
                     }
 
                     override fun onCaptureSuccess(image: ImageProxy) {
@@ -127,14 +127,14 @@ class CameraManager : CameraOperations {
                                 )
 
                                 setCropImage(crop)
-                                sendMessage(resources.getString(R.string.success_camera_capture))
+                                sendMessage(SnackBarMessageType.CAMERA_CAPTURE_SUCCESS)
                                 image.close()
                             } catch (e: Exception) {
                                 return
 
                             }
                         } ?: run {
-                            sendMessage(resources.getString(R.string.error_detect_camera_capture))
+                            sendMessage(SnackBarMessageType.CAMERA_CAPTURE_DETECT_FAILURE)
                             image.close()
                         }
                     }

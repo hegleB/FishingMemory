@@ -2,6 +2,7 @@ package com.qure.ui.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.qure.ui.model.SnackBarMessageType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,6 +18,10 @@ abstract class BaseViewModel : ViewModel() {
     val error: SharedFlow<Throwable>
         get() = _error
 
+    protected val _message = MutableSharedFlow<SnackBarMessageType>()
+    val message: SharedFlow<SnackBarMessageType>
+        get()= _message
+
     fun startLoading() {
         _isLoading.value = true
     }
@@ -28,6 +33,12 @@ abstract class BaseViewModel : ViewModel() {
     fun sendErrorMessage(throwable: Throwable) {
         viewModelScope.launch {
             _error.emit(throwable)
+        }
+    }
+
+    fun sendMessage(messageType: SnackBarMessageType) {
+        viewModelScope.launch {
+            _message.emit(messageType)
         }
     }
 }

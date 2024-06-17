@@ -55,14 +55,15 @@ import com.qure.ui.component.CameraFrameCorners
 import com.qure.ui.component.LevelIndicatorView
 import com.qure.ui.component.RectangleView
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.SnackBarMessageType
 import kotlinx.coroutines.launch
 
 @Composable
 fun CameraRoute(
-    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     memoUI: MemoUI,
     navigateToMemoCreate: (MemoUI) -> Unit,
-    viewModel: CameraViewModel = hiltViewModel()
+    onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
+    viewModel: CameraViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val cameraUiState by viewModel.cameraUiState.collectAsStateWithLifecycle()
@@ -93,9 +94,7 @@ fun CameraRoute(
                 )
             }
         },
-        sendMessage = { message ->
-            onShowErrorSnackBar(Throwable(message))
-        },
+        sendMessage = onShowMessageSnackBar,
         setDetectedRect = viewModel::setDetectedRect,
         changeLevel = viewModel::changeLevel,
     )
@@ -108,7 +107,7 @@ fun CameraScreen(
     context: Context,
     cameraUiState: CameraUiState = CameraUiState(),
     setCropImage: (Bitmap) -> Unit,
-    sendMessage: (String) -> Unit,
+    sendMessage: (SnackBarMessageType) -> Unit,
     setDetectedRect: (List<ObjectRect<Int>>) -> Unit,
     changeLevel: (Float, Float) -> Unit,
 ) {

@@ -11,12 +11,10 @@ fun NavController.navigateDarkMode() {
 
 fun NavGraphBuilder.darkModeNavGraph(
     onBack: () -> Unit,
-    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     composable<DarkModeRoute> {
         DarkModeRoute(
             onBack = onBack,
-            onShowErrorSnackBar = onShowErrorSnackBar,
         )
     }
 }

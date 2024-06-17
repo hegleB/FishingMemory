@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.qure.fishingspot.bookmark.BookmarkRoute
 import com.qure.model.FishingSpotUI
+import com.qure.ui.model.SnackBarMessageType
 import com.qure.navigation.Route.Bookmark as BookmarkRoute
 
 fun NavController.navigateBookmark() {
@@ -16,6 +17,7 @@ fun NavGraphBuilder.bookmarkNavGraph(
     onBack: () -> Unit,
     navigateToFishingSpot: (FishingSpotUI) -> Unit,
     onClickPhoneNumber: (String) -> Unit,
+    onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
 ) {
     composable<BookmarkRoute> {
         BookmarkRoute(
@@ -23,6 +25,7 @@ fun NavGraphBuilder.bookmarkNavGraph(
             navigateToFishingSpot = navigateToFishingSpot,
             onClickPhoneNumber = onClickPhoneNumber,
             onShowErrorSnackBar = onShowErrorSnackBar,
+            onShowMessageSnackBar = onShowMessageSnackBar,
         )
     }
 }

@@ -53,6 +53,7 @@ import com.qure.designsystem.utils.FMPreview
 import com.qure.feature.gallery.R
 import com.qure.model.gallery.GalleryImage
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.SnackBarMessageType
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -64,6 +65,7 @@ fun GalleryRoute(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onClickCamera: (MemoUI) -> Unit,
     onClickDone: (MemoUI) -> Unit,
+    onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
     viewModel: GalleryViewModel = hiltViewModel(),
 ) {
 
@@ -85,13 +87,11 @@ fun GalleryRoute(
         permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
-    val stringResource = LocalContext.current.resources
-
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted.not()) {
-            viewModel.sendErrorMessage(Throwable(message = stringResource.getString(com.qure.core.ui.R.string.permission_denied)))
+            onShowMessageSnackBar(SnackBarMessageType.PERMISSION_FAILURE)
         }
     }
 

@@ -42,6 +42,7 @@ import com.qure.designsystem.utils.FMPreview
 import com.qure.feature.fishingspot.R
 import com.qure.fishingspot.FishingSpotUiState
 import com.qure.model.FishingSpotUI
+import com.qure.ui.model.SnackBarMessageType
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -51,10 +52,14 @@ fun BookmarkRoute(
     navigateToFishingSpot: (FishingSpotUI) -> Unit,
     onClickPhoneNumber: (String) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
 ) {
-
     LaunchedEffect(viewModel.error) {
         viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
+    LaunchedEffect(viewModel.message) {
+        viewModel.message.collectLatest(onShowMessageSnackBar)
     }
 
     val fishingSpotUiState by viewModel.fishingSpotUiState.collectAsStateWithLifecycle()
@@ -80,7 +85,7 @@ fun BookmarkRoute(
         fishingSpotUiState = fishingSpotUiState,
         navigateToFishingSpot = navigateToFishingSpot,
         onClickPhoneNumber = onClickPhoneNumber,
-        onClickDelete = { viewModel.deleteAllBookmarks() },
+        onClickDelete = viewModel::deleteAllBookmarks,
     )
 }
 

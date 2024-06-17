@@ -7,6 +7,7 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
 import com.qure.model.camera.ObjectRect
+import com.qure.ui.model.SnackBarMessageType
 
 interface CameraOperations {
     fun initialize(context: Context)
@@ -14,7 +15,7 @@ interface CameraOperations {
     fun takePicture(
         objectRect: ObjectRect<Int>?,
         setCropImage: (Bitmap) -> Unit,
-        sendMessage: (String) -> Unit,
+        sendMessage: (SnackBarMessageType) -> Unit,
     )
     fun unBindCamera()
     fun getPreviewView(): PreviewView

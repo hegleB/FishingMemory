@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.qure.navigation.Route
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.SnackBarMessageType
 import com.qure.ui.model.toMemoUI
 import com.qure.navigation.Route.MemoDetail as MemoDetailRoute
 
@@ -18,6 +19,7 @@ fun NavGraphBuilder.memoDetailNavGraph(
     onBack: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onClickEdit: (MemoUI) -> Unit,
+    onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
 ) {
     composable<MemoDetailRoute> { navBackStackEntry ->
         val memo = navBackStackEntry.toRoute<Route.MemoDetail>().memo.toMemoUI()
@@ -26,6 +28,7 @@ fun NavGraphBuilder.memoDetailNavGraph(
             onBack = onBack,
             onClickEdit = onClickEdit,
             onShowErrorSnackBar = onShowErrorSnackBar,
+            onShowMessageSnackBar = onShowMessageSnackBar,
         )
     }
 }

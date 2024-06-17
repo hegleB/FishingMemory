@@ -78,6 +78,7 @@ import com.qure.designsystem.utils.FMPreview
 import com.qure.feature.create.R
 import com.qure.ui.component.FMCalendarDialog
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.SnackBarMessageType
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -90,6 +91,7 @@ fun MemoCreateRoute(
     navigateToGallery: (MemoUI) -> Unit,
     navigateToMemoDetail: (MemoUI) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
     viewModel: MemoViewModel = hiltViewModel(),
 ) {
 
@@ -99,6 +101,10 @@ fun MemoCreateRoute(
             viewModel.setMemoUi(memo)
             viewModel.setEditMode(true)
         }
+    }
+
+    LaunchedEffect(viewModel.message) {
+        viewModel.message.collectLatest(onShowMessageSnackBar)
     }
 
     LaunchedEffect(viewModel.error) {

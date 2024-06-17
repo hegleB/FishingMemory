@@ -5,4 +5,13 @@
     <string name="open_source_license_url">https://sites.google.com/view/fishingmemory-license/%ED%99%88</string>
     <string name="policy_service_url">https://sites.google.com/view/fishingmemory-policyservice/%ED%99%88</string>
     <string name="policy_privacy_url">https://sites.google.com/view/fishingmemory-privacypolicy/%ED%99%88</string>
+
+    <string name="save_memo_message">작성한 메모가 저장되었습니다.</string>
+    <string name="update_memo_message">메모가 수정되었습니다.</string>
+    <string name="delete_success_message">삭제가 완료되었습니다</string>
+    <string name="camera_capture_error_message">카메라 캡쳐 할 수 없습니다</string>
+    <string name="camera_capture_success_message">카메라 캡쳐 성공하였습니다</string>
+    <string name="detect_camera_capture_error__message">카메라 인식 할 수 없습니다</string>
+    <string name="delete_bookmark_all_delete_message">모든 북마크가 삭제되었습니다.</string>
+    <string name="permission_denied_message">권한이 거부되었습니다.</string>
 </resources>

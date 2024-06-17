@@ -48,6 +48,7 @@ import com.qure.feature.memo.R
 import com.qure.memo.share.DeepLinkHelper
 import com.qure.memo.share.KakaoLinkSender
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.SnackBarMessageType
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -56,6 +57,7 @@ fun DetailMemoRoute(
     onBack: () -> Unit,
     onClickEdit: (MemoUI) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
     viewModel: DetailMemoViewModel = hiltViewModel(),
 ) {
     val detailMemoUiState by viewModel.detailMemoUiState.collectAsStateWithLifecycle()
@@ -90,6 +92,7 @@ fun DetailMemoRoute(
                 viewModel.sendErrorMessage(Throwable(error))
             }.createDynamicLink(memo)
         },
+        showSnackBar = onShowMessageSnackBar,
     )
 }
 
@@ -103,7 +106,7 @@ private fun DetailMemoScreen(
     onClickEdit: () -> Unit = { },
     onClickKakaoShare: () -> Unit = { },
     onClickMoreShare: () -> Unit = { },
-    showSnackBar: (String) -> Unit = { },
+    showSnackBar: (SnackBarMessageType) -> Unit = { },
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var deleteDialogState by remember { mutableStateOf(false) }
@@ -148,7 +151,7 @@ private fun DetailMemoScreen(
             }
 
             DetailMemoUiState.Success -> {
-                showSnackBar(stringResource(id = R.string.delete_success_message))
+                showSnackBar(SnackBarMessageType.DELETE_MEMO)
                 onBack()
             }
         }

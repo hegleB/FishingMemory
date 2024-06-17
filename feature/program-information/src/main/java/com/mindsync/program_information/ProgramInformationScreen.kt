@@ -1,4 +1,4 @@
-package com.qure.program_information
+package com.mindsync.program_information
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,6 @@ import com.qure.designsystem.component.FMWebView
 fun ProgramInformationRoute(
     webUrl: String = "",
     onBack: () -> Unit,
-    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     ProgramInformationScreen(
         webUrl = webUrl,
