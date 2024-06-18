@@ -442,8 +442,10 @@ private fun FishItem(
         stringResource(id = R.string.fish_size) -> memos.map { it.fishSize }
         else -> memos.map {
             val location = it.location.split(String.Spacing)
-            location[1].ifEmpty {
+            if (location.size <= 1) {
                 location[0]
+            } else {
+                location[1]
             }
         }
     }
