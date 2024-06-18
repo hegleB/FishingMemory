@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.qure.data.utils.NetworkMonitor
 import com.qure.designsystem.theme.FishingMemoryTheme
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_BASE_URL
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_CONTENT
@@ -31,9 +32,13 @@ import com.qure.ui.model.MemoUI
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -60,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             val route by viewModel.currentRoute.collectAsStateWithLifecycle()
+            val isConnectNetwork by networkMonitor.isConnectNetwork.collectAsStateWithLifecycle(true)
 
             val navigator: MainNavigator = rememberMainNavigator()
             FishingMemoryTheme(isDarkTheme) {
@@ -72,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                             navigator = navigator,
                             memo = memo,
                             route = MainTab.HOME.route,
+                            isConnectNetwork = isConnectNetwork
                         )
                         return@FishingMemoryTheme
                     }
@@ -81,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                     navigator = navigator,
                     setRoute = viewModel::setRoute,
                     route = route,
+                    isConnectNetwork = isConnectNetwork,
                 )
 
             }

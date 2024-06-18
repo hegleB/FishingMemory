@@ -12,6 +12,8 @@ import com.qure.data.datasource.memo.MemoStorageRemoteDataSource
 import com.qure.data.datasource.memo.MemoStorageRemoteDataSourceImpl
 import com.qure.data.datasource.weather.WeatherRemoteDataSource
 import com.qure.data.datasource.weather.WeatherRemoteDataSourceImpl
+import com.qure.data.utils.ConnectivityNetworkMonitor
+import com.qure.data.utils.NetworkMonitor
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -44,4 +46,8 @@ internal abstract class RemoteModule {
     @Binds
     @Singleton
     abstract fun bindMemoStorageRemoteDataResource(dataSource: MemoStorageRemoteDataSourceImpl): MemoStorageRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindNetworkMonitor(connectivityNetworkMonitor: ConnectivityNetworkMonitor): NetworkMonitor
 }

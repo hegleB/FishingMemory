@@ -35,6 +35,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -83,23 +84,35 @@ fun MainScreen(
     memo: MemoUI = MemoUI(),
     setRoute: (Route) -> Unit = { },
     route: Route = Route.Splash,
+    isConnectNetwork: Boolean,
 ) {
+
     val snackBarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val localContextResource = LocalContext.current.resources
+
+    LaunchedEffect(isConnectNetwork) {
+        if (isConnectNetwork.not()) {
+            snackBarHostState.showSnackbar(
+                message = localContextResource.getString(R.string.error_message_network),
+                actionLabel = SnackBarType.NETWORK_ERROR.name,
+                duration = SnackbarDuration.Indefinite,
+            )
+        }
+    }
+
     val onShowErrorSnackBar: (throwable: Throwable?) -> Unit = { throwable ->
         coroutineScope.launch {
-            throwable?.message?.let {
-                println("SnackBarMessage :  $it$")
-                snackBarHostState.showSnackbar(
-                    message = when (throwable) {
-                        is UnknownHostException -> localContextResource.getString(R.string.error_message_network)
-                        else -> localContextResource.getString(R.string.error_message_unknown)
-                    },
-                    actionLabel = SnackBarType.NETWORK_ERROR.name,
-                    duration = SnackbarDuration.Short,
-                )
+            if (throwable !is UnknownHostException) {
+                throwable?.message?.let {
+                    println("SnackBarMessage :  $it$")
+                    snackBarHostState.showSnackbar(
+                        message = localContextResource.getString(R.string.error_message_unknown),
+                        actionLabel = SnackBarType.NETWORK_ERROR.name,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
             }
         }
     }
@@ -112,7 +125,10 @@ fun MainScreen(
                 SnackBarMessageType.UPDATE_MEMO -> localContextResource.getString(R.string.update_memo_message)
                 SnackBarMessageType.DELETE_ALL_BOOKMARK -> localContextResource.getString(R.string.delete_bookmark_all_delete_message)
                 SnackBarMessageType.CAMERA_CAPTURE_SUCCESS -> localContextResource.getString(R.string.camera_capture_success_message)
-                SnackBarMessageType.CAMERA_CAPTURE_DETECT_FAILURE -> localContextResource.getString(R.string.detect_camera_capture_error__message)
+                SnackBarMessageType.CAMERA_CAPTURE_DETECT_FAILURE -> localContextResource.getString(
+                    R.string.detect_camera_capture_error__message
+                )
+
                 SnackBarMessageType.CAMERA_CAPTURE_FAILURE -> localContextResource.getString(R.string.camera_capture_error_message)
                 SnackBarMessageType.PERMISSION_FAILURE -> localContextResource.getString(R.string.permission_denied_message)
             }
