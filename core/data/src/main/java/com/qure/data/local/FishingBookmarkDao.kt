@@ -12,15 +12,15 @@ internal interface FishingBookmarkDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
 
-    @Query("select * from fishingspot_table")
+    @Query("select * from fishing_spot_bookmark_table")
     suspend fun getFishingSpots(): List<FishingSpotBookmarkEntity>
 
-    @Query("select EXISTS(SELECT * from fishingspot_table where number = :number)")
+    @Query("select EXISTS(SELECT * from fishing_spot_bookmark_table where number = :number)")
     suspend fun checkFishingSpot(number: Int): Boolean
 
     @Delete
     suspend fun deleteFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
 
-    @Query("delete from fishingspot_table")
+    @Query("delete from fishing_spot_bookmark_table")
     suspend fun deleteAllFishingSpots()
 }

@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.serialization.Serializable
 
-@Entity(tableName = "fishingspot_table")
+@Entity(tableName = "fishing_spot_bookmark_table")
 @Serializable
 data class FishingSpotBookmarkEntity(
     @PrimaryKey val number: Int,
