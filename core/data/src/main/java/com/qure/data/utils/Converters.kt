@@ -1,6 +1,7 @@
 package com.qure.data.utils
 
 import androidx.room.TypeConverter
+import com.qure.model.fishingspot.Document
 import com.qure.model.memo.MemoFieldsEntity
 import com.qure.model.weather.Response
 import kotlinx.serialization.encodeToString
@@ -27,4 +28,15 @@ class Converters {
     fun toWeatherResponse(responseString: String): Response {
         return Json.decodeFromString(responseString)
     }
+
+    @TypeConverter
+    fun fromFishingSpotDocument(document: Document): String {
+        return Json.encodeToString(document)
+    }
+
+    @TypeConverter
+    fun toFishingSpotDocument(documentString: String): Document {
+        return Json.decodeFromString(documentString)
+    }
+
 }

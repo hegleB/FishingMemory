@@ -1,15 +1,15 @@
 package com.qure.data.api
 
-import com.qure.data.entity.fishingspot.FishingSpotEntity
-import com.qure.model.fishingspot.FishingSpotQuery
-import retrofit2.http.Body
-import retrofit2.http.POST
+import com.qure.data.entity.fishingspot.FishingSpotsResponse
+import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 internal interface FishingSpotService {
-    @POST("/v1beta1/projects/{projectId}/databases/(default)/documents:runQuery")
-    suspend fun getFishingSpot(
+    @GET("/v1/projects/{projectId}/databases/(default)/documents/{collectionId}")
+    suspend fun getFishingSpots(
         @Path("projectId") projectId: String,
-        @Body fishingSpotQuery: FishingSpotQuery,
-    ): List<FishingSpotEntity>
+        @Path("collectionId") collectionId: String,
+        @Query("pageToken") nextPageToken: String? = null,
+    ): FishingSpotsResponse
 }

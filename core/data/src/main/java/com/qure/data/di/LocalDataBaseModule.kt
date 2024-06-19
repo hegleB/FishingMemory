@@ -34,4 +34,8 @@ internal object LocalDataBaseModule {
     @Provides
     @Singleton
     fun providesWeather(database: FishingDatabase) = database.weatherDao()
+
+    @Provides
+    @Singleton
+    fun providesFishingSpot(database: FishingDatabase) = database.fishingSpotDao()
 }

@@ -3,15 +3,9 @@ package com.qure.map
 import androidx.lifecycle.viewModelScope
 import com.qure.domain.usecase.fishingspot.GetFishingSpotUseCase
 import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
-import com.qure.model.fishingspot.CollectionId
-import com.qure.model.fishingspot.FishingSpotQuery
-import com.qure.model.fishingspot.StructuredQuery
-import com.qure.model.fishingspot.Where
+import com.qure.model.fishingspot.FishingSpot
 import com.qure.model.map.MapType
 import com.qure.model.map.MarkerType
-import com.qure.model.memo.FieldFilter
-import com.qure.model.memo.FieldPath
-import com.qure.model.memo.Value
 import com.qure.model.toFishingSpotUI
 import com.qure.ui.base.BaseViewModel
 import com.qure.ui.model.FishingPlaceInfo
@@ -64,17 +58,31 @@ constructor(
 
     fun fetchFishingSpot(fishingGroundType: MarkerType) {
         viewModelScope.launch {
-            getFishingSpotUseCase(getStructuredQuery(fishingGroundType.value))
+            getFishingSpotUseCase(FISHING_SPOT_COLLECTION_ID)
                 .map { fishingSpots ->
-                    MapUiState.Success(fishingSpots = fishingSpots.map { fishingSpot ->
-                        FishingPlaceInfo.FishingSpotInfo(fishingSpot.toFishingSpotUI())
-                    })
+                    MapUiState.Success(
+                        fishingSpots = filterFishingSpots(
+                            fishingSpots,
+                            fishingGroundType.value
+                        ),
+                    )
                 }
                 .onStart { _mapUiState.value = MapUiState.Loading }
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .collectLatest { mapUiState ->
                     _mapUiState.value = mapUiState
                 }
+        }
+    }
+
+    private fun filterFishingSpots(
+        fishingSpots: List<FishingSpot>,
+        fishingGroundType: String
+    ): List<FishingPlaceInfo.FishingSpotInfo> {
+        return fishingSpots.filter {
+            it.document.fields.fishing_ground_type.stringValue == fishingGroundType
+        }.map { fishingSpot ->
+            FishingPlaceInfo.FishingSpotInfo(fishingSpot.toFishingSpotUI())
         }
     }
 
@@ -118,21 +126,21 @@ constructor(
         _sheetHeight.value = height
     }
 
-    private fun getStructuredQuery(fishingGroundType: String): FishingSpotQuery {
-        val fieldFilter =
-            FieldFilter(
-                op = "EQUAL",
-                field = FieldPath("fishing_ground_type"),
-                value = Value(fishingGroundType),
-            )
-
-        return FishingSpotQuery(
-            StructuredQuery(
-                from = listOf(CollectionId(FISHING_SPOT_COLLECTION_ID)),
-                where = Where(fieldFilter),
-            ),
-        )
-    }
+//    private fun getStructuredQuery(fishingGroundType: String): FishingSpotQuery {
+//        val fieldFilter =
+//            FieldFilter(
+//                op = "EQUAL",
+//                field = FieldPath("fishing_ground_type"),
+//                value = Value(fishingGroundType),
+//            )
+//
+//        return FishingSpotQuery(
+//            StructuredQuery(
+//                from = listOf(CollectionId(FISHING_SPOT_COLLECTION_ID)),
+//                where = Where(fieldFilter),
+//            ),
+//        )
+//    }
 
     companion object {
         const val FISHING_SPOT_COLLECTION_ID = "fishingspot"

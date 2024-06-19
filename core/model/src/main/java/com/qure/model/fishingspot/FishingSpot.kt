@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 data class FishingSpot(
     val document: Document,
-    val readTime: String,
 )
 
 @Serializable
@@ -43,5 +42,5 @@ data class StringValue(
 
 @Serializable
 data class DoubleValue(
-    val doubleValue: Double,
+    val doubleValue: Double = 0.0,
 )
