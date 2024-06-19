@@ -12,10 +12,9 @@ constructor(
     private val memoRepository: MemoRepository,
 ) {
     operator fun invoke(): Flow<List<Memo>> {
-        return memoRepository.getfilteredMemo()
+        return memoRepository.getMemos()
             .map { memos ->
-                memos.filter { it.createTime != "" }
-                    .sortedByDescending { memo -> memo.createTime }
+                memos.sortedByDescending { memo -> memo.createTime }
             }
     }
 }

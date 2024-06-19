@@ -313,7 +313,6 @@ fun MemoListScreenPreview() = FMPreview {
             listOf(
                 MemoUI(
                     image = "https://www.pexels.com/photo/close-up-photo-of-clownfish-128756/",
-                    name = "미꾸라지",
                     location = "서울특별시 강남구",
                     title = "제목1",
                     content = "내용내용내용내용 내용",
@@ -321,7 +320,6 @@ fun MemoListScreenPreview() = FMPreview {
                 ),
                 MemoUI(
                     image = "https://unsplash.com/ko/%EC%82%AC%EC%A7%84/%ED%9A%8C%EC%83%89%EA%B3%BC-%EB%85%B8%EB%9E%80%EC%83%89-%EB%AC%BC%EA%B3%A0%EA%B8%B0-iLwQIbWxv-s",
-                    name = "붕어",
                     location = "서울특별시 서초구",
                     title = "제목2",
                     content = "내용내용내용내용 내용12내용내용내치hjgjhg",

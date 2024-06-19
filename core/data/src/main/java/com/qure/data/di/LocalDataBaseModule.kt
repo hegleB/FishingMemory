@@ -15,15 +15,19 @@ import javax.inject.Singleton
 internal object LocalDataBaseModule {
     @Provides
     @Singleton
-    fun providesFishingSpotDatabase(
+    fun providesFishingDatabase(
         @ApplicationContext context: Context,
     ) = Room.databaseBuilder(
         context,
-        FishingSpotDatabase::class.java,
+        FishingDatabase::class.java,
         "fishingspot_db",
     ).build()
 
     @Provides
     @Singleton
-    fun providesFishingSpotDao(database: FishingSpotDatabase) = database.fishingSpotkDao()
+    fun providesFishingSpotDao(database: FishingDatabase) = database.fishingSpotBookmarkDao()
+
+    @Provides
+    @Singleton
+    fun providesMemo(database: FishingDatabase) = database.memoDao()
 }

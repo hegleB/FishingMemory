@@ -4,10 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Memo(
-    val name: String,
     val fields: MemoFieldsEntity = MemoFieldsEntity.EMPTY,
     val createTime: String,
-    val updateTime: String,
 )
 
 @Serializable
@@ -23,18 +21,14 @@ data class MemoFieldsEntity(
 
 @Serializable
 data class Document(
-    val name: String = "",
     val fields: MemoFields,
     val createTime: String = "",
-    val updateTime: String = "",
 ) {
     companion object {
         val EMPTY =
             Document(
-                name = "",
                 fields = MemoFields.EMPTY,
                 createTime = "",
-                updateTime = "",
             )
     }
 }

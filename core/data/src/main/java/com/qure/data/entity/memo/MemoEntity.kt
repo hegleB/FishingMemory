@@ -1,5 +1,7 @@
 package com.qure.data.entity.memo
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.qure.model.memo.Document
 import com.qure.model.memo.MemoFields
 import com.qure.model.memo.MemoFieldsEntity
@@ -11,6 +13,14 @@ data class MemoEntity(
     val fields: MemoFieldsEntity,
     val createTime: String,
     val updateTime: String,
+)
+
+@Serializable
+@Entity(tableName = "fishing_memo_table")
+data class MemoLocalEntity(
+    @PrimaryKey val uuid: String,
+    val fields: MemoFieldsEntity,
+    val createTime: String,
 )
 
 @Serializable

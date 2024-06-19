@@ -1,6 +1,7 @@
 package com.qure.data.mapper
 
 import com.qure.data.entity.memo.MemoEntity
+import com.qure.data.entity.memo.MemoLocalEntity
 import com.qure.data.entity.memo.MemoQueryEntity
 import com.qure.data.entity.memo.MemoStorageEntity
 import com.qure.data.entity.memo.UpdatedMemoEntity
@@ -14,30 +15,24 @@ fun MemoEntity.toMemo(): Memo {
     val data = this
 
     return Memo(
-        name = data.name,
         fields = data.fields,
         createTime = data.createTime,
-        updateTime = data.updateTime,
     )
 }
 
 fun UpdatedMemoEntity.toDocument(): Document {
     val data = this
     return Document(
-        name = data.name,
         fields = data.fields,
         createTime = data.createTime,
-        updateTime = data.updateTime,
     )
 }
 
 fun MemoQueryEntity.toMemo(): Memo {
     val data = this.document ?: Document.EMPTY
     return Memo(
-        name = data.name,
         fields = data.fields.toMemoFieldsEntity(),
         createTime = data.createTime,
-        updateTime = data.updateTime,
     )
 }
 
@@ -65,4 +60,38 @@ fun MemoStorageEntity.toMemoStorage(): MemoStorage {
         etag = this.etag,
         downloadTokens = this.downloadTokens,
     )
+}
+
+fun MemoFields.toMemoLocalEntity(): MemoLocalEntity {
+    return MemoLocalEntity(
+        uuid = this.uuid.stringValue,
+        fields = this.toMemoFieldsEntity(),
+        createTime = this.createTime.stringValue,
+    )
+}
+
+fun MemoFields.toDocument(): Document {
+    return Document(
+        fields = this,
+        createTime = this.createTime.stringValue,
+    )
+}
+
+fun MemoLocalEntity.toMemo(): Memo {
+    return Memo(
+        fields = this.fields,
+        createTime = this.createTime,
+    )
+}
+
+fun Memo.toMemoLocalEntity(): MemoLocalEntity {
+    return MemoLocalEntity(
+        uuid = this.fields.fields.uuid.stringValue,
+        fields = this.fields,
+        createTime = this.createTime,
+    )
+}
+
+fun List<Memo>.toMemosLocalEntity(): List<MemoLocalEntity> {
+    return this.map { it.toMemoLocalEntity() }
 }

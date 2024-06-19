@@ -16,7 +16,7 @@ interface MemoRepository {
 
     fun deleteMemo(uuid: String): Flow<Unit>
 
-    fun getfilteredMemo(): Flow<List<Memo>>
+    fun getMemos(): Flow<List<Memo>>
 
     fun deleteAllMemos(): Flow<Boolean>
 }

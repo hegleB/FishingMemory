@@ -1,13 +1,13 @@
 package com.qure.data.datasource.fishingspot
 
 import com.qure.data.entity.fishingspot.FishingSpotBookmarkEntity
-import com.qure.data.local.FishingSpotDao
+import com.qure.data.local.FishingBookmarkDao
 import javax.inject.Inject
 
 internal class FishingSpotLocalDataSourceImpl
     @Inject
     constructor(
-        private val fishingSpotDao: FishingSpotDao,
+        private val fishingSpotDao: FishingBookmarkDao,
     ) : FishingSpotLocalDataSource {
         override suspend fun insertFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity) {
             fishingSpotDao.insertFishingSpot(fishingSpotBookmarkEntity)

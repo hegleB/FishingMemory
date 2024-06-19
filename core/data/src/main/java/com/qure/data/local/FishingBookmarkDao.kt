@@ -8,7 +8,7 @@ import androidx.room.Query
 import com.qure.data.entity.fishingspot.FishingSpotBookmarkEntity
 
 @Dao
-interface FishingSpotDao {
+internal interface FishingBookmarkDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
 

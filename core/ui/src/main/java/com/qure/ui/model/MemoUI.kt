@@ -15,7 +15,6 @@ import ted.gun0912.clustering.geometry.TedLatLng
 @Serializable
 data class MemoUI(
     val uuid: String = String.Empty,
-    val name: String = String.Empty,
     val email: String = String.Empty,
     val title: String = String.Empty,
     val image: String = String.Empty,
@@ -77,7 +76,6 @@ fun Memo.toMemoUI(): MemoUI {
     val data = this.fields.fields
     return MemoUI(
         uuid = data.uuid.stringValue,
-        name = this.name,
         email = data.email.stringValue,
         title = data.title.stringValue,
         image = data.image.stringValue,
@@ -96,7 +94,6 @@ fun Document.toMemoUI(): MemoUI {
     val data = this.fields
     return MemoUI(
         uuid = data.uuid.stringValue,
-        name = this.name,
         email = data.email.stringValue,
         title = data.title.stringValue,
         image = data.image.stringValue,
