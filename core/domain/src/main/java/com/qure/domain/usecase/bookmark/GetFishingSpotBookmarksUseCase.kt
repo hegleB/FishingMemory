@@ -11,6 +11,6 @@ class GetFishingSpotBookmarksUseCase
         private val fishingSpotLocalRepository: FishingSpotLocalRepository,
     ) {
         operator fun invoke(): Flow<List<FishingSpotBookmark>> {
-            return fishingSpotLocalRepository.getFishingSpots()
+            return fishingSpotLocalRepository.getFishingSpotBookmarks()
         }
     }

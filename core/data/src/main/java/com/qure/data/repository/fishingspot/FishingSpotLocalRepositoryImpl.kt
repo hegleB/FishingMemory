@@ -13,27 +13,27 @@ internal class FishingSpotLocalRepositoryImpl
 constructor(
     private val fishingSpotLocalDataSource: FishingSpotLocalDataSource,
 ) : FishingSpotLocalRepository {
-    override suspend fun insertFishingSpot(fishingSpotBookmark: FishingSpotBookmark) {
-        fishingSpotLocalDataSource.insertFishingSpot(fishingSpotBookmark.toFishingSpotBookmarkEntity())
+    override suspend fun insertFishingSpotBookmark(fishingSpotBookmark: FishingSpotBookmark) {
+        fishingSpotLocalDataSource.insertFishingSpotBookmark(fishingSpotBookmark.toFishingSpotBookmarkEntity())
     }
 
-    override fun getFishingSpots(): Flow<List<FishingSpotBookmark>> {
+    override fun getFishingSpotBookmarks(): Flow<List<FishingSpotBookmark>> {
         return flow {
-            emit(fishingSpotLocalDataSource.getFishingSpots().map { it.toFishingSpotBookmark() })
+            emit(fishingSpotLocalDataSource.getFishingSpotBookmarks().map { it.toFishingSpotBookmark() })
         }
     }
 
-    override fun checkFishingSpot(number: Int): Flow<Boolean> {
+    override fun checkFishingSpotBookmark(number: Int): Flow<Boolean> {
         return flow {
-            emit(fishingSpotLocalDataSource.checkFishingSpot(number))
+            emit(fishingSpotLocalDataSource.checkFishingSpotBookmark(number))
         }
     }
 
-    override suspend fun deleteFishingSpot(fishingSpotBookmark: FishingSpotBookmark) {
-        fishingSpotLocalDataSource.deleteFishingSpot(fishingSpotBookmark.toFishingSpotBookmarkEntity())
+    override suspend fun deleteFishingSpotBookmark(fishingSpotBookmark: FishingSpotBookmark) {
+        fishingSpotLocalDataSource.deleteFishingSpotBookmark(fishingSpotBookmark.toFishingSpotBookmarkEntity())
     }
 
-    override suspend fun deleteAllFishingSpots() {
-        fishingSpotLocalDataSource.deleteAllFishingSpots()
+    override suspend fun deleteAllFishingSpotBookmarks() {
+        fishingSpotLocalDataSource.deleteAllFishingSpotBookmarks()
     }
 }

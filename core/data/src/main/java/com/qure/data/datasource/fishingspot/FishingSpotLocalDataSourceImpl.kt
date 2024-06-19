@@ -9,23 +9,23 @@ internal class FishingSpotLocalDataSourceImpl
     constructor(
         private val fishingSpotDao: FishingBookmarkDao,
     ) : FishingSpotLocalDataSource {
-        override suspend fun insertFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity) {
+        override suspend fun insertFishingSpotBookmark(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity) {
             fishingSpotDao.insertFishingSpot(fishingSpotBookmarkEntity)
         }
 
-        override suspend fun getFishingSpots(): List<FishingSpotBookmarkEntity> {
+        override suspend fun getFishingSpotBookmarks(): List<FishingSpotBookmarkEntity> {
             return fishingSpotDao.getFishingSpots()
         }
 
-        override suspend fun checkFishingSpot(number: Int): Boolean {
+        override suspend fun checkFishingSpotBookmark(number: Int): Boolean {
             return fishingSpotDao.checkFishingSpot(number)
         }
 
-        override suspend fun deleteFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity) {
+        override suspend fun deleteFishingSpotBookmark(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity) {
             fishingSpotDao.deleteFishingSpot(fishingSpotBookmarkEntity)
         }
 
-        override suspend fun deleteAllFishingSpots() {
+        override suspend fun deleteAllFishingSpotBookmarks() {
             fishingSpotDao.deleteAllFishingSpots()
         }
     }

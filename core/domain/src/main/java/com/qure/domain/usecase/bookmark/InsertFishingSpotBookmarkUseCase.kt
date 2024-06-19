@@ -10,6 +10,6 @@ class InsertFishingSpotBookmarkUseCase
         private val fishingSpotLocalRepository: FishingSpotLocalRepository,
     ) {
         suspend operator fun invoke(fishingSpotBookmark: FishingSpotBookmark) {
-            fishingSpotLocalRepository.insertFishingSpot(fishingSpotBookmark)
+            fishingSpotLocalRepository.insertFishingSpotBookmark(fishingSpotBookmark)
         }
     }

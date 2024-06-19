@@ -10,6 +10,6 @@ class CheckFishingSpotBookmarkUseCase
         private val fishingSpotLocalRepository: FishingSpotLocalRepository,
     ) {
         operator fun invoke(number: Int): Flow<Boolean> {
-            return fishingSpotLocalRepository.checkFishingSpot(number)
+            return fishingSpotLocalRepository.checkFishingSpotBookmark(number)
         }
     }

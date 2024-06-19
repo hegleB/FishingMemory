@@ -3,13 +3,13 @@ package com.qure.data.datasource.fishingspot
 import com.qure.data.entity.fishingspot.FishingSpotBookmarkEntity
 
 internal interface FishingSpotLocalDataSource {
-    suspend fun insertFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
+    suspend fun insertFishingSpotBookmark(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
 
-    suspend fun getFishingSpots(): List<FishingSpotBookmarkEntity>
+    suspend fun getFishingSpotBookmarks(): List<FishingSpotBookmarkEntity>
 
-    suspend fun checkFishingSpot(number: Int): Boolean
+    suspend fun checkFishingSpotBookmark(number: Int): Boolean
 
-    suspend fun deleteFishingSpot(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
+    suspend fun deleteFishingSpotBookmark(fishingSpotBookmarkEntity: FishingSpotBookmarkEntity)
 
-    suspend fun deleteAllFishingSpots()
+    suspend fun deleteAllFishingSpotBookmarks()
 }
