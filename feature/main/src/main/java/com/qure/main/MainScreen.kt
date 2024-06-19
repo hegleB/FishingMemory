@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -485,47 +486,67 @@ fun MainScreen(
                 currentTab = navigator.currentTab,
                 onTabSelected = {
                     navigator.navigate(it)
-                }
+                },
+                snackBarHostState = if (isConnectNetwork.not()) snackBarHostState else null,
+                isConnectNetwork = isConnectNetwork,
             )
         },
         snackbarHost = {
-            SnackbarHost(snackBarHostState) { snackBarData ->
-                Row(
+            if (isConnectNetwork) {
+                SnackBar(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .height(50.dp)
                         .padding(bottom = 10.dp)
-                        .padding(horizontal = 10.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.onBackground,
-                            shape = RoundedCornerShape(5.dp),
-                        ),
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .padding(start = 20.dp)
-                            .align(Alignment.CenterVertically),
-                        imageVector = when (snackBarData.visuals.actionLabel) {
-                            SnackBarType.SUCCESS.name -> Icons.Default.CheckCircle
-                            else -> Icons.Default.Warning
-                        },
-                        contentDescription = null,
-                        tint = when (snackBarData.visuals.actionLabel) {
-                            SnackBarType.SUCCESS.name -> Color.Green
-                            else -> Color.Red
-                        },
-                    )
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 10.dp),
-                        text = snackBarData.visuals.message,
-                        color = MaterialTheme.colorScheme.background,
-                    )
-                }
+                        .padding(horizontal = 10.dp),
+                    snackBarHostState = snackBarHostState,
+                    isConnectNetwork = isConnectNetwork,
+                )
             }
         }
     )
+}
+
+@Composable
+private fun SnackBar(
+    modifier: Modifier = Modifier,
+    snackBarHostState: SnackbarHostState,
+    isConnectNetwork: Boolean,
+) {
+    SnackbarHost(snackBarHostState) { snackBarData ->
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    shape = RoundedCornerShape(5.dp),
+                ),
+            horizontalArrangement = if (isConnectNetwork) Arrangement.Start else Arrangement.Center,
+        ) {
+            if (isConnectNetwork) {
+                Icon(
+                    modifier = Modifier
+                        .padding(start = 20.dp)
+                        .align(Alignment.CenterVertically),
+                    imageVector = when (snackBarData.visuals.actionLabel) {
+                        SnackBarType.SUCCESS.name -> Icons.Default.CheckCircle
+                        else -> Icons.Default.Warning
+                    },
+                    contentDescription = null,
+                    tint = when (snackBarData.visuals.actionLabel) {
+                        SnackBarType.SUCCESS.name -> Color.Green
+                        else -> Color.Red
+                    },
+                )
+            }
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 10.dp),
+                text = snackBarData.visuals.message,
+                color = MaterialTheme.colorScheme.background,
+            )
+        }
+    }
 }
 
 private fun showPhoneCall(context: Context, phoneNumber: String) {
@@ -541,30 +562,44 @@ private fun MainBottomBar(
     tabs: List<MainTab>,
     currentTab: MainTab?,
     onTabSelected: (MainTab) -> Unit,
+    snackBarHostState: SnackbarHostState?,
+    isConnectNetwork: Boolean,
 ) {
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn() + slideIn { IntOffset(0, it.height) },
-        exit = fadeOut() + slideOut { IntOffset(0, it.height) }
-    ) {
-        Row(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .fillMaxWidth()
-                .height(56.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.background,
-                )
-                .padding(horizontal = 28.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+    Column {
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn() + slideIn { IntOffset(0, it.height) },
+            exit = fadeOut() + slideOut { IntOffset(0, it.height) }
         ) {
-            tabs.forEach { tab ->
-                MainBottomBarItem(
-                    tab = tab,
-                    selected = tab == currentTab,
-                    onClick = { onTabSelected(tab) },
-                )
+            Row(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                    )
+                    .padding(horizontal = 28.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                tabs.forEach { tab ->
+                    MainBottomBarItem(
+                        tab = tab,
+                        selected = tab == currentTab,
+                        onClick = { onTabSelected(tab) },
+                    )
+                }
             }
+        }
+        snackBarHostState?.let { snackBarHostState ->
+            SnackBar(
+                modifier = Modifier
+                    .height(30.dp)
+                    .padding(bottom = 10.dp)
+                    .padding(horizontal = 10.dp),
+                snackBarHostState = snackBarHostState,
+                isConnectNetwork = isConnectNetwork,
+            )
         }
     }
 }
