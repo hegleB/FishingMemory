@@ -117,10 +117,6 @@ fun HomeRoute(
         locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
-    LaunchedEffect(latXLngY) {
-        viewModel.fetchData()
-    }
-
     if (hasLocationPermission) {
         LaunchedEffect(Unit) {
             val location = getCurrentLocation(fusedLocationClient)
@@ -128,6 +124,7 @@ fun HomeRoute(
             val longitude = location?.longitude ?: String.DefaultLongitude.toDouble()
             val latLng = GpsTransfer().convertGRID_GPS(0, latitude, longitude)
             viewModel.setLatLng(latLng)
+            viewModel.fetchData()
         }
     }
 

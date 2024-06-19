@@ -8,14 +8,14 @@ internal class WeatherRemoteDataSourceImpl @Inject constructor(
     private val weatherService: WeatherService,
 ) : WeatherRemoteDataSource {
     override suspend fun getWeather(
-        base_date: Int,
-        base_time: String,
+        baseDate: Int,
+        baseTime: String,
         nx: String,
         ny: String,
     ): WeatherEntity {
         return weatherService.getWeather(
-            baseDate = base_date,
-            baseTime = base_time,
+            baseDate = baseDate,
+            baseTime = baseTime,
             nx = nx,
             ny = ny,
         )

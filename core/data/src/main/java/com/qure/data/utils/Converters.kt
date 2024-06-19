@@ -17,4 +17,14 @@ class Converters {
     fun toMemoFieldsEntity(memoFieldsString: String): MemoFieldsEntity {
         return Json.decodeFromString(memoFieldsString)
     }
+
+    @TypeConverter
+    fun fromWeatherResponse(response: Response): String {
+        return Json.encodeToString(response)
+    }
+
+    @TypeConverter
+    fun toWeatherResponse(responseString: String): Response {
+        return Json.decodeFromString(responseString)
+    }
 }

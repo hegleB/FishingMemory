@@ -5,11 +5,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Weather(
     val response: Response,
-)
+) {
+    companion object {
+        val EMPTY = Weather(
+            response = Response()
+        )
+    }
+}
 
 @Serializable
 data class Response(
-    val header: Header,
+    val header: Header = Header(0, ""),
     val body: Body? = null,
 )
 

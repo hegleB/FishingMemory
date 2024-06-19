@@ -2,7 +2,7 @@ package com.qure.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.qure.data.local.FishingSpotDatabase
+import com.qure.data.local.FishingDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,4 +30,8 @@ internal object LocalDataBaseModule {
     @Provides
     @Singleton
     fun providesMemo(database: FishingDatabase) = database.memoDao()
+
+    @Provides
+    @Singleton
+    fun providesWeather(database: FishingDatabase) = database.weatherDao()
 }

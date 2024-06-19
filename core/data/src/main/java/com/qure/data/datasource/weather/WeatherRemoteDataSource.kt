@@ -4,8 +4,8 @@ import com.qure.data.entity.weather.WeatherEntity
 
 internal interface WeatherRemoteDataSource {
     suspend fun getWeather(
-        base_date: Int,
-        base_time: String,
+        baseDate: Int,
+        baseTime: String,
         nx: String,
         ny: String,
     ): WeatherEntity

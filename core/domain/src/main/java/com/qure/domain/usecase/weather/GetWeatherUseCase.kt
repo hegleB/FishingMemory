@@ -11,9 +11,9 @@ class GetWeatherUseCase
         private val weatherRepository: WeatherRepository,
     ) {
         operator fun invoke(
-            base_date: Int,
-            base_time: String,
+            baseDate: Int,
+            baseTime: String,
             nx: String,
             ny: String,
-        ): Flow<Weather> = weatherRepository.getWeather(base_date, base_time, nx, ny)
+        ): Flow<Weather> = weatherRepository.getWeather(baseDate, baseTime, nx, ny)
     }

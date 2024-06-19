@@ -45,16 +45,12 @@ constructor(
     private val _homeUiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val homeUiState = _homeUiState.asStateFlow()
 
-    init {
-        fetchData()
-    }
-
     fun fetchData() {
         viewModelScope.launch {
             combine(
                 getWeatherUseCase(
-                    base_date = getBaseDate(),
-                    base_time = getBaseTime(),
+                    baseDate = getBaseDate(),
+                    baseTime = getBaseTime(),
                     nx = _latLng.value.nx.toInt().toString(),
                     ny = _latLng.value.ny.toInt().toString(),
                 ),
