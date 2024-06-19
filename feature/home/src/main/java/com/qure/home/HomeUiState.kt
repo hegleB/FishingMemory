@@ -36,5 +36,22 @@ sealed interface HomeUiState {
         fun getThunder(): com.qure.ui.model.WeatherUI {
             return weather.filter { it.category == WeatherCategory.LGT }[0]
         }
+
+        fun toCurrentDateTimeWeather(): String {
+            return "${convertToDate(weather.first().fcstDate)}\n${convertToAmPm(weather.first().fcstTime)} 기준"
+        }
+
+        private fun convertToDate(date: Int): String {
+            val month = (date % 10000) / 100
+            val day = date % 100
+            return String.format("%02d/%02d", month, day)
+        }
+        private fun convertToAmPm(time: Int): String {
+            val hour = time / 100
+            val minute = time % 100
+            val period = if (hour >= 12) "오후" else "오전"
+            val adjustedHour = if (hour % 12 == 0) 12 else hour % 12
+            return String.format("%s %d:%02d", period, adjustedHour, minute)
+        }
     }
 }

@@ -17,6 +17,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -338,6 +340,7 @@ fun HomeContent(
                             city = address
                         }
                         WeatherItem(
+                            dateTimeWeather = homeUiState.toCurrentDateTimeWeather(),
                             temperature = homeUiState.toTemperatureString(),
                             skyState = SkyState.from(homeUiState.getSkyState().fcstValue.toInt()),
                             location = city,
@@ -501,6 +504,7 @@ private fun <T> countElements(list: List<T>): Map<T, Float> {
 
 @Composable
 private fun WeatherItem(
+    dateTimeWeather: String = "",
     temperature: String = "",
     skyState: String = "",
     location: String = "",
@@ -513,12 +517,23 @@ private fun WeatherItem(
             .padding(top = 40.dp, bottom = 20.dp),
     ) {
         Column {
-            Text(
-                text = temperature,
-                color = White,
-                fontSize = 34.sp,
-                style = MaterialTheme.typography.displayLarge,
-            )
+            Row(
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Text(
+                    text = temperature,
+                    color = White,
+                    fontSize = 34.sp,
+                    style = MaterialTheme.typography.displayLarge,
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = dateTimeWeather,
+                    color = White,
+                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.displayLarge
+                )
+            }
             Text(
                 modifier = Modifier.padding(top = 10.dp),
                 text = location,
