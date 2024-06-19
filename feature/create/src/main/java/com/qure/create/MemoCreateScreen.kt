@@ -77,6 +77,7 @@ import com.qure.designsystem.theme.White
 import com.qure.designsystem.utils.FMPreview
 import com.qure.feature.create.R
 import com.qure.ui.component.FMCalendarDialog
+import com.qure.ui.component.OfflineView
 import com.qure.ui.model.MemoUI
 import com.qure.ui.model.SnackBarMessageType
 import kotlinx.coroutines.flow.collectLatest
@@ -113,6 +114,7 @@ fun MemoCreateRoute(
 
     val uiState by viewModel.memoCreateUiState.collectAsStateWithLifecycle()
     val memo by viewModel.memo.collectAsStateWithLifecycle()
+    val isConnectNetwork by viewModel.isConnectNetwork.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -153,6 +155,7 @@ fun MemoCreateRoute(
             viewModel.setCoords(memo.coords)
         },
         setImage = viewModel::setImage,
+        isConnectNetwork = isConnectNetwork,
     )
 }
 
@@ -187,6 +190,7 @@ private fun MemoCreateScreen(
     onClickEdit: () -> Unit = { },
     setLocation: (String) -> Unit = { },
     setImage: (String) -> Unit = { },
+    isConnectNetwork: Boolean = true,
 ) {
     var isShowCalendar by remember {
         mutableStateOf(false)
@@ -214,7 +218,6 @@ private fun MemoCreateScreen(
                 .verticalScroll(scrollState)
                 .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Bottom + WindowInsetsSides.Top)),
             horizontalAlignment = CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
         ) {
             if (uiState is MemoCreateUiState.Success) {
                 navigateToMemoDetail(uiState.memo)
@@ -233,159 +236,167 @@ private fun MemoCreateScreen(
             FMTopAppBar(
                 onBack = onBack,
             )
-            MemoItem(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp),
-                contentModifier = Modifier
-                    .padding(top = 10.dp)
-                    .height(45.dp)
-                    .fillMaxWidth(),
-                title = stringResource(id = R.string.title),
-                hint = stringResource(id = R.string.input_title),
-                contentMode = MemoMode.INPUT,
-                value = memo.title,
-                onValueChange = setTitle,
-            )
-            MemoItem(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp),
-                contentModifier = Modifier
-                    .height(130.dp)
-                    .padding(top = 15.dp)
-                    .fillMaxWidth(),
-                title = stringResource(id = R.string.image),
-                contentMode = MemoMode.IMAGE,
-                onClick = { navigateToGallery() },
-                value = memo.image,
-                onValueChange = setImage
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(top = 10.dp),
-            ) {
-                FMChipGroup(
-                    elements = listOf(
-                        stringResource(id = R.string.fresh_water),
-                        stringResource(id = R.string.sea_water),
+            if (isConnectNetwork) {
+                MemoItem(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp),
+                    contentModifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(45.dp)
+                        .fillMaxWidth(),
+                    title = stringResource(id = R.string.title),
+                    hint = stringResource(id = R.string.input_title),
+                    contentMode = MemoMode.INPUT,
+                    value = memo.title,
+                    onValueChange = setTitle,
+                )
+                MemoItem(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp),
+                    contentModifier = Modifier
+                        .height(130.dp)
+                        .padding(top = 15.dp)
+                        .fillMaxWidth(),
+                    title = stringResource(id = R.string.image),
+                    contentMode = MemoMode.IMAGE,
+                    onClick = { navigateToGallery() },
+                    value = memo.image,
+                    onValueChange = setImage
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .padding(top = 10.dp),
+                ) {
+                    FMChipGroup(
+                        elements = listOf(
+                            stringResource(id = R.string.fresh_water),
+                            stringResource(id = R.string.sea_water),
+                        ),
+                        onClickChip = setWaterType,
+                        selectedChip = memo.waterType,
+                        unSelectedFontColor = MaterialTheme.colorScheme.onBackground,
+                        selectedFontColor = White,
+                    )
+                    MemoSizeInputItem(
+                        modifier = Modifier
+                            .width(200.dp)
+                            .padding(end = 5.dp),
+                        onValueChange = setSize,
+                        size = memo.fishSize,
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                ) {
+                    MemoItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(2f)
+                            .padding(end = 10.dp),
+                        contentModifier = Modifier
+                            .padding(top = 10.dp)
+                            .height(40.dp)
+                            .fillMaxWidth(),
+                        title = stringResource(id = R.string.location),
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_marker),
+                                contentDescription = null,
+                                tint = Color(0xFF056AEE)
+                            )
+                        },
+                        contentMode = MemoMode.TEXT,
+                        onClick = { navigateToLocationSetting() },
+                        value = memo.location,
+                        onValueChange = setLocation,
+                    )
+                    MemoItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(start = 10.dp),
+                        contentModifier = Modifier
+                            .padding(top = 10.dp)
+                            .height(40.dp)
+                            .fillMaxWidth(),
+                        title = stringResource(id = R.string.date),
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_date),
+                                contentDescription = null,
+                                tint = Color(0xFFF38315)
+                            )
+                        },
+                        value = memo.date,
+                        contentMode = MemoMode.TEXT,
+                        onClick = { isShowCalendar = true },
+                        onValueChange = setDate,
+                    )
+                }
+                MemoItem(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp),
+                    contentModifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(45.dp)
+                        .fillMaxWidth(),
+                    title = stringResource(id = R.string.fish_type),
+                    hint = stringResource(id = R.string.input_fishtype),
+                    contentMode = MemoMode.INPUT,
+                    value = memo.fishType,
+                    onValueChange = setFishType,
+                )
+
+                MemoItem(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp),
+                    contentModifier = Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth()
+                        .height(80.dp),
+                    title = stringResource(id = R.string.content),
+                    hint = stringResource(id = R.string.input_content),
+                    contentMode = MemoMode.INPUT,
+                    value = memo.content,
+                    onValueChange = setContent,
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                FMButton(
+                    modifier = Modifier
+                        .padding(horizontal = 30.dp)
+                        .padding(bottom = 20.dp)
+                        .fillMaxWidth(),
+                    onClick = {
+                        if (memo.uuid.isNotEmpty()) {
+                            onClickEdit()
+                        } else {
+                            onClickSave()
+                        }
+                    },
+                    text = if (memo.uuid.isNotEmpty()) {
+                        stringResource(id = R.string.edit)
+                    } else stringResource(
+                        id = R.string.save
                     ),
-                    onClickChip = setWaterType,
-                    selectedChip = memo.waterType,
-                    unSelectedFontColor = MaterialTheme.colorScheme.onBackground,
-                    selectedFontColor = White,
+                    textStyle = MaterialTheme.typography.displayMedium,
+                    buttonColor = Blue500,
+                    fontColor = White,
+                    shape = RoundedCornerShape(10.dp),
+                    isEnabled = memo.isValidMemo,
                 )
-                MemoSizeInputItem(
+            } else {
+                OfflineView(
                     modifier = Modifier
-                        .width(200.dp)
-                        .padding(end = 5.dp),
-                    onValueChange = setSize,
-                    size = memo.fishSize,
+                        .padding(top = 100.dp),
                 )
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-            ) {
-                MemoItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(2f)
-                        .padding(end = 10.dp),
-                    contentModifier = Modifier
-                        .padding(top = 10.dp)
-                        .height(40.dp)
-                        .fillMaxWidth(),
-                    title = stringResource(id = R.string.location),
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_marker),
-                            contentDescription = null,
-                            tint = Color(0xFF056AEE)
-                        )
-                    },
-                    contentMode = MemoMode.TEXT,
-                    onClick = { navigateToLocationSetting() },
-                    value = memo.location,
-                    onValueChange = setLocation,
-                )
-                MemoItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(start = 10.dp),
-                    contentModifier = Modifier
-                        .padding(top = 10.dp)
-                        .height(40.dp)
-                        .fillMaxWidth(),
-                    title = stringResource(id = R.string.date),
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = com.qure.core.designsystem.R.drawable.ic_date),
-                            contentDescription = null,
-                            tint = Color(0xFFF38315)
-                        )
-                    },
-                    value = memo.date,
-                    contentMode = MemoMode.TEXT,
-                    onClick = { isShowCalendar = true },
-                    onValueChange = setDate,
-                )
-            }
-            MemoItem(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp),
-                contentModifier = Modifier
-                    .padding(top = 10.dp)
-                    .height(45.dp)
-                    .fillMaxWidth(),
-                title = stringResource(id = R.string.fish_type),
-                hint = stringResource(id = R.string.input_fishtype),
-                contentMode = MemoMode.INPUT,
-                value = memo.fishType,
-                onValueChange = setFishType,
-            )
 
-            MemoItem(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp),
-                contentModifier = Modifier
-                    .padding(top = 10.dp)
-                    .fillMaxWidth()
-                    .height(80.dp),
-                title = stringResource(id = R.string.content),
-                hint = stringResource(id = R.string.input_content),
-                contentMode = MemoMode.INPUT,
-                value = memo.content,
-                onValueChange = setContent,
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            FMButton(
-                modifier = Modifier
-                    .padding(horizontal = 30.dp)
-                    .padding(bottom = 20.dp)
-                    .fillMaxWidth(),
-                onClick = {
-                    if (memo.uuid.isNotEmpty()) {
-                        onClickEdit()
-                    } else {
-                        onClickSave()
-                    }
-                },
-                text = if (memo.uuid.isNotEmpty()) {
-                    stringResource(id = R.string.edit)
-                } else stringResource(
-                    id = R.string.save
-                ),
-                textStyle = MaterialTheme.typography.displayMedium,
-                buttonColor = Blue500,
-                fontColor = White,
-                shape = RoundedCornerShape(10.dp),
-                isEnabled = memo.isValidMemo,
-            )
         }
         val isLoading = uiState is MemoCreateUiState.Loading
         if (isLoading) {
@@ -396,6 +407,8 @@ private fun MemoCreateScreen(
         }
     }
 }
+
+
 
 @Composable
 private fun MemoSizeInputItem(

@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import com.qure.data.repository.auth.AuthRepository
+import com.qure.data.utils.NetworkMonitor
 import com.qure.domain.usecase.memo.CreateMemoUseCase
 import com.qure.domain.usecase.memo.UpdateMemoUseCase
 import com.qure.domain.usecase.memo.UploadMemoImageUseCase
@@ -22,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -29,6 +31,7 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -46,6 +49,7 @@ constructor(
     private val updateMemoUseCase: UpdateMemoUseCase,
     private val authRepository: AuthRepository,
     private val buildPropertyRepository: BuildPropertyRepository,
+    private val networkMonitor: NetworkMonitor,
 ) : BaseViewModel() {
     private val _memoCreateUiState = MutableStateFlow<MemoCreateUiState>(MemoCreateUiState.Initial)
     val memoCreateUiState = _memoCreateUiState.asStateFlow()
@@ -60,6 +64,13 @@ constructor(
 
     private val _editMode = MutableStateFlow(false)
     val editMode = _editMode.asStateFlow()
+
+    val isConnectNetwork = networkMonitor.isConnectNetwork
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun createMemo() {
