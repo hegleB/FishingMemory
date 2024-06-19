@@ -8,6 +8,7 @@ import com.qure.data.utils.SIGNED_UP_EMAIL
 import com.qure.model.auth.SignUpUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 internal class AuthRepositoryImpl
@@ -53,8 +54,10 @@ constructor(
         }
 
     override fun removeEmailFromRemote(email: String): Flow<Unit> {
-        return flow {
-            emit(authRemoteDataSource.deleteUserEmail(email))
-        }
+        return flow { emit(authRemoteDataSource.deleteUserEmail(email)) }
+            .onEach {
+                removeEmailFromLocal()
+                removeTokenFromLocal()
+            }
     }
 }
