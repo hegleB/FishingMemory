@@ -47,7 +47,7 @@
 
 
 ## Technical Content
-[사이즈 수기 측정에서 자동 측정](https://velog.io/@qure/FishingMemory%EC%82%AC%EC%9D%B4%EC%A6%88-%EC%88%98%EA%B8%B0-%EC%B8%A1%EC%A0%95%EC%97%90%EC%84%9C-%EC%9E%90%EB%8F%99-%EC%B8%A1%EC%A0%95)
+[사이즈 수동 측정에서 자동 측정](https://velog.io/@qure/FishingMemory%EC%82%AC%EC%9D%B4%EC%A6%88-%EC%88%98%EA%B8%B0-%EC%B8%A1%EC%A0%95%EC%97%90%EC%84%9C-%EC%9E%90%EB%8F%99-%EC%B8%A1%EC%A0%95)
 
 </br>
 
