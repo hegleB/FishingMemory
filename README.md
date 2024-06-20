@@ -25,12 +25,19 @@
 
 ||||||
 |---|---|---|---|---|
-|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/6698a1bd-deb5-462a-8a34-956fca4462f3">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/ddc255be-b19c-460f-9df6-02d0dd7b31aa">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/5ae8db38-f61e-4bfe-b4de-429aea6a7ce5">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/1f0c6004-0ab4-4817-b44b-520440985189">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/cdaa9d74-fcb0-48f1-affe-30753f80a7be">|
+|<img src="https://github.com/hegleB/FishingMemory/assets/39490416/d6292021-4a02-4b3e-92ae-e1b0954f489d">|<img src="https://github.com/hegleB/FishingMemory/assets/39490416/eadb0dbf-e413-4019-aef6-08fa53adefba">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/5ae8db38-f61e-4bfe-b4de-429aea6a7ce5">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/1f0c6004-0ab4-4817-b44b-520440985189">|<img src="https://github.com/hegleB/FishingMemory/assets/39490416/c4b0d8f7-f9df-4121-937b-c7f2cb2ccd7c">|
+
+
+### 사이즈 측정
+<img src="https://github.com/hegleB/FishingMemory/assets/39490416/c6655d0d-11e4-4cea-85da-f15e75bda4d2" width="620" height="350">
+
+### 오프라인 지원
+<img src="https://github.com/hegleB/FishingMemory/assets/39490416/4b3e6078-8a78-423a-b21a-5f8e4c97a81b" height="500">
 
 ## Project Architecture
 
 <p align="center">
-<img src="https://github.com/hegleB/FishingMemory/assets/39490416/a32851c9-c1f6-4315-810f-abbe697213b8" height="500" style="width:100%;">
+<img src="https://github.com/hegleB/FishingMemory/assets/39490416/f89d9470-aef9-44b5-92a6-c180fde17382" height="500" style="width:100%;">
 </p>
 
 ## UI Layer
@@ -38,6 +45,7 @@
 <p align="center">
 <img src="https://github.com/hegleB/FishingMemory/assets/39490416/6ae9cc45-eede-4757-a5a0-fd8a1c8e8e57" height="450" style="width:100%;">
 </p>
+
 
 
 ## Specifications used
