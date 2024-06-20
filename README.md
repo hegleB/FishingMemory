@@ -42,11 +42,14 @@
 
 ## UI Layer
 
-<p align="center">
-<img src="https://github.com/hegleB/FishingMemory/assets/39490416/6ae9cc45-eede-4757-a5a0-fd8a1c8e8e57" height="450" style="width:100%;">
-</p>
+<img src="https://github.com/hegleB/FishingMemory/assets/39490416/6ae9cc45-eede-4757-a5a0-fd8a1c8e8e57" height="350" width="400">
 
 
+
+## Technical Content
+[사이즈 수기 측정에서 자동 측정](https://velog.io/@qure/FishingMemory%EC%82%AC%EC%9D%B4%EC%A6%88-%EC%88%98%EA%B8%B0-%EC%B8%A1%EC%A0%95%EC%97%90%EC%84%9C-%EC%9E%90%EB%8F%99-%EC%B8%A1%EC%A0%95)
+
+</br>
 
 ## Specifications used
 
