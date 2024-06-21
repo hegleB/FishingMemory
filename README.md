@@ -65,7 +65,8 @@
   - Core
   - Lifecycle & ViewModel Compose
   - Navigation
-
+  - Datastore
+  - Room
 - Kotlin Libraries (Coroutine, Serialization)
 - Compose
   - Material3
@@ -73,7 +74,18 @@
 - Glide
 - Dagger & Hilt
 - Square (Retrofit, OkHttp)
-
+- CameraX
+- ML Kit
+- Firebase
+- Maps
+  - NaverMap
+  - NaverClustering
+- Accompanist-Permissions
+- MPAndroidChart
+- Kakao
+  - User
+  - Share
+  
 ## License
 MIT License
 
