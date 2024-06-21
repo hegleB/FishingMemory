@@ -58,7 +58,6 @@ import com.qure.feature.main.R
 import com.qure.fishingspot.fishingSpotNavGraph
 import com.qure.gallery.galleryNavGraph
 import com.qure.history.historyNavGraph
-import com.qure.history.navigationHistory
 import com.qure.home.homeNavGraph
 import com.qure.login.loginNavGraph
 import com.qure.map.mapNavGraph
@@ -83,8 +82,6 @@ fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
     isKakaoOpenDeepLink: Boolean = false,
     memo: MemoUI = MemoUI(),
-    setRoute: (Route) -> Unit = { },
-    route: Route = Route.Splash,
     isConnectNetwork: Boolean,
 ) {
 
@@ -179,7 +176,6 @@ fun MainScreen(
                             )
                         },
                         navigateToMemoCreate = {
-                            setRoute(MainTabRoute.History)
                             navigator.navigateToMemoCreate()
                         },
                         onShowErrorSnackBar = onShowErrorSnackBar,
@@ -278,33 +274,7 @@ fun MainScreen(
                     )
 
                     memoCreateNavGraph(
-                        onBack = {
-                            when (route) {
-                                MainTabRoute.History -> {
-                                    navigator.navController.navigationHistory(
-                                        navOptions {
-                                            popUpTo(MainTabRoute.History) {
-                                                inclusive = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                    )
-                                }
-
-                                Route.MemoList -> {
-                                    navigator.navigateToMemoList(
-                                        navOptions {
-                                            popUpTo(Route.MemoList) {
-                                                inclusive = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                    )
-                                }
-
-                                else -> navigator.popBackStack()
-                            }
-                        },
+                        onBack = navigator::popBackStack,
                         navigateToLocationSetting = { memo ->
                             navigator.navigateToLocationSetting(
                                 memoUI = memo,
@@ -318,6 +288,12 @@ fun MainScreen(
                         navigateToMemoDetail = { memo ->
                             navigator.navigateToMemoDetail(
                                 memoUI = memo,
+                                navOptions = navOptions {
+                                    popUpTo(Route.MemoCreate().toRouteString()) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                }
                             )
                         },
                         onShowErrorSnackBar = onShowErrorSnackBar,
@@ -330,6 +306,12 @@ fun MainScreen(
                             navigator.navigateToMemoCreate(
                                 memoUI = memo,
                                 isEdit = true,
+                                navOptions = navOptions {
+                                    popUpTo(Route.MemoCreate().toRouteString()) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                },
                             )
                         },
                         onShowErrorSnackBar = onShowErrorSnackBar,
@@ -361,6 +343,12 @@ fun MainScreen(
                             navigator.navigateToMemoCreate(
                                 memoUI = memo,
                                 isEdit = true,
+                                navOptions = navOptions {
+                                    popUpTo(Route.MemoCreate().toRouteString()) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                },
                             )
                         },
                         onShowErrorSnackBar = onShowErrorSnackBar,
@@ -371,7 +359,6 @@ fun MainScreen(
                         onBack = navigator::popBackStack,
                         navigateToDetailFishingSpot = navigator::navigateToFishingSpot,
                         navigateToDetailMemo = { memo ->
-                            setRoute(Route.Map)
                             navigator.navigateToMemoDetail(
                                 memoUI = memo,
                             )
@@ -381,44 +368,7 @@ fun MainScreen(
                     )
 
                     memoDetailNavGraph(
-                        onBack = {
-                            when (route) {
-                                MainTabRoute.History -> {
-                                    navigator.navController.navigationHistory(
-                                        navOptions {
-                                            popUpTo(MainTabRoute.History) {
-                                                inclusive = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                    )
-                                }
-
-                                Route.MemoList -> {
-                                    navigator.navigateToMemoList(
-                                        navOptions {
-                                            popUpTo(Route.MemoList) {
-                                                inclusive = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                    )
-                                }
-
-                                MainTab.HOME.route -> {
-                                    navigator.navigateToHome(
-                                        navOptions {
-                                            popUpTo(Route.Splash) {
-                                                inclusive = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                    )
-                                }
-
-                                else -> navigator.popBackStack()
-                            }
-                        },
+                        onBack = navigator::popBackStack,
                         onClickEdit = { memo ->
                             navigator.navigateToMemoCreate(
                                 memoUI = memo,
@@ -430,30 +380,11 @@ fun MainScreen(
                     )
 
                     memoListNavGraph(
-                        onBack = {
-                            navigator.navigateToHome(
-                                navOptions {
-                                    popUpTo(Route.MemoList) {
-                                        inclusive = true
-                                    }
-                                    launchSingleTop = true
-                                }
-                            )
-                        },
-                        navigateToMemoCreate = {
-                            setRoute(Route.MemoList)
-                            navigator.navigateToMemoCreate()
-                        },
+                        onBack = navigator::popBackStack,
+                        navigateToMemoCreate = navigator::navigateToMemoCreate,
                         navigateToMemoDetail = { memo ->
                             navigator.navigateToMemoDetail(
                                 memoUI = memo,
-                                navOptions = navOptions {
-                                    popUpTo(Route.MemoList) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
                             )
                         },
                         onShowErrorSnackBar = onShowErrorSnackBar,
@@ -472,6 +403,12 @@ fun MainScreen(
                             navigator.navigateToMemoCreate(
                                 memoUI = memo,
                                 isEdit = true,
+                                navOptions = navOptions {
+                                    popUpTo(Route.MemoCreate().toRouteString()) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                },
                             )
                         },
                         onShowMessageSnackBar = onShowMessageSnackBar,

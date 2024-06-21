@@ -26,30 +26,50 @@ sealed interface Route {
     ) : Route
 
     @Serializable
-    data class FishingSpot(val fishingSpot: String) : Route
+    data class FishingSpot(val fishingSpot: String) : Route {
+        fun toRouteString():String {
+            return "${this::class.qualifiedName}?fishingSpot={fishingSpot}"
+        }
+    }
 
     @Serializable
     data object MemoList : Route
 
     @Serializable
-    data class ProgramInformation(val url: String) : Route
+    data class ProgramInformation(val url: String) : Route {
+        fun toRouteString():String {
+            return "${this::class.qualifiedName}?url={url}"
+        }
+    }
 
     @Serializable
     data class MemoDetail(
         val memo: String = MemoUI().toMemoString(),
         val isEdit: Boolean = false
-    ) : Route
+    ) : Route {
+        fun toRouteString():String {
+            return "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"
+        }
+    }
 
     @Serializable
     data class MemoCreate(
         val memo: String = MemoUI().toMemoString(),
         val isEdit: Boolean = false,
-    ) : Route
+    ) : Route {
+        fun toRouteString():String {
+            return "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"
+        }
+    }
 
     @Serializable
     data class LocationSetting(
         val memo: String = MemoUI().toMemoString(),
-    ) : Route
+    ) : Route {
+        fun toRouteString():String {
+            return "${this::class.qualifiedName}?memo={memo}"
+        }
+    }
 
     @Serializable
     data object Bookmark : Route
@@ -61,7 +81,11 @@ sealed interface Route {
     data class Camera(
         val memo: String = MemoUI().toMemoString(),
         val isEdit: Boolean = false,
-    ) : Route
+    ) : Route {
+        fun toRouteString():String {
+            return "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"
+        }
+    }
 }
 
 sealed interface MainTabRoute : Route {

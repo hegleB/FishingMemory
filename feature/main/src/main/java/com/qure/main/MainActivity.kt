@@ -64,7 +64,6 @@ class MainActivity : AppCompatActivity() {
                     DarkModeConfig.SYSTEM -> isSystemInDarkTheme()
                 }
             }
-            val route by viewModel.currentRoute.collectAsStateWithLifecycle()
             val isConnectNetwork by networkMonitor.isConnectNetwork.collectAsStateWithLifecycle(true)
 
             val navigator: MainNavigator = rememberMainNavigator()
@@ -77,7 +76,6 @@ class MainActivity : AppCompatActivity() {
                         MainScreen(
                             navigator = navigator,
                             memo = memo,
-                            route = MainTab.HOME.route,
                             isConnectNetwork = isConnectNetwork
                         )
                         return@FishingMemoryTheme
@@ -86,8 +84,6 @@ class MainActivity : AppCompatActivity() {
 
                 MainScreen(
                     navigator = navigator,
-                    setRoute = viewModel::setRoute,
-                    route = route,
                     isConnectNetwork = isConnectNetwork,
                 )
 
