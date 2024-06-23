@@ -6,13 +6,10 @@ import com.qure.ui.base.BaseViewModel
 import com.qure.ui.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -24,7 +21,7 @@ class HistoryViewModel
 constructor(
     private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
 ) : BaseViewModel() {
-    private val _filteredMemosUiState = MutableStateFlow<HistoryUiState>(HistoryUiState.Empty)
+    private val _filteredMemosUiState = MutableStateFlow<HistoryUiState>(HistoryUiState.Loading)
     val filteredMemosUiState = _filteredMemosUiState.asStateFlow()
 
     private val _dateUiState = MutableStateFlow(DateUiState())
@@ -39,12 +36,6 @@ constructor(
             getFilteredMemoUseCase()
                 .map { memos -> HistoryUiState.Success(memos.map { it.toMemoUI() }) }
                 .catch { throwable -> sendErrorMessage(throwable) }
-                .onStart { _filteredMemosUiState.value = HistoryUiState.Loading }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = HistoryUiState.Empty,
-                )
                 .collectLatest { uiState ->
                     _filteredMemosUiState.value = uiState
                 }
