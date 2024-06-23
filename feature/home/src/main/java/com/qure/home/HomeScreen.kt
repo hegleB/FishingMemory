@@ -172,11 +172,6 @@ suspend fun getCurrentLocation(fusedLocationClient: FusedLocationProviderClient)
     }
 }
 
-data class HomeItemData(
-    val modifier: Modifier,
-    val title: String,
-)
-
 @Composable
 private fun HomeScreen(
     homeUiState: HomeUiState = HomeUiState.Loading,
