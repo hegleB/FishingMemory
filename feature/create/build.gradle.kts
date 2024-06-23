@@ -11,4 +11,5 @@ android {
 dependencies {
     implementation(project(":build-property"))
     implementation(project(":feature:memo"))
+    implementation(libs.play.services.location)
 }

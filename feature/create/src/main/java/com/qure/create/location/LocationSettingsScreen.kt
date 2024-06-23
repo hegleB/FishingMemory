@@ -1,6 +1,15 @@
 package com.qure.create.location
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.TweenSpec
@@ -12,6 +21,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +32,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +57,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.Task
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.MarkerState
@@ -65,8 +80,11 @@ import com.qure.model.extensions.DefaultLatitude
 import com.qure.model.extensions.DefaultLongitude
 import com.qure.ui.extentions.toReverseCoordsString
 import com.qure.ui.model.MemoUI
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.Locale
 
 data class LocationData(
     val title: String = "",
@@ -86,7 +104,6 @@ fun LocationSettingRoute(
     LaunchedEffect(viewModel.error) {
         viewModel.error.collectLatest(onShowErrorSnackBar)
     }
-
     val geoCodingUiState by viewModel.geoCodingUiState.collectAsStateWithLifecycle()
     val reverseGeoCodingUiState by viewModel.reverseGeoCodingUiState.collectAsStateWithLifecycle()
     val locationUiState by viewModel.locationUiState.collectAsStateWithLifecycle()
@@ -132,6 +149,20 @@ fun LocationSettingRoute(
     )
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
+@SuppressLint("MissingPermission")
+suspend fun getCurrentLocation(fusedLocationClient: FusedLocationProviderClient): Location? {
+    return suspendCancellableCoroutine { continuation ->
+        val locationTask: Task<Location> = fusedLocationClient.lastLocation
+        locationTask.addOnSuccessListener { location ->
+            continuation.resume(location) { }
+        }
+        locationTask.addOnFailureListener { _ ->
+            continuation.resume(null) { }
+        }
+    }
+}
+
 enum class Direction {
     LEFT,
     RIGHT,
@@ -161,6 +192,38 @@ private fun LocationSettingScreen(
     var longitude by remember { mutableDoubleStateOf(String.DefaultLongitude.toDouble()) }
     var coords by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+    var hasLocationPermission by remember { mutableStateOf(false) }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasLocationPermission = isGranted
+    }
+
+    LaunchedEffect(Unit) {
+        locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+    var currentAddresses by remember { mutableStateOf(emptyList<Address>()) }
+    LaunchedEffect(doIndex) {
+        if (doIndex == Regions.entries.lastIndex) {
+            val location = getCurrentLocation(fusedLocationClient)
+            latitude = location?.latitude ?: String.DefaultLatitude.toDouble()
+            longitude = location?.longitude ?: String.DefaultLongitude.toDouble()
+            fetchCurrentAddresses(latitude, longitude, context) {
+                currentAddresses = it
+            }
+            val currentAddress = currentAddresses.last()
+                .getAddressLine(0)
+                .split(" ")
+                .drop(1)
+                .joinToString(" ") {
+                    it.replace("-", " ")
+                }
+            setRegionName(currentAddress)
+        }
+    }
 
     LaunchedEffect(geoCodingUiState) {
         if (geoCodingUiState is GeoCodingUiState.Success) {
@@ -177,10 +240,18 @@ private fun LocationSettingScreen(
     }
     LaunchedEffect(reverseGeoCodingUiState) {
         if (reverseGeoCodingUiState is ReverseGeoCodingUiState.Success) {
-            setRegionName(
-                reverseGeoCodingUiState.reverseGeocoding?.areaName?.split(" ")?.drop(2)
+            val regionName = if (doIndex == Regions.entries.lastIndex) {
+                reverseGeoCodingUiState.reverseGeocoding
+                    ?.areaName
+                    ?.split(" ")
                     ?.joinToString(" ") ?: ""
-            )
+            } else {
+                reverseGeoCodingUiState.reverseGeocoding
+                    ?.areaName
+                    ?.split(" ")?.drop(2)
+                    ?.joinToString(" ") ?: ""
+            }
+            setRegionName(regionName)
         }
     }
 
@@ -200,7 +271,9 @@ private fun LocationSettingScreen(
                 }
 
                 else -> {
-                    onNextPage()
+                    coroutineScope.launch {
+                        onNextPage()
+                    }
                     direction = Direction.LEFT
                 }
             }
@@ -233,7 +306,11 @@ private fun LocationSettingScreen(
             val regions = if (targetState.region == Regions.REGION) {
                 RegionData.regions.map { it.name }
             } else {
-                RegionData.regions[doIndex].subRegions
+                if (doIndex != Regions.entries.lastIndex) {
+                    RegionData.regions[doIndex].subRegions
+                } else {
+                    emptyList()
+                }
             }
             if (geoCodingUiState is GeoCodingUiState.Loading || reverseGeoCodingUiState is ReverseGeoCodingUiState.Loading) {
                 Box(
@@ -260,18 +337,61 @@ private fun LocationSettingScreen(
                     fetchReverseGeocoding = fetchReverseGeocoding,
                 )
             } else {
-                RegionContent(
-                    modifier = Modifier
-                        .fillMaxSize()
+                Column(
+                    modifier = Modifier.fillMaxSize()
                         .padding(paddingValues)
-                        .padding(horizontal = 20.dp),
-                    selectedIndex = if (locationUiState.currentPage == 0) doIndex else cityIndex,
-                    onClick = if (locationUiState.currentPage == 0) setDoIndex else setCityIndex,
-                    regions = regions,
-                    setRegionName = setRegionName,
-                )
+                        .padding(horizontal = 20.dp)
+                ) {
+                    if (locationUiState.currentPage == 0) {
+                        MyLocationContent(
+                            selectedIndex = doIndex,
+                            onClick = { index ->
+                                setDoIndex(index)
+                            },
+                            setRegionName = setRegionName,
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        HorizontalDivider()
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                    RegionContent(
+                        modifier = Modifier,
+                        selectedIndex = if (locationUiState.currentPage == 0) doIndex else cityIndex,
+                        onClick = if (locationUiState.currentPage == 0) setDoIndex else setCityIndex,
+                        regions = regions,
+                        setRegionName = setRegionName,
+                    )
+                }
             }
         }
+    }
+}
+
+private fun fetchCurrentAddresses(
+    latitude: Double,
+    longitude: Double,
+    context: Context,
+    setCurrentAddress: (List<Address>) -> Unit,
+) {
+    val geocoder = Geocoder(context, Locale.KOREA)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getGeocoderLocation(geocoder, latitude, longitude) {
+            setCurrentAddress(it)
+        }
+    } else {
+        setCurrentAddress(geocoder.getFromLocation(latitude, longitude, 1) ?: emptyList())
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private fun getGeocoderLocation(
+    geocoder: Geocoder,
+    latitude: Double,
+    longitude: Double,
+    getFromLocation: (List<Address>) -> Unit,
+) {
+    geocoder.getFromLocation(latitude, longitude, 1) { result ->
+        getFromLocation(result)
     }
 }
 
@@ -413,6 +533,21 @@ private fun LocationContent(
                     isEnabled = isEnabledNext
                 )
             }
+        }
+    )
+}
+
+@Composable
+private fun MyLocationContent(
+    selectedIndex: Int,
+    onClick: (Int) -> Unit,
+    setRegionName: (String) -> Unit,
+) {
+    RegionItem(
+        region = "현재 나의 위치",
+        isSelected = selectedIndex == Regions.entries.lastIndex,
+        onClick = {
+            onClick(Regions.entries.lastIndex)
         }
     )
 }

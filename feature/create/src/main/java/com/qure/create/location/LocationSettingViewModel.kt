@@ -76,8 +76,12 @@ constructor(
     }
 
     fun onClickNext() {
-        if (currentPage < 3) {
-            currentPage += 1
+        if (_doIndex.intValue == Regions.entries.lastIndex) {
+            currentPage += 2
+        } else {
+            if (currentPage < 3) {
+                currentPage += 1
+            }
         }
         if (_cityIndex.intValue != -1 && currentPage == 1) {
             val region = RegionData.regions[_doIndex.intValue].subRegions[_cityIndex.intValue]
@@ -92,8 +96,12 @@ constructor(
     }
 
     fun onClickPrevious() {
-        if (currentPage > 0) {
-            currentPage -= 1
+        if (_doIndex.intValue == Regions.entries.lastIndex) {
+            currentPage -= 2
+        } else {
+            if (currentPage > 0) {
+                currentPage -= 1
+            }
         }
         when (currentPage) {
             0 -> if (_selectedRegionName.size == 2) {
@@ -133,11 +141,23 @@ constructor(
     }
 
     fun setRegionName(regionName: String) {
-        if (_selectedRegionName.size == 3) {
-            _selectedRegionName.removeLast()
-        }
-        if (regionName != NO_REGION_NAME) {
-            _selectedRegionName.add(regionName)
+        when {
+            _selectedRegionName.size == 3 -> {
+                _selectedRegionName.removeLast()
+            }
+            _doIndex.intValue == Regions.entries.lastIndex -> {
+                val (doName, cityName, addressNumber) = regionName.split(" ", limit = 3).let {
+                    Triple(it[0], it[1], it.drop(2).joinToString(" "))
+                }
+                _selectedRegionName.apply {
+                    add(doName)
+                    add(cityName)
+                    add(addressNumber)
+                }
+            }
+            regionName != NO_REGION_NAME -> {
+                _selectedRegionName.add(regionName)
+            }
         }
     }
 
@@ -165,4 +185,5 @@ enum class Regions {
     JEONNAM,
     JEJU,
     REGION,
+    CURRENT_LOCATION,
 }
