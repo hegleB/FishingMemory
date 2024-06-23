@@ -10,10 +10,13 @@ import android.location.Location
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RawRes
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,15 +35,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,8 +62,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -80,7 +86,10 @@ import com.qure.model.extensions.Spacing
 import com.qure.model.weather.SkyState
 import com.qure.ui.custom.barchart.BarChartView
 import com.qure.ui.custom.barchart.CustomBarChartView
+import com.qure.ui.model.HourOfWeatherState
 import com.qure.ui.model.MemoUI
+import com.qure.ui.model.WeatherUI
+import com.qure.ui.model.categorizeWeather
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -91,7 +100,7 @@ import java.util.Locale
 fun HomeRoute(
     padding: PaddingValues,
     navigateToMemoList: () -> Unit,
-    navigateToDetailMemo: (com.qure.ui.model.MemoUI) -> Unit,
+    navigateToDetailMemo: (MemoUI) -> Unit,
     navigateToMap: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
@@ -107,7 +116,7 @@ fun HomeRoute(
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     var hasLocationPermission by remember { mutableStateOf(false) }
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -130,17 +139,6 @@ fun HomeRoute(
         }
     }
 
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) {
-                viewModel.fetchData()
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
 
     HomeScreen(
         modifier = Modifier
@@ -181,12 +179,12 @@ data class HomeItemData(
 
 @Composable
 private fun HomeScreen(
-    homeUiState: HomeUiState = HomeUiState.Empty,
+    homeUiState: HomeUiState = HomeUiState.Loading,
     context: Context = LocalContext.current,
     modifier: Modifier = Modifier,
     onClickFishType: (String) -> Unit = { },
     onClickMemoMore: () -> Unit = { },
-    onClickMemo: (com.qure.ui.model.MemoUI) -> Unit = { },
+    onClickMemo: (MemoUI) -> Unit = { },
     selectedChip: String = stringResource(id = R.string.fish_type),
     latXLngY: LatXLngY = LatXLngY(),
     navigateToMap: () -> Unit = { },
@@ -204,28 +202,35 @@ private fun HomeScreen(
                 .padding(horizontal = 30.dp)
                 .padding(top = 30.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .background(Color.Transparent)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                HomeItemList(
-                    homeUiState = homeUiState,
-                    context = context,
-                    latXLngY = latXLngY,
-                    selectedChip = selectedChip,
-                    onClickFishType = onClickFishType,
-                    onClickMemo = onClickMemo,
-                    onClickMemoMore = onClickMemoMore
-                )
-                MapCard(navigateToMap)
-            }
-            if (homeUiState is HomeUiState.Loading && isRefresh.not()) {
-                FMProgressBar(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .align(Alignment.Center)
-                )
+            when (homeUiState) {
+                HomeUiState.Loading -> {
+                    FMProgressBar(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .align(Alignment.Center)
+                    )
+                }
+
+                is HomeUiState.Success -> {
+                    Column(
+                        modifier = Modifier
+                            .background(Color.Transparent)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                    ) {
+                        HomeItemList(
+                            context = context,
+                            latXLngY = latXLngY,
+                            selectedChip = selectedChip,
+                            onClickFishType = onClickFishType,
+                            onClickMemo = onClickMemo,
+                            onClickMemoMore = onClickMemoMore,
+                            memos = homeUiState.memos,
+                            weather = homeUiState.weather,
+                        )
+                        MapCard(navigateToMap)
+                    }
+                }
             }
         }
     }
@@ -233,45 +238,93 @@ private fun HomeScreen(
 
 @Composable
 private fun HomeItemList(
-    homeUiState: HomeUiState,
     context: Context,
     latXLngY: LatXLngY,
     selectedChip: String,
     onClickFishType: (String) -> Unit,
-    onClickMemo: (com.qure.ui.model.MemoUI) -> Unit,
+    onClickMemo: (MemoUI) -> Unit,
     onClickMemoMore: () -> Unit,
+    memos: List<MemoUI> = emptyList(),
+    weather: List<WeatherUI> = emptyList(),
 ) {
-    val items = listOf(
-        HomeItemData(
-            modifier = Modifier.height(220.dp),
-            title = stringResource(id = R.string.caught_fish)
-        ),
-        HomeItemData(
-            modifier = Modifier.height(180.dp),
-            title = stringResource(id = R.string.weather)
-        ),
-        HomeItemData(
-            modifier = Modifier.height(200.dp),
-            title = stringResource(id = R.string.writhing)
-        ),
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        FishItem(
+            modifier = Modifier
+                .height(220.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(15.dp))
+                .background(color = MaterialTheme.colorScheme.secondary),
+            elements = listOf(
+                stringResource(id = R.string.fish_type),
+                stringResource(id = R.string.fish_size),
+                stringResource(id = R.string.place)
+            ),
+            context = context,
+            onClickChip = onClickFishType,
+            selectedChip = selectedChip,
+            memos = memos
+        )
 
-    items.forEachIndexed { index, item ->
-        HomeItem(
-            modifier = item.modifier.fillMaxWidth(),
-            title = item.title
-        ) {
-            HomeContent(
-                index = index,
-                homeUiState = homeUiState,
-                context = context,
-                latXLngY = latXLngY,
-                selectedChip = selectedChip,
-                onClickFishType = onClickFishType,
-                onClickMemo = onClickMemo,
-                onClickMemoMore = onClickMemoMore
+        if (weather.isNotEmpty()) {
+
+            var city = ""
+            fetchCurrentAddress(context, latXLngY) { address ->
+                city = address
+            }
+
+            WeatherItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Purple700, Blue300)
+                        )
+                    )
+                    .animateContentSize(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow,
+                        )
+                    ),
+                hoursOfWeather = weather.categorizeWeather(),
+                location = city,
             )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(15.dp))
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Purple700, Blue300)
+                        )
+                    ),
+            ) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.Center),
+                    text = stringResource(id = R.string.no_seacrh_weather),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = White,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
+
+        MemoItem(
+            modifier = Modifier
+                .height(180.dp)
+                .clip(RoundedCornerShape(15.dp))
+                .background(color = MaterialTheme.colorScheme.secondary),
+            memos = memos,
+            clickMemo = onClickMemo,
+            clickMemoMore = onClickMemoMore
+        )
     }
 }
 
@@ -308,122 +361,63 @@ private fun MapCard(
 }
 
 @Composable
-fun HomeContent(
-    index: Int,
-    homeUiState: HomeUiState,
-    context: Context,
-    latXLngY: LatXLngY,
-    selectedChip: String,
-    onClickFishType: (String) -> Unit,
-    onClickMemo: (MemoUI) -> Unit,
-    onClickMemoMore: () -> Unit,
-) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        if (homeUiState is HomeUiState.Success) {
-            when (index) {
-                0 -> FishItem(
-                    elements = listOf(
-                        stringResource(id = R.string.fish_type),
-                        stringResource(id = R.string.fish_size),
-                        stringResource(id = R.string.place)
-                    ),
-                    context = context,
-                    onClickChip = onClickFishType,
-                    selectedChip = selectedChip,
-                    memos = homeUiState.memos
-                )
-
-                1 -> {
-                    if (homeUiState.weather.isNotEmpty()) {
-                        var city = ""
-                        fetchCurrentAddress(context, latXLngY) { address ->
-                            city = address
-                        }
-                        WeatherItem(
-                            dateTimeWeather = homeUiState.toCurrentDateTimeWeather(),
-                            temperature = homeUiState.toTemperatureString(),
-                            skyState = SkyState.from(homeUiState.getSkyState().fcstValue.toInt()),
-                            location = city,
-                            weatherRes = homeUiState.toWeatherAnimation()
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .align(Alignment.Center),
-                                text = stringResource(id = R.string.no_seacrh_weather),
-                                style = MaterialTheme.typography.displayLarge,
-                                color = White,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-                    }
-                }
-
-                2 -> MemoItem(
-                    memos = homeUiState.memos,
-                    clickMemo = onClickMemo,
-                    clickMemoMore = onClickMemoMore
-                )
-            }
-        }
-    }
-}
-
-@Composable
 private fun MemoItem(
-    memos: List<com.qure.ui.model.MemoUI> = emptyList(),
-    clickMemo: (com.qure.ui.model.MemoUI) -> Unit = { },
+    modifier: Modifier = Modifier,
+    memos: List<MemoUI> = emptyList(),
+    clickMemo: (MemoUI) -> Unit = { },
     clickMemoMore: () -> Unit = { },
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(end = 10.dp, top = 10.dp),
-    ) {
-        Text(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .clickable { clickMemoMore() },
-            text = stringResource(id = R.string.memo_more),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-    }
-    if (memos.isEmpty()) {
+    Column(modifier = modifier) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth(),
         ) {
+            ItemTitle(
+                modifier = Modifier,
+                title = stringResource(id = R.string.writhing),
+            )
             Text(
                 modifier = Modifier
-                    .align(Alignment.Center),
-                text = stringResource(R.string.empty_memo),
-                style = MaterialTheme.typography.displayLarge,
+                    .align(Alignment.TopEnd)
+                    .padding(top = 10.dp, end = 10.dp)
+                    .clickable { clickMemoMore() },
+                text = stringResource(id = R.string.memo_more),
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
-    } else {
-        LazyRow(
-            modifier = Modifier.padding(top = 20.dp, start = 10.dp),
-            state = rememberLazyListState(),
-        ) {
-            items(items = memos) { memo ->
-                FMMemoItem(
+        if (memos.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Text(
                     modifier = Modifier
-                        .width(300.dp)
-                        .height(100.dp),
-                    imageUrl = memo.image,
-                    title = memo.title,
-                    location = memo.location,
-                    fishType = memo.fishType,
-                    content = memo.content,
-                    date = memo.date,
-                    onMemoClicked = { clickMemo(memo) }
+                        .align(Alignment.Center),
+                    text = stringResource(R.string.empty_memo),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
+            }
+        } else {
+            LazyRow(
+                modifier = Modifier.padding(top = 20.dp, start = 10.dp),
+                state = rememberLazyListState(),
+            ) {
+                items(items = memos) { memo ->
+                    FMMemoItem(
+                        modifier = Modifier
+                            .width(300.dp)
+                            .height(100.dp),
+                        imageUrl = memo.image,
+                        title = memo.title,
+                        location = memo.location,
+                        fishType = memo.fishType,
+                        content = memo.content,
+                        date = memo.date,
+                        onMemoClicked = { clickMemo(memo) }
+                    )
+                }
             }
         }
     }
@@ -431,10 +425,11 @@ private fun MemoItem(
 
 @Composable
 private fun FishItem(
+    modifier: Modifier = Modifier,
     elements: List<String> = emptyList(),
     context: Context,
     onClickChip: (String) -> Unit,
-    memos: List<com.qure.ui.model.MemoUI> = emptyList(),
+    memos: List<MemoUI> = emptyList(),
     selectedChip: String = stringResource(id = R.string.fish_type),
 ) {
     val filteredFishes = when (selectedChip) {
@@ -449,47 +444,57 @@ private fun FishItem(
             }
         }
     }
-
-    Box(modifier = Modifier.fillMaxWidth()) {
-        FMChipGroup(
-            modifier = Modifier.align(Alignment.TopEnd),
-            chipModifier = Modifier.width(50.dp),
-            elements = elements,
-            chipFontSize = 12.sp,
-            onClickChip = { chip -> onClickChip(chip) },
-            selectedChip = selectedChip,
-            selectedFontColor = White,
-            unSelectedFontColor = Blue500,
-        )
-    }
-    if (memos.isEmpty()) {
+    Column(
+        modifier = modifier,
+    ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth(),
         ) {
-            Text(
-                modifier = Modifier
-                    .align(Alignment.Center),
-                text = stringResource(R.string.no_fish_caught),
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+            ItemTitle(
+                modifier = Modifier.align(Alignment.TopStart),
+                title = stringResource(id = R.string.caught_fish)
+            )
+            FMChipGroup(
+                modifier = Modifier.align(Alignment.TopEnd),
+                chipModifier = Modifier.width(50.dp),
+                elements = elements,
+                chipFontSize = 12.sp,
+                onClickChip = { chip -> onClickChip(chip) },
+                selectedChip = selectedChip,
+                selectedFontColor = White,
+                unSelectedFontColor = Blue500,
             )
         }
-    } else {
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { ctx ->
-                CustomBarChartView(ctx).apply {
-                    setRadius((15 * Resources.getSystem().displayMetrics.density + 0.5f).toInt())
-                }
+        if (memos.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.Center),
+                    text = stringResource(R.string.no_fish_caught),
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
             }
-        ) { barChart ->
-            BarChartView(
-                context = context,
-                resources = context.resources,
-                values = countElements(filteredFishes).values.toList(),
-                labels = filteredFishes.distinct()
-            ).initBarChart(barChart)
+        } else {
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { ctx ->
+                    CustomBarChartView(ctx).apply {
+                        setRadius((15 * Resources.getSystem().displayMetrics.density + 0.5f).toInt())
+                    }
+                }
+            ) { barChart ->
+                BarChartView(
+                    context = context,
+                    resources = context.resources,
+                    values = countElements(filteredFishes).values.toList(),
+                    labels = filteredFishes.distinct()
+                ).initBarChart(barChart)
+            }
         }
     }
 }
@@ -504,58 +509,139 @@ private fun <T> countElements(list: List<T>): Map<T, Float> {
 
 @Composable
 private fun WeatherItem(
-    dateTimeWeather: String = "",
-    temperature: String = "",
-    skyState: String = "",
+    modifier: Modifier = Modifier,
+    hoursOfWeather: List<HourOfWeatherState>,
     location: String = "",
-    @RawRes weatherRes: Int = com.qure.core.designsystem.R.raw.weather_sunny_day,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 30.dp)
-            .padding(top = 40.dp, bottom = 20.dp),
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
+    val height = if (isExpanded) 250.dp else 150.dp
+    Column(
+        modifier = modifier
+            .heightIn(height)
     ) {
-        Column {
-            Row(
-                verticalAlignment = Alignment.Bottom,
+        ItemTitle(
+            title = stringResource(id = R.string.weather)
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 10.dp)
+                .padding(horizontal = 20.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 10.dp)
+                    .padding(bottom = 20.dp),
             ) {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 10.dp),
+                    verticalAlignment = Alignment.Bottom,
+                ) {
+                    Text(
+                        text = hoursOfWeather.first().toTemperatureString(),
+                        color = White,
+                        fontSize = 34.sp,
+                        style = MaterialTheme.typography.displayLarge,
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = hoursOfWeather.first().toCurrentDateTimeWeather(),
+                        color = White,
+                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.displayLarge
+                    )
+                }
                 Text(
-                    text = temperature,
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = location,
                     color = White,
-                    fontSize = 34.sp,
+                    fontSize = 20.sp,
                     style = MaterialTheme.typography.displayLarge,
                 )
-                Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = dateTimeWeather,
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = SkyState.from(hoursOfWeather.first().skyState.fcstValue.toInt()),
                     color = White,
-                    fontSize = 12.sp,
-                    style = MaterialTheme.typography.displayLarge
+                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.displaySmall,
                 )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                        .clickable { isExpanded = !isExpanded },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        imageVector = if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = White,
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = stringResource(id = R.string.weather_time_zone_more),
+                        color = White,
+                    )
+                }
+
+                if (isExpanded) {
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        items(hoursOfWeather.drop(1)) { weather ->
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                Text(
+                                    text = weather.toTemperatureString(),
+                                    color = White,
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                FMLottieAnimation(
+                                    modifier = Modifier
+                                        .size(50.dp),
+                                    lottieId = weather.toWeatherAnimation()
+                                )
+                                Text(
+                                    text = weather.convertToHourString(),
+                                    color = White,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                            }
+                        }
+                    }
+                }
             }
-            Text(
-                modifier = Modifier.padding(top = 10.dp),
-                text = location,
-                color = White,
-                fontSize = 20.sp,
-                style = MaterialTheme.typography.displayLarge,
-            )
-            Text(
-                modifier = Modifier.padding(top = 10.dp),
-                text = skyState,
-                color = White,
-                fontSize = 18.sp,
-                style = MaterialTheme.typography.displaySmall,
+            FMLottieAnimation(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 10.dp, end = 10.dp)
+                    .size(80.dp),
+                lottieId = hoursOfWeather.first().toWeatherAnimation(),
             )
         }
-        FMLottieAnimation(
-            modifier = Modifier
-                .size(80.dp)
-                .align(Alignment.TopEnd),
-            lottieId = weatherRes,
-        )
     }
+}
+
+@Composable
+private fun ItemTitle(
+    modifier: Modifier = Modifier,
+    title: String,
+) {
+    Text(
+        modifier = modifier
+            .padding(top = 5.dp, start = 10.dp),
+        text = title,
+        color = Gray300,
+    )
 }
 
 
@@ -577,44 +663,6 @@ private fun fetchCurrentAddress(
         val address: Address? = geoCoder.getFromLocation(latXLngY.lat, latXLngY.lng, 1)?.get(0)
         if (address != null) {
             sendAddressCityName(address.getAddressLine(0).split(" ")[1])
-        }
-    }
-}
-
-@Composable
-private fun HomeItem(
-    modifier: Modifier = Modifier,
-    title: String = "",
-    content: @Composable () -> Unit = { },
-) {
-    val homeItemModifier = if (title == stringResource(id = R.string.weather)) {
-        Modifier.background(
-            brush = Brush.verticalGradient(
-                colors = listOf(Purple700, Blue300)
-            )
-        )
-    } else {
-        Modifier.background(
-            color = MaterialTheme.colorScheme.secondary
-        )
-    }
-    Card(
-        modifier = modifier
-            .clip(RoundedCornerShape(15.dp))
-            .padding(bottom = 20.dp),
-    ) {
-        Box(
-            modifier = homeItemModifier.fillMaxSize(),
-        ) {
-            Text(
-                modifier = Modifier
-                    .padding(top = 10.dp, start = 10.dp)
-                    .align(Alignment.TopStart),
-                text = title,
-                color = Gray300,
-                style = MaterialTheme.typography.displayMedium,
-            )
-            content()
         }
     }
 }

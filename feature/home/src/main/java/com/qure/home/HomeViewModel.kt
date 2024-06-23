@@ -16,8 +16,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -59,11 +59,12 @@ constructor(
             )
                 .map { ui ->
                     HomeUiState.Success(
-                        weather = ui.first.response.body?.items?.item?.map { it.toWeatherUI() } ?: emptyList(),
+                        weather = ui.first.response.body?.items?.item?.map { it.toWeatherUI() }
+                            ?: emptyList(),
                         memos = ui.second.map { it.toMemoUI() }
                     )
                 }
-                .onStart { _homeUiState.value = HomeUiState.Loading }
+                .filter { it.weather.isNotEmpty() }
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .collectLatest { homeUiState ->
                     _homeUiState.value = homeUiState
@@ -71,6 +72,9 @@ constructor(
         }
     }
 
+    fun refresh() = viewModelScope.launch {
+
+    }
 
     fun setSelectedChip(chip: String) {
         _selectedChip.value = chip

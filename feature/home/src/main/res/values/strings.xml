@@ -18,5 +18,7 @@
     <string name="no_seacrh_weather">현재 날씨 정보를 가져오지 못하였습니다.\n새로고침 해주세요</string>
 
     <string name="message_location_permission_required">위치 권한을 설정해주세요</string>
-    
+
+    <string name="weather_time_zone_more">시간대별 날씨 보기</string>
+
 </resources>
