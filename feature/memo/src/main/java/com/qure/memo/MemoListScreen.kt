@@ -74,6 +74,10 @@ fun MemoListRoute(
         viewModel.error.collectLatest(onShowErrorSnackBar)
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchMemoList()
+    }
+
     MemoListScreen(
         memoListUiState = memoListUiState,
         modifier = Modifier.fillMaxSize(),
