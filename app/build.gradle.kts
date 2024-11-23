@@ -30,8 +30,9 @@ android {
 
     defaultConfig {
         applicationId = "com.qure.fishingmemory"
-        versionCode = 7
-        versionName = "1.0.0"
+        versionCode = 9
+        versionName = "1.0.3"
+        targetSdk = 34
 
         buildConfigField("String", "KAKAO_API_KEY", kakaoApiKey)
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", kakaoNativeAppKey)
