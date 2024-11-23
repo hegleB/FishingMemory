@@ -105,12 +105,12 @@ constructor(
         }
         when (currentPage) {
             0 -> if (_selectedRegionName.size == 2) {
-                _selectedRegionName.removeLast()
+                _selectedRegionName.removeAt(_selectedRegionName.lastIndex)
             }
 
 
             1 -> if (_selectedRegionName.size == 3) {
-                _selectedRegionName.removeLast()
+                _selectedRegionName.removeAt(_selectedRegionName.lastIndex)
             }
         }
         val region = when {

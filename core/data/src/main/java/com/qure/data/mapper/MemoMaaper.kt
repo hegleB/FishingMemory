@@ -4,7 +4,6 @@ import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoLocalEntity
 import com.qure.data.entity.memo.MemoQueryEntity
 import com.qure.data.entity.memo.MemoStorageEntity
-import com.qure.data.entity.memo.UpdatedMemoEntity
 import com.qure.model.memo.Document
 import com.qure.model.memo.Memo
 import com.qure.model.memo.MemoFields
@@ -20,7 +19,7 @@ fun MemoEntity.toMemo(): Memo {
     )
 }
 
-fun UpdatedMemoEntity.toDocument(): Document {
+fun MemoEntity.toDocument(): Document {
     val data = this
     return Document(
         fields = data.fields,
@@ -31,7 +30,7 @@ fun UpdatedMemoEntity.toDocument(): Document {
 fun MemoQueryEntity.toMemo(): Memo {
     val data = this.document ?: Document.EMPTY
     return Memo(
-        fields = data.fields.toMemoFieldsEntity(),
+        fields = data.fields,
         createTime = data.createTime,
     )
 }
@@ -65,7 +64,7 @@ fun MemoStorageEntity.toMemoStorage(): MemoStorage {
 fun MemoFields.toMemoLocalEntity(): MemoLocalEntity {
     return MemoLocalEntity(
         uuid = this.uuid.stringValue,
-        fields = this.toMemoFieldsEntity(),
+        fields = this,
         createTime = this.createTime.stringValue,
     )
 }
@@ -86,7 +85,7 @@ fun MemoLocalEntity.toMemo(): Memo {
 
 fun Memo.toMemoLocalEntity(): MemoLocalEntity {
     return MemoLocalEntity(
-        uuid = this.fields.fields.uuid.stringValue,
+        uuid = this.fields.uuid.stringValue,
         fields = this.fields,
         createTime = this.createTime,
     )

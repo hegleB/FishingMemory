@@ -2,7 +2,6 @@ package com.qure.data.api
 
 import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoQueryEntity
-import com.qure.data.entity.memo.UpdatedMemoEntity
 import com.qure.model.memo.MemoFieldsEntity
 import com.qure.model.memo.MemoQuery
 import retrofit2.http.Body
@@ -37,5 +36,5 @@ internal interface MemoService {
         @Path("projectId") projectId: String,
         @Path("documentId") documentId: String,
         @Body fields: MemoFieldsEntity,
-    ): UpdatedMemoEntity
+    ): MemoEntity
 }

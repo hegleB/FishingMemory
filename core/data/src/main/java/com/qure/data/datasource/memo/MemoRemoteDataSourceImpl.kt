@@ -6,7 +6,6 @@ import com.qure.data.api.MemoService
 import com.qure.data.datasource.FishMemorySharedPreference
 import com.qure.data.entity.memo.MemoEntity
 import com.qure.data.entity.memo.MemoQueryEntity
-import com.qure.data.entity.memo.UpdatedMemoEntity
 import com.qure.data.utils.SIGNED_UP_EMAIL
 import com.qure.model.memo.CollectionId
 import com.qure.model.memo.CompositeFilter
@@ -51,7 +50,7 @@ constructor(
         )
     }
 
-    override suspend fun updateMemo(memoFields: MemoFields): UpdatedMemoEntity {
+    override suspend fun updateMemo(memoFields: MemoFields): MemoEntity {
         return memoService.updateMemo(
             buildPropertyRepository.get(BuildProperty.FIREBASE_DATABASE_PROJECT_ID),
             memoFields.uuid.stringValue,

@@ -211,6 +211,7 @@ private fun LocationSettingScreen(
             val location = getCurrentLocation(fusedLocationClient)
             latitude = location?.latitude ?: String.DefaultLatitude.toDouble()
             longitude = location?.longitude ?: String.DefaultLongitude.toDouble()
+            coords = "$latitude, $longitude"
             fetchCurrentAddresses(latitude, longitude, context) {
                 currentAddresses = it
             }

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Memo(
-    val fields: MemoFieldsEntity = MemoFieldsEntity.EMPTY,
+    val fields: MemoFields = MemoFields.EMPTY,
     val createTime: String,
 )
 

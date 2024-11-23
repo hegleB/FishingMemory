@@ -4,13 +4,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.qure.model.memo.Document
 import com.qure.model.memo.MemoFields
-import com.qure.model.memo.MemoFieldsEntity
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class MemoEntity(
     val name: String,
-    val fields: MemoFieldsEntity,
+    val fields: MemoFields = MemoFields.EMPTY,
     val createTime: String,
     val updateTime: String,
 )
@@ -19,16 +18,8 @@ data class MemoEntity(
 @Entity(tableName = "fishing_memo_table")
 data class MemoLocalEntity(
     @PrimaryKey val uuid: String,
-    val fields: MemoFieldsEntity,
+    val fields: MemoFields = MemoFields.EMPTY,
     val createTime: String,
-)
-
-@Serializable
-data class UpdatedMemoEntity(
-    val name: String,
-    val fields: MemoFields,
-    val createTime: String,
-    val updateTime: String,
 )
 
 @Serializable

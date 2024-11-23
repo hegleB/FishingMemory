@@ -73,7 +73,7 @@ fun MemoUI.toMemoFields(email: String): MemoFields {
 
 
 fun Memo.toMemoUI(): MemoUI {
-    val data = this.fields.fields
+    val data = this.fields
     return MemoUI(
         uuid = data.uuid.stringValue,
         email = data.email.stringValue,
