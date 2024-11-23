@@ -251,7 +251,7 @@ fun MainScreen(
                         navigateToLogin = {
                             navigator.navigateToLogin(
                                 navOptions = navOptions {
-                                    popUpTo(Route.Splash) {
+                                    popUpTo(Route.Permission) {
                                         inclusive = true
                                     }
                                 }
