@@ -1,12 +1,15 @@
 package com.qure.permission
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,9 +59,8 @@ fun PermissionRoute(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
     ) { permissions ->
         hasLocationPermission =
-            permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION] == true &&
-            permissions[android.Manifest.permission.ACCESS_FINE_LOCATION] == true
-
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true &&
+                    permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
         if (hasLocationPermission) {
             navigateToLogin()
         } else {
@@ -68,17 +70,38 @@ fun PermissionRoute(
             context.startActivity(intent)
         }
     }
+
     PermissionScreen(
         modifier = Modifier.fillMaxSize(),
         onPermissionClick = {
             requestPermissionLauncher.launch(
-                arrayOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                ),
+                getPermissions()
             )
         },
     )
+}
+
+private fun getPermissions(): Array<String> {
+    return when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED,
+        )
+
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.READ_MEDIA_IMAGES,
+            )
+        else -> arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+        )
+    }
 }
 
 private fun checkPermission(context: Context): Boolean {
@@ -86,10 +109,10 @@ private fun checkPermission(context: Context): Boolean {
         context,
         android.Manifest.permission.ACCESS_COARSE_LOCATION,
     ) == PackageManager.PERMISSION_GRANTED &&
-        ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-        ) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+            ) == PackageManager.PERMISSION_GRANTED
 }
 
 @Composable
