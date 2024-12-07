@@ -23,7 +23,6 @@ import com.qure.map.navigateMap
 import com.qure.memo.detail.navigateMemoDetail
 import com.qure.memo.navigateMemoList
 import com.qure.model.FishingSpotUI
-import com.qure.model.toFishingSpotString
 import com.qure.mypage.darkmode.navigateDarkMode
 import com.qure.mypage.navigationMyPage
 import com.qure.navigation.MainTabRoute
@@ -31,7 +30,6 @@ import com.qure.navigation.Route
 import com.qure.onboarding.navigateOnboarding
 import com.qure.permission.navigatePermission
 import com.qure.ui.model.MemoUI
-import com.qure.ui.model.toMemoString
 
 
 class MainNavigator(
@@ -93,7 +91,7 @@ class MainNavigator(
     }
 
     fun navigateToFishingSpot(fishingSpotUI: FishingSpotUI) {
-        navController.navigateFishingSpot(fishingSpotUI.toFishingSpotString())
+        navController.navigateFishingSpot(fishingSpotUI)
     }
 
     fun navigateToGallery(memoUI: MemoUI = MemoUI(), navOptions: NavOptions = navOptions { }) {
@@ -110,7 +108,7 @@ class MainNavigator(
         navOptions: NavOptions = navOptions { }
     ) {
         navController.navigateMemoCreate(
-            memo = memoUI.toMemoString(),
+            memo = memoUI,
             isEdit = isEdit,
             navOptions = navOptions
         )
@@ -128,7 +126,7 @@ class MainNavigator(
     }
 
     fun navigateToMemoDetail(memoUI: MemoUI, navOptions: NavOptions? = null) {
-        navController.navigateMemoDetail(memoUI.toMemoString(), navOptions)
+        navController.navigateMemoDetail(memoUI, navOptions)
     }
 
     fun navigateToBookmark() {

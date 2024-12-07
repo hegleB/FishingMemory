@@ -289,7 +289,7 @@ fun MainScreen(
                             navigator.navigateToMemoDetail(
                                 memoUI = memo,
                                 navOptions = navOptions {
-                                    popUpTo(Route.MemoCreate().toRouteString()) {
+                                    popUpTo(Route.MemoCreate().route) {
                                         inclusive = true
                                     }
                                     launchSingleTop = true
@@ -307,7 +307,7 @@ fun MainScreen(
                                 memoUI = memo,
                                 isEdit = true,
                                 navOptions = navOptions {
-                                    popUpTo(Route.MemoCreate().toRouteString()) {
+                                    popUpTo(Route.MemoCreate().route) {
                                         inclusive = true
                                     }
                                     launchSingleTop = true
@@ -344,7 +344,7 @@ fun MainScreen(
                                 memoUI = memo,
                                 isEdit = true,
                                 navOptions = navOptions {
-                                    popUpTo(Route.MemoCreate().toRouteString()) {
+                                    popUpTo(Route.MemoCreate().route) {
                                         inclusive = true
                                     }
                                     launchSingleTop = true
@@ -404,7 +404,7 @@ fun MainScreen(
                                 memoUI = memo,
                                 isEdit = true,
                                 navOptions = navOptions {
-                                    popUpTo(Route.MemoCreate().toRouteString()) {
+                                    popUpTo(Route.MemoCreate().route) {
                                         inclusive = true
                                     }
                                     launchSingleTop = true

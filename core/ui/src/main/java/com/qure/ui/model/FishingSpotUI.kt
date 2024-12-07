@@ -4,8 +4,6 @@ import com.qure.model.extensions.Empty
 import com.qure.model.fishingspot.FishingSpot
 import com.qure.model.fishingspot.FishingSpotBookmark
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.geometry.TedLatLng
 
@@ -24,14 +22,6 @@ data class FishingSpotUI(
     val fee: String = String.Empty,
     val phone_number: String = String.Empty,
 )
-
-fun FishingSpotUI.toFishingSpotString(): String {
-    return Json.encodeToString(this)
-}
-
-fun String.toFishingSpotUI(): FishingSpotUI {
-    return Json.decodeFromString(this)
-}
 
 fun FishingSpotUI.toTedClusterItem(): TedClusterItem {
     val lat = this.latitude

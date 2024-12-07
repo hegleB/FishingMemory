@@ -4,11 +4,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.qure.model.toFishingSpotUI
+import com.qure.model.FishingSpotUI
 import com.qure.navigation.Route
 import com.qure.navigation.Route.FishingSpot as FishingSpotRoute
 
-fun NavController.navigateFishingSpot(fishingSpot: String) {
+fun NavController.navigateFishingSpot(fishingSpot: FishingSpotUI) {
     navigate(Route.FishingSpot(fishingSpot))
 }
 
@@ -17,8 +17,10 @@ fun NavGraphBuilder.fishingSpotNavGraph(
     onBack: () -> Unit,
     onClickPhoneNumber: (String) -> Unit,
 ) {
-    composable<FishingSpotRoute> { navBackStackEntry ->
-        val fishingSpot = navBackStackEntry.toRoute<Route.FishingSpot>().fishingSpot.toFishingSpotUI()
+    composable<FishingSpotRoute>(
+        typeMap = FishingSpotRoute.typeMap,
+    ) { navBackStackEntry ->
+        val fishingSpot = navBackStackEntry.toRoute<Route.FishingSpot>().fishingSpot
         FishingSpotRoute(
             onBack = onBack,
             fishingSpot = fishingSpot,

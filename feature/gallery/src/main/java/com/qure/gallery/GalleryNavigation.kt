@@ -8,12 +8,10 @@ import androidx.navigation.toRoute
 import com.qure.navigation.Route
 import com.qure.ui.model.MemoUI
 import com.qure.ui.model.SnackBarMessageType
-import com.qure.ui.model.toMemoString
-import com.qure.ui.model.toMemoUI
 import com.qure.navigation.Route.Gallery as GalleryRoute
 
 fun NavController.navigateGallery(memoUI: MemoUI, navOptions: NavOptions) {
-    navigate(GalleryRoute(memoUI.toMemoString()), navOptions)
+    navigate(GalleryRoute(memoUI), navOptions)
 }
 
 fun NavGraphBuilder.galleryNavGraph(
@@ -23,8 +21,10 @@ fun NavGraphBuilder.galleryNavGraph(
     onClickDone: (MemoUI) -> Unit,
     onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
 ) {
-    composable<GalleryRoute> { navBackStackEntry ->
-        val memo = navBackStackEntry.toRoute<Route.MemoCreate>().memo.toMemoUI()
+    composable<GalleryRoute>(
+        typeMap = GalleryRoute.typeMap,
+    ) { navBackStackEntry ->
+        val memo = navBackStackEntry.toRoute<Route.MemoCreate>().memo
         GalleryRoute(
             memoUI = memo,
             onBack = onBack,

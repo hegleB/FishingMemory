@@ -8,10 +8,9 @@ import androidx.navigation.toRoute
 import com.qure.navigation.Route
 import com.qure.ui.model.MemoUI
 import com.qure.ui.model.SnackBarMessageType
-import com.qure.ui.model.toMemoUI
 
 fun NavController.navigateMemoCreate(
-    memo: String,
+    memo: MemoUI,
     isEdit: Boolean,
     navOptions: NavOptions
 ) {
@@ -26,8 +25,10 @@ fun NavGraphBuilder.memoCreateNavGraph(
     navigateToMemoDetail: (MemoUI) -> Unit,
     onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
 ) {
-    composable<Route.MemoCreate> { navBackStackEntry ->
-        val memo = navBackStackEntry.toRoute<Route.MemoDetail>().memo.toMemoUI()
+    composable<Route.MemoCreate>(
+        typeMap = Route.MemoCreate.typeMap
+    ) { navBackStackEntry ->
+        val memo = navBackStackEntry.toRoute<Route.MemoDetail>().memo
         val isEdit = navBackStackEntry.toRoute<Route.MemoDetail>().isEdit
         MemoCreateRoute(
             memo = memo,

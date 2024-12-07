@@ -7,19 +7,19 @@ import androidx.navigation.toRoute
 import com.qure.navigation.Route
 import com.qure.ui.model.MemoUI
 import com.qure.ui.model.SnackBarMessageType
-import com.qure.ui.model.toMemoString
-import com.qure.ui.model.toMemoUI
 
 fun NavController.navigateCamera(memoUI: MemoUI, isEdit: Boolean) {
-    navigate(Route.Camera(memoUI.toMemoString(), isEdit))
+    navigate(Route.Camera(memoUI, isEdit))
 }
 
 fun NavGraphBuilder.cameraNavHost(
     navigateToMemoCreate: (MemoUI) -> Unit,
     onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
 ) {
-    composable<Route.Camera> { navBackStackEntry ->
-        val memo = navBackStackEntry.toRoute<Route.MemoCreate>().memo.toMemoUI()
+    composable<Route.Camera>(
+        typeMap = Route.Camera.typeMap,
+    ) { navBackStackEntry ->
+        val memo = navBackStackEntry.toRoute<Route.MemoCreate>().memo
         CameraRoute(
             memoUI = memo,
             navigateToMemoCreate = navigateToMemoCreate,

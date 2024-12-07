@@ -2,6 +2,7 @@ import com.fishingmemory.app.setNamespace
 
 plugins {
     id("fishingmemory.android.feature")
+    id("kotlinx-serialization")
 }
 
 android {
@@ -13,4 +14,5 @@ dependencies {
     implementation(libs.kakao.share)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.link.ktx)
+    implementation(libs.kotlinx.serialization.json)
 }

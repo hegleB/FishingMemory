@@ -7,8 +7,6 @@ import com.qure.model.memo.FieldStringValue
 import com.qure.model.memo.Memo
 import com.qure.model.memo.MemoFields
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.geometry.TedLatLng
 
@@ -35,15 +33,6 @@ data class MemoUI(
             date.isNotEmpty() &&
             fishType.isNotEmpty() &&
             content.isNotEmpty()
-}
-
-
-fun MemoUI.toMemoString(): String {
-    return Json.encodeToString(this)
-}
-
-fun String.toMemoUI(): MemoUI {
-    return Json.decodeFromString(this)
 }
 
 fun MemoUI.toTedClusterItem(): TedClusterItem {

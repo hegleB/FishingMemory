@@ -1,10 +1,12 @@
 package com.qure.navigation
 
+import com.qure.model.FishingSpotUI
 import com.qure.ui.model.MemoUI
-import com.qure.ui.model.toMemoString
 import kotlinx.serialization.Serializable
+import kotlin.reflect.typeOf
 
 sealed interface Route {
+
     @Serializable
     data object Splash : Route
 
@@ -22,13 +24,24 @@ sealed interface Route {
 
     @Serializable
     data class Gallery(
-        val memo: String = MemoUI().toMemoString()
-    ) : Route
+        val memo: MemoUI = MemoUI()
+    ) : Route {
+        val route: String = "${this::class.qualifiedName}?memo={memo}"
+
+        companion object {
+            val typeMap = mapOf(typeOf<MemoUI>() to serializableType<MemoUI>())
+        }
+    }
 
     @Serializable
-    data class FishingSpot(val fishingSpot: String) : Route {
-        fun toRouteString():String {
-            return "${this::class.qualifiedName}?fishingSpot={fishingSpot}"
+    data class FishingSpot(
+        val fishingSpot: FishingSpotUI,
+    ) : Route {
+
+        val route: String = "${this::class.qualifiedName}?fishingSpot={fishingSpot}"
+
+        companion object {
+            val typeMap = mapOf(typeOf<FishingSpotUI>() to serializableType<FishingSpotUI>())
         }
     }
 
@@ -36,38 +49,47 @@ sealed interface Route {
     data object MemoList : Route
 
     @Serializable
-    data class ProgramInformation(val url: String) : Route {
-        fun toRouteString():String {
-            return "${this::class.qualifiedName}?url={url}"
-        }
+    data class ProgramInformation(
+        val url: String,
+    ) : Route {
+        val route: String = "${this::class.qualifiedName}?url={url}"
     }
 
     @Serializable
     data class MemoDetail(
-        val memo: String = MemoUI().toMemoString(),
+        val memo: MemoUI = MemoUI(),
         val isEdit: Boolean = false
     ) : Route {
-        fun toRouteString():String {
-            return "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"
+
+        val route: String = "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"
+
+        companion object {
+            val typeMap = mapOf(
+                typeOf<MemoUI>() to serializableType<MemoUI>()
+            )
         }
     }
 
     @Serializable
     data class MemoCreate(
-        val memo: String = MemoUI().toMemoString(),
+        val memo: MemoUI = MemoUI(),
         val isEdit: Boolean = false,
     ) : Route {
-        fun toRouteString():String {
-            return "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"
+        val route: String = "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"
+
+        companion object {
+            val typeMap = mapOf(typeOf<MemoUI>() to serializableType<MemoUI>())
         }
     }
 
     @Serializable
     data class LocationSetting(
-        val memo: String = MemoUI().toMemoString(),
+        val memo: MemoUI = MemoUI(),
     ) : Route {
-        fun toRouteString():String {
-            return "${this::class.qualifiedName}?memo={memo}"
+        val route: String = "${this::class.qualifiedName}?memo={memo}"
+
+        companion object {
+            val typeMap = mapOf(typeOf<MemoUI>() to serializableType<MemoUI>())
         }
     }
 
@@ -79,11 +101,13 @@ sealed interface Route {
 
     @Serializable
     data class Camera(
-        val memo: String = MemoUI().toMemoString(),
+        val memo: MemoUI = MemoUI(),
         val isEdit: Boolean = false,
     ) : Route {
-        fun toRouteString():String {
-            return "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"
+        val route: String = "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"
+
+        companion object {
+            val typeMap = mapOf(typeOf<MemoUI>() to serializableType<MemoUI>())
         }
     }
 }

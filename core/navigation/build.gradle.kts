@@ -14,4 +14,5 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.compose.navigation)
 }
