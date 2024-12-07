@@ -4,8 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,9 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,17 +33,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qure.designsystem.component.DropDownItem
 import com.qure.designsystem.component.FMDeleteDialog
 import com.qure.designsystem.component.FMDropdownMenu
-import com.qure.designsystem.component.FMGlideImage
 import com.qure.designsystem.component.FMMoreButton
 import com.qure.designsystem.component.FMProgressBar
 import com.qure.designsystem.component.FMShareDialog
 import com.qure.designsystem.component.FMTopAppBar
-import com.qure.designsystem.theme.Gray700
-import com.qure.designsystem.theme.White
+import com.qure.designsystem.theme.GrayBackground
 import com.qure.designsystem.utils.FMPreview
 import com.qure.feature.memo.R
 import com.qure.memo.share.DeepLinkHelper
 import com.qure.memo.share.KakaoLinkSender
+import com.qure.ui.component.PolaroidFrame
 import com.qure.ui.model.MemoUI
 import com.qure.ui.model.SnackBarMessageType
 import kotlinx.coroutines.flow.collectLatest
@@ -73,7 +69,7 @@ fun DetailMemoRoute(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(color = MaterialTheme.colorScheme.background),
+            .background(color = GrayBackground),
         memo = memo,
         detailMemoUiState = detailMemoUiState,
         onBack = onBack,
@@ -189,86 +185,29 @@ private fun DetailMemoScreen(
             )
         }
 
-        FMGlideImage(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(350.dp),
-            model = memo.image,
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .background(
-                        color = Gray700,
-                        shape = RoundedCornerShape(15.dp),
-                    ),
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp, vertical = 5.dp),
-                    text = memo.waterType,
-                    style = MaterialTheme.typography.displayLarge,
-                    color = White,
-                    fontSize = 15.sp,
-                )
-            }
-
-            Text(
-                modifier = Modifier.padding(start = 20.dp),
-                text = memo.fishType,
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-
-            Text(
-                modifier = Modifier.padding(start = 20.dp),
-                text = stringResource(id = R.string.fish_length, memo.fishSize),
-                style = MaterialTheme.typography.bodyLarge,
-                fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                modifier = Modifier
-                    .padding(start = 20.dp),
-                text = memo.date,
-                style = MaterialTheme.typography.bodyMedium,
-                fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        }
-
-        Text(
-            modifier = Modifier.padding(top = 20.dp, start = 20.dp),
-            text = memo.title,
-            style = MaterialTheme.typography.displayMedium,
-            fontSize = 15.sp,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-
-        Text(
-            modifier = Modifier.padding(top = 10.dp, start = 20.dp),
-            text = memo.location,
-            fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-
         Text(
             modifier = Modifier
+                .padding(top = 16.dp)
+                .align(Alignment.CenterHorizontally),
+            text = stringResource(R.string.polaroidDescription),
+            style = MaterialTheme.typography.displayLarge,
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+        )
+
+        PolaroidFrame(
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp, start = 20.dp, bottom = 30.dp),
-            text = memo.content,
-            fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onBackground,
+                .height(550.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            fishType = memo.fishType,
+            title = memo.title,
+            imageUrl = memo.image,
+            location = memo.location,
+            date = memo.date,
+            waterType = memo.waterType,
+            fishSize = memo.fishSize,
+            content = memo.content,
         )
     }
 }
