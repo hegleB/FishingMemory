@@ -32,8 +32,6 @@ constructor(
     private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
 ) : BaseViewModel() {
 
-    private val _selectedChip = MutableStateFlow(INITIAL_FISH_TYPE)
-    val selectedChip = _selectedChip.asStateFlow()
     private val _latLng = MutableStateFlow(
         LatXLngY(
             String.DefaultLatitude.toDouble(),
@@ -74,10 +72,6 @@ constructor(
 
     fun refresh() = viewModelScope.launch {
 
-    }
-
-    fun setSelectedChip(chip: String) {
-        _selectedChip.value = chip
     }
 
     fun setLatLng(latXLngY: LatXLngY) {

@@ -3,7 +3,6 @@ package com.qure.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Resources
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -12,8 +11,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,18 +28,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,41 +57,40 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
-import com.qure.designsystem.component.FMChipGroup
 import com.qure.designsystem.component.FMLottieAnimation
-import com.qure.designsystem.component.FMMemoItem
 import com.qure.designsystem.component.FMProgressBar
 import com.qure.designsystem.component.FMRefreshLayout
 import com.qure.designsystem.theme.Blue300
-import com.qure.designsystem.theme.Blue500
 import com.qure.designsystem.theme.Gray300
 import com.qure.designsystem.theme.Purple700
 import com.qure.designsystem.theme.White
 import com.qure.designsystem.utils.FMPreview
+import com.qure.designsystem.utils.clickableWithoutRipple
 import com.qure.feature.home.R
 import com.qure.home.location.GpsTransfer
 import com.qure.home.location.LatXLngY
 import com.qure.model.extensions.DefaultLatitude
 import com.qure.model.extensions.DefaultLongitude
-import com.qure.model.extensions.Spacing
 import com.qure.model.weather.SkyState
-import com.qure.ui.custom.barchart.BarChartView
-import com.qure.ui.custom.barchart.CustomBarChartView
+import com.qure.ui.component.CardFront
+import com.qure.ui.component.Tape
 import com.qure.ui.model.HourOfWeatherState
 import com.qure.ui.model.MemoUI
 import com.qure.ui.model.WeatherUI
@@ -94,6 +99,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Locale
+import kotlin.math.absoluteValue
 
 
 @Composable
@@ -104,6 +110,7 @@ fun HomeRoute(
     navigateToMap: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
+    navigateToMemoCreate: () -> Unit,
 ) {
 
     LaunchedEffect(viewModel.error) {
@@ -111,7 +118,6 @@ fun HomeRoute(
     }
 
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
-    val selectedChip by viewModel.selectedChip.collectAsStateWithLifecycle()
     val latXLngY by viewModel.latLng.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
@@ -144,10 +150,8 @@ fun HomeRoute(
         modifier = Modifier
             .padding(padding),
         homeUiState = homeUiState,
-        onClickFishType = viewModel::setSelectedChip,
         onClickMemoMore = navigateToMemoList,
         onClickMemo = { memo -> navigateToDetailMemo(memo) },
-        selectedChip = selectedChip,
         latXLngY = latXLngY,
         navigateToMap = navigateToMap,
         onRefresh = {
@@ -155,6 +159,7 @@ fun HomeRoute(
             isRefresh = true
         },
         isRefresh = isRefresh,
+        onClickRecord = navigateToMemoCreate,
     )
 }
 
@@ -177,14 +182,13 @@ private fun HomeScreen(
     homeUiState: HomeUiState = HomeUiState.Loading,
     context: Context = LocalContext.current,
     modifier: Modifier = Modifier,
-    onClickFishType: (String) -> Unit = { },
     onClickMemoMore: () -> Unit = { },
     onClickMemo: (MemoUI) -> Unit = { },
-    selectedChip: String = stringResource(id = R.string.fish_type),
     latXLngY: LatXLngY = LatXLngY(),
     navigateToMap: () -> Unit = { },
     onRefresh: () -> Unit = { },
     isRefresh: Boolean = false,
+    onClickRecord: () -> Unit = { },
 ) {
     FMRefreshLayout(
         onRefresh = { onRefresh() },
@@ -216,12 +220,11 @@ private fun HomeScreen(
                         HomeItemList(
                             context = context,
                             latXLngY = latXLngY,
-                            selectedChip = selectedChip,
-                            onClickFishType = onClickFishType,
                             onClickMemo = onClickMemo,
                             onClickMemoMore = onClickMemoMore,
                             memos = homeUiState.memos,
                             weather = homeUiState.weather,
+                            onClickRecord = onClickRecord,
                         )
                         MapCard(navigateToMap)
                     }
@@ -235,37 +238,56 @@ private fun HomeScreen(
 private fun HomeItemList(
     context: Context,
     latXLngY: LatXLngY,
-    selectedChip: String,
-    onClickFishType: (String) -> Unit,
     onClickMemo: (MemoUI) -> Unit,
     onClickMemoMore: () -> Unit,
     memos: List<MemoUI> = emptyList(),
     weather: List<WeatherUI> = emptyList(),
+    onClickRecord: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        FishItem(
-            modifier = Modifier
-                .height(220.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(15.dp))
-                .background(color = MaterialTheme.colorScheme.secondary),
-            elements = listOf(
-                stringResource(id = R.string.fish_type),
-                stringResource(id = R.string.fish_size),
-                stringResource(id = R.string.place)
-            ),
-            context = context,
-            onClickChip = onClickFishType,
-            selectedChip = selectedChip,
-            memos = memos
-        )
+        if (memos.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                Text(
+                    text = stringResource(R.string.go_to_record),
+                    modifier = Modifier
+                        .clickableWithoutRipple { onClickRecord() },
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = stringResource(R.string.memo_more),
+                    modifier = Modifier
+                        .clickableWithoutRipple { onClickMemoMore() },
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+            }
+
+            MemoItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(450.dp),
+                memos = memos.sortedByDescending { it.fishSize.toFloat() },
+                onClickMemo = onClickMemo,
+            )
+        } else {
+            MemoEmptyItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(450.dp),
+                onClick = onClickRecord,
+            )
+        }
 
         if (weather.isNotEmpty()) {
-
             var city = ""
             fetchCurrentAddress(context, latXLngY) { address ->
                 city = address
@@ -310,16 +332,157 @@ private fun HomeItemList(
                 )
             }
         }
+    }
+}
 
-        MemoItem(
+@Composable
+fun MemoEmptyItem(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .background(color = Color.Transparent),
+    ) {
+        CardFront(
             modifier = Modifier
-                .height(180.dp)
-                .clip(RoundedCornerShape(15.dp))
-                .background(color = MaterialTheme.colorScheme.secondary),
-            memos = memos,
-            clickMemo = onClickMemo,
-            clickMemoMore = onClickMemoMore
+                .fillMaxWidth()
+                .padding(top = 24.dp)
+                .background(color = Color.White),
         )
+        Text(
+            text = stringResource(R.string.empty_memo),
+            style = MaterialTheme.typography.displayLarge,
+            modifier = Modifier.align(Alignment.Center),
+            color = Color.White,
+            fontSize = 18.sp,
+        )
+        Button(
+            onClick = { onClick() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+            ),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = 50.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.go_to_record),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.displayLarge,
+                color = Color.White,
+            )
+        }
+        Tape(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .graphicsLayer {
+                    rotationZ = 50f
+                    rotationY = 180f
+                }
+                .height(65.dp)
+                .width(30.dp)
+                .alpha(0.5f)
+                .background(color = Color.Transparent)
+        )
+    }
+}
+
+@Composable
+private fun MemoItem(
+    modifier: Modifier = Modifier,
+    memos: List<MemoUI> = emptyList(),
+    onClickMemo: (MemoUI) -> Unit,
+) {
+    val pagerState = rememberPagerState(
+        pageCount = { memos.size }
+    )
+    val contentPadding = 30.dp
+    val pageSpacing = 10.dp
+    val scaleSizeRatio = 0.8f
+
+    Box(
+        modifier = modifier
+            .background(color = Color.Transparent),
+    ) {
+        HorizontalPager(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Center),
+            state = pagerState,
+            key = { memos[it].uuid },
+            contentPadding = PaddingValues(horizontal = contentPadding),
+            pageSpacing = pageSpacing,
+        ) { page ->
+            val memo = memos[page]
+            val pageOffset = pagerState.currentPage - page + pagerState.currentPageOffsetFraction
+            val isTaped = pageOffset.absoluteValue.coerceIn(0f, 1f) <= 0.2f
+            val tapeScale by animateFloatAsState(
+                targetValue = if (isTaped) 1f else 0f,
+                animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+                label = "tapeScale"
+            )
+            val tapeAlpha by animateFloatAsState(
+                targetValue = if (isTaped) 1f else 0f,
+                animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+                label = "tapeAlpha"
+            )
+            val tapeTranslation by animateFloatAsState(
+                targetValue = if (isTaped) 0f else -100f,
+                animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+                label = "tapeTranslation"
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        alpha = lerp(
+                            start = 0.5f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f),
+                        )
+                        lerp(
+                            start = 1f,
+                            stop = scaleSizeRatio,
+                            fraction = pageOffset.absoluteValue.coerceIn(0f, 1f),
+                        ).let {
+                            scaleX = it
+                            scaleY = it
+                            val sign = if (pageOffset > 0) 1 else -1
+                            translationX = sign * size.width * (1 - it) / 2
+                        }
+                    },
+            ) {
+                CardFront(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp)
+                        .background(color = Color.White)
+                        .clickableWithoutRipple { onClickMemo(memo) },
+                    fishType = memo.fishType,
+                    waterType = memo.waterType,
+                    size = memo.fishSize,
+                    imageUrl = memo.image,
+                )
+                Tape(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .graphicsLayer {
+                            scaleX = tapeScale
+                            scaleY = tapeScale
+                            alpha = tapeAlpha
+                            translationY = tapeTranslation
+                            rotationZ = 50f
+                            rotationY = 180f
+                        }
+                        .height(65.dp)
+                        .width(30.dp)
+                        .alpha(0.5f)
+                        .background(color = Color.Transparent)
+                )
+            }
+        }
     }
 }
 
@@ -353,153 +516,6 @@ private fun MapCard(
             )
         }
     }
-}
-
-@Composable
-private fun MemoItem(
-    modifier: Modifier = Modifier,
-    memos: List<MemoUI> = emptyList(),
-    clickMemo: (MemoUI) -> Unit = { },
-    clickMemoMore: () -> Unit = { },
-) {
-    Column(modifier = modifier) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(),
-        ) {
-            ItemTitle(
-                modifier = Modifier,
-                title = stringResource(id = R.string.writhing),
-            )
-            Text(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 10.dp, end = 10.dp)
-                    .clickable { clickMemoMore() },
-                text = stringResource(id = R.string.memo_more),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-        }
-        if (memos.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    text = stringResource(R.string.empty_memo),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-            }
-        } else {
-            LazyRow(
-                modifier = Modifier.padding(top = 20.dp, start = 10.dp),
-                state = rememberLazyListState(),
-            ) {
-                items(items = memos) { memo ->
-                    FMMemoItem(
-                        modifier = Modifier
-                            .width(300.dp)
-                            .height(100.dp),
-                        imageUrl = memo.image,
-                        title = memo.title,
-                        location = memo.location,
-                        fishType = memo.fishType,
-                        content = memo.content,
-                        date = memo.date,
-                        onMemoClicked = { clickMemo(memo) }
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun FishItem(
-    modifier: Modifier = Modifier,
-    elements: List<String> = emptyList(),
-    context: Context,
-    onClickChip: (String) -> Unit,
-    memos: List<MemoUI> = emptyList(),
-    selectedChip: String = stringResource(id = R.string.fish_type),
-) {
-    val filteredFishes = when (selectedChip) {
-        stringResource(id = R.string.fish_type) -> memos.map { it.fishType }
-        stringResource(id = R.string.fish_size) -> memos.map { it.fishSize }
-        else -> memos.map {
-            val location = it.location.split(String.Spacing)
-            if (location.size <= 1) {
-                location[0]
-            } else {
-                location[1]
-            }
-        }
-    }
-    Column(
-        modifier = modifier,
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(),
-        ) {
-            ItemTitle(
-                modifier = Modifier.align(Alignment.TopStart),
-                title = stringResource(id = R.string.caught_fish)
-            )
-            FMChipGroup(
-                modifier = Modifier.align(Alignment.TopEnd),
-                chipModifier = Modifier.width(50.dp),
-                elements = elements,
-                chipFontSize = 12.sp,
-                onClickChip = { chip -> onClickChip(chip) },
-                selectedChip = selectedChip,
-                selectedFontColor = White,
-                unSelectedFontColor = Blue500,
-            )
-        }
-        if (memos.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    text = stringResource(R.string.no_fish_caught),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-            }
-        } else {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    CustomBarChartView(ctx).apply {
-                        setRadius((15 * Resources.getSystem().displayMetrics.density + 0.5f).toInt())
-                    }
-                }
-            ) { barChart ->
-                BarChartView(
-                    context = context,
-                    resources = context.resources,
-                    values = countElements(filteredFishes).values.toList(),
-                    labels = filteredFishes.distinct()
-                ).initBarChart(barChart)
-            }
-        }
-    }
-}
-
-private fun <T> countElements(list: List<T>): Map<T, Float> {
-    val map = mutableMapOf<T, Float>()
-    for (element in list) {
-        map[element] = (map.getOrDefault(element, 0)).toFloat() + 1
-    }
-    return map
 }
 
 @Composable

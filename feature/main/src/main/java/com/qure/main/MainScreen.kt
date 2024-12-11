@@ -165,6 +165,7 @@ fun MainScreen(
                             )
                         },
                         navigateToMap = navigator::navigateToMap,
+                        navigateToMemoCreate = navigator::navigateToMemoCreate,
                         onShowErrorSnackBar = onShowErrorSnackBar,
                     )
                     historyNavGraph(

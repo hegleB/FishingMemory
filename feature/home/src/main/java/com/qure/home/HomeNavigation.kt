@@ -18,6 +18,7 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToDetailMemo: (MemoUI) -> Unit,
     navigateToMap: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    navigateToMemoCreate: () -> Unit,
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
@@ -26,6 +27,7 @@ fun NavGraphBuilder.homeNavGraph(
             navigateToDetailMemo = navigateToDetailMemo,
             navigateToMap = navigateToMap,
             onShowErrorSnackBar = onShowErrorSnackBar,
+            navigateToMemoCreate = navigateToMemoCreate,
         )
     }
 }
