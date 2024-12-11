@@ -18,7 +18,6 @@ dependencies {
     implementation(libs.navermap.sdk)
     implementation(libs.navermap.clustering)
     implementation(libs.calendar)
-    implementation(libs.chart)
     implementation(libs.jetpack.material)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.viewModelCompose)

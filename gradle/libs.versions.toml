@@ -67,9 +67,6 @@ firebase = "32.3.1"
 # internal
 room = "2.6.1"
 
-## chart
-androidChart = "v3.1.0"
-
 ## location
 playServicesLocation = "21.3.0"
 googleServices = "4.3.15"
@@ -176,8 +173,6 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics-kts = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-link-ktx = { group = "com.google.firebase", name = "firebase-dynamic-links-ktx" }
-
-chart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "androidChart" }
 
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
