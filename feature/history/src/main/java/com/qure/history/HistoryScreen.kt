@@ -1,5 +1,6 @@
 package com.qure.history
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,6 +58,9 @@ import com.qure.designsystem.utils.FMPreview
 import com.qure.feature.history.R
 import com.qure.ui.component.MonthCalendarView
 import com.qure.ui.model.MemoUI
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.YearMonth
@@ -108,6 +112,7 @@ fun HistoryRoute(
     )
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 private fun HistoryScreen(
     uiState: HistoryUiState = HistoryUiState.Success(),
@@ -179,7 +184,7 @@ private fun HistoryScreen(
                             it.date.startsWith(
                                 "$year/${String.format("%02d", month.plus(1))}"
                             )
-                        } else emptyList(),
+                        }.toPersistentList() else persistentListOf(),
                     )
                 }
             }
@@ -337,7 +342,7 @@ private fun HistoryCalendar(
     year: Int = LocalDate.now().year,
     month: YearMonth = YearMonth.of(year, LocalDate.now().month),
     date: LocalDate = LocalDate.now(),
-    memos: List<MemoUI> = emptyList(),
+    memos: ImmutableList<MemoUI> = persistentListOf(),
 ) {
     WeekCalendar(
         modifier = modifier

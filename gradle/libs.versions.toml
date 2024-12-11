@@ -99,6 +99,9 @@ camerax = "1.3.1"
 # ML kit
 mlkit = "17.0.1"
 
+#kotlinx-collections-immutable
+kotlinxImmutable = "0.3.8"
+
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
@@ -199,6 +202,8 @@ camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
 
 mlkit-object-detection = { group = "com.google.mlkit", name = "object-detection", version.ref = "mlkit" }
+
+kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
 
 [bundles]
 

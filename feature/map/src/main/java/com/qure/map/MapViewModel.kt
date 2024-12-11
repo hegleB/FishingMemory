@@ -13,6 +13,7 @@ import com.qure.ui.model.MovingCameraWrapper
 import com.qure.ui.model.SheetHeight
 import com.qure.ui.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -64,7 +65,7 @@ constructor(
                         fishingSpots = filterFishingSpots(
                             fishingSpots,
                             fishingGroundType.value
-                        ),
+                        ).toPersistentList(),
                     )
                 }
                 .onStart { _mapUiState.value = MapUiState.Loading }
@@ -92,7 +93,7 @@ constructor(
                 .map { memos ->
                     MapUiState.Success(memos = memos.map { memo ->
                         FishingPlaceInfo.MemoInfo(memo.toMemoUI())
-                    })
+                    }.toPersistentList())
                 }
                 .onStart { _mapUiState.value = MapUiState.Loading }
                 .catch { throwable -> sendErrorMessage(throwable) }

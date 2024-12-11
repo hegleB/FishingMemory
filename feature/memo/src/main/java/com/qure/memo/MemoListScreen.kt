@@ -54,6 +54,7 @@ import com.qure.designsystem.theme.Gray700
 import com.qure.designsystem.utils.FMPreview
 import com.qure.feature.memo.R
 import com.qure.ui.model.MemoUI
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -314,7 +315,7 @@ private fun MemoItem(
 fun MemoListScreenPreview() = FMPreview {
     MemoListScreen(
         memoListUiState = MemoListUiState.Success(
-            listOf(
+            persistentListOf(
                 MemoUI(
                     image = "https://www.pexels.com/photo/close-up-photo-of-clownfish-128756/",
                     location = "서울특별시 강남구",

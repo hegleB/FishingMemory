@@ -11,6 +11,8 @@ import com.qure.ui.base.BaseViewModel
 import com.qure.ui.model.toMemoUI
 import com.qure.ui.model.toWeatherUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -57,9 +59,9 @@ constructor(
             )
                 .map { ui ->
                     HomeUiState.Success(
-                        weather = ui.first.response.body?.items?.item?.map { it.toWeatherUI() }
-                            ?: emptyList(),
-                        memos = ui.second.map { it.toMemoUI() }
+                        weather = ui.first.response.body?.items?.item?.map { it.toWeatherUI() }?.toPersistentList()
+                            ?: persistentListOf(),
+                        memos = ui.second.map { it.toMemoUI() }.toPersistentList()
                     )
                 }
                 .filter { it.weather.isNotEmpty() }

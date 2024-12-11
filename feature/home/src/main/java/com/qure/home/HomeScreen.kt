@@ -95,6 +95,8 @@ import com.qure.ui.model.HourOfWeatherState
 import com.qure.ui.model.MemoUI
 import com.qure.ui.model.WeatherUI
 import com.qure.ui.model.categorizeWeather
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -308,7 +310,7 @@ private fun HomeItemList(
                             stiffness = Spring.StiffnessLow,
                         )
                     ),
-                hoursOfWeather = weather.categorizeWeather(),
+                hoursOfWeather = weather.categorizeWeather().toImmutableList(),
                 location = city,
             )
         } else {
@@ -521,7 +523,7 @@ private fun MapCard(
 @Composable
 private fun WeatherItem(
     modifier: Modifier = Modifier,
-    hoursOfWeather: List<HourOfWeatherState>,
+    hoursOfWeather: ImmutableList<HourOfWeatherState>,
     location: String = "",
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }

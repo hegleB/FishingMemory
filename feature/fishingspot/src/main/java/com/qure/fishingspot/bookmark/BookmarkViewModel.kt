@@ -8,6 +8,7 @@ import com.qure.model.toFishingSpotUI
 import com.qure.ui.base.BaseViewModel
 import com.qure.ui.model.SnackBarMessageType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -35,7 +36,7 @@ constructor(
     fun fetchFishingSpotBookmark() {
         viewModelScope.launch {
             getFishingSpotBookmarksUseCase()
-                .map { fishingSpots -> FishingSpotUiState.Success(fishingSpots.map { it.toFishingSpotUI() }) }
+                .map { fishingSpots -> FishingSpotUiState.Success(fishingSpots.map { it.toFishingSpotUI() }.toImmutableList()) }
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .collectLatest { fishingSpotUiState ->
                     _fishingSpotUiState.value = fishingSpotUiState

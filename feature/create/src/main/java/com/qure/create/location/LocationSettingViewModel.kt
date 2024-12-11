@@ -126,7 +126,7 @@ constructor(
     }
 
     fun setDoIndexData(doIndex: Int) {
-        if (doIndex != _doIndex.value) {
+        if (doIndex != _doIndex.intValue) {
             _doIndex.intValue = doIndex
             _cityIndex.intValue = -1
             _selectedRegionName.clear()
@@ -135,7 +135,7 @@ constructor(
 
     fun setCityIndexData(cityIndex: Int) {
         if (_cityIndex.intValue != -1) {
-            _selectedRegionName.removeLast()
+            _selectedRegionName.removeAt(_selectedRegionName.lastIndex)
         }
         _cityIndex.intValue = cityIndex
     }
@@ -143,7 +143,7 @@ constructor(
     fun setRegionName(regionName: String) {
         when {
             _selectedRegionName.size == 3 -> {
-                _selectedRegionName.removeLast()
+                _selectedRegionName.removeAt(_selectedRegionName.lastIndex)
             }
             _doIndex.intValue == Regions.entries.lastIndex -> {
                 val (doName, cityName, addressNumber) = regionName.split(" ", limit = 3).let {

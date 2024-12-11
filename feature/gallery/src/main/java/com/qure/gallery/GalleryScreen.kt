@@ -54,6 +54,9 @@ import com.qure.feature.gallery.R
 import com.qure.model.gallery.GalleryImage
 import com.qure.ui.model.MemoUI
 import com.qure.ui.model.SnackBarMessageType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -115,7 +118,7 @@ fun GalleryRoute(
 
     GalleryScreen(
         onClickClose = onBack,
-        images = images,
+        images = images.toPersistentList(),
         onClickDone = { onClickDone(memoUI.copy(image = it.path)) },
         onClickTakingPicture = { onClickCamera(memoUI) },
     )
@@ -156,7 +159,7 @@ private fun GalleryScreen(
     modifier: Modifier = Modifier,
     onClickClose: () -> Unit = { },
     onClickTakingPicture: () -> Unit = { },
-    images: List<GalleryImage> = emptyList(),
+    images: ImmutableList<GalleryImage> = persistentListOf(),
     onClickDone: (GalleryImage) -> Unit = { },
 ) {
     var selectedImage by remember {
@@ -289,7 +292,7 @@ private fun GalleryCameraItem(
 @Composable
 private fun GalleryContentPreview() = FMPreview {
     GalleryScreen(
-        images = listOf(
+        images = persistentListOf(
             GalleryImage(
                 id = 0,
                 path = "",

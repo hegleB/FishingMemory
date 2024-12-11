@@ -5,6 +5,7 @@ import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
 import com.qure.ui.base.BaseViewModel
 import com.qure.ui.model.toMemoUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -34,7 +35,7 @@ constructor(
     fun fetchFilteredMemos() {
         viewModelScope.launch {
             getFilteredMemoUseCase()
-                .map { memos -> HistoryUiState.Success(memos.map { it.toMemoUI() }) }
+                .map { memos -> HistoryUiState.Success(memos.map { it.toMemoUI() }.toPersistentList()) }
                 .catch { throwable -> sendErrorMessage(throwable) }
                 .collectLatest { uiState ->
                     _filteredMemosUiState.value = uiState

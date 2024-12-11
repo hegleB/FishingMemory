@@ -3,6 +3,7 @@ package com.qure.fishingspot
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.qure.model.FishingSpotUI
+import kotlinx.collections.immutable.ImmutableList
 
 @Stable
 sealed interface FishingSpotUiState {
@@ -11,6 +12,6 @@ sealed interface FishingSpotUiState {
 
     @Immutable
     data class Success(
-        val bookmarks: List<FishingSpotUI>,
+        val bookmarks: ImmutableList<FishingSpotUI>,
     ) : FishingSpotUiState
 }

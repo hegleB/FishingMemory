@@ -84,6 +84,9 @@ import com.qure.ui.model.MovingCameraType
 import com.qure.ui.model.MovingCameraWrapper
 import com.qure.ui.model.SheetHeight
 import com.qure.ui.model.toTedClusterItem
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -152,7 +155,7 @@ fun MapRoute(
 
     MapScreen(
         uiState = mapUiState,
-        placeItems = placeItems,
+        placeItems = placeItems.toPersistentList(),
         onBack = onBack,
         mapType = mapType,
         markerType = markerType,
@@ -199,7 +202,7 @@ fun MapRoute(
             }
             viewModel.setSelectedPlaceItems(placeInfoItems)
         },
-        selectedPlaceItems = selectedPlaceItems,
+        selectedPlaceItems = selectedPlaceItems.toPersistentList(),
         onClickMarker = { item ->
             placeItems.find { placeItem ->
                 when (placeItem) {
@@ -241,7 +244,7 @@ suspend fun getCurrentLocation(
 private fun MapScreen(
     modifier: Modifier = Modifier,
     uiState: MapUiState = MapUiState.Loading,
-    placeItems: List<FishingPlaceInfo> = emptyList(),
+    placeItems: ImmutableList<FishingPlaceInfo> = persistentListOf(),
     onBack: () -> Unit = { },
     markerType: MarkerType = MarkerType.MEMO,
     mapType: MapType = MapType.BASIC_MAP,
@@ -253,7 +256,7 @@ private fun MapScreen(
     onClickFishingSpot: (FishingSpotUI) -> Unit = { },
     onClickMemo: (MemoUI) -> Unit = { },
     onClickClusterMarkers: (List<TedClusterItem>) -> Unit = { },
-    selectedPlaceItems: List<FishingPlaceInfo> = emptyList(),
+    selectedPlaceItems: ImmutableList<FishingPlaceInfo> = persistentListOf(),
     onClickMarker: (TedClusterItem) -> Unit = { },
     onClickPhoneNumber: (String) -> Unit = { },
     updateMovingCamera: (MovingCameraWrapper) -> Unit = { },
@@ -384,7 +387,7 @@ private fun MapScreen(
 @Composable
 private fun MapContent(
     uiState: MapUiState = MapUiState.Loading,
-    placeItems: List<FishingPlaceInfo> = emptyList(),
+    placeItems: ImmutableList<FishingPlaceInfo> = persistentListOf(),
     modifier: Modifier = Modifier,
     onBack: () -> Unit = { },
     markerType: MarkerType = MarkerType.MEMO,

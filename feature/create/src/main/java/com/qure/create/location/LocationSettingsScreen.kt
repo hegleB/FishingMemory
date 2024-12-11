@@ -80,6 +80,9 @@ import com.qure.model.extensions.DefaultLatitude
 import com.qure.model.extensions.DefaultLongitude
 import com.qure.ui.extentions.toReverseCoordsString
 import com.qure.ui.model.MemoUI
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -124,7 +127,7 @@ fun LocationSettingRoute(
 
     LocationSettingScreen(
         onBack = onBack,
-        locationPages = locationPages,
+        locationPages = locationPages.toPersistentList(),
         setDoIndex = viewModel::setDoIndexData,
         setCityIndex = viewModel::setCityIndexData,
         locationUiState = locationUiState,
@@ -137,7 +140,7 @@ fun LocationSettingRoute(
         fetchGeocoding = viewModel::fetchGeocoding,
         fetchReverseGeocoding = viewModel::fetchReverseGeocoding,
         setRegionName = viewModel::setRegionName,
-        selectedRegionNames = viewModel.selectedRegionName,
+        selectedRegionNames = viewModel.selectedRegionName.toPersistentList(),
         navigateToMemoCreate = { location, coords ->
             navigateToMemoCreate(
                 memo.copy(
@@ -173,7 +176,7 @@ private fun LocationSettingScreen(
     geoCodingUiState: GeoCodingUiState = GeoCodingUiState.Idle,
     reverseGeoCodingUiState: ReverseGeoCodingUiState = ReverseGeoCodingUiState.Idle,
     onBack: () -> Unit = { },
-    locationPages: List<LocationData> = emptyList(),
+    locationPages: ImmutableList<LocationData> = persistentListOf(),
     setDoIndex: (Int) -> Unit = { },
     setCityIndex: (Int) -> Unit = { },
     locationUiState: LocationUiState = LocationUiState(),
@@ -184,7 +187,7 @@ private fun LocationSettingScreen(
     fetchGeocoding: (String) -> Unit = { },
     fetchReverseGeocoding: (String) -> Unit = { },
     setRegionName: (String) -> Unit = { },
-    selectedRegionNames: List<String> = emptyList(),
+    selectedRegionNames: ImmutableList<String> = persistentListOf(),
     navigateToMemoCreate: (String, String) -> Unit = { _, _ -> },
 ) {
     var direction by remember { mutableStateOf(Direction.LEFT) }
