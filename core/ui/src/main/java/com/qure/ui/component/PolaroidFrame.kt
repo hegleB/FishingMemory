@@ -130,23 +130,27 @@ fun CardFront(
                 .fillMaxSize()
                 .padding(start = 20.dp, end = 20.dp),
         ) {
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterStart),
-                text = "$fishType / $waterType",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            if (fishType.isNotEmpty() && waterType.isNotEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart),
+                    text = "$fishType / $waterType",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
             Spacer(modifier = Modifier.width(30.dp))
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd),
-                text = "${size}CM",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            if (size.isNotEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd),
+                    text = "${size}CM",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
         }
     }
 }
@@ -261,3 +265,4 @@ private fun FishingMemoryBackSide(
         }
     }
 }
+
