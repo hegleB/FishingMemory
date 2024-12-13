@@ -167,7 +167,7 @@ private fun MemoList(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValue)
-            .background(color = GrayBackground)
+            .background(color = MaterialTheme.colorScheme.surfaceTint)
             .verticalScroll(scrollState),
     ) {
         PolaroidLayout(

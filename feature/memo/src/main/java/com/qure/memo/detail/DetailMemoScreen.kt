@@ -37,7 +37,6 @@ import com.qure.designsystem.component.FMMoreButton
 import com.qure.designsystem.component.FMProgressBar
 import com.qure.designsystem.component.FMShareDialog
 import com.qure.designsystem.component.FMTopAppBar
-import com.qure.designsystem.theme.GrayBackground
 import com.qure.designsystem.utils.FMPreview
 import com.qure.feature.memo.R
 import com.qure.memo.share.DeepLinkHelper
@@ -69,7 +68,7 @@ fun DetailMemoRoute(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(color = GrayBackground),
+            .background(color = MaterialTheme.colorScheme.surfaceTint),
         memo = memo,
         detailMemoUiState = detailMemoUiState,
         onBack = onBack,
