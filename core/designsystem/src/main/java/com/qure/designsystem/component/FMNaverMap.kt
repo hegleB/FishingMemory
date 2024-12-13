@@ -29,7 +29,6 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.qure.core.designsystem.R
 import ted.gun0912.clustering.clustering.TedClusterItem
-import ted.gun0912.clustering.geometry.TedLatLng
 import ted.gun0912.clustering.naver.TedNaverClustering
 
 @OptIn(ExperimentalNaverMapApi::class)
@@ -80,9 +79,6 @@ fun FMNaverMap(
 
             var clusterManager by remember {
                 mutableStateOf<TedNaverClustering<TedClusterItem>?>(null)
-            }
-            var preTedLatLng by remember {
-                mutableStateOf<List<TedLatLng>>(emptyList())
             }
 
             DisposableMapEffect(markers) { map ->
