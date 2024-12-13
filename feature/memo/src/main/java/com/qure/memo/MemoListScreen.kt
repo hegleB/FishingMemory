@@ -171,7 +171,7 @@ private fun MemoList(
             .verticalScroll(scrollState),
     ) {
         PolaroidLayout(
-            modifier = Modifier.padding(top = 50.dp),
+            modifier = Modifier.padding(top = 20.dp),
             itemCount = uiState.memos.size,
         ) { index ->
             val memo = uiState.memos[index]
@@ -307,6 +307,14 @@ private fun TopAppBar(onBack: () -> Unit, navigateToMemoCreate: () -> Unit) {
                 .align(Alignment.CenterStart),
             onClickBack = { onBack() },
             iconColor = MaterialTheme.colorScheme.onBackground,
+        )
+        Text(
+            modifier = Modifier
+                .align(Alignment.Center),
+            text = stringResource(R.string.memo_list_app_bar_title),
+            style = MaterialTheme.typography.displayLarge,
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onBackground,
         )
         FMCircleAddButton(
             modifier = Modifier

@@ -16,4 +16,6 @@
     <string name="more">더보기</string>
 
     <string name="polaroidDescription">📸 폴라로이드 사진을 클릭하여\n기록을 확인하세요</string>
+    
+    <string name="memo_list_app_bar_title">나만의 앨범"</string>
 </resources>
