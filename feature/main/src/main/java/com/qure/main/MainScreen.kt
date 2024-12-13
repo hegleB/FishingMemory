@@ -155,13 +155,6 @@ fun MainScreen(
                         navigateToDetailMemo = { memo ->
                             navigator.navigateToMemoDetail(
                                 memoUI = memo,
-                                navOptions = navOptions {
-                                    popUpTo(MainTab.HOME.route) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
                             )
                         },
                         navigateToMap = navigator::navigateToMap,
