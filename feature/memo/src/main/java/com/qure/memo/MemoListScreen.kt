@@ -1,61 +1,72 @@
 package com.qure.memo
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qure.designsystem.component.FMBackButton
 import com.qure.designsystem.component.FMCircleAddButton
-import com.qure.designsystem.component.FMGlideImage
 import com.qure.designsystem.component.FMLottieAnimation
 import com.qure.designsystem.component.FMProgressBar
-import com.qure.designsystem.component.FMRefreshLayout
-import com.qure.designsystem.theme.Gray200
-import com.qure.designsystem.theme.Gray700
+import com.qure.designsystem.theme.GrayBackground
 import com.qure.designsystem.utils.FMPreview
+import com.qure.designsystem.utils.clickableWithoutRipple
 import com.qure.feature.memo.R
+import com.qure.ui.component.CardFront
+import com.qure.ui.component.PolaroidLayout
+import com.qure.ui.component.Tape
 import com.qure.ui.model.MemoUI
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlin.math.absoluteValue
 
 @Composable
 fun MemoListRoute(
@@ -64,32 +75,22 @@ fun MemoListRoute(
     navigateToMemoDetail: (MemoUI) -> Unit,
     viewModel: MemoListViewModel = hiltViewModel(),
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-
-    ) {
+) {
     val memoListUiState by viewModel.memoListUiState.collectAsStateWithLifecycle()
-    var isRefresh by remember { mutableStateOf(false) }
-
-    BackHandler(onBack = onBack)
-
-    LaunchedEffect(viewModel.error) {
-        viewModel.error.collectLatest(onShowErrorSnackBar)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.fetchMemoList()
     }
 
+    LaunchedEffect(viewModel.error) {
+        viewModel.error.collectLatest(onShowErrorSnackBar)
+    }
+
     MemoListScreen(
         memoListUiState = memoListUiState,
-        modifier = Modifier.fillMaxSize(),
-        onRefresh = {
-            viewModel.fetchMemoList()
-            isRefresh = true
-        },
         onBack = onBack,
         navigateToMemoCreate = navigateToMemoCreate,
         navigateToMemoDetail = navigateToMemoDetail,
-        isRefresh = isRefresh,
     )
 }
 
@@ -97,215 +98,222 @@ fun MemoListRoute(
 private fun MemoListScreen(
     memoListUiState: MemoListUiState = MemoListUiState.Loading,
     modifier: Modifier = Modifier,
-    onRefresh: () -> Unit = { },
     onBack: () -> Unit = { },
     navigateToMemoCreate: () -> Unit = { },
     navigateToMemoDetail: (MemoUI) -> Unit = { },
-    isRefresh: Boolean = false,
 ) {
-    val memoListState = rememberLazyListState()
-    val scrollState = rememberScrollState()
-    Column(
+    val scrollState = rememberSaveable(saver = ScrollState.Saver) { ScrollState(0) }
+
+    Scaffold(
         modifier = modifier
+            .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background),
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(start = 30.dp, end = 30.dp, top = 30.dp)
-                .fillMaxWidth(),
-        ) {
-            FMBackButton(
-                modifier = Modifier.size(25.dp),
-                onClickBack = { onBack() },
-                iconColor = MaterialTheme.colorScheme.onBackground,
-            )
-            FMCircleAddButton(
-                modifier = Modifier
-                    .size(25.dp)
-                    .align(Alignment.CenterEnd),
-                onClickAdd = { navigateToMemoCreate() },
-                iconColor = MaterialTheme.colorScheme.onBackground,
-            )
+        topBar = {
+            TopAppBar(onBack, navigateToMemoCreate)
         }
-        FMRefreshLayout(
-            onRefresh = { onRefresh() },
-            isRefresh = if (isRefresh) memoListUiState is MemoListUiState.Loading else false,
-        ) {
-            when (memoListUiState) {
-                MemoListUiState.Loading -> {
-                    if (isRefresh.not()) {
-                        Row(
-                            modifier = modifier
-                                .verticalScroll(scrollState)
-                                .background(color = MaterialTheme.colorScheme.background),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            FMProgressBar(
-                                modifier = Modifier
-                                    .size(50.dp),
-                            )
-                        }
-                    }
-                }
+    ) { paddingValue ->
 
-                is MemoListUiState.Success -> {
-                    if (memoListUiState.memos.isEmpty()) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(scrollState)
-                                .background(color = MaterialTheme.colorScheme.background),
-                        ) {
-                            FMLottieAnimation(
-                                modifier = Modifier
-                                    .height(350.dp)
-                                    .fillMaxWidth()
-                                    .background(color = MaterialTheme.colorScheme.background),
-                                lottieId = com.qure.core.designsystem.R.raw.fishing,
-                            )
+        when (memoListUiState) {
+            MemoListUiState.Loading -> MemoLoading()
 
-                            Text(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                text = stringResource(id = R.string.empty_memo_title),
-                                fontSize = 18.sp,
-                                style = MaterialTheme.typography.headlineLarge,
-                                color = MaterialTheme.colorScheme.onBackground,
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = 5.dp)
-                                    .align(Alignment.CenterHorizontally),
-                                text = stringResource(id = R.string.empty_memo_description),
-                                fontSize = 12.sp,
-                                style = MaterialTheme.typography.displayMedium,
-                                color = MaterialTheme.colorScheme.onBackground,
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(color = MaterialTheme.colorScheme.background),
-                            state = memoListState,
-                        ) {
-                            items(memoListUiState.memos) { memo ->
-                                MemoItem(
-                                    memo = memo,
-                                    navigateToMemoDetail = navigateToMemoDetail,
-                                )
-                            }
-                        }
-                    }
+            is MemoListUiState.Success -> {
+                if (memoListUiState.memos.isEmpty()) {
+                    MemoListEmpty(
+                        paddingValue = paddingValue,
+                        scrollState = scrollState,
+                    )
+                } else {
+                    MemoList(
+                        paddingValue = paddingValue,
+                        scrollState = scrollState,
+                        uiState = memoListUiState,
+                        navigateToMemoDetail = navigateToMemoDetail,
+                    )
                 }
             }
         }
     }
 }
 
-
 @Composable
-private fun MemoItem(
-    memo: MemoUI,
-    navigateToMemoDetail: (MemoUI) -> Unit,
+private fun MemoList(
+    paddingValue: PaddingValues,
+    scrollState: ScrollState,
+    uiState: MemoListUiState.Success,
+    navigateToMemoDetail: (MemoUI) -> Unit
 ) {
-    Column(modifier = Modifier.clickable { navigateToMemoDetail(memo) }) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .padding(top = 10.dp, start = 10.dp),
-        ) {
-            FMGlideImage(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(150.dp)
-                    .padding(bottom = 10.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .border(
-                        width = 2.dp,
-                        color = Color.Transparent,
-                        shape = RoundedCornerShape(10.dp),
-                    ),
-                model = memo.image,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-            )
-            Column(
-                modifier = Modifier
-                    .weight(0.75f)
-                    .padding(start = 20.dp),
-            ) {
-                Text(
-                    text = memo.title,
-                    style = MaterialTheme.typography.displayMedium,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-                Text(
-                    modifier = Modifier.padding(top = 5.dp),
-                    text = memo.location,
-                    fontSize = 12.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp),
-                    text = memo.content,
-                    fontSize = 12.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
+    var isVisibleList = rememberSaveable(
+        saver = Saver<MutableList<Boolean>, MutableList<Boolean>>(
+            save = { it },
+            restore = { it }
+        )
+    ) {
+        MutableList(uiState.memos.size) { false }
+    }
+
+    if (isVisibleList.size != uiState.memos.size) {
+        if (isVisibleList.size < uiState.memos.size) {
+            repeat(uiState.memos.size - isVisibleList.size) {
+                isVisibleList.add(false)
             }
+        } else {
+            repeat(isVisibleList.size - uiState.memos.size) {
+                isVisibleList.removeAt(isVisibleList.lastIndex)
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValue)
+            .background(color = GrayBackground)
+            .verticalScroll(scrollState),
+    ) {
+        PolaroidLayout(
+            modifier = Modifier.padding(top = 50.dp),
+            itemCount = uiState.memos.size,
+        ) { index ->
+            val memo = uiState.memos[index]
+            val isEven = index % 2 == 0
+
+            var targetAlpha by rememberSaveable { mutableStateOf(0f) }
+            var targetOffsetY by rememberSaveable { mutableStateOf(300f) }
+
+            val animatedAlpha by animateFloatAsState(
+                targetValue = targetAlpha,
+                animationSpec = tween(durationMillis = 300)
+            )
+            val animatedOffsetY by animateFloatAsState(
+                targetValue = targetOffsetY,
+                animationSpec = tween(durationMillis = 300)
+            )
+            val isVisible = isVisibleList[index]
+
+            LaunchedEffect(isVisible) {
+                if (!isVisible) {
+                    delay(index * 100L)
+                    isVisibleList[index] = true
+                    targetAlpha = 1f
+                    targetOffsetY = 0f
+                }
+            }
+
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(0.3f),
+                    .size(280.dp)
+                    .graphicsLayer {
+                        rotationZ = if (isEven) -15f else 15f
+                    }
+                    .alpha(animatedAlpha)
+                    .offset(
+                        y = animatedOffsetY.dp,
+                    ),
             ) {
-                Column(
+                CardFront(
                     modifier = Modifier
-                        .padding(end = 10.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        .background(
-                            color = Gray700,
-                        ),
-                ) {
-                    Spacer(modifier = Modifier.height(1.dp))
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.CenterHorizontally),
-                        text = memo.fishType,
-                        textAlign = TextAlign.Center,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 12.sp,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White,
-                        maxLines = 1,
-                    )
-                    Spacer(modifier = Modifier.height(1.dp))
-                }
-
-                Text(
+                        .fillMaxWidth()
+                        .padding(top = 24.dp)
+                        .background(color = Color.White)
+                        .clickableWithoutRipple { navigateToMemoDetail(memo) },
+                    fishType = memo.fishType,
+                    waterType = memo.waterType,
+                    size = memo.fishSize,
+                    imageUrl = memo.image,
+                )
+                Tape(
                     modifier = Modifier
-                        .padding(end = 10.dp, bottom = 5.dp)
-                        .align(Alignment.BottomCenter),
-                    text = memo.date,
-                    fontSize = 12.sp,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground,
+                        .align(Alignment.TopCenter)
+                        .graphicsLayer {
+                            rotationZ = if (isEven) 50f else -50f
+                            rotationY = 180f
+                        }
+                        .height(65.dp)
+                        .width(30.dp)
+                        .alpha(0.5f)
+                        .background(color = Color.Transparent)
                 )
             }
         }
-        Divider(
+    }
+}
+
+@Composable
+private fun MemoListEmpty(
+    paddingValue: PaddingValues,
+    scrollState: ScrollState
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValue)
+            .verticalScroll(scrollState)
+            .background(color = MaterialTheme.colorScheme.background),
+    ) {
+        FMLottieAnimation(
             modifier = Modifier
+                .height(350.dp)
                 .fillMaxWidth()
-                .padding(horizontal = 5.dp),
-            thickness = 1.dp,
-            color = Gray200,
+                .background(color = MaterialTheme.colorScheme.background),
+            lottieId = com.qure.core.designsystem.R.raw.fishing,
+        )
+
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = stringResource(id = R.string.empty_memo_title),
+            fontSize = 18.sp,
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+        Text(
+            modifier = Modifier
+                .padding(top = 5.dp)
+                .align(Alignment.CenterHorizontally),
+            text = stringResource(id = R.string.empty_memo_description),
+            fontSize = 12.sp,
+            style = MaterialTheme.typography.displayMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+    }
+}
+
+@Composable
+private fun MemoLoading(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .background(color = MaterialTheme.colorScheme.background),
+    ) {
+        FMProgressBar(
+            modifier = Modifier
+                .size(50.dp)
+                .align(Alignment.Center),
+        )
+    }
+}
+
+@Composable
+private fun TopAppBar(onBack: () -> Unit, navigateToMemoCreate: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .padding(start = 30.dp, end = 30.dp)
+            .fillMaxWidth()
+            .height(50.dp),
+    ) {
+        FMBackButton(
+            modifier = Modifier
+                .size(25.dp)
+                .align(Alignment.CenterStart),
+            onClickBack = { onBack() },
+            iconColor = MaterialTheme.colorScheme.onBackground,
+        )
+        FMCircleAddButton(
+            modifier = Modifier
+                .size(25.dp)
+                .align(Alignment.CenterEnd),
+            onClickAdd = { navigateToMemoCreate() },
+            iconColor = MaterialTheme.colorScheme.onBackground,
         )
     }
 }
@@ -332,7 +340,6 @@ fun MemoListScreenPreview() = FMPreview {
                 ),
             ),
         ),
-        onRefresh = { },
         onBack = { },
         navigateToMemoCreate = { },
         navigateToMemoDetail = { },
