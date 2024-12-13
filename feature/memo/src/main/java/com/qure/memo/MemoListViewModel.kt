@@ -9,10 +9,9 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,18 +24,15 @@ constructor(
     private val _memoListUiState = MutableStateFlow<MemoListUiState>(MemoListUiState.Loading)
     val memoListUiState = _memoListUiState.asStateFlow()
 
-    init {
-        fetchMemoList()
-    }
     fun fetchMemoList() {
-        viewModelScope.launch {
-            getFilteredMemoUseCase()
-                .map { memos -> MemoListUiState.Success(memos.map { it.toMemoUI() }.toPersistentList()) }
-                .onStart { _memoListUiState.value = MemoListUiState.Loading }
-                .catch { throwable -> sendErrorMessage(throwable) }
-                .collectLatest { memoListUiState ->
-                    _memoListUiState.value = memoListUiState
-                }
-        }
+        getFilteredMemoUseCase()
+            .map { memos ->
+                MemoListUiState.Success(memos.map { it.toMemoUI() }.toPersistentList())
+            }
+            .catch { throwable -> sendErrorMessage(throwable) }
+            .onEach { newState ->
+                _memoListUiState.value = MemoListUiState.Success(newState.memos.toPersistentList())
+            }
+            .launchIn(viewModelScope)
     }
 }
