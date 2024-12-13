@@ -21,4 +21,5 @@
 
     <string name="weather_time_zone_more">시간대별 날씨 보기</string>
 
+    <string name="header">오늘은 어떤 특별한 물고기를\n기록하시겠어요?</string>
 </resources>

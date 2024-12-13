@@ -219,6 +219,14 @@ private fun HomeScreen(
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                     ) {
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.Start),
+                            text = stringResource(R.string.header),
+                            style = MaterialTheme.typography.displayLarge,
+                            fontSize = 24.sp,
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
                         HomeItemList(
                             context = context,
                             latXLngY = latXLngY,
