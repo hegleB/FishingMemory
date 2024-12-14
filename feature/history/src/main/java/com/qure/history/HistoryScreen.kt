@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,7 +62,9 @@ import com.qure.ui.model.MemoUI
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -84,6 +87,7 @@ fun HistoryRoute(
     var isRefresh by remember {
         mutableStateOf(false)
     }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.fetchFilteredMemos()
@@ -105,7 +109,11 @@ fun HistoryRoute(
         onSelectedYearChange = viewModel::selectYear,
         onRefresh = {
             viewModel.fetchFilteredMemos()
-            isRefresh = true
+            coroutineScope.launch {
+                isRefresh = true
+                delay(1_000L)
+                isRefresh = filteredMemosUiState is HistoryUiState.Loading
+            }
         },
         shouldShowYearDialog = viewModel::shouldShowYear,
         isRefresh = isRefresh,
@@ -155,7 +163,7 @@ private fun HistoryScreen(
 
         FMRefreshLayout(
             onRefresh = { onRefresh() },
-            isRefresh = if (isRefresh) uiState is HistoryUiState.Loading else false,
+            isRefresh = isRefresh,
         ) {
             LazyColumn(
                 modifier = Modifier

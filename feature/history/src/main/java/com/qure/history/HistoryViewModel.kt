@@ -9,10 +9,10 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -33,14 +33,11 @@ constructor(
     }
 
     fun fetchFilteredMemos() {
-        viewModelScope.launch {
-            getFilteredMemoUseCase()
-                .map { memos -> HistoryUiState.Success(memos.map { it.toMemoUI() }.toPersistentList()) }
-                .catch { throwable -> sendErrorMessage(throwable) }
-                .collectLatest { uiState ->
-                    _filteredMemosUiState.value = uiState
-                }
-        }
+        getFilteredMemoUseCase()
+            .map { memos -> HistoryUiState.Success(memos.map { it.toMemoUI() }.toPersistentList()) }
+            .catch { throwable -> sendErrorMessage(throwable) }
+            .onEach { _filteredMemosUiState.value = it }
+            .launchIn(viewModelScope)
     }
 
     fun selectDate(date: LocalDate) {

@@ -53,6 +53,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -98,7 +99,9 @@ import com.qure.ui.model.categorizeWeather
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Locale
 import kotlin.math.absoluteValue
@@ -124,6 +127,7 @@ fun HomeRoute(
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     var hasLocationPermission by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -158,7 +162,11 @@ fun HomeRoute(
         navigateToMap = navigateToMap,
         onRefresh = {
             viewModel.fetchData()
-            isRefresh = true
+            coroutineScope.launch {
+                isRefresh = true
+                delay(1_000L)
+                isRefresh = homeUiState is HomeUiState.Loading
+            }
         },
         isRefresh = isRefresh,
         onClickRecord = navigateToMemoCreate,
@@ -193,11 +201,13 @@ private fun HomeScreen(
     onClickRecord: () -> Unit = { },
 ) {
     FMRefreshLayout(
+        modifier = modifier
+            .fillMaxSize(),
         onRefresh = { onRefresh() },
-        isRefresh = if (isRefresh) homeUiState is HomeUiState.Loading else false,
+        isRefresh = isRefresh,
     ) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .background(MaterialTheme.colorScheme.surfaceTint)
                 .fillMaxSize()
                 .padding(horizontal = 30.dp)

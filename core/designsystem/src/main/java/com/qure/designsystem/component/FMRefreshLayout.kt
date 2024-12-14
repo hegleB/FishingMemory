@@ -29,7 +29,8 @@ import com.qure.core.designsystem.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FMRefreshLayout(
+fun  FMRefreshLayout(
+    modifier: Modifier = Modifier,
     onRefresh: () -> Unit,
     isRefresh: Boolean,
     content: @Composable () -> Unit,
@@ -43,8 +44,10 @@ fun FMRefreshLayout(
         }
     }
 
-    if (isRefresh.not()) {
-        LaunchedEffect(true) {
+    LaunchedEffect(isRefresh) {
+        if (isRefresh) {
+            state.startRefresh()
+        } else {
             state.endRefresh()
         }
     }
@@ -59,11 +62,11 @@ fun FMRefreshLayout(
                 state.progress.coerceIn(0f..1f),
             )
         },
-        label = "",
+        label = "pullToRefresh",
     )
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(color = MaterialTheme.colorScheme.background)
             .nestedScroll(state.nestedScrollConnection),
     ) {

@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -55,6 +56,7 @@ import com.qure.designsystem.component.FMBackButton
 import com.qure.designsystem.component.FMCircleAddButton
 import com.qure.designsystem.component.FMLottieAnimation
 import com.qure.designsystem.component.FMProgressBar
+import com.qure.designsystem.component.FMRefreshLayout
 import com.qure.designsystem.theme.GrayBackground
 import com.qure.designsystem.utils.FMPreview
 import com.qure.designsystem.utils.clickableWithoutRipple
@@ -66,6 +68,7 @@ import com.qure.ui.model.MemoUI
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @Composable
@@ -86,11 +89,23 @@ fun MemoListRoute(
         viewModel.error.collectLatest(onShowErrorSnackBar)
     }
 
+    var isRefresh by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
     MemoListScreen(
         memoListUiState = memoListUiState,
         onBack = onBack,
         navigateToMemoCreate = navigateToMemoCreate,
         navigateToMemoDetail = navigateToMemoDetail,
+        onRefresh = {
+            viewModel.fetchMemoList()
+            coroutineScope.launch {
+                isRefresh = true
+                delay(1_000L)
+                isRefresh = memoListUiState is MemoListUiState.Loading
+            }
+        },
+        isRefresh = isRefresh,
     )
 }
 
@@ -101,6 +116,8 @@ private fun MemoListScreen(
     onBack: () -> Unit = { },
     navigateToMemoCreate: () -> Unit = { },
     navigateToMemoDetail: (MemoUI) -> Unit = { },
+    onRefresh: () -> Unit = { },
+    isRefresh: Boolean = false,
 ) {
     val scrollState = rememberSaveable(saver = ScrollState.Saver) { ScrollState(0) }
 
@@ -112,23 +129,30 @@ private fun MemoListScreen(
             TopAppBar(onBack, navigateToMemoCreate)
         }
     ) { paddingValue ->
+        FMRefreshLayout(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValue)
+                .background(color = MaterialTheme.colorScheme.background),
+            onRefresh = { onRefresh() },
+            isRefresh = isRefresh,
+        ) {
+            when (memoListUiState) {
+                MemoListUiState.Loading -> MemoLoading()
 
-        when (memoListUiState) {
-            MemoListUiState.Loading -> MemoLoading()
-
-            is MemoListUiState.Success -> {
-                if (memoListUiState.memos.isEmpty()) {
-                    MemoListEmpty(
-                        paddingValue = paddingValue,
-                        scrollState = scrollState,
-                    )
-                } else {
-                    MemoList(
-                        paddingValue = paddingValue,
-                        scrollState = scrollState,
-                        uiState = memoListUiState,
-                        navigateToMemoDetail = navigateToMemoDetail,
-                    )
+                is MemoListUiState.Success -> {
+                    if (memoListUiState.memos.isEmpty()) {
+                        MemoListEmpty(
+                            paddingValue = paddingValue,
+                            scrollState = scrollState,
+                        )
+                    } else {
+                        MemoList(
+                            scrollState = scrollState,
+                            uiState = memoListUiState,
+                            navigateToMemoDetail = navigateToMemoDetail,
+                        )
+                    }
                 }
             }
         }
@@ -137,7 +161,7 @@ private fun MemoListScreen(
 
 @Composable
 private fun MemoList(
-    paddingValue: PaddingValues,
+    modifier: Modifier = Modifier,
     scrollState: ScrollState,
     uiState: MemoListUiState.Success,
     navigateToMemoDetail: (MemoUI) -> Unit
@@ -164,9 +188,8 @@ private fun MemoList(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(paddingValue)
             .background(color = MaterialTheme.colorScheme.surfaceTint)
             .verticalScroll(scrollState),
     ) {
