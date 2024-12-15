@@ -58,7 +58,8 @@ sealed interface Route {
     @Serializable
     data class MemoDetail(
         val memo: MemoUI = MemoUI(),
-        val isEdit: Boolean = false
+        val isEdit: Boolean = false,
+        val isOpenDeepLink: Boolean = false,
     ) : Route {
 
         val route: String = "${this::class.qualifiedName}?memo={memo}&isEdit={isEdit}"

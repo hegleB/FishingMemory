@@ -127,8 +127,12 @@ class MainNavigator(
         navController.navigateLocationSetting(memoUI, navOptions)
     }
 
-    fun navigateToMemoDetail(memoUI: MemoUI, navOptions: NavOptions? = null) {
-        navController.navigateMemoDetail(memoUI, navOptions)
+    fun navigateToMemoDetail(
+        memoUI: MemoUI,
+        isOpenDeepLink: Boolean = false,
+        navOptions: NavOptions? = null
+    ) {
+        navController.navigateMemoDetail(memoUI, isOpenDeepLink, navOptions)
     }
 
     fun navigateToBookmark() {

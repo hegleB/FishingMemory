@@ -53,6 +53,7 @@ fun DetailMemoRoute(
     onClickEdit: (MemoUI) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
+    isOpenDeepLink: Boolean = false,
     viewModel: DetailMemoViewModel = hiltViewModel(),
 ) {
     val detailMemoUiState by viewModel.detailMemoUiState.collectAsStateWithLifecycle()
@@ -88,6 +89,7 @@ fun DetailMemoRoute(
             }.createDynamicLink(memo)
         },
         showSnackBar = onShowMessageSnackBar,
+        isOpenDeepLink = isOpenDeepLink,
     )
 }
 
@@ -102,6 +104,7 @@ private fun DetailMemoScreen(
     onClickKakaoShare: () -> Unit = { },
     onClickMoreShare: () -> Unit = { },
     showSnackBar: (SnackBarMessageType) -> Unit = { },
+    isOpenDeepLink: Boolean = false,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var deleteDialogState by remember { mutableStateOf(false) }
@@ -157,10 +160,13 @@ private fun DetailMemoScreen(
             onBack = onBack,
             titleFontSize = 15.sp,
         ) {
-            FMMoreButton(
-                modifier = Modifier.size(25.dp),
-                onClickMore = { isExpanded = !isExpanded },
-            )
+            if (isOpenDeepLink.not()) {
+                FMMoreButton(
+                    modifier = Modifier.size(25.dp),
+                    onClickMore = { isExpanded = !isExpanded },
+                )
+            }
+
             FMDropdownMenu(
                 modifier = Modifier
                     .width(200.dp)

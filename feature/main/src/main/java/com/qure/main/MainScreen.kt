@@ -103,7 +103,7 @@ fun MainScreen(
     LaunchedEffect(memo.isValidMemo) {
         if (memo.isValidMemo) {
             delay(500L)
-            navigator.navigateToMemoDetail(memoUI = memo)
+            navigator.navigateToMemoDetail(memoUI = memo, isOpenDeepLink = true)
 
         }
     }
@@ -238,7 +238,7 @@ fun MainScreen(
                         navigateToMemoDetail = {
                             navigator.navigateToMemoDetail(
                                 memoUI = memo,
-                                navOptions {
+                                navOptions =  navOptions {
                                     popUpTo(MainTabRoute.Home)
                                 }
                             )

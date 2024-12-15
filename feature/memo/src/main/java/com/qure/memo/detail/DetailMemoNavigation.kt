@@ -10,8 +10,8 @@ import com.qure.ui.model.MemoUI
 import com.qure.ui.model.SnackBarMessageType
 import com.qure.navigation.Route.MemoDetail as MemoDetailRoute
 
-fun NavController.navigateMemoDetail(memo: MemoUI, navOptions: NavOptions?) {
-    navigate(Route.MemoDetail(memo), navOptions)
+fun NavController.navigateMemoDetail(memo: MemoUI, isOpenDeepLink: Boolean, navOptions: NavOptions?) {
+    navigate(Route.MemoDetail(memo = memo, isOpenDeepLink = isOpenDeepLink), navOptions)
 }
 
 fun NavGraphBuilder.memoDetailNavGraph(
@@ -24,6 +24,7 @@ fun NavGraphBuilder.memoDetailNavGraph(
         typeMap = MemoDetailRoute.typeMap,
     ) { navBackStackEntry ->
         val memo = navBackStackEntry.toRoute<MemoDetailRoute>().memo
+        val isOpenDeepLink = navBackStackEntry.toRoute<MemoDetailRoute>().isOpenDeepLink
 
         DetailMemoRoute(
             memo = memo,
@@ -31,6 +32,7 @@ fun NavGraphBuilder.memoDetailNavGraph(
             onClickEdit = onClickEdit,
             onShowErrorSnackBar = onShowErrorSnackBar,
             onShowMessageSnackBar = onShowMessageSnackBar,
+            isOpenDeepLink = isOpenDeepLink,
         )
     }
 }
