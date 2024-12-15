@@ -74,17 +74,17 @@ import com.qure.ui.model.MemoUI
 import com.qure.ui.model.SnackBarMessageType
 import com.qure.ui.model.SnackBarMessageType.Companion.isFailureMessageType
 import com.qure.ui.model.SnackBarType
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 
 @Composable
 fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator(),
-    isKakaoOpenDeepLink: Boolean = false,
+    deepLinkType: DeepLinkType = DeepLinkType.None,
     memo: MemoUI = MemoUI(),
     isConnectNetwork: Boolean,
 ) {
-
     val snackBarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -100,11 +100,18 @@ fun MainScreen(
         }
     }
 
+    LaunchedEffect(memo.isValidMemo) {
+        if (memo.isValidMemo) {
+            delay(500L)
+            navigator.navigateToMemoDetail(memoUI = memo)
+
+        }
+    }
+
     val onShowErrorSnackBar: (throwable: Throwable?) -> Unit = { throwable ->
         coroutineScope.launch {
             if (throwable !is UnknownHostException) {
                 throwable?.message?.let {
-                    println("SnackBarMessage :  $it$")
                     snackBarHostState.showSnackbar(
                         message = localContextResource.getString(R.string.error_message_unknown),
                         actionLabel = SnackBarType.NETWORK_ERROR.name,
@@ -147,7 +154,11 @@ fun MainScreen(
             ) {
                 NavHost(
                     navController = navigator.navController,
-                    startDestination = navigator.startDestination,
+                    startDestination = if (deepLinkType is DeepLinkType.None) {
+                        navigator.startDestination
+                    } else {
+                        navigator.startDeppLinkDestination
+                    },
                 ) {
                     homeNavGraph(
                         padding = padding,

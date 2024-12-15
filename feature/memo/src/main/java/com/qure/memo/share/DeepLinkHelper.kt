@@ -4,9 +4,9 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.google.firebase.dynamiclinks.DynamicLink
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.qure.ui.model.MemoUI
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.util.LinkProperties
 
 class DeepLinkHelper(
     private val context: Context,
@@ -15,45 +15,46 @@ class DeepLinkHelper(
     fun createDynamicLink(memo: MemoUI) {
         val baseUrl = memo.image.split("%2F")[0]
         val imagePath = memo.image.split("%2F")[1]
-        val uri = generateUri(memo, baseUrl, imagePath)
-        FirebaseDynamicLinks.getInstance().createDynamicLink()
-            .setLink(Uri.parse(uri))
-            .setDomainUriPrefix("fishmemo.page.link")
-            .setAndroidParameters(
-                DynamicLink.AndroidParameters.Builder(context.packageName)
-                    .setMinimumVersion(1)
-                    .build(),
-            )
-            .buildShortDynamicLink()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val deepLink = task.result.shortLink ?: Uri.EMPTY
-                    shareDeepLink(deepLink)
-                } else {
-                    errorMessage(task.toString())
-                }
-            }
-    }
 
-    private fun generateUri(
-        memo: MemoUI,
-        baseUrl: String,
-        imagePath: String,
-    ) = Uri.Builder()
-        .scheme("https")
-        .authority("fishingmemory.com")
-        .path("/memo")
-        .appendQueryParameter("title", memo.title)
-        .appendQueryParameter("waterType", memo.waterType)
-        .appendQueryParameter("fishType", memo.fishType)
-        .appendQueryParameter("fishSize", memo.fishSize)
-        .appendQueryParameter("createTime", memo.date.toString())
-        .appendQueryParameter("content", memo.content)
-        .appendQueryParameter("baseUrl", baseUrl)
-        .appendQueryParameter("imagePath", imagePath)
-        .appendQueryParameter("location", memo.location)
-        .build()
-        .toString()
+        val branchUniversalObject = BranchUniversalObject()
+            .setCanonicalIdentifier("memo/${memo.uuid}")
+            .setTitle(memo.title)
+            .setContentImageUrl(baseUrl + imagePath)
+            .setContentDescription(memo.content)
+            .addKeyWords(arrayListOf("#${memo.fishType} #${memo.fishSize}CM ${memo.waterType}"))
+            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+
+        val linkProperties = LinkProperties()
+            .setChannel("app")
+            .setFeature("sharing")
+            .setCampaign("fishing_memo_campaign")
+            .addControlParameter("title", memo.title)
+            .addControlParameter("waterType", memo.waterType)
+            .addControlParameter("fishType", memo.fishType)
+            .addControlParameter("fishSize", memo.fishSize)
+            .addControlParameter("createTime", memo.date)
+            .addControlParameter("content", memo.content)
+            .addControlParameter("baseUrl", baseUrl)
+            .addControlParameter("imagePath", imagePath)
+            .addControlParameter("location", memo.location)
+            .addControlParameter("uuid", memo.uuid)
+            .addControlParameter("email", memo.email)
+            .addControlParameter("date", memo.date)
+            .addControlParameter("createTime", memo.createTime)
+            .addControlParameter("coords", memo.coords)
+
+
+
+
+        branchUniversalObject.generateShortUrl(context, linkProperties) { url, error ->
+            if (error == null) {
+                shareDeepLink(Uri.parse(url))
+            } else {
+                errorMessage("Error creating Branch link: ${error.message}")
+            }
+        }
+    }
 
     private fun shareDeepLink(deepLink: Uri) {
         val sendIntent =

@@ -1,6 +1,5 @@
 package com.qure.main
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -18,20 +17,26 @@ import com.qure.data.utils.NetworkMonitor
 import com.qure.designsystem.theme.FishingMemoryTheme
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_BASE_URL
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_CONTENT
+import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_COORDS
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_CREATE_TIME
+import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_DATE
+import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_EMAIL
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_FISH_SIZE
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_FISH_TYPE
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_IMAGE_PATH
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_LOCATION
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_TITLE
+import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_UUID
 import com.qure.memo.share.KakaoLinkSender.Companion.QUERY_WATER_TYPE
 import com.qure.memo.share.KakaoLinkSender.Companion.SLASH
 import com.qure.model.darkmode.DarkModeConfig
 import com.qure.model.extensions.Empty
 import com.qure.ui.model.MemoUI
 import dagger.hilt.android.AndroidEntryPoint
+import io.branch.referral.Branch
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -68,25 +73,48 @@ class MainActivity : AppCompatActivity() {
 
             val navigator: MainNavigator = rememberMainNavigator()
             FishingMemoryTheme(isDarkTheme) {
-                if (intent.action == Intent.ACTION_VIEW) {
-                    val uri = intent.data ?: Uri.EMPTY
-                    if (uri != null) {
-                        val memo = getMemoForKakaoShare(uri)
-                        viewModel.setKakaoDeepLink(true)
+                val memo by viewModel.memo.collectAsStateWithLifecycle()
+                intent.putExtra("branch_force_new_session", true)
+                val uri = intent.data ?: Uri.EMPTY
+                val deepLinkType = DeepLinkType.fromUri(uri.toString())
+
+                if (memo.isValidMemo.not() && deepLinkType is DeepLinkType.Branch) {
+                    handleBranchDeepLink(
+                        uri = uri,
+                        setMemo = viewModel::setMemo,
+                        updateBranchForceNewSession = {
+                            intent.putExtra("branch_force_new_session", false)
+                        },
+                    )
+                }
+                when(deepLinkType) {
+                    is DeepLinkType.Branch -> {
                         MainScreen(
                             navigator = navigator,
                             memo = memo,
-                            isConnectNetwork = isConnectNetwork
+                            isConnectNetwork = isConnectNetwork,
+                            deepLinkType = deepLinkType,
                         )
-                        return@FishingMemoryTheme
+                    }
+
+                    is DeepLinkType.Kakao -> {
+                        val kakaoMemo = getMemoForKakaoShare(uri)
+                        viewModel.setKakaoDeepLink(true)
+                        MainScreen(
+                            navigator = navigator,
+                            memo = kakaoMemo,
+                            isConnectNetwork = isConnectNetwork,
+                            deepLinkType = deepLinkType,
+                        )
+                    }
+                    is DeepLinkType.None -> {
+                        MainScreen(
+                            navigator = navigator,
+                            isConnectNetwork = isConnectNetwork,
+                            deepLinkType = deepLinkType,
+                        )
                     }
                 }
-
-                MainScreen(
-                    navigator = navigator,
-                    isConnectNetwork = isConnectNetwork,
-                )
-
             }
         }
     }
@@ -97,12 +125,51 @@ class MainActivity : AppCompatActivity() {
             waterType = uri.getQueryParameter(QUERY_WATER_TYPE) ?: String.Empty,
             fishSize = uri.getQueryParameter(QUERY_FISH_SIZE) ?: String.Empty,
             fishType = uri.getQueryParameter(QUERY_FISH_TYPE) ?: String.Empty,
-            date = uri.getQueryParameter(QUERY_CREATE_TIME) ?: String.Empty,
             location = uri.getQueryParameter(QUERY_LOCATION) ?: String.Empty,
             content = uri.getQueryParameter(QUERY_CONTENT) ?: String.Empty,
             image =
             uri.getQueryParameter(QUERY_BASE_URL) + SLASH +
                     uri.getQueryParameter(QUERY_IMAGE_PATH),
+            uuid = uri.getQueryParameter(QUERY_UUID) ?: String.Empty,
+            createTime = uri.getQueryParameter(QUERY_CREATE_TIME) ?: String.Empty,
+            date = uri.getQueryParameter(QUERY_DATE) ?: String.Empty,
+            email = uri.getQueryParameter(QUERY_EMAIL) ?: String.Empty,
+            coords = uri.getQueryParameter(QUERY_COORDS) ?: String.Empty,
         )
+    }
+
+    private fun getMemoForBranchDeepLink(jsonObject: JSONObject): MemoUI {
+        return MemoUI(
+            title = jsonObject.optString(QUERY_TITLE) ?: String.Empty,
+            waterType = jsonObject.optString(QUERY_WATER_TYPE) ?: String.Empty,
+            fishSize = jsonObject.optString(QUERY_FISH_SIZE) ?: String.Empty,
+            fishType = jsonObject.optString(QUERY_FISH_TYPE) ?: String.Empty,
+            location = jsonObject.optString(QUERY_LOCATION) ?: String.Empty,
+            content = jsonObject.optString(QUERY_CONTENT) ?: String.Empty,
+            image =
+            jsonObject.optString(QUERY_BASE_URL) + SLASH +
+                    jsonObject.optString(QUERY_IMAGE_PATH),
+            uuid = jsonObject.optString(QUERY_UUID),
+            createTime = jsonObject.optString(QUERY_CREATE_TIME),
+            date = jsonObject.optString(QUERY_DATE),
+            email = jsonObject.optString(QUERY_EMAIL),
+            coords = jsonObject.optString(QUERY_COORDS),
+        )
+    }
+
+    private fun handleBranchDeepLink(
+        uri: Uri,
+        setMemo: (MemoUI) -> Unit,
+        updateBranchForceNewSession: () -> Unit,
+    ) {
+        Branch.sessionBuilder(this)
+            .withCallback { referringParams, error ->
+                if (error == null && referringParams != null) {
+                    setMemo(getMemoForBranchDeepLink(referringParams))
+                }
+                updateBranchForceNewSession()
+            }
+            .withData(uri)
+            .init()
     }
 }

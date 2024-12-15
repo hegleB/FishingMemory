@@ -41,6 +41,8 @@ class MainNavigator(
 
     val startDestination = Route.Splash
 
+    val startDeppLinkDestination = MainTabRoute.Home
+
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->
             currentDestination?.hasRoute(tab::class) == true
@@ -83,7 +85,7 @@ class MainNavigator(
     }
 
     fun navigateToHome(navOptions: NavOptions) {
-        navController.navigate(MainTab.HOME.route, navOptions)
+        navController.navigationHome(navOptions)
     }
 
     fun navigateToMap() {

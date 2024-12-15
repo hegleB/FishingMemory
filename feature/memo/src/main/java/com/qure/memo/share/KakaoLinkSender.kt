@@ -9,6 +9,7 @@ import com.kakao.sdk.template.model.Button
 import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
+import com.qure.model.extensions.Empty
 import com.qure.model.extensions.HashTag
 import com.qure.ui.model.MemoUI
 
@@ -58,11 +59,15 @@ class KakaoLinkSender(
             QUERY_WATER_TYPE to memo.waterType,
             QUERY_FISH_TYPE to memo.fishType,
             QUERY_FISH_SIZE to memo.fishSize,
-            QUERY_CREATE_TIME to memo.date,
+            QUERY_CREATE_TIME to (memo.createTime ?: String.Empty),
             QUERY_LOCATION to memo.location,
             QUERY_CONTENT to memo.content,
             QUERY_BASE_URL to imageBaseUrl,
             QUERY_IMAGE_PATH to imagePath,
+            QUERY_UUID to memo.uuid,
+            QUERY_COORDS to memo.coords,
+            QUERY_EMAIL to memo.email,
+            QUERY_DATE to memo.date,
         )
     }
 
@@ -114,6 +119,10 @@ class KakaoLinkSender(
         const val QUERY_CONTENT = "content"
         const val QUERY_BASE_URL = "baseUrl"
         const val QUERY_IMAGE_PATH = "imagePath"
+        const val QUERY_UUID = "uuid"
+        const val QUERY_COORDS = "coords"
+        const val QUERY_EMAIL = "email"
+        const val QUERY_DATE = "date"
 
         const val SLASH = "%2F"
     }

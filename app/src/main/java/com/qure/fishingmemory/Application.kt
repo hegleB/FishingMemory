@@ -6,6 +6,7 @@ import com.naver.maps.map.NaverMapSdk
 import com.qure.build_property.BuildProperty
 import com.qure.build_property.BuildPropertyRepository
 import dagger.hilt.android.HiltAndroidApp
+import io.branch.referral.Branch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -19,6 +20,8 @@ class Application : Application() {
         initTimber()
         initKakaoSdk()
         initNaverMapSdk()
+        Branch.expectDelayedSessionInitialization(true)
+        Branch.getAutoInstance(this)
     }
 
 

@@ -23,10 +23,12 @@ android {
     val naverMapBaseUrl = properties["naver_map_base_url"] as? String ?: ""
     val naverMapApiClientId = properties["naver_map_api_client_id"] as? String ?: ""
     val naverMapApiClientSecret = properties["naver_map_api_client_secret"] as? String ?: ""
+    val branchKey = properties["branch_io_key"] as? String ?: ""
 
     val removeQuotationKakaoApiKey = kakaoApiKey.replace("\"", "")
     val removeQuotationNaverMapApiClientId = naverMapApiClientId.replace("\"", "")
     val removeQuotationKakaoNativeAppkey = kakaoNativeAppKey.replace("\"", "")
+    val removeQuotationBranchKey = branchKey.replace("\"", "")
 
     defaultConfig {
         applicationId = "com.qure.fishingmemory"
@@ -45,9 +47,11 @@ android {
         buildConfigField("String", "NAVER_MAP_BASE_URL", naverMapBaseUrl)
         buildConfigField("String", "NAVER_MAP_API_CLIENT_ID", naverMapApiClientId)
         buildConfigField("String", "NAVER_MAP_API_CLIENT_SECRET", naverMapApiClientSecret)
+        buildConfigField("String", "BRANCH_KEY", branchKey)
         manifestPlaceholders["KAKAO_API_KEY"] = removeQuotationKakaoApiKey
         manifestPlaceholders["NAVER_MAP_API_CLIENT_ID"] = removeQuotationNaverMapApiClientId
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = removeQuotationKakaoNativeAppkey
+        manifestPlaceholders["BRANCH_KEY"] = removeQuotationBranchKey
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -113,6 +117,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.navermap.sdk)
     implementation(libs.kakao.user)
+    implementation(libs.io.branch.sdk)
 }
 
 val ktlintCheck by tasks.registering(JavaExec::class) {
