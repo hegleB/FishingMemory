@@ -102,6 +102,14 @@ mlkit = "17.0.1"
 #kotlinx-collections-immutable
 kotlinxImmutable = "0.3.8"
 
+# branch.io
+branch = "5.8.0"
+
+playServiceAds = "18.0.1"
+
+androidxBrowser = "1.0.0"
+
+
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
@@ -175,7 +183,10 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-analytics-kts = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
-firebase-link-ktx = { group = "com.google.firebase", name = "firebase-dynamic-links-ktx" }
+
+io-branch-sdk = { group = "io.branch.sdk.android", name = "library", version.ref = "branch" }
+play-services-ads-identifier = { group = "com.google.android.gms", name = "play-services-ads-identifier", version.ref = "playServiceAds"}
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser"}
 
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
