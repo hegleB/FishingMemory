@@ -62,8 +62,8 @@ constructor(
     )
     val memo = _memo.asStateFlow()
 
-    private val _editMode = MutableStateFlow(false)
-    val editMode = _editMode.asStateFlow()
+    private val _isEdit = MutableStateFlow(false)
+    val isEdit = _isEdit.asStateFlow()
 
     val isConnectNetwork = networkMonitor.isConnectNetwork
         .stateIn(
@@ -94,7 +94,7 @@ constructor(
                         .catch { throwable -> sendErrorMessage(throwable) }
                 }
                 .collectLatest {
-                    _memoCreateUiState.value = MemoCreateUiState.Success(memo.value)
+                    _memoCreateUiState.value = MemoCreateUiState.Success(memo = memo.value)
                     sendMessage(SnackBarMessageType.SAVE_MEMO)
                 }
         }
@@ -138,11 +138,11 @@ constructor(
     }
 
     fun setMemoUi(memoUI: MemoUI) {
-        _memo.update { memoUI }
+        _memo.update { memoUI.copy(date = _memo.value.date, email = _memo.value.email) }
     }
 
     fun setEditMode(isEdit: Boolean) {
-        _editMode.value = isEdit
+        _isEdit.value = isEdit
     }
 
     private fun getImageUrl(storage: MemoStorage): String {

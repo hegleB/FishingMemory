@@ -24,7 +24,8 @@ sealed interface Route {
 
     @Serializable
     data class Gallery(
-        val memo: MemoUI = MemoUI()
+        val memo: MemoUI = MemoUI(),
+        val isEdit: Boolean = false,
     ) : Route {
         val route: String = "${this::class.qualifiedName}?memo={memo}"
 
@@ -86,6 +87,7 @@ sealed interface Route {
     @Serializable
     data class LocationSetting(
         val memo: MemoUI = MemoUI(),
+        val isEdit: Boolean = false,
     ) : Route {
         val route: String = "${this::class.qualifiedName}?memo={memo}"
 

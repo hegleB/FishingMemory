@@ -20,8 +20,8 @@ fun NavController.navigateMemoCreate(
 fun NavGraphBuilder.memoCreateNavGraph(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onBack: () -> Unit,
-    navigateToLocationSetting: (MemoUI) -> Unit,
-    navigateToGallery: (MemoUI) -> Unit,
+    navigateToLocationSetting: (MemoUI, Boolean) -> Unit,
+    navigateToGallery: (MemoUI, Boolean) -> Unit,
     navigateToMemoDetail: (MemoUI) -> Unit,
     onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
 ) {
@@ -31,11 +31,11 @@ fun NavGraphBuilder.memoCreateNavGraph(
         val memo = navBackStackEntry.toRoute<Route.MemoDetail>().memo
         val isEdit = navBackStackEntry.toRoute<Route.MemoDetail>().isEdit
         MemoCreateRoute(
-            memo = memo,
+            memoUI = memo,
             isEdit = isEdit,
             onBack = onBack,
-            navigateToLocationSetting = navigateToLocationSetting,
-            navigateToGallery = navigateToGallery,
+            navigateToLocationSetting = { memoUI -> navigateToLocationSetting(memoUI,isEdit) },
+            navigateToGallery = { memoUI ->  navigateToGallery(memoUI, isEdit) },
             navigateToMemoDetail = navigateToMemoDetail,
             onShowErrorSnackBar = onShowErrorSnackBar,
             onShowMessageSnackBar = onShowMessageSnackBar,

@@ -96,8 +96,12 @@ class MainNavigator(
         navController.navigateFishingSpot(fishingSpotUI)
     }
 
-    fun navigateToGallery(memoUI: MemoUI = MemoUI(), navOptions: NavOptions = navOptions { }) {
-        navController.navigateGallery(memoUI, navOptions)
+    fun navigateToGallery(
+        memoUI: MemoUI = MemoUI(),
+        isEdit: Boolean = false,
+        navOptions: NavOptions = navOptions { }
+    ) {
+        navController.navigateGallery(memoUI, isEdit, navOptions)
     }
 
     fun navigateToMemoList(navOptions: NavOptions = navOptions { }) {
@@ -122,9 +126,10 @@ class MainNavigator(
 
     fun navigateToLocationSetting(
         memoUI: MemoUI = MemoUI(),
+        isEdit: Boolean = false,
         navOptions: NavOptions = navOptions { }
     ) {
-        navController.navigateLocationSetting(memoUI, navOptions)
+        navController.navigateLocationSetting(memoUI, isEdit, navOptions)
     }
 
     fun navigateToMemoDetail(
@@ -143,7 +148,7 @@ class MainNavigator(
         navController.navigateDarkMode()
     }
 
-    fun navigateToCamera(memo: MemoUI, isEdit: Boolean) {
+    fun navigateToCamera(memo: MemoUI, isEdit: Boolean = false) {
         navController.navigateCamera(memo, isEdit)
     }
 

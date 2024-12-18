@@ -280,14 +280,16 @@ fun MainScreen(
 
                     memoCreateNavGraph(
                         onBack = navigator::popBackStack,
-                        navigateToLocationSetting = { memo ->
+                        navigateToLocationSetting = { memo, isEdit ->
                             navigator.navigateToLocationSetting(
                                 memoUI = memo,
+                                isEdit = isEdit,
                             )
                         },
-                        navigateToGallery = { memo ->
+                        navigateToGallery = { memo, isEdit ->
                             navigator.navigateToGallery(
                                 memoUI = memo,
+                                isEdit = isEdit,
                             )
                         },
                         navigateToMemoDetail = { memo ->
@@ -307,10 +309,10 @@ fun MainScreen(
 
                     locationSettingNavGraph(
                         onBack = navigator::popBackStack,
-                        navigateToMemoCreate = { memo ->
+                        navigateToMemoCreate = { memo, isEdit ->
                             navigator.navigateToMemoCreate(
                                 memoUI = memo,
-                                isEdit = true,
+                                isEdit = isEdit,
                                 navOptions = navOptions {
                                     popUpTo(Route.MemoCreate().route) {
                                         inclusive = true
@@ -338,16 +340,16 @@ fun MainScreen(
 
                     galleryNavGraph(
                         onBack = navigator::popBackStack,
-                        onClickCamera = { memo ->
+                        onClickCamera = { memo, isEdit ->
                             navigator.navigateToCamera(
                                 memo = memo,
-                                isEdit = true,
+                                isEdit = isEdit,
                             )
                         },
-                        onClickDone = { memo ->
+                        onClickDone = { memo, isEdit ->
                             navigator.navigateToMemoCreate(
                                 memoUI = memo,
-                                isEdit = true,
+                                isEdit = isEdit,
                                 navOptions = navOptions {
                                     popUpTo(Route.MemoCreate().route) {
                                         inclusive = true
@@ -404,10 +406,10 @@ fun MainScreen(
                     )
 
                     cameraNavHost(
-                        navigateToMemoCreate = { memo ->
+                        navigateToMemoCreate = { memo, isEdit ->
                             navigator.navigateToMemoCreate(
                                 memoUI = memo,
-                                isEdit = true,
+                                isEdit = isEdit,
                                 navOptions = navOptions {
                                     popUpTo(Route.MemoCreate().route) {
                                         inclusive = true

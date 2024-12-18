@@ -85,7 +85,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MemoCreateRoute(
-    memo: MemoUI,
+    memoUI: MemoUI,
     isEdit: Boolean = false,
     onBack: () -> Unit,
     navigateToLocationSetting: (MemoUI) -> Unit,
@@ -96,12 +96,10 @@ fun MemoCreateRoute(
     viewModel: MemoViewModel = hiltViewModel(),
 ) {
 
-    val editMode by viewModel.editMode.collectAsStateWithLifecycle()
-    LaunchedEffect(isEdit) {
-        if (isEdit && editMode.not()) {
-            viewModel.setMemoUi(memo)
-            viewModel.setEditMode(true)
-        }
+
+    LaunchedEffect(Unit) {
+        viewModel.setMemoUi(memoUI)
+        viewModel.setEditMode(isEdit)
     }
 
     LaunchedEffect(viewModel.message) {
@@ -114,6 +112,7 @@ fun MemoCreateRoute(
 
     val uiState by viewModel.memoCreateUiState.collectAsStateWithLifecycle()
     val memo by viewModel.memo.collectAsStateWithLifecycle()
+    val editMode by viewModel.isEdit.collectAsStateWithLifecycle()
     val isConnectNetwork by viewModel.isConnectNetwork.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val permissions = arrayOf(
@@ -156,6 +155,7 @@ fun MemoCreateRoute(
         },
         setImage = viewModel::setImage,
         isConnectNetwork = isConnectNetwork,
+        isEdit = editMode,
     )
 }
 
@@ -191,6 +191,7 @@ private fun MemoCreateScreen(
     setLocation: (String) -> Unit = { },
     setImage: (String) -> Unit = { },
     isConnectNetwork: Boolean = true,
+    isEdit: Boolean = false,
 ) {
     var isShowCalendar by remember {
         mutableStateOf(false)
@@ -373,13 +374,13 @@ private fun MemoCreateScreen(
                         .padding(bottom = 20.dp)
                         .fillMaxWidth(),
                     onClick = {
-                        if (memo.uuid.isNotEmpty()) {
+                        if (isEdit) {
                             onClickEdit()
                         } else {
                             onClickSave()
                         }
                     },
-                    text = if (memo.uuid.isNotEmpty()) {
+                    text = if (isEdit) {
                         stringResource(id = R.string.edit)
                     } else stringResource(
                         id = R.string.save

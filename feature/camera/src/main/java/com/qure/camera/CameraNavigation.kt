@@ -13,16 +13,17 @@ fun NavController.navigateCamera(memoUI: MemoUI, isEdit: Boolean) {
 }
 
 fun NavGraphBuilder.cameraNavHost(
-    navigateToMemoCreate: (MemoUI) -> Unit,
+    navigateToMemoCreate: (MemoUI, Boolean) -> Unit,
     onShowMessageSnackBar: (messageType: SnackBarMessageType) -> Unit,
 ) {
     composable<Route.Camera>(
         typeMap = Route.Camera.typeMap,
     ) { navBackStackEntry ->
         val memo = navBackStackEntry.toRoute<Route.MemoCreate>().memo
+        val isEdit = navBackStackEntry.toRoute<Route.MemoCreate>().isEdit
         CameraRoute(
             memoUI = memo,
-            navigateToMemoCreate = navigateToMemoCreate,
+            navigateToMemoCreate = { memoUI ->navigateToMemoCreate(memoUI, isEdit) },
             onShowMessageSnackBar = onShowMessageSnackBar,
         )
     }
