@@ -130,6 +130,7 @@ class CameraManager : CameraOperations {
                                 sendMessage(SnackBarMessageType.CAMERA_CAPTURE_SUCCESS)
                                 image.close()
                             } catch (e: Exception) {
+                                sendMessage(SnackBarMessageType.CAMERA_CAPTURE_FAILURE)
                                 return
 
                             }
