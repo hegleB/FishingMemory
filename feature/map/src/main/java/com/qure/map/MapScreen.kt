@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,16 +44,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.compose.CameraPositionState
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
 import com.naver.maps.map.compose.rememberCameraPositionState
@@ -84,16 +79,12 @@ import com.qure.ui.model.MovingCameraType
 import com.qure.ui.model.MovingCameraWrapper
 import com.qure.ui.model.SheetHeight
 import com.qure.ui.model.toTedClusterItem
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import ted.gun0912.clustering.clustering.TedClusterItem
 
-@OptIn(ExperimentalNaverMapApi::class)
 @Composable
 fun MapRoute(
     onBack: () -> Unit,
@@ -108,117 +99,44 @@ fun MapRoute(
         viewModel.error.collectLatest(onShowErrorSnackBar)
     }
 
-
     val mapUiState by viewModel.mapUiState.collectAsStateWithLifecycle()
-    val mapType by viewModel.mapType.collectAsStateWithLifecycle()
-    val markerType by viewModel.markerType.collectAsStateWithLifecycle()
-    val placeItems by viewModel.placeItems.collectAsStateWithLifecycle()
-    val selectedPlaceItems by viewModel.selectedPlaceItems.collectAsStateWithLifecycle()
-    val movingCameraWrapper by viewModel.movingCameraWrapper.collectAsStateWithLifecycle()
-    val sheetHeight by viewModel.sheetHeight.collectAsStateWithLifecycle()
     var hasLocationPermission by remember { mutableStateOf(false) }
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasLocationPermission = isGranted
     }
-    val cameraPositionState = rememberCameraPositionState()
+
     LaunchedEffect(Unit) {
         locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
-    LaunchedEffect(markerType) {
-        if (markerType == MarkerType.MEMO) {
-            viewModel.fetchFilteredMemo()
-        } else {
-            viewModel.fetchFishingSpot(markerType)
-        }
-    }
-
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_START) {
-                if (markerType == MarkerType.MEMO) {
-                    viewModel.fetchFilteredMemo()
-                } else {
-                    viewModel.fetchFishingSpot(markerType)
-                }
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
     MapScreen(
         uiState = mapUiState,
-        placeItems = placeItems.toPersistentList(),
         onBack = onBack,
-        mapType = mapType,
-        markerType = markerType,
         onClickMarkerType = {
-            viewModel.setMarkerType(MarkerType.getMarkerType(it))
+            viewModel.setMarkerType(markerType = MarkerType.getMarkerType(it))
         },
-        onClickMapType = { viewModel.setMapType(MapType.getMapType(it)) },
+        onClickMapType = { viewModel.setMapType(mapType = MapType.getMapType(it)) },
         onClickLocation = { location ->
-            val lat = location.latitude
-            val lng = location.longitude
-            viewModel.updateMovingCamera(MovingCameraWrapper.Moving(
+            viewModel.updateMovingCamera(movingCameraWrapper = MovingCameraWrapper.Moving(
                 Location(MovingCameraType.MY_LOCATION.name).apply {
                     latitude = location.latitude
                     longitude = location.longitude
                 }
             ))
-            cameraPositionState.move(
-                CameraUpdate.toCameraPosition(
-                    CameraPosition(LatLng(lat, lng), 15.0)
-                )
-            )
         },
-        cameraPositionState = cameraPositionState,
-        setPlaceItems = viewModel::setPlaceItems,
         onClickFishingSpot = navigateToDetailFishingSpot,
         onClickMemo = navigateToDetailMemo,
         onClickClusterMarkers = { items ->
-            val placeInfoItems = placeItems.filter { placeItem ->
-                when (placeItem) {
-                    is FishingPlaceInfo.FishingSpotInfo -> {
-                        items.any { item ->
-                            placeItem.fishingSpotUI.toTedClusterItem()
-                                .getTedLatLng() == item.getTedLatLng()
-                        }
-                    }
-
-                    is FishingPlaceInfo.MemoInfo -> {
-                        items.any { item ->
-                            placeItem.memoUI.toTedClusterItem()
-                                .getTedLatLng() == item.getTedLatLng()
-                        }
-                    }
-                }
-            }
-            viewModel.setSelectedPlaceItems(placeInfoItems)
+            viewModel.updateClusterMarkers(clusterMarkers = items)
         },
-        selectedPlaceItems = selectedPlaceItems.toPersistentList(),
         onClickMarker = { item ->
-            placeItems.find { placeItem ->
-                when (placeItem) {
-                    is FishingPlaceInfo.FishingSpotInfo -> placeItem.fishingSpotUI.toTedClusterItem()
-                        .getTedLatLng() == item.getTedLatLng()
-
-                    is FishingPlaceInfo.MemoInfo -> placeItem.memoUI.toTedClusterItem()
-                        .getTedLatLng() == item.getTedLatLng()
-                }
-            }?.let { viewModel.setSelectedPlaceItems(listOf(it)) }
+            viewModel.updateClusterMarkers(clusterMarkers = listOf(item))
         },
         onClickPhoneNumber = onClickPhoneNumber,
-        updateMovingCamera = viewModel::updateMovingCamera,
-        movingCameraWrapper = movingCameraWrapper,
-        updateSheetHeight = viewModel::updateSheetHeight,
-        sheetHeight = sheetHeight,
+        updateMovingCamera = { movingCamera -> viewModel.updateMovingCamera(movingCameraWrapper = movingCamera) },
+        updateSheetHeight = { sheetHeight -> viewModel.updateSheetHeight(sheetHeight = sheetHeight) },
     )
 }
 
@@ -244,193 +162,167 @@ suspend fun getCurrentLocation(
 private fun MapScreen(
     modifier: Modifier = Modifier,
     uiState: MapUiState = MapUiState.Loading,
-    placeItems: ImmutableList<FishingPlaceInfo> = persistentListOf(),
     onBack: () -> Unit = { },
-    markerType: MarkerType = MarkerType.MEMO,
-    mapType: MapType = MapType.BASIC_MAP,
     onClickMarkerType: (String) -> Unit = { },
     onClickMapType: (String) -> Unit = { },
     onClickLocation: (Location) -> Unit = { },
-    cameraPositionState: CameraPositionState = CameraPositionState(),
-    setPlaceItems: (List<FishingPlaceInfo>) -> Unit = { },
     onClickFishingSpot: (FishingSpotUI) -> Unit = { },
     onClickMemo: (MemoUI) -> Unit = { },
     onClickClusterMarkers: (List<TedClusterItem>) -> Unit = { },
-    selectedPlaceItems: ImmutableList<FishingPlaceInfo> = persistentListOf(),
     onClickMarker: (TedClusterItem) -> Unit = { },
     onClickPhoneNumber: (String) -> Unit = { },
     updateMovingCamera: (MovingCameraWrapper) -> Unit = { },
-    movingCameraWrapper: MovingCameraWrapper = MovingCameraWrapper.Default,
     updateSheetHeight: (SheetHeight) -> Unit = { },
-    sheetHeight: SheetHeight = SheetHeight.DEFAULT,
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState()
     )
 
+    when (uiState) {
+        is MapUiState.Loading -> {
+            FMProgressBar(
+                modifier = Modifier
+                    .size(50.dp)
+            )
+        }
 
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetContent = {
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (uiState is MapUiState.Loading) {
-                    FMProgressBar(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.TopCenter),
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                            .align(Alignment.CenterHorizontally),
-                        text = if (markerType == MarkerType.MEMO) {
-                            stringResource(id = R.string.memo_counter, selectedPlaceItems.size)
-                        } else {
-                            stringResource(
-                                id = R.string.fishing_spot_counter,
-                                selectedPlaceItems.size
-                            )
-                        },
-                        style = MaterialTheme.typography.displaySmall,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(top = 10.dp),
+        is MapUiState.Success -> {
+            BottomSheetScaffold(
+                scaffoldState = scaffoldState,
+                sheetContent = {
+                    Box(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .background(
+                                color = MaterialTheme.colorScheme.background,
+                            ),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        items(selectedPlaceItems) { item ->
-                            when (item) {
-                                is FishingPlaceInfo.MemoInfo -> {
-                                    FMMemoItem(
-                                        modifier = Modifier
-                                            .padding(top = 10.dp),
-                                        imageUrl = item.memoUI.image,
-                                        title = item.memoUI.title,
-                                        location = item.memoUI.location,
-                                        fishType = item.memoUI.fishType,
-                                        content = item.memoUI.content,
-                                        date = item.memoUI.date,
-                                        onMemoClicked = { onClickMemo(item.memoUI) },
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(top = 8.dp)
+                                    .align(Alignment.CenterHorizontally),
+                                text = if (uiState.markerType == MarkerType.MEMO) {
+                                    stringResource(
+                                        id = R.string.memo_counter,
+                                        uiState.selectedPlaceItems.size
                                     )
-                                }
+                                } else {
+                                    stringResource(
+                                        id = R.string.fishing_spot_counter,
+                                        uiState.selectedPlaceItems.size
+                                    )
+                                },
+                                style = MaterialTheme.typography.displaySmall,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                            LazyColumn(
+                                modifier = Modifier
+                                    .padding(top = 10.dp),
+                            ) {
+                                items(uiState.selectedPlaceItems) { item ->
+                                    when (item) {
+                                        is FishingPlaceInfo.MemoInfo -> {
+                                            FMMemoItem(
+                                                modifier = Modifier
+                                                    .padding(top = 10.dp),
+                                                imageUrl = item.memoUI.image,
+                                                title = item.memoUI.title,
+                                                location = item.memoUI.location,
+                                                fishType = item.memoUI.fishType,
+                                                content = item.memoUI.content,
+                                                date = item.memoUI.date,
+                                                onMemoClicked = { onClickMemo(item.memoUI) },
+                                            )
+                                        }
 
-                                is FishingPlaceInfo.FishingSpotInfo -> {
-                                    FMFishingSpotItem(
-                                        fishingSpotName = item.fishingSpotUI.fishing_spot_name,
-                                        fishingGroundType = item.fishingSpotUI.fishing_ground_type,
-                                        numberAddress = item.fishingSpotUI.number_address,
-                                        roadAddress = item.fishingSpotUI.road_address,
-                                        phoneNumber = item.fishingSpotUI.phone_number,
-                                        fishType = item.fishingSpotUI.fish_type,
-                                        mainPoint = item.fishingSpotUI.main_point,
-                                        fee = item.fishingSpotUI.fee,
-                                        onClickPhoneNumber = onClickPhoneNumber,
-                                        onFishingSpotClicked = { onClickFishingSpot(item.fishingSpotUI) },
-                                    )
+                                        is FishingPlaceInfo.FishingSpotInfo -> {
+                                            FMFishingSpotItem(
+                                                fishingSpotName = item.fishingSpotUI.fishing_spot_name,
+                                                fishingGroundType = item.fishingSpotUI.fishing_ground_type,
+                                                numberAddress = item.fishingSpotUI.number_address,
+                                                roadAddress = item.fishingSpotUI.road_address,
+                                                phoneNumber = item.fishingSpotUI.phone_number,
+                                                fishType = item.fishingSpotUI.fish_type,
+                                                mainPoint = item.fishingSpotUI.main_point,
+                                                fee = item.fishingSpotUI.fee,
+                                                onClickPhoneNumber = onClickPhoneNumber,
+                                                onFishingSpotClicked = { onClickFishingSpot(item.fishingSpotUI) },
+                                            )
+                                        }
+                                    }
+                                    HorizontalDivider(modifier = Modifier.padding(top = 10.dp))
                                 }
                             }
-                            HorizontalDivider(modifier = Modifier.padding(top = 10.dp))
                         }
                     }
-                }
+                },
+                sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                sheetContainerColor = MaterialTheme.colorScheme.background,
+                sheetPeekHeight = uiState.sheetHeight.height,
+            ) {
+                MapContent(
+                    uiState = uiState,
+                    onBack = onBack,
+                    onClickMap = { updateSheetHeight(SheetHeight.MEDIUM) },
+                    onClickMarkerType = { type ->
+                        onClickMarkerType(type)
+                        updateSheetHeight(SheetHeight.MEDIUM)
+                    },
+                    onClickMapType = onClickMapType,
+                    onClickLocation = onClickLocation,
+                    onClickCluster = { items ->
+                        onClickClusterMarkers(items)
+                        updateSheetHeight(SheetHeight.LARGE)
+                    },
+                    onClickMarker = { item ->
+                        onClickMarker(item)
+                        updateSheetHeight(SheetHeight.LARGE)
+                    },
+                    updateMovingCamera = updateMovingCamera,
+                )
             }
-        },
-        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-        sheetContainerColor = MaterialTheme.colorScheme.background,
-        sheetPeekHeight = sheetHeight.height,
-    ) {
-
-        MapContent(
-            uiState = uiState,
-            placeItems = placeItems,
-            onBack = onBack,
-            onClickMap = { updateSheetHeight(SheetHeight.SMALL) },
-            markerType = markerType,
-            mapType = mapType,
-            onClickMarkerType = { type ->
-                onClickMarkerType(type)
-                updateSheetHeight(SheetHeight.SMALL)
-            },
-            onClickMapType = onClickMapType,
-            onClickLocation = onClickLocation,
-            cameraPositionState = cameraPositionState,
-            onClickCluster = { items ->
-                onClickClusterMarkers(items)
-                updateSheetHeight(SheetHeight.MEDIUM)
-            },
-            onClickMarker = { item ->
-                onClickMarker(item)
-                updateSheetHeight(SheetHeight.MEDIUM)
-            },
-            setPlaceItems = setPlaceItems,
-            updateMovingCamera = updateMovingCamera,
-            movingCameraWrapper = movingCameraWrapper,
-            sheetHeight = sheetHeight,
-        )
-
+        }
     }
 }
 
 @OptIn(ExperimentalNaverMapApi::class)
 @Composable
 private fun MapContent(
-    uiState: MapUiState = MapUiState.Loading,
-    placeItems: ImmutableList<FishingPlaceInfo> = persistentListOf(),
+    uiState: MapUiState.Success,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = { },
-    markerType: MarkerType = MarkerType.MEMO,
-    mapType: MapType = MapType.BASIC_MAP,
     onClickMap: () -> Unit = { },
     onClickMarkerType: (String) -> Unit = { },
     onClickMapType: (String) -> Unit = { },
     onClickLocation: (Location) -> Unit = { },
-    cameraPositionState: CameraPositionState = CameraPositionState(),
     onClickCluster: (List<TedClusterItem>) -> Unit = { },
     onClickMarker: (TedClusterItem) -> Unit = { },
-    setPlaceItems: (List<FishingPlaceInfo>) -> Unit = { },
     updateMovingCamera: (MovingCameraWrapper) -> Unit = { },
-    movingCameraWrapper: MovingCameraWrapper = MovingCameraWrapper.Default,
-    sheetHeight: SheetHeight = SheetHeight.DEFAULT,
 ) {
 
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val coroutineScope = rememberCoroutineScope()
+    val cameraPositionState = rememberCameraPositionState()
 
-    if (uiState is MapUiState.Success) {
-        if (markerType == MarkerType.MEMO) {
-            setPlaceItems(uiState.memos)
-        } else {
-            setPlaceItems(uiState.fishingSpots)
-        }
-    }
-
-
-    LaunchedEffect(movingCameraWrapper) {
-        when (movingCameraWrapper) {
+    LaunchedEffect(uiState.movingCameraState) {
+        when (uiState.movingCameraState) {
             MovingCameraWrapper.Default -> {}
             is MovingCameraWrapper.MyLocation -> {
                 cameraPositionState.animate(
-                    update = CameraUpdate.scrollTo(LatLng(movingCameraWrapper.location))
+                    update = CameraUpdate.scrollTo(LatLng(uiState.movingCameraState.location))
                 )
                 updateMovingCamera(MovingCameraWrapper.Default)
             }
 
             is MovingCameraWrapper.Moving -> {
                 cameraPositionState.animate(
-                    update = CameraUpdate.scrollTo(LatLng(movingCameraWrapper.location))
+                    update = CameraUpdate.scrollTo(LatLng(uiState.movingCameraState.location))
                 )
                 updateMovingCamera(MovingCameraWrapper.Default)
             }
@@ -449,33 +341,24 @@ private fun MapContent(
             onMapClick = {
                 onClickMap()
             },
-            markers = placeItems.map { placeItem ->
-                when (placeItem) {
-                    is FishingPlaceInfo.MemoInfo -> placeItem.memoUI.toTedClusterItem()
-                    is FishingPlaceInfo.FishingSpotInfo -> placeItem.fishingSpotUI.toTedClusterItem()
+            markers = when (uiState.markerType) {
+                MarkerType.MEMO -> {
+                    uiState.memos.map { it.memoUI.toTedClusterItem() }
                 }
-            }.sortedBy { it.getTedLatLng().latitude },
+
+                else -> {
+                    uiState.fishingSpots.map { it.fishingSpotUI.toTedClusterItem() }
+                }
+            }.sortedByDescending { it.getTedLatLng().latitude },
             isClusteringMarkers = true,
-            mapType = getMapType(type = mapType),
+            mapType = getMapType(type = uiState.mapType),
             onClickClusterItems = { clusterItems ->
                 onClickCluster(clusterItems)
-                updateMovingCamera(MovingCameraWrapper.Moving(
-                    Location(MovingCameraType.MARKER.name).apply {
-                        latitude = clusterItems.first().getTedLatLng().latitude
-                        longitude = clusterItems.first().getTedLatLng().longitude
-                    }
-                ))
             },
             onClickMarker = { item ->
                 onClickMarker(item)
-                updateMovingCamera(MovingCameraWrapper.Moving(
-                    Location(MovingCameraType.MARKER.name).apply {
-                        latitude = item.getTedLatLng().latitude
-                        longitude = item.getTedLatLng().longitude
-                    }
-                ))
             },
-            mapHeight = sheetHeight.height + 20.dp,
+            mapHeight = uiState.sheetHeight.height + 20.dp,
             locationTrackingMode = LocationTrackingMode.NoFollow,
             onMapLoaded = {
                 if (MapViewModel.initialMarkerLoadFlag) {
@@ -522,7 +405,7 @@ private fun MapContent(
                 stringResource(id = R.string.map_flatland),
                 stringResource(id = R.string.map_other),
             ),
-            selectedChip = markerType.value,
+            selectedChip = uiState.markerType.value,
             selectedFontColor = White,
             unSelectedFontColor = White,
             selectedChipColor = Color(0xFF212121),
@@ -542,7 +425,7 @@ private fun MapContent(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(
-                    bottom = sheetHeight.height + 30.dp,
+                    bottom = uiState.sheetHeight.height + 30.dp,
                     start = 5.dp,
                 ),
             elements = listOf(
@@ -550,7 +433,7 @@ private fun MapContent(
                 stringResource(id = R.string.satellite_map),
                 stringResource(id = R.string.terrain_map),
             ),
-            selectedChip = mapType.value,
+            selectedChip = uiState.mapType.value,
             selectedFontColor = White,
             unSelectedFontColor = White,
             selectedChipColor = Blue400,
@@ -568,7 +451,7 @@ private fun MapContent(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 20.dp, bottom = sheetHeight.height + 20.dp)
+                .padding(end = 20.dp, bottom = uiState.sheetHeight.height + 20.dp)
                 .background(
                     color = Blue600,
                     shape = CircleShape,

@@ -6,6 +6,7 @@ import com.qure.domain.usecase.memo.GetFilteredMemoUseCase
 import com.qure.model.fishingspot.FishingSpot
 import com.qure.model.map.MapType
 import com.qure.model.map.MarkerType
+import com.qure.model.memo.Memo
 import com.qure.model.toFishingSpotUI
 import com.qure.ui.base.BaseViewModel
 import com.qure.ui.model.FishingPlaceInfo
@@ -19,8 +20,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ted.gun0912.clustering.clustering.TedClusterItem
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,25 +33,6 @@ constructor(
     private val getFilteredMemoUseCase: GetFilteredMemoUseCase,
 ) : BaseViewModel() {
 
-    private val _mapType = MutableStateFlow(MapType.BASIC_MAP)
-    val mapType = _mapType.asStateFlow()
-
-    private val _markerType = MutableStateFlow(MarkerType.MEMO)
-    val markerType = _markerType.asStateFlow()
-
-    private val _placeItems = MutableStateFlow<List<FishingPlaceInfo>>(emptyList())
-    val placeItems = _placeItems.asStateFlow()
-
-    private val _selectedPlaceItems = MutableStateFlow<List<FishingPlaceInfo>>(emptyList())
-    val selectedPlaceItems = _selectedPlaceItems.asStateFlow()
-
-    private val _movingCameraState =
-        MutableStateFlow<MovingCameraWrapper>(MovingCameraWrapper.Default)
-    val movingCameraWrapper = _movingCameraState.asStateFlow()
-
-    private val _sheetHeight = MutableStateFlow(SheetHeight.DEFAULT)
-    val sheetHeight = _sheetHeight.asStateFlow()
-
     private val _mapUiState = MutableStateFlow<MapUiState>(MapUiState.Loading)
     val mapUiState = _mapUiState.asStateFlow()
 
@@ -57,91 +40,90 @@ constructor(
         fetchFilteredMemo()
     }
 
-    fun fetchFishingSpot(fishingGroundType: MarkerType) {
+    private fun fetchFishingSpot(markerType: MarkerType) {
         viewModelScope.launch {
             getFishingSpotUseCase(FISHING_SPOT_COLLECTION_ID)
                 .map { fishingSpots ->
-                    MapUiState.Success(
-                        fishingSpots = filterFishingSpots(
-                            fishingSpots,
-                            fishingGroundType.value
-                        ).toPersistentList(),
-                    )
+                    createFishingSpotUiState(fishingSpots, markerType)
                 }
-                .onStart { _mapUiState.value = MapUiState.Loading }
                 .catch { throwable -> sendErrorMessage(throwable) }
-                .collectLatest { mapUiState ->
-                    _mapUiState.value = mapUiState
-                }
+                .collectLatest { newState -> _mapUiState.value = newState }
         }
     }
 
-    private fun filterFishingSpots(
+    private fun createFishingSpotUiState(
         fishingSpots: List<FishingSpot>,
-        fishingGroundType: String
-    ): List<FishingPlaceInfo.FishingSpotInfo> {
-        return fishingSpots.filter {
-            it.document.fields.fishing_ground_type.stringValue == fishingGroundType
-        }.map { fishingSpot ->
-            FishingPlaceInfo.FishingSpotInfo(fishingSpot.toFishingSpotUI())
+        markerType: MarkerType
+    ): MapUiState {
+        val filteredSpots = fishingSpots.filter {
+            it.document.fields.fishing_ground_type.stringValue == markerType.value
+        }.map { it.toFishingSpotUI() }.map { FishingPlaceInfo.FishingSpotInfo(it) }.toPersistentList()
+
+        val currentState = _mapUiState.value
+        return if (currentState is MapUiState.Success) {
+            currentState.copy(fishingSpots = filteredSpots)
+        } else {
+            MapUiState.Success(fishingSpots = filteredSpots)
         }
     }
 
-    fun fetchFilteredMemo() {
+    private fun fetchFilteredMemo() {
         viewModelScope.launch {
             getFilteredMemoUseCase()
-                .map { memos ->
-                    MapUiState.Success(memos = memos.map { memo ->
-                        FishingPlaceInfo.MemoInfo(memo.toMemoUI())
-                    }.toPersistentList())
-                }
-                .onStart { _mapUiState.value = MapUiState.Loading }
+                .map { memos -> createMemoUiState(memos) }
                 .catch { throwable -> sendErrorMessage(throwable) }
-                .collectLatest { mapUiState ->
-                    _mapUiState.value = mapUiState
-                }
+                .collectLatest { newState -> _mapUiState.value = newState }
+        }
+    }
+
+    private fun createMemoUiState(memos: List<Memo>): MapUiState {
+        val memoItems = memos.map { it.toMemoUI() }.map { FishingPlaceInfo.MemoInfo(it) }.toPersistentList()
+
+        val currentState = _mapUiState.value
+        return if (currentState is MapUiState.Success) {
+            currentState.copy(memos = memoItems)
+        } else {
+            MapUiState.Success(memos = memoItems)
         }
     }
 
     fun setMapType(mapType: MapType) {
-        _mapType.value = mapType
+        _mapUiState.update { currentState ->
+            (currentState as? MapUiState.Success)?.copy(
+                mapType = mapType
+            ) ?: currentState
+        }
     }
 
     fun setMarkerType(markerType: MarkerType) {
-        _markerType.value = markerType
-    }
-
-    fun setPlaceItems(placeItems: List<FishingPlaceInfo>) {
-        _placeItems.value = placeItems
-    }
-
-    fun setSelectedPlaceItems(placeItems: List<FishingPlaceInfo>) {
-        _selectedPlaceItems.value = placeItems
+        updateState { it.copy(markerType = markerType) }
+        when (markerType) {
+            MarkerType.MEMO -> fetchFilteredMemo()
+            else -> fetchFishingSpot(markerType)
+        }
     }
 
     fun updateMovingCamera(movingCameraWrapper: MovingCameraWrapper) {
-        _movingCameraState.value = movingCameraWrapper
+        updateState { it.copy(movingCameraState = movingCameraWrapper) }
     }
 
-    fun updateSheetHeight(height: SheetHeight) {
-        _sheetHeight.value = height
+    fun updateSheetHeight(sheetHeight: SheetHeight) {
+        updateState { it.copy(sheetHeight = sheetHeight) }
     }
 
-//    private fun getStructuredQuery(fishingGroundType: String): FishingSpotQuery {
-//        val fieldFilter =
-//            FieldFilter(
-//                op = "EQUAL",
-//                field = FieldPath("fishing_ground_type"),
-//                value = Value(fishingGroundType),
-//            )
-//
-//        return FishingSpotQuery(
-//            StructuredQuery(
-//                from = listOf(CollectionId(FISHING_SPOT_COLLECTION_ID)),
-//                where = Where(fieldFilter),
-//            ),
-//        )
-//    }
+    fun updateClusterMarkers(clusterMarkers: List<TedClusterItem>) {
+        updateState { it.copy(clusterMarkers = clusterMarkers.toPersistentList()) }
+    }
+
+    private fun updateState(update: (MapUiState.Success) -> MapUiState.Success) {
+        _mapUiState.update { currentState ->
+            if (currentState is MapUiState.Success) {
+                update(currentState)
+            } else {
+                currentState
+            }
+        }
+    }
 
     companion object {
         const val FISHING_SPOT_COLLECTION_ID = "fishingspot"
