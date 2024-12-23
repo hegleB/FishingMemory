@@ -39,7 +39,8 @@
 
 |북마크|오프라인|다크모드|
 |---|---|---|
-|<img src="https://github.com/user-attachments/assets/e1d5bff1-a5cc-40f6-9f19-61b95365069f" height="400" width="210">|<img src="https://github.com/user-attachments/assets/ff9fe76a-eeef-48ec-9101-161743f91cc8" height="400" width="210">|<img src="https://github.com/user-attachments/assets/ae16c7b1-8f0e-4a47-9b17-c8d56b445a86" height="400" width="210">|
+|<img src="https://github.com/user-attachments/assets/e1d5bff1-a5cc-40f6-9f19-61b95365069f" height="400" width="210">|<img src="https://github.com/user-attachments/assets/ff9fe76a-eeef-48ec-9101-161743f91cc8" height="400" width="210">|<img src="https://github.com/user-attachments/assets/b1c10321-4ac1-4756-9fc3-81a3b08a608b" height="400" width="210">|
+
 
 |사이즈 측정|
 |---|
