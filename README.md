@@ -20,19 +20,31 @@
 
 ## ScreenShots
 <p align="center">
-<img src = "https://github.com/dltkd1395/FishingMemory/assets/39490416/bbd5c38d-f17e-4441-abd9-80e9cf8ec55c" height="350" style="width:100%;">
+<img src = "https://github.com/user-attachments/assets/d041b95e-dc3f-4a19-b0a1-1c37e485f3b5" height="400" style="width:100%;">
 </p>
 
-||||||
-|---|---|---|---|---|
-|<img src="https://github.com/hegleB/FishingMemory/assets/39490416/4765e44c-bb82-4887-91e2-3ac4bcc70439">|<img src="https://github.com/hegleB/FishingMemory/assets/39490416/eadb0dbf-e413-4019-aef6-08fa53adefba">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/5ae8db38-f61e-4bfe-b4de-429aea6a7ce5">|<img src="https://github.com/dltkd1395/FishingMemory/assets/39490416/1f0c6004-0ab4-4817-b44b-520440985189">|<img src="https://github.com/hegleB/FishingMemory/assets/39490416/c526d728-84eb-4c0c-a754-36fe4076f290">|
+<img src="https://github.com/user-attachments/assets/70a4a2da-915d-44fe-9a56-829c13612600" height="300" width="20%">
+<img src="https://github.com/user-attachments/assets/d71234d4-e512-49d8-92a4-6a06f214e0c8" height="300" width="20%">
+<img src="https://github.com/user-attachments/assets/893ceaea-4abe-4924-805b-c51c18cf4754" height="300" width="20%"> <br/>
+<img src="https://github.com/user-attachments/assets/1a83f538-4884-4b0f-945d-e7af2b901777" height="300" width="20%">
+<img src="https://github.com/user-attachments/assets/807122c6-a650-49c8-81fa-fcb6e5f39d5e" height="300" width="20%">
+<img src="https://github.com/user-attachments/assets/beb1debe-9ec5-420f-a937-8fbeb84b207f" height="300" width="20%">
 
-### 사이즈 측정
-<img src="https://github.com/hegleB/FishingMemory/assets/39490416/c6655d0d-11e4-4cea-85da-f15e75bda4d2" width="620" height="350">
 
-|오프라인|날씨 정보|
-|---|---|
-|<img src="https://github.com/hegleB/FishingMemory/assets/39490416/4b3e6078-8a78-423a-b21a-5f8e4c97a81b" height="500">|<img src="https://github.com/hegleB/FishingMemory/assets/39490416/66bdce82-bda8-4ab0-a169-ec48a8a701e7" height="500">|
+## Animations
+
+|홈|앨범|지도|
+|---|---|---|
+|<img src="https://github.com/user-attachments/assets/3a529c57-bcd8-41b4-a020-569a8307cca4" height="400" width="210">|<img src ="https://github.com/user-attachments/assets/d9251d38-8a0c-4fac-89de-28e90a68e782" height="400" width="210">|<img src="https://github.com/user-attachments/assets/6247ab74-ebb8-4d28-9236-18dbd579984e" height="400" width="210">|
+
+|북마크|오프라인|다크모드|
+|---|---|---|
+|<img src="https://github.com/user-attachments/assets/e1d5bff1-a5cc-40f6-9f19-61b95365069f" height="400" width="210">|<img src="https://github.com/user-attachments/assets/ff9fe76a-eeef-48ec-9101-161743f91cc8" height="400" width="210">|<img src="https://github.com/user-attachments/assets/ae16c7b1-8f0e-4a47-9b17-c8d56b445a86" height="400" width="210">|
+
+|사이즈 측정|
+|---|
+|<img src="https://github.com/hegleB/FishingMemory/assets/39490416/c6655d0d-11e4-4cea-85da-f15e75bda4d2" width="685" height="400">|
+
 
 ## Project Architecture
 
