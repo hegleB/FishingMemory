@@ -17,9 +17,9 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.LocationSource
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.compose.CameraPositionState
+import com.naver.maps.map.compose.DisposableMapEffect
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
-import com.naver.maps.map.compose.MapEffect
 import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapType
 import com.naver.maps.map.compose.MapUiSettings
@@ -87,7 +87,7 @@ fun FMNaverMap(
                 mutableStateOf(markers)
             }
 
-            MapEffect(markers) { map ->
+            DisposableMapEffect(markers) { map ->
                 val newClusterRequired =
                     clusterManager == null || !isMarkersEqual(previousMarkers, markers)
 
@@ -105,6 +105,10 @@ fun FMNaverMap(
                     previousMarkers = markers
                 }
                 clusterManager?.addItems(previousMarkers)
+
+                onDispose {
+                    clusterManager?.clearItems()
+                }
             }
         } else {
             Marker(
