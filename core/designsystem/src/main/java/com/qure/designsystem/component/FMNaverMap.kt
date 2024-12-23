@@ -1,11 +1,13 @@
 package com.qure.designsystem.component
 
+import android.content.Context
 import android.graphics.Color
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -13,10 +15,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.LocationSource
+import com.naver.maps.map.NaverMap
 import com.naver.maps.map.compose.CameraPositionState
-import com.naver.maps.map.compose.DisposableMapEffect
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MapEffect
 import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MapType
 import com.naver.maps.map.compose.MapUiSettings
@@ -80,28 +83,28 @@ fun FMNaverMap(
             var clusterManager by remember {
                 mutableStateOf<TedNaverClustering<TedClusterItem>?>(null)
             }
+            var previousMarkers by rememberSaveable {
+                mutableStateOf(markers)
+            }
 
-            DisposableMapEffect(markers) { map ->
-                if (clusterManager == null) {
-                    clusterManager = TedNaverClustering.with<TedClusterItem>(context, map)
-                        .customMarker { tedClusterItem -> tedClusterItem.createMarker() }
-                        .clusterBackground {
-                            Color.BLACK
-                        }
-                        .markerClickListener { marker ->
-                            onClickMarker(marker)
-                        }
-                        .clusterClickListener { clusterItems ->
-                            onClickClusterItems(clusterItems.items.toList())
-                        }
-                        .minClusterSize(1)
-                        .make()
+            MapEffect(markers) { map ->
+                val newClusterRequired =
+                    clusterManager == null || !isMarkersEqual(previousMarkers, markers)
+
+                if (newClusterRequired) {
+                    clusterManager = createClusterManager(
+                        context = context,
+                        map = map,
+                        onClickMarker = onClickMarker,
+                        onClickClusterItems = onClickClusterItems,
+                    )
                 }
-                clusterManager?.addItems(markers)
 
-                onDispose {
+                if (!isMarkersEqual(previousMarkers, markers)) {
                     clusterManager?.clearItems()
+                    previousMarkers = markers
                 }
+                clusterManager?.addItems(previousMarkers)
             }
         } else {
             Marker(
@@ -112,6 +115,28 @@ fun FMNaverMap(
             )
         }
     }
+}
+
+private fun createClusterManager(
+    context: Context,
+    map: NaverMap,
+    onClickMarker: (TedClusterItem) -> Unit,
+    onClickClusterItems: (List<TedClusterItem>) -> Unit,
+): TedNaverClustering<TedClusterItem> {
+    return TedNaverClustering.with<TedClusterItem>(context, map)
+        .customMarker { tedClusterItem -> tedClusterItem.createMarker() }
+        .clusterBackground { Color.BLACK }
+        .markerClickListener { marker -> onClickMarker(marker) }
+        .clusterClickListener { clusterItems -> onClickClusterItems(clusterItems.items.toList()) }
+        .minClusterSize(1)
+        .make()
+}
+
+private fun isMarkersEqual(
+    oldMarkers: List<TedClusterItem>,
+    newMarkers: List<TedClusterItem>
+): Boolean {
+    return oldMarkers.map { it.getTedLatLng() } == newMarkers.map { it.getTedLatLng() }
 }
 
 private fun List<TedClusterItem>.toTedLatLng() =
