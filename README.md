@@ -17,6 +17,10 @@
 #### 낚시꾼들을 위한 기록 앱
 
 </br>
+<a href="https://play.google.com/store/apps/details?id=com.qure.fishingmemory">
+<img src="https://github.com/user-attachments/assets/988c609d-0ce9-49a8-8397-d4693d5f0a6b" width=400 height=150/>
+</a>
+
 
 ## ScreenShots
 <p align="center">
